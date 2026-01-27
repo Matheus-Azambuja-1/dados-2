@@ -220,7 +220,69 @@ body.light-mode .checkbox-pill.active { background: rgba(0, 114, 255, 0.1); }
 .timeline-title { font-size: 13px; font-weight: 600; color: var(--text-main); margin: 0; display:flex; justify-content: space-between;} 
 .duration-tag { font-size: 10px; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; color: var(--secondary); font-weight: normal; } 
   
-@media (max-width: 768px) { .upload-grid { grid-template-columns: 1fr; } .summary-panel { flex-direction: column; align-items: flex-end; gap: 10px; } }  
+/* NOVOS BOTÕES DE AUTOMAÇÃO */  
+.auto-buttons {  
+    display: flex;  
+    gap: 10px;  
+    margin-top: 15px;  
+    flex-wrap: wrap;  
+}  
+  
+.auto-btn {  
+    background: linear-gradient(135deg, #8b5cf6, #6366f1);  
+    color: white;  
+    border: none;  
+    border-radius: 8px;  
+    padding: 10px 16px;  
+    font-size: 12px;  
+    font-weight: 600;  
+    cursor: pointer;  
+    transition: all 0.3s;  
+    display: flex;  
+    align-items: center;  
+    gap: 8px;  
+    text-transform: uppercase;  
+}  
+  
+.auto-btn:hover {  
+    transform: translateY(-2px);  
+    box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);  
+}  
+  
+.auto-btn.secondary {  
+    background: rgba(139, 92, 246, 0.1);  
+    color: var(--primary);  
+    border: 1px solid rgba(139, 92, 246, 0.3);  
+}  
+  
+.auto-btn.secondary:hover {  
+    background: rgba(139, 92, 246, 0.2);  
+}  
+  
+.file-status {  
+    margin-top: 10px;  
+    padding: 8px 12px;  
+    background: rgba(255, 255, 255, 0.05);  
+    border-radius: 6px;  
+    font-size: 12px;  
+    display: flex;  
+    align-items: center;  
+    gap: 8px;  
+}  
+  
+.file-status i {  
+    color: var(--success);  
+}  
+  
+.file-status.error i {  
+    color: var(--danger);  
+}  
+  
+@media (max-width: 768px) {  
+    .upload-grid { grid-template-columns: 1fr; }  
+    .summary-panel { flex-direction: column; align-items: flex-end; gap: 10px; }  
+    .auto-buttons { flex-direction: column; }  
+}  
 </style>  
 </head>  
 <body>  
@@ -272,13 +334,39 @@ body.light-mode .checkbox-pill.active { background: rgba(0, 114, 255, 0.1); }
                 <span class="upload-label">FONTE DE SETOR E HISTÓRICO (A)</span>  
                 <span class="upload-title" style="color:var(--info)"><i class="fa-regular fa-file-pdf"></i> R_SITUACAO_DOCUMENTO</span>  
                 <input type="file" id="pdfFileA" accept=".pdf" />  
+                <div id="statusA" class="file-status hidden"><i class="fa-solid fa-circle-check"></i> <span>Arquivo detectado</span></div>  
             </div>  
             <div class="upload-card">  
                 <span class="upload-label">BASE DE COBRANÇA (B)</span>  
                 <span class="upload-title" style="color:var(--warning)"><i class="fa-regular fa-file-pdf"></i> R_ATENDE_SEM_CONTA</span>  
                 <input type="file" id="pdfFileB" accept=".pdf" />  
+                <div id="statusB" class="file-status hidden"><i class="fa-solid fa-circle-check"></i> <span>Arquivo detectado</span></div>  
             </div>  
             <button id="processBtn" class="btn btn-primary"><span><i class="fa-solid fa-bolt"></i> PROCESSAR (BASE B)</span></button>  
+        </div>  
+        
+        <!-- NOVA SEÇÃO DE AUTOMAÇÃO -->  
+        <div class="auto-buttons">  
+            <button id="autoDetectBtn" class="auto-btn">  
+                <i class="fa-solid fa-magnifying-glass"></i>  
+                Buscar PDFs Automaticamente  
+            </button>  
+            <button id="loadRecentBtn" class="auto-btn secondary">  
+                <i class="fa-solid fa-clock-rotate-left"></i>  
+                Usar Últimos PDFs Baixados  
+            </button>  
+            <button id="openFolderBtn" class="auto-btn secondary">  
+                <i class="fa-solid fa-folder-open"></i>  
+                Selecionar Pasta  
+            </button>  
+        </div>  
+          
+        <!-- STATUS DA AUTOMAÇÃO -->  
+        <div id="autoStatus" style="margin-top: 15px; display: none;">  
+            <div class="file-status">  
+                <i class="fa-solid fa-robot"></i>  
+                <span id="autoStatusText">Buscando PDFs...</span>  
+            </div>  
         </div>  
     </header>  
   
@@ -397,6 +485,15 @@ const exportNormalExcel = document.getElementById("exportNormalExcel");
 const exportInverseExcelB = document.getElementById("exportInverseExcelB"); 
 const toggleDebug = document.getElementById("toggleDebug");  
 const toggleInverseBtn = document.getElementById("toggleInverseBtn"); 
+  
+// NOVOS ELEMENTOS DE AUTOMAÇÃO  
+const autoDetectBtn = document.getElementById("autoDetectBtn");  
+const loadRecentBtn = document.getElementById("loadRecentBtn");  
+const openFolderBtn = document.getElementById("openFolderBtn");  
+const autoStatus = document.getElementById("autoStatus");  
+const autoStatusText = document.getElementById("autoStatusText");  
+const statusA = document.getElementById("statusA");  
+const statusB = document.getElementById("statusB");  
   
 let recordsA = new Map(); 
 let recordsB = new Map(); 
@@ -525,6 +622,237 @@ document.getElementById('historyModal').addEventListener('click', function(e) {
     if(e.target === this) closeModal(); 
 }); 
  
+/* --- NOVAS FUNÇÕES DE AUTOMAÇÃO --- */  
+async function autoDetectPDFs() {  
+    autoStatus.style.display = 'block';  
+    autoStatusText.innerHTML = '<i class="fa-solid fa-search"></i> Buscando PDFs nos Downloads...';  
+      
+    try {  
+        // Tenta usar a File System Access API (funciona em Chrome/Edge)  
+        if ('showOpenFilePicker' in window) {  
+            autoStatusText.innerHTML = '<i class="fa-solid fa-folder-open"></i> Selecione a pasta com os PDFs...';  
+              
+            const dirHandle = await window.showDirectoryPicker();  
+            const files = [];  
+              
+            // Função recursiva para listar arquivos  
+            async function* getFilesRecursively(entry) {  
+                if (entry.kind === 'file') {  
+                    if (entry.name.toLowerCase().endsWith('.pdf')) {  
+                        const file = await entry.getFile();  
+                        files.push(file);  
+                    }  
+                } else if (entry.kind === 'directory') {  
+                    for await (const handle of entry.values()) {  
+                        yield* getFilesRecursively(handle);  
+                    }  
+                }  
+            }  
+              
+            for await (const file of getFilesRecursively(dirHandle)) {  
+                // Continua a iteração  
+            }  
+              
+            if (files.length === 0) {  
+                autoStatusText.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Nenhum PDF encontrado na pasta.';  
+                return;  
+            }  
+              
+            // Ordena por data de modificação (mais recentes primeiro)  
+            files.sort((a, b) => b.lastModified - a.lastModified);  
+              
+            // Procura pelos arquivos específicos  
+            let pdfA = null;  
+            let pdfB = null;  
+              
+            for (const file of files) {  
+                const fileName = file.name.toUpperCase();  
+                  
+                // Procura por R_SITUACAO_DOCUMENTO (PDF A)  
+                if (!pdfA && (fileName.includes('R_SITUACAO') || fileName.includes('SITUACAO_DOCUMENTO'))) {  
+                    pdfA = file;  
+                    autoStatusText.innerHTML += `<br><i class="fa-solid fa-check"></i> Encontrado: ${file.name}`;  
+                }  
+                  
+                // Procura por R_ATENDE_SEM_CONTA (PDF B)  
+                if (!pdfB && (fileName.includes('ATENDE_SEM_CONTA') || fileName.includes('ATENDE_SEM'))) {  
+                    pdfB = file;  
+                    autoStatusText.innerHTML += `<br><i class="fa-solid fa-check"></i> Encontrado: ${file.name}`;  
+                }  
+                  
+                if (pdfA && pdfB) break;  
+            }  
+              
+            if (pdfA && pdfB) {  
+                // Carrega os arquivos nos inputs  
+                loadFileToInput(pdfA, pdfInputA, statusA);  
+                loadFileToInput(pdfB, pdfInputB, statusB);  
+                  
+                autoStatusText.innerHTML = `<i class="fa-solid fa-circle-check" style="color:var(--success)"></i> Arquivos carregados automaticamente!`;  
+                  
+                // Processa automaticamente após 1 segundo  
+                setTimeout(() => {  
+                    autoStatusText.innerHTML += '<br><i class="fa-solid fa-bolt"></i> Processando...';  
+                    processAutomatically();  
+                }, 1000);  
+            } else {  
+                autoStatusText.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Não encontrou ambos os PDFs necessários.';  
+            }  
+        } else {  
+            // Fallback para browsers que não suportam File System Access API  
+            autoStatusText.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Seu navegador não suporta seleção de pastas. Use os botões de upload.';  
+        }  
+    } catch (error) {  
+        console.error('Erro na detecção automática:', error);  
+        autoStatusText.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Erro: ${error.message}`;  
+    }  
+}  
+  
+async function loadRecentPDFs() {  
+    autoStatus.style.display = 'block';  
+    autoStatusText.innerHTML = '<i class="fa-solid fa-clock-rotate-left"></i> Procurando últimos PDFs baixados...';  
+      
+    try {  
+        // Esta abordagem tem limitações devido à segurança do navegador  
+        // Mas podemos tentar algumas estratégias  
+          
+        // 1. Verificar se há arquivos no input que foram recentemente selecionados  
+        if (pdfInputA.files.length > 0 && pdfInputB.files.length > 0) {  
+            autoStatusText.innerHTML = '<i class="fa-solid fa-circle-check" style="color:var(--success)"></i> Usando arquivos já selecionados.';  
+            processAutomatically();  
+            return;  
+        }  
+          
+        // 2. Tentar usar a API de Clipboard para ver se há PDFs recentes  
+        const clipboardItems = await navigator.clipboard.read();  
+        let foundPdf = false;  
+          
+        for (const item of clipboardItems) {  
+            for (const type of item.types) {  
+                if (type === 'application/pdf') {  
+                    foundPdf = true;  
+                    break;  
+                }  
+            }  
+        }  
+          
+        if (foundPdf) {  
+            autoStatusText.innerHTML = '<i class="fa-solid fa-clipboard"></i> PDF encontrado no clipboard! Selecione manualmente.';  
+        } else {  
+            autoStatusText.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Não encontrei PDFs recentes. Selecione manualmente.';  
+        }  
+          
+    } catch (error) {  
+        console.error('Erro ao carregar PDFs recentes:', error);  
+        autoStatusText.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Selecione os PDFs manualmente.`;  
+    }  
+}  
+  
+function loadFileToInput(file, inputElement, statusElement) {  
+    // Cria um novo DataTransfer para simular o upload  
+    const dataTransfer = new DataTransfer();  
+    dataTransfer.items.add(file);  
+    inputElement.files = dataTransfer.files;  
+      
+    // Dispara evento de change  
+    inputElement.dispatchEvent(new Event('change', { bubbles: true }));  
+      
+    // Atualiza status  
+    statusElement.classList.remove('hidden');  
+    statusElement.querySelector('span').textContent = file.name;  
+}  
+  
+async function processAutomatically() {  
+    if (!pdfInputA.files[0] || !pdfInputB.files[0]) {  
+        autoStatusText.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Selecione ambos os PDFs primeiro.';  
+        return;  
+    }  
+      
+    loading.style.display = 'flex';  
+    autoStatusText.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processando...';  
+      
+    try {  
+        await processPDFA();  
+        await processPDFB();  
+        separateRecords();  
+        autoStatusText.innerHTML = '<i class="fa-solid fa-circle-check" style="color:var(--success)"></i> Processamento concluído com sucesso!';  
+    } catch (err) {  
+        console.error(err);  
+        autoStatusText.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Erro: ${err.message}`;  
+        alert("Erro no processamento automático.");  
+    } finally {  
+        loading.style.display = 'none';  
+    }  
+}  
+  
+function openFolderPicker() {  
+    // Cria um input de pasta (diretório)  
+    const folderInput = document.createElement('input');  
+    folderInput.type = 'file';  
+    folderInput.webkitdirectory = true;  
+    folderInput.multiple = true;  
+    folderInput.accept = '.pdf';  
+      
+    folderInput.onchange = async (e) => {  
+        const files = Array.from(e.target.files);  
+        if (files.length === 0) return;  
+          
+        autoStatus.style.display = 'block';  
+        autoStatusText.innerHTML = `<i class="fa-solid fa-search"></i> Analisando ${files.length} arquivos...`;  
+          
+        // Ordena por data de modificação  
+        files.sort((a, b) => b.lastModified - a.lastModified);  
+          
+        // Procura pelos arquivos específicos  
+        let pdfA = null;  
+        let pdfB = null;  
+          
+        for (const file of files) {  
+            const fileName = file.name.toUpperCase();  
+              
+            // Procura por R_SITUACAO_DOCUMENTO (PDF A)  
+            if (!pdfA && (fileName.includes('R_SITUACAO') || fileName.includes('SITUACAO_DOCUMENTO'))) {  
+                pdfA = file;  
+                autoStatusText.innerHTML += `<br><i class="fa-solid fa-check"></i> Encontrado: ${file.name}`;  
+            }  
+              
+            // Procura por R_ATENDE_SEM_CONTA (PDF B)  
+            if (!pdfB && (fileName.includes('ATENDE_SEM_CONTA') || fileName.includes('ATENDE_SEM'))) {  
+                pdfB = file;  
+                autoStatusText.innerHTML += `<br><i class="fa-solid fa-check"></i> Encontrado: ${file.name}`;  
+            }  
+              
+            if (pdfA && pdfB) break;  
+        }  
+          
+        if (pdfA && pdfB) {  
+            // Carrega os arquivos  
+            loadFileToInput(pdfA, pdfInputA, statusA);  
+            loadFileToInput(pdfB, pdfInputB, statusB);  
+              
+            autoStatusText.innerHTML = `<i class="fa-solid fa-circle-check" style="color:var(--success)"></i> Arquivos encontrados e carregados!`;  
+              
+            // Processa automaticamente  
+            setTimeout(() => {  
+                autoStatusText.innerHTML += '<br><i class="fa-solid fa-bolt"></i> Processando automaticamente...';  
+                processAutomatically();  
+            }, 1000);  
+        } else {  
+            let missing = [];  
+            if (!pdfA) missing.push('R_SITUACAO_DOCUMENTO');  
+            if (!pdfB) missing.push('R_ATENDE_SEM_CONTA');  
+            autoStatusText.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Não encontrou: ${missing.join(', ')}`;  
+        }  
+    };  
+      
+    folderInput.click();  
+}  
+  
+/* --- EVENT LISTENERS PARA AUTOMAÇÃO --- */  
+autoDetectBtn.addEventListener('click', autoDetectPDFs);  
+loadRecentBtn.addEventListener('click', loadRecentPDFs);  
+openFolderBtn.addEventListener('click', openFolderPicker);  
+  
 /* --- PROCESSAMENTO DE PDF --- */ 
 async function extractLines(pdfFile){  
   const buf = await pdfFile.arrayBuffer();  
@@ -877,6 +1205,43 @@ btn.addEventListener('click', async ()=>{
   if(!pdfInputA.files[0] || !pdfInputB.files[0]) return alert("Selecione os dois PDFs (A e B).");  
   loading.style.display = 'flex';  
   try{ await processPDFA(); await processPDFB(); separateRecords(); } catch(err){ console.error(err); alert("Erro no processamento."); } finally{ loading.style.display = 'none'; }  
+});  
+
+/* --- INICIALIZAÇÃO AUTOMÁTICA AO CARREGAR A PÁGINA --- */  
+document.addEventListener('DOMContentLoaded', async () => {  
+    // Verifica se há arquivos no localStorage (última sessão)  
+    const lastSessionA = localStorage.getItem('last_pdf_A');  
+    const lastSessionB = localStorage.getItem('last_pdf_B');  
+      
+    if (lastSessionA && lastSessionB) {  
+        // Tenta restaurar a última sessão  
+        autoStatus.style.display = 'block';  
+        autoStatusText.innerHTML = '<i class="fa-solid fa-clock-rotate-left"></i> Restaurando última sessão...';  
+          
+        // Nota: Por limitações de segurança, não podemos restaurar arquivos diretamente do localStorage  
+        // Mas podemos mostrar uma mensagem informativa  
+        setTimeout(() => {  
+            autoStatusText.innerHTML = '<i class="fa-solid fa-circle-info"></i> Selecione os PDFs novamente para continuar.';  
+        }, 1500);  
+    }  
+      
+    // Tenta detectar automaticamente após um breve delay  
+    setTimeout(() => {  
+        //autoDetectPDFs(); // Descomente se quiser busca automática ao carregar  
+    }, 500);  
+});  
+
+// Salva os nomes dos arquivos no localStorage quando são selecionados  
+pdfInputA.addEventListener('change', () => {  
+    if (pdfInputA.files[0]) {  
+        localStorage.setItem('last_pdf_A', pdfInputA.files[0].name);  
+    }  
+});  
+  
+pdfInputB.addEventListener('change', () => {  
+    if (pdfInputB.files[0]) {  
+        localStorage.setItem('last_pdf_B', pdfInputB.files[0].name);  
+    }  
 });  
 </script>  
 </body>  
