@@ -1,0 +1,598 @@
+<!DOCTYPE html> 
+<html lang="pt-BR"> 
+<head> 
+<meta charset="UTF-8" /> 
+<meta name="viewport" content="width=device-width, initial-scale=1" /> 
+<title>Painel Hnsa- Filtros Avançados</title> 
+ 
+<link rel="preconnect" href="https://fonts.googleapis.com"> 
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"> 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
+<link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2910/2910795.png" /> 
+ 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script> 
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script> 
+ 
+<style> 
+:root { 
+    --bg-app: #0f172a; 
+    --card-bg: #1e293b; 
+    --border-color: #334155; 
+    --primary: #3b82f6; 
+    --primary-hover: #2563eb; 
+    --text-main: #f1f5f9; 
+    --text-muted: #94a3b8; 
+    --success: #10b981; 
+    --warning: #f59e0b; 
+    --danger: #ef4444; 
+} 
+ 
+* { box-sizing: border-box; } 
+ 
+body { 
+    margin: 0; font-family: 'Inter', sans-serif;  
+    background-color: var(--bg-app); 
+    color: var(--text-main); 
+    height: 100vh; overflow-y: auto; 
+} 
+ 
+::-webkit-scrollbar { width: 8px; height: 8px; } 
+::-webkit-scrollbar-track { background: var(--bg-app); } 
+::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; } 
+::-webkit-scrollbar-thumb:hover { background: #64748b; } 
+ 
+.app-container { max-width: 1800px; margin: 0 auto; padding: 24px; } 
+ 
+.header { 
+    display: flex; justify-content: space-between; align-items: center; 
+    margin-bottom: 24px; padding-bottom: 20px; 
+    border-bottom: 1px solid var(--border-color); 
+} 
+.header h1 {  
+    margin: 0; font-size: 26px; font-weight: 700; color: white; letter-spacing: -0.5px; 
+    display: flex; align-items: center; gap: 12px; 
+} 
+.header h1 i { color: var(--primary); } 
+ 
+/* KPI CARDS */ 
+.kpi-grid { 
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+    gap: 16px; margin-bottom: 24px; 
+} 
+.kpi-card { 
+    background: var(--card-bg); border: 1px solid var(--border-color); 
+    border-radius: 8px; padding: 16px; 
+    display: flex; flex-direction: column; 
+} 
+.kpi-title { font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 6px; } 
+.kpi-value { font-size: 24px; font-weight: 700; color: white; } 
+.txt-success { color: var(--success); } 
+.txt-danger { color: var(--danger); } 
+ 
+/* Upload Section */ 
+.upload-grid {  
+    display: grid; grid-template-columns: 1fr 1fr auto; gap: 16px; margin-bottom: 24px;  
+    background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); 
+} 
+.upload-card { display: flex; flex-direction: column; gap: 8px; } 
+.upload-label { font-size: 11px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; } 
+.file-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 4px; } 
+ 
+input[type=file] { font-size: 13px; color: var(--text-muted); } 
+input[type=file]::file-selector-button { 
+    border: none; background: #334155; color: white; 
+    padding: 8px 12px; border-radius: 6px; cursor: pointer; 
+    font-weight: 500; margin-right: 10px; transition: 0.2s; 
+} 
+input[type=file]::file-selector-button:hover { background: #475569; } 
+ 
+.btn-process { 
+    background: var(--primary); border: none; border-radius: 8px; color: white; font-weight: 600; 
+    padding: 0 40px; cursor: pointer; font-size: 14px; 
+    transition: all 0.2s; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); 
+} 
+.btn-process:hover { background: var(--primary-hover); transform: translateY(-1px); } 
+ 
+/* Toolbar */ 
+.toolbar { 
+    display: flex; gap: 12px; margin-bottom: 24px; align-items: center; flex-wrap: wrap; 
+} 
+.search-box { position: relative; flex: 1; min-width: 250px; } 
+.search-box input { 
+    width: 100%; background: var(--card-bg); border: 1px solid var(--border-color); 
+    padding: 10px 14px; border-radius: 8px; color: white; outline: none; font-size: 14px; 
+    transition: border-color 0.2s; 
+} 
+.search-box input:focus { border-color: var(--primary); } 
+ 
+select, .btn-export { 
+    background: var(--card-bg); border: 1px solid var(--border-color); 
+    color: white; padding: 10px 16px; border-radius: 8px; cursor: pointer; 
+    font-weight: 500; font-size: 14px; outline: none; 
+} 
+.btn-export { background: rgba(16, 185, 129, 0.1); color: var(--success); border-color: rgba(16, 185, 129, 0.2); display: flex; align-items: center; gap: 8px; } 
+.btn-export:hover { background: rgba(16, 185, 129, 0.2); } 
+ 
+/* --- BOTÕES DE FILTRO DE STATUS --- */ 
+.filter-group { 
+    display: flex; 
+    background: var(--card-bg); 
+    border: 1px solid var(--border-color); 
+    border-radius: 8px; 
+    padding: 4px; 
+    gap: 4px; 
+} 
+.filter-btn { 
+    background: transparent; 
+    border: none; 
+    color: var(--text-muted); 
+    padding: 6px 16px; 
+    font-size: 13px; 
+    font-weight: 600; 
+    cursor: pointer; 
+    border-radius: 6px; 
+    transition: all 0.2s; 
+} 
+.filter-btn:hover { color: white; background: rgba(255,255,255,0.05); } 
+ 
+/* Estilos Ativos */ 
+.filter-btn.active.all { background: #334155; color: white; } 
+.filter-btn.active.open { background: rgba(16, 185, 129, 0.2); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2); } 
+.filter-btn.active.closed { background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); } 
+ 
+ 
+/* Grid de Resultados */ 
+.competence-container {  
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));  
+    gap: 24px; 
+    align-items: start; 
+    padding-bottom: 50px;  
+} 
+@media (max-width: 768px) { 
+    .competence-container { grid-template-columns: 1fr; } 
+    .upload-grid { grid-template-columns: 1fr; } 
+} 
+ 
+.comp-card { 
+    background: var(--card-bg); border: 1px solid var(--border-color); 
+    border-radius: 12px; overflow: hidden; 
+    display: flex; flex-direction: column; 
+} 
+ 
+.comp-header { 
+    background: #1e293b; padding: 16px 20px; 
+    display: flex; justify-content: space-between; align-items: center; 
+    border-bottom: 1px solid var(--border-color); cursor: pointer; 
+} 
+.comp-title { font-size: 15px; font-weight: 700; color: white; display: flex; align-items: center; gap: 10px; } 
+.comp-meta { display: flex; align-items: center; gap: 10px; } 
+.comp-meta .badge { font-size: 11px; padding: 5px 10px; } 
+.badge-count { background: #334155; color: #cbd5e1; font-size: 11px; padding: 2px 8px; border-radius: 12px; font-weight: 600; } 
+.comp-body { max-height: 500px; overflow-y: auto; transition: max-height 0.3s ease; } 
+.comp-card.collapsed .comp-body { max-height: 0; padding-top: 0; padding-bottom: 0; border-top: 0; opacity: 0; } 
+.comp-card.collapsed .toggle-icon { transform: rotate(-90deg); } 
+.toggle-icon { transition: transform 0.2s; } 
+ 
+table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; } 
+th {  
+    background: #0f172a; color: var(--text-muted);  
+    font-weight: 600; text-align: left; padding: 12px 16px; 
+    font-size: 11px; text-transform: uppercase; position: sticky; top: 0; z-index: 10; border-bottom: 1px solid var(--border-color); 
+} 
+td { padding: 12px 16px; border-bottom: 1px solid var(--border-color); vertical-align: middle; color: #e2e8f0; } 
+ 
+.badge { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; } 
+.badge-setor { background: rgba(59, 130, 246, 0.1); color: var(--primary); border: 1px solid rgba(59, 130, 246, 0.2); } 
+.badge-ok { background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2); } 
+.badge-err { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); } 
+.mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #cbd5e1; } 
+.paciente-nome { font-weight: 500; color: white; display: block; max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } 
+ 
+#loading { 
+    position: fixed; top:0; left:0; width:100%; height:100%; 
+    background: rgba(15, 23, 42, 0.85); z-index: 100; backdrop-filter: blur(4px); 
+    display: none; align-items: center; justify-content: center; flex-direction: column; 
+} 
+.spinner { 
+    width: 48px; height: 48px; border: 4px solid rgba(255,255,255,0.1); 
+    border-top-color: var(--primary); border-radius: 50%; 
+    animation: spin 0.8s infinite linear; margin-bottom: 20px; 
+} 
+@keyframes spin { to { transform: rotate(360deg); } } 
+</style> 
+</head> 
+<body> 
+ 
+<div id="loading"> 
+    <div class="spinner"></div> 
+    <span style="color:white; font-weight: 500;">Processando...</span> 
+</div> 
+ 
+<div class="app-container"> 
+    <div class="header"> 
+        <div> 
+            <h1><i class="fa-solid fa-layer-group"></i> Monitoramento de contas AIH</h1> 
+        </div> 
+        <div style="text-align: right;"> 
+            <div style="font-size: 12px; color: var(--text-muted);">Data do Sistema</div> 
+            <div style="font-weight: 600;" id="sysDate">--/--/----</div> 
+        </div> 
+    </div> 
+ 
+    <div class="kpi-grid" id="kpiContainer" style="display:none;"> 
+        <div class="kpi-card"> 
+            <span class="kpi-title">Total de Contas</span> 
+            <span class="kpi-value" id="kpiTotal">0</span> 
+        </div> 
+        <div class="kpi-card"> 
+            <span class="kpi-title">Abertos (Conferidos)</span> 
+            <span class="kpi-value txt-success" id="kpiOk">0</span> 
+        </div> 
+        <div class="kpi-card"> 
+            <span class="kpi-title">Fechados (Faturado)</span> 
+            <span class="kpi-value txt-danger" id="kpiErr">0</span> 
+        </div> 
+        <div class="kpi-card"> 
+            <span class="kpi-title">Taxa de Sucesso</span> 
+            <span class="kpi-value" style="color: var(--primary);" id="kpiRate">0%</span> 
+        </div> 
+    </div> 
+ 
+    <div class="upload-grid"> 
+        <div class="upload-card"> 
+            <span class="upload-label">1. R_POSICAO_CONTAS_AIH</span> 
+            <input type="file" id="filePosicao" accept=".pdf" /> 
+        </div> 
+        <div class="upload-card"> 
+            <span class="upload-label">2. R_SITUACAO_DOCUMENTO </span> 
+            <input type="file" id="fileSituacao" accept=".pdf" /> 
+        </div> 
+        <button id="processBtn" class="btn-process"> 
+            <i class="fa-solid fa-bolt" style="margin-right: 8px;"></i> RECONCILIAR 
+        </button> 
+    </div> 
+ 
+    <div class="toolbar"> 
+        <div class="search-box"> 
+            <i class="fa-solid fa-search" style="position:absolute; left: 14px; top: 13px; color: var(--text-muted); font-size: 12px;"></i> 
+            <input type="text" id="searchInput" placeholder="Buscar..." style="padding-left: 36px;" /> 
+        </div> 
+         
+        <select id="filterSetor"><option value="">Todos os Setores</option></select> 
+         
+        <div class="filter-group"> 
+            <button class="filter-btn active all" id="btnAll" onclick="setFilter('all')">Todos</button> 
+            <button class="filter-btn" id="btnOpen" onclick="setFilter('open')"><i class="fa-solid fa-check"></i> Abertos</button> 
+            <button class="filter-btn" id="btnClosed" onclick="setFilter('closed')"><i class="fa-solid fa-xmark"></i> Fechados</button> 
+        </div> 
+ 
+        <button id="exportBtn" class="btn-export"> 
+            <i class="fa-solid fa-file-excel"></i> Exportar 
+        </button> 
+    </div> 
+ 
+    <div id="resultsContainer" class="competence-container"> 
+        <div style="grid-column: 1 / -1; text-align: center; padding: 60px; color: var(--text-muted); border: 2px dashed var(--border-color); border-radius: 12px;"> 
+            <i class="fa-regular fa-file-pdf" style="font-size: 40px; margin-bottom: 20px; opacity: 0.5;"></i> 
+            <p>Carregue os arquivos PDF.</p> 
+        </div> 
+    </div> 
+</div> 
+ 
+<script> 
+document.getElementById('sysDate').innerText = new Date().toLocaleDateString('pt-BR'); 
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; 
+ 
+let globalData = []; 
+let uniqueSetores = new Set(); 
+let currentFilterStatus = 'all'; // Estado inicial: mostrar todos 
+ 
+// --- Lógica de Filtro dos Botões --- 
+function setFilter(status) { 
+    currentFilterStatus = status; 
+     
+    // Atualiza Visual dos Botões 
+    document.getElementById('btnAll').className = `filter-btn ${status === 'all' ? 'active all' : ''}`; 
+    document.getElementById('btnOpen').className = `filter-btn ${status === 'open' ? 'active open' : ''}`; 
+    document.getElementById('btnClosed').className = `filter-btn ${status === 'closed' ? 'active closed' : ''}`; 
+ 
+    renderCards(); 
+} 
+ 
+// --- Funções Auxiliares e Processamento --- 
+function parseDatePTBR(dateStr) { 
+    if (!dateStr) return new Date(0); 
+    const [day, month, year] = dateStr.split('/'); 
+    return new Date(year, month - 1, day); 
+} 
+ 
+async function extractLines(file) { 
+    const buf = await file.arrayBuffer(); 
+    const pdf = await pdfjsLib.getDocument(buf).promise; 
+    const lines = []; 
+    for (let i = 1; i <= pdf.numPages; i++) { 
+        const page = await pdf.getPage(i); 
+        const content = await page.getTextContent(); 
+        const yMap = {}; 
+        content.items.forEach(item => { 
+            const y = Math.round(item.transform[5]); 
+            if (!yMap[y]) yMap[y] = []; 
+            yMap[y].push(item); 
+        }); 
+        Object.keys(yMap).sort((a,b)=>b-a).forEach(y => { 
+            const rowItems = yMap[y].sort((a,b)=>a.transform[4]-b.transform[4]); 
+            const text = rowItems.map(it=>it.str).join(' ').replace(/\s+/g,' ').trim(); 
+            if(text) lines.push(text); 
+        }); 
+    } 
+    return lines; 
+} 
+ 
+async function processPosicao() { 
+    const file = document.getElementById('filePosicao').files[0]; 
+    if (!file) return new Map(); 
+    const lines = await extractLines(file); 
+    const map = new Map(); 
+    lines.forEach(line => { 
+        const match = line.match(/^["']?(\d{4,})["']?/); 
+        if(match) map.set(match[1], true); 
+    }); 
+    return map; 
+} 
+ 
+async function processSituacao() { 
+    const file = document.getElementById('fileSituacao').files[0]; 
+    if (!file) return new Map();  
+    const lines = await extractLines(file); 
+    const map = new Map(); 
+    let currentSector = "INDEFINIDO"; 
+    const today = new Date(); 
+    const regexData = /^(\d+)\s+\d+\s+\d+\s+(.+?)\s+(\d{2}\/\d{2}\/\d{4})\s+(\d{2}\/\d{2}\/\d{4})\s+(\d{2}\/\d{2}\/\d{4})/; 
+ 
+    lines.forEach(line => { 
+        const cleanLine = line.trim(); 
+        if (cleanLine.includes("Setor:")) { 
+            const parts = cleanLine.split("Setor:"); 
+            if (parts[1]) currentSector = parts[1].replace(/["']/g, '').trim(); 
+        } 
+         
+        const match = cleanLine.match(regexData); 
+        if (match) { 
+            const atendimentoId = match[1]; 
+            const novoRegistro = { 
+                atendimento: atendimentoId, 
+                paciente: match[2].trim(), 
+                setor: currentSector, 
+                dtEnvio: match[3], 
+                dtInicio: match[4], 
+                dtAlta: match[5] 
+            }; 
+ 
+            if (map.has(atendimentoId)) { 
+                const registroExistente = map.get(atendimentoId); 
+                const dataNova = parseDatePTBR(novoRegistro.dtEnvio); 
+                const dataExistente = parseDatePTBR(registroExistente.dtEnvio); 
+                const diffNova = Math.abs(today - dataNova); 
+                const diffExistente = Math.abs(today - dataExistente); 
+                if (diffNova < diffExistente) map.set(atendimentoId, novoRegistro); 
+            } else { 
+                map.set(atendimentoId, novoRegistro); 
+            } 
+        } 
+    }); 
+    return map; 
+} 
+ 
+function getCompetence(dateStr) { 
+    if(!dateStr || dateStr.length < 10) return { key: '999999', label: 'SEM DATA' }; 
+    const parts = dateStr.split('/'); 
+    const month = parts[1]; 
+    const year = parts[2]; 
+    const months = ["","JAN","FEV","MAR","ABR","MAI","JUN","JUL","AGO","SET","OUT","NOV","DEZ"]; 
+    return { key: `${year}${month}`, label: `${months[parseInt(month)]}/${year}` }; 
+} 
+ 
+document.getElementById('processBtn').addEventListener('click', async () => { 
+    const fileSit = document.getElementById('fileSituacao').files[0]; 
+    if(!fileSit) { alert('Erro: Arquivo Base 2 obrigatório.'); return; } 
+     
+    document.getElementById('loading').style.display = 'flex'; 
+     
+    try { 
+        const [posMap, sitMap] = await Promise.all([processPosicao(), processSituacao()]); 
+        globalData = []; 
+        uniqueSetores = new Set(); 
+        let stats = { total: 0, ok: 0, err: 0 }; 
+ 
+        sitMap.forEach((dados, atend) => { 
+            const leitoFound = posMap.has(atend); 
+            stats.total++; 
+            if(leitoFound) stats.ok++; else stats.err++; 
+            uniqueSetores.add(dados.setor); 
+            const comp = getCompetence(dados.dtAlta); 
+ 
+            globalData.push({ 
+                ...dados, 
+                leitoFound: leitoFound, 
+                compKey: comp.key, 
+                compLabel: comp.label 
+            }); 
+        }); 
+ 
+        document.getElementById('kpiContainer').style.display = 'grid'; 
+        document.getElementById('kpiTotal').innerText = stats.total; 
+        document.getElementById('kpiOk').innerText = stats.ok; 
+        document.getElementById('kpiErr').innerText = stats.err; 
+        const rate = stats.total > 0 ? ((stats.ok / stats.total) * 100).toFixed(1) : 0; 
+        document.getElementById('kpiRate').innerText = rate + '%'; 
+ 
+        const sel = document.getElementById('filterSetor'); 
+        sel.innerHTML = '<option value="">Todos os Setores</option>'; 
+        Array.from(uniqueSetores).sort().forEach(s => { 
+            const opt = document.createElement('option'); 
+            opt.value = s; opt.innerText = s; sel.appendChild(opt); 
+        }); 
+ 
+        renderCards(); 
+    } catch (e) { 
+        console.error(e); 
+        alert('Erro no processamento.'); 
+    } finally { 
+        document.getElementById('loading').style.display = 'none'; 
+    } 
+}); 
+ 
+function renderCards() { 
+    const term = document.getElementById('searchInput').value.toLowerCase(); 
+    const selSetor = document.getElementById('filterSetor').value; 
+    const container = document.getElementById('resultsContainer'); 
+     
+    const filtered = globalData.filter(row => { 
+        const matchText = row.atendimento.includes(term) || row.paciente.toLowerCase().includes(term) || row.setor.toLowerCase().includes(term); 
+        const matchSetor = selSetor === "" || row.setor === selSetor; 
+         
+        // --- LOGICA DOS FILTROS DE STATUS (ABERTO/FECHADO) --- 
+        let matchStatus = true; 
+        if (currentFilterStatus === 'open') matchStatus = row.leitoFound === true; 
+        if (currentFilterStatus === 'closed') matchStatus = row.leitoFound === false; 
+ 
+        return matchText && matchSetor && matchStatus; 
+    }); 
+ 
+    if(filtered.length === 0) { 
+        container.innerHTML = `<div style="grid-column: 1 / -1; text-align:center; padding:40px; color:var(--text-muted);"> 
+            <i class="fa-solid fa-filter-circle-xmark" style="font-size:30px; margin-bottom:10px;"></i><br> 
+            Nenhum registro encontrado com os filtros atuais. 
+        </div>`; 
+        return; 
+    } 
+ 
+    const groups = {}; 
+    filtered.forEach(row => { 
+        if(!groups[row.compKey]) groups[row.compKey] = { label: row.compLabel, items: [] }; 
+        groups[row.compKey].items.push(row); 
+    }); 
+ 
+    const sortedKeys = Object.keys(groups).sort((a,b) => b - a); 
+    container.innerHTML = ''; 
+ 
+    sortedKeys.forEach(key => { 
+        const group = groups[key]; 
+        const card = document.createElement('div'); 
+        card.className = 'comp-card collapsed'; 
+ 
+        const counts = group.items.reduce((acc, item) => { 
+            if(item.leitoFound) acc.open++; 
+            else acc.closed++; 
+            return acc; 
+        }, { open: 0, closed: 0 }); 
+         
+        const header = document.createElement('div'); 
+        header.className = 'comp-header'; 
+        header.innerHTML = ` 
+            <div class="comp-title"><i class="fa-regular fa-calendar-check"></i> ${group.label}</div> 
+            <div class="comp-meta"> 
+                <span class="badge badge-ok"><i class="fa-solid fa-check"></i> ${counts.open} Abertos</span> 
+                <span class="badge badge-err"><i class="fa-solid fa-xmark"></i> ${counts.closed} Fechados</span> 
+                <i class="fa-solid fa-chevron-down toggle-icon"></i> 
+            </div> 
+        `; 
+ 
+        const body = document.createElement('div'); 
+        body.className = 'comp-body'; 
+         
+        const table = document.createElement('table'); 
+        table.innerHTML = ` 
+            <thead> 
+                <tr> 
+                    <th style="width:15%">Atendimento</th> 
+                    <th style="width:30%">Paciente</th> 
+                    <th style="width:20%">Setor</th> 
+                    <th style="width:10%">Dt. Envio</th>  
+                    <th style="width:10%">Data Alta</th> 
+                    <th style="width:15%; text-align:right;">Status</th> 
+                </tr> 
+            </thead> 
+            <tbody> 
+                ${group.items.map(row => { 
+                    const statusHtml = row.leitoFound  
+                        ? `<span class="badge badge-ok"><i class="fa-solid fa-check"></i> ABERTO</span>` 
+                        : `<span class="badge badge-err"><i class="fa-solid fa-xmark"></i> FECHADA</span>`; 
+                     
+                    return ` 
+                        <tr> 
+                            <td class="mono"><strong>${row.atendimento}</strong></td> 
+                            <td><span class="paciente-nome" title="${row.paciente}">${row.paciente}</span></td> 
+                            <td><span class="badge badge-setor">${row.setor}</span></td> 
+                            <td class="mono" style="color:var(--warning); font-weight:600;">${row.dtEnvio}</td> 
+                            <td class="mono">${row.dtAlta}</td> 
+                            <td style="text-align:right;">${statusHtml}</td> 
+                        </tr> 
+                    `; 
+                }).join('')} 
+            </tbody> 
+        `; 
+        body.appendChild(table); 
+        card.appendChild(header); 
+        card.appendChild(body); 
+        container.appendChild(card); 
+        header.addEventListener('click', () => card.classList.toggle('collapsed')); 
+    }); 
+} 
+ 
+// Event Listeners para acionar o renderCards no filtro 
+document.getElementById('searchInput').addEventListener('input', renderCards); 
+document.getElementById('filterSetor').addEventListener('change', renderCards); 
+ 
+document.getElementById('exportBtn').addEventListener('click', () => { 
+    if(globalData.length === 0) { alert('Nada para exportar.'); return; } 
+     
+    const term = document.getElementById('searchInput').value.toLowerCase(); 
+    const selSetor = document.getElementById('filterSetor').value; 
+     
+    const dataToExport = globalData.filter(row => { 
+        const matchText = row.atendimento.includes(term) || row.paciente.toLowerCase().includes(term) || row.setor.toLowerCase().includes(term); 
+        const matchSetor = selSetor === "" || row.setor === selSetor; 
+         
+        let matchStatus = true; 
+        if (currentFilterStatus === 'open') matchStatus = row.leitoFound === true; 
+        if (currentFilterStatus === 'closed') matchStatus = row.leitoFound === false; 
+ 
+        return matchText && matchSetor && matchStatus; 
+    }); 
+ 
+    const ws = XLSX.utils.json_to_sheet(dataToExport.map(r => ({ 
+        "Competência": r.compLabel, 
+        "Atendimento": r.atendimento, 
+        "Paciente": r.paciente, 
+        "Setor": r.setor, 
+        "Status": r.leitoFound ? "ABERTO" : "FECHADA", 
+        "Data Envio": r.dtEnvio, 
+        "Data Alta": r.dtAlta 
+    }))); 
+     
+    const wb = XLSX.utils.book_new(); 
+    XLSX.utils.book_append_sheet(wb, ws, "Reconciliacao"); 
+    XLSX.writeFile(wb, "Relatorio_Auditoria.xlsx"); 
+}); 
+</script> 
+<script>
+
+uniqueSetores = new Set(['ER', 'ICU']);
+document.getElementById('kpiContainer').style.display = 'grid';
+document.getElementById('kpiTotal').innerText = 0;
+document.getElementById('kpiOk').innerText = 0;
+document.getElementById('kpiErr').innerText = 0;
+document.getElementById('kpiRate').innerText = '0%';
+const sel = document.getElementById('filterSetor');
+sel.innerHTML = '<option value="">Todos os Setores</option>';
+Array.from(uniqueSetores).sort().forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s; opt.innerText = s; sel.appendChild(opt);
+});
+renderCards();
+</script>
+</body> 
+</html>
