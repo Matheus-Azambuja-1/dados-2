@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Auditor TISS Enterprise | Validação de Faturamento</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -40,65 +40,54 @@
             margin: 0;
             padding: 0;
             min-height: 100vh;
-            font-size: 14px;
         }
 
         .app-container {
-            max-width: 100%;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 20px 15px;
+            padding: 40px 24px;
         }
 
         /* Header */
         .app-header {
             display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-bottom: 30px;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
             background: var(--surface);
-            padding: 20px;
+            padding: 24px 32px;
             border-radius: var(--radius);
             box-shadow: var(--shadow-sm);
             border: 1px solid var(--border);
         }
 
-        .brand {
-            width: 100%;
-        }
-        
         .brand h1 {
-            font-size: 1.3rem;
+            font-size: 1.5rem;
             font-weight: 700;
             margin: 0;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             color: #0f172a;
-            flex-wrap: wrap;
         }
 
-        .brand p { 
-            margin: 4px 0 0 0; 
-            color: var(--secondary); 
-            font-size: 0.85rem; 
-        }
+        .brand p { margin: 4px 0 0 0; color: var(--secondary); font-size: 0.9rem; }
 
         .header-controls {
             display: flex;
-            flex-direction: column;
+            align-items: center;
             gap: 15px;
-            width: 100%;
         }
 
         .ref-date-card {
             background: #eff6ff;
             border: 1px solid #dbeafe;
-            padding: 12px 15px;
+            padding: 10px 20px;
             border-radius: 8px;
-            text-align: center;
+            text-align: right;
         }
-        .ref-date-card span { display: block; font-size: 0.7rem; color: var(--secondary); text-transform: uppercase; }
-        .ref-date-card strong { font-size: 1rem; color: var(--primary); }
+        .ref-date-card span { display: block; font-size: 0.75rem; color: var(--secondary); text-transform: uppercase; }
+        .ref-date-card strong { font-size: 1.1rem; color: var(--primary); }
 
         .btn-reset {
             background: white;
@@ -110,51 +99,51 @@
             color: var(--secondary);
             display: flex;
             align-items: center;
-            justify-content: center;
             gap: 8px;
             transition: all 0.2s;
-            width: 100%;
-            font-size: 0.9rem;
+            display: none; /* Escondido por padrão */
         }
         .btn-reset:hover { background: #f8fafc; color: var(--primary); border-color: var(--primary); }
 
         /* Dashboard Grid */
         .dashboard-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 24px;
+            margin-bottom: 30px;
             display: none; 
             animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-            width: 100%;
         }
 
         /* Analytics Card */
         .analytics-card {
             background: var(--surface);
             border-radius: var(--radius);
-            padding: 20px;
+            padding: 24px;
             box-shadow: var(--shadow-md);
             border: 1px solid var(--border);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            margin-bottom: 20px;
         }
 
         .chart-container {
-            width: 140px;
-            height: 140px;
+            width: 160px;
+            height: 160px;
             border-radius: 50%;
             background: conic-gradient(var(--danger) 0% 0%, var(--success) 0% 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             position: relative;
         }
 
         .chart-container::after {
             content: '';
-            width: 110px;
-            height: 110px;
+            width: 130px;
+            height: 130px;
             background: var(--surface);
             border-radius: 50%;
             position: absolute;
@@ -165,12 +154,12 @@
             z-index: 2;
             text-align: center;
         }
-        .chart-value strong { font-size: 1.5rem; display: block; color: #0f172a; }
-        .chart-value span { font-size: 0.75rem; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+        .chart-value strong { font-size: 1.8rem; display: block; color: #0f172a; }
+        .chart-value span { font-size: 0.8rem; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.5px; }
 
         .stats-row {
             display: flex;
-            gap: 15px;
+            gap: 20px;
             width: 100%;
             justify-content: space-around;
             margin-top: 10px;
@@ -179,8 +168,8 @@
         }
         
         .mini-stat { text-align: center; }
-        .mini-stat span { display: block; font-size: 1.1rem; font-weight: 700; }
-        .mini-stat label { font-size: 0.7rem; color: var(--secondary); }
+        .mini-stat span { display: block; font-size: 1.2rem; font-weight: 700; }
+        .mini-stat label { font-size: 0.75rem; color: var(--secondary); }
         .text-success { color: var(--success); }
         .text-danger { color: var(--danger); }
 
@@ -189,64 +178,50 @@
             background: var(--surface);
             border: 2px dashed #cbd5e1;
             border-radius: var(--radius);
-            padding: 40px 20px;
+            padding: 60px 40px;
             text-align: center;
             cursor: pointer;
             transition: all 0.2s;
             display: block;
-            width: 100%;
-            margin-bottom: 20px;
         }
         .upload-zone:hover { border-color: var(--primary); background: #f1f5f9; }
 
         /* Toolbar */
         .toolbar {
+            grid-column: 2;
             background: var(--surface);
             border-radius: var(--radius);
-            padding: 15px;
+            padding: 20px;
             box-shadow: var(--shadow-md);
             border: 1px solid var(--border);
             display: flex;
             flex-direction: column;
             gap: 15px;
-            margin-bottom: 20px;
         }
 
-        .tool-header { 
-            display: flex; 
-            flex-direction: column;
-            gap: 10px;
-        }
-        .tool-header h3 { margin: 0; font-size: 1rem; }
-        .tool-header span { font-size: 0.8rem; color: var(--secondary); }
+        .tool-header { display: flex; justify-content: space-between; align-items: center; }
+        .tool-header h3 { margin: 0; font-size: 1.1rem; }
 
-        .filters { 
-            display: flex; 
-            gap: 8px; 
-            flex-wrap: wrap;
-            justify-content: center;
-        }
+        .filters { display: flex; gap: 10px; flex-wrap: wrap; }
         
         .btn-filter {
-            padding: 8px 12px;
+            padding: 8px 16px;
             border: 1px solid var(--border);
             background: white;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: 500;
             color: var(--secondary);
             transition: all 0.2s;
-            flex: 1;
-            min-width: 80px;
-            text-align: center;
         }
         .btn-filter.active { background: var(--primary); color: white; border-color: var(--primary); }
         .btn-filter:hover:not(.active) { background: #f1f5f9; }
 
         .search-box {
             position: relative;
-            width: 100%;
+            flex: 1;
+            max-width: 300px;
         }
         .search-box input {
             width: 100%;
@@ -254,7 +229,6 @@
             border: 1px solid var(--border);
             border-radius: 6px;
             font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
         }
         .search-box i {
             position: absolute;
@@ -268,257 +242,97 @@
             background: #0f172a;
             color: white;
             border: none;
-            padding: 10px 15px;
+            padding: 10px 20px;
             border-radius: 6px;
             font-weight: 500;
             cursor: pointer;
             display: flex;
             align-items: center;
-            justify-content: center;
             gap: 8px;
-            width: 100%;
-            font-size: 0.9rem;
+            margin-left: auto;
         }
         .btn-action:hover { background: #1e293b; }
 
         /* Table */
         .table-wrapper {
+            grid-column: span 2;
             background: var(--surface);
             border-radius: var(--radius);
             box-shadow: var(--shadow-lg);
-            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 600px;
             border: 1px solid var(--border);
-            -webkit-overflow-scrolling: touch;
         }
 
-        table { 
-            width: 100%; 
-            border-collapse: separate; 
-            border-spacing: 0;
-            min-width: 600px;
-        }
+        table { width: 100%; border-collapse: separate; border-spacing: 0; }
         
         thead { position: sticky; top: 0; z-index: 10; background: #f8fafc; }
         
         th {
-            padding: 12px 10px;
+            padding: 16px;
             text-align: left;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             color: var(--secondary);
             border-bottom: 1px solid var(--border);
             background: #f8fafc;
-            white-space: nowrap;
         }
 
         td {
-            padding: 10px;
+            padding: 14px 16px;
             border-bottom: 1px solid var(--border);
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             vertical-align: middle;
         }
 
         tr:last-child td { border-bottom: none; }
         tr:hover td { background-color: #f8fafc; }
 
-        .mono { font-family: 'JetBrains Mono', monospace; color: #334155; font-size: 0.8rem; }
+        .mono { font-family: 'JetBrains Mono', monospace; color: #334155; }
         .strong { font-weight: 600; color: #0f172a; }
         
         .date-cell { display: flex; flex-direction: column; }
         .date-main { font-weight: 500; }
-        .date-sub { font-size: 0.7rem; color: var(--secondary); margin-top: 2px; }
+        .date-sub { font-size: 0.75rem; color: var(--secondary); margin-top: 2px; }
 
         .status-pill {
             display: inline-flex;
             align-items: center;
-            gap: 4px;
-            padding: 4px 8px;
+            gap: 6px;
+            padding: 4px 10px;
             border-radius: 20px;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             font-weight: 600;
-            white-space: nowrap;
         }
         .st-ok { background: #dcfce7; color: #166534; }
         .st-err { background: #fee2e2; color: #991b1b; }
 
         #toast-container {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 24px;
+            right: 24px;
             z-index: 1000;
             display: flex;
             flex-direction: column;
             gap: 10px;
-            max-width: calc(100% - 40px);
         }
         .toast {
             background: #1e293b;
             color: white;
-            padding: 10px 15px;
+            padding: 12px 24px;
             border-radius: 8px;
             box-shadow: var(--shadow-lg);
             display: flex;
             align-items: center;
             gap: 10px;
             animation: slideIn 0.3s ease;
-            font-size: 0.85rem;
-            max-width: 300px;
+            font-size: 0.9rem;
         }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
-
-        /* Responsividade */
-        @media (min-width: 768px) {
-            .app-header {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-            }
-            
-            .brand {
-                width: auto;
-            }
-            
-            .header-controls {
-                flex-direction: row;
-                align-items: center;
-                width: auto;
-            }
-            
-            .ref-date-card {
-                text-align: right;
-                min-width: 180px;
-            }
-            
-            .tool-header {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-            }
-            
-            .search-box {
-                max-width: 300px;
-            }
-            
-            .btn-action {
-                width: auto;
-            }
-            
-            .dashboard-grid {
-                display: grid;
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            
-            .analytics-card {
-                flex-direction: row;
-                justify-content: space-around;
-                align-items: center;
-                padding: 20px 30px;
-            }
-            
-            .chart-container {
-                margin-bottom: 0;
-                margin-right: 20px;
-            }
-            
-            .stats-row {
-                border-top: none;
-                border-left: 1px solid var(--border);
-                padding-top: 0;
-                padding-left: 20px;
-                justify-content: flex-start;
-                gap: 30px;
-            }
-        }
-        
-        @media (min-width: 1024px) {
-            .app-container {
-                padding: 30px 20px;
-                max-width: 1400px;
-            }
-            
-            .dashboard-grid {
-                grid-template-columns: 350px 1fr;
-            }
-            
-            .table-wrapper {
-                grid-column: span 2;
-            }
-            
-            .toolbar {
-                grid-column: 2;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .app-container {
-                padding: 15px 10px;
-            }
-            
-            .app-header {
-                padding: 15px;
-            }
-            
-            .upload-zone {
-                padding: 30px 15px;
-            }
-            
-            .chart-container {
-                width: 120px;
-                height: 120px;
-            }
-            
-            .chart-container::after {
-                width: 90px;
-                height: 90px;
-            }
-            
-            .chart-value strong {
-                font-size: 1.3rem;
-            }
-            
-            .stats-row {
-                gap: 10px;
-            }
-            
-            .mini-stat span {
-                font-size: 1rem;
-            }
-        }
-        
-        /* Ajuste para tablets em modo retrato */
-        @media (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
-            .app-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .header-controls {
-                width: 100%;
-                justify-content: space-between;
-            }
-            
-            .analytics-card {
-                flex-direction: column;
-            }
-            
-            .chart-container {
-                margin-right: 0;
-                margin-bottom: 15px;
-            }
-            
-            .stats-row {
-                border-left: none;
-                border-top: 1px solid var(--border);
-                padding-left: 0;
-                padding-top: 15px;
-                justify-content: space-around;
-            }
-        }
 
     </style>
 </head>
@@ -528,7 +342,7 @@
     
     <header class="app-header">
         <div class="brand">
-            <h1><i class="ph-duotone ph-shield-check" style="color: var(--primary)"></i> Auditor TISS <span class="sys-badge" style="background:var(--primary); color:white; border:none; padding:4px 8px; border-radius:4px; font-size:0.65em;">v3.1</span></h1>
+            <h1><i class="ph-duotone ph-shield-check" style="color: var(--primary)"></i> Auditor TISS <span class="sys-badge" style="background:var(--primary); color:white; border:none; padding:4px 10px; border-radius:4px; font-size:0.7em;">v3.1</span></h1>
             <p>Validação de Lotes para o <strong>Próximo Ciclo de Envio</strong> </p>
         </div>
         
@@ -545,9 +359,9 @@
 
     <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
         <input type="file" id="fileInput" accept=".xml" onchange="handleFileSelect(this)" style="display:none">
-        <i class="ph-duotone ph-cloud-arrow-up" style="font-size: 48px; color: var(--primary); opacity: 0.8"></i>
-        <h2 style="margin: 15px 0 5px 0; color: #1e293b; font-size: 1.1rem;">Arraste seu XML TISS aqui</h2>
-        <p style="color: var(--secondary); margin: 0; font-size: 0.85rem;">Processamento local. Padrão Unimed.</p>
+        <i class="ph-duotone ph-cloud-arrow-up" style="font-size: 64px; color: var(--primary); opacity: 0.8"></i>
+        <h2 style="margin: 15px 0 5px 0; color: #1e293b">Arraste seu XML TISS aqui</h2>
+        <p style="color: var(--secondary); margin: 0">Processamento local. Padrão Unimed.</p>
     </div>
 
     <div id="dashboard" class="dashboard-grid">
@@ -574,10 +388,10 @@
         <div class="toolbar">
             <div class="tool-header">
                 <h3 id="fileNameDisplay">Gerenciamento de Lote</h3>
-                <span style="font-size: 0.8rem; color: var(--secondary)">Total: <strong id="valTotalGeral">0</strong></span>
+                <span style="font-size: 0.85rem; color: var(--secondary)">Total: <strong id="valTotalGeral">0</strong></span>
             </div>
             
-            <div style="display: flex; flex-direction: column; gap: 15px;">
+            <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
                 <div class="filters">
                     <button class="btn-filter active" onclick="filtrar('todos', this)">Todas</button>
                     <button class="btn-filter" onclick="filtrar('ok', this)">Aprovadas</button>
@@ -616,18 +430,188 @@
 <div id="toast-container"></div>
 
 <script>
-    /* JavaScript mantido igual, apenas ajustes de toques */
-    /* ... */
-    
-    // Aumentar área de clique para botões em mobile
-    document.querySelectorAll('button').forEach(btn => {
-        btn.style.minHeight = '44px'; // Tamanho mínimo para toque
+    function getPrimeiroDiaUtilProximoMes(dataBase) {
+        let proximoMes = new Date(dataBase.getFullYear(), dataBase.getMonth() + 1, 1);
+        while (proximoMes.getDay() === 0 || proximoMes.getDay() === 6) {
+            proximoMes.setDate(proximoMes.getDate() + 1);
+        }
+        return proximoMes;
+    }
+
+    let dadosGlobais = [];
+
+    // --- NOVA FUNÇÃO: Resetar a tela para novo arquivo ---
+    function resetarPagina() {
+        document.getElementById('fileInput').value = ""; // Limpa o input
+        document.getElementById('dashboard').style.display = 'none'; // Esconde resultados
+        document.getElementById('btnReset').style.display = 'none'; // Esconde botão de troca
+        document.getElementById('dropZone').style.display = 'block'; // Mostra área de upload
+        dadosGlobais = [];
+        showToast("Pronto para novo arquivo.", "info");
+    }
+
+    const dropZone = document.getElementById('dropZone');
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(e => {
+        dropZone.addEventListener(e, (ev) => { ev.preventDefault(); ev.stopPropagation(); });
     });
-    
-    document.querySelectorAll('input').forEach(input => {
-        input.style.minHeight = '44px'; // Tamanho mínimo para toque
-        input.style.fontSize = '16px'; // Evita zoom em iOS
+    dropZone.addEventListener('dragover', () => dropZone.style.borderColor = 'var(--primary)');
+    dropZone.addEventListener('dragleave', () => dropZone.style.borderColor = '#cbd5e1');
+    dropZone.addEventListener('drop', (e) => {
+        dropZone.style.borderColor = '#cbd5e1';
+        handleFile(e.dataTransfer.files[0]);
     });
+
+    function handleFileSelect(input) { if(input.files.length) handleFile(input.files[0]); }
+
+    function handleFile(file) {
+        if(!file) return;
+        showToast("Lendo: " + file.name, "info");
+        
+        // Exibe o nome do arquivo no dashboard
+        document.getElementById('fileNameDisplay').innerText = "Arquivo: " + file.name;
+        
+        document.getElementById('dropZone').style.display = 'none';
+        document.getElementById('btnReset').style.display = 'flex'; // Mostra o botão de trocar arquivo
+        
+        const reader = new FileReader();
+        reader.onload = e => processarXML(e.target.result);
+        reader.readAsText(file);
+    }
+
+    function processarXML(xmlText) {
+        try {
+            const parser = new DOMParser();
+            const xml = parser.parseFromString(xmlText, "text/xml");
+            let guias = [...xml.getElementsByTagName("ans:guiaPrincipal"), ...xml.getElementsByTagName("guiaPrincipal")];
+
+            if(guias.length === 0) {
+                showToast("Erro: Nenhuma guia encontrada.", "error");
+                resetarPagina();
+                return;
+            }
+
+            dadosGlobais = [];
+            let contagem = { total: 0, ok: 0, vencidas: 0 };
+            const dataHoje = new Date();
+            const dtEnvioGeral = getPrimeiroDiaUtilProximoMes(dataHoje);
+            document.getElementById('displayEnvioHeader').innerText = dtEnvioGeral.toLocaleDateString('pt-BR');
+
+            guias.forEach(node => {
+                const parent = node.parentNode.parentNode;
+                const getText = (tag) => {
+                    const el = parent.getElementsByTagName("ans:"+tag)[0] || parent.getElementsByTagName(tag)[0];
+                    return el ? el.textContent.trim() : null;
+                };
+
+                const numGuia = node.textContent.trim();
+                const senha = getText("senha") || "---";
+                const dataStr = getText("dataSolicitacao") || getText("dataAutorizacao");
+
+                if(dataStr) {
+                    const dtGuia = new Date(dataStr + "T00:00:00");
+                    const diasPrazo = (dtGuia.getFullYear() >= 2026) ? 30 : 45;
+                    const dtLimite = new Date(dtGuia);
+                    dtLimite.setDate(dtGuia.getDate() + diasPrazo);
+                    const isVencida = dtEnvioGeral > dtLimite;
+
+                    if(isVencida) contagem.vencidas++; else contagem.ok++;
+                    contagem.total++;
+
+                    dadosGlobais.push({
+                        guia: numGuia,
+                        senha: senha,
+                        dtGuia: dtGuia,
+                        dtLimite: dtLimite,
+                        dtEnvio: dtEnvioGeral,
+                        isVencida: isVencida,
+                        diasPrazo: diasPrazo
+                    });
+                }
+            });
+
+            renderizarTabela(dadosGlobais);
+            atualizarDashboard(contagem);
+            document.getElementById('dashboard').style.display = 'grid';
+            showToast("Análise concluída!", "success");
+
+        } catch (error) {
+            showToast("Erro ao processar arquivo.", "error");
+            resetarPagina();
+        }
+    }
+
+    function renderizarTabela(dados) {
+        const tbody = document.getElementById('corpoTabela');
+        tbody.innerHTML = '';
+        dados.forEach(d => {
+            const tr = document.createElement('tr');
+            tr.className = d.isVencida ? 'row-vencida' : 'row-ok';
+            const badge = d.isVencida 
+                ? `<span class="status-pill st-err"><i class="ph-bold ph-warning-circle"></i> Vencida</span>`
+                : `<span class="status-pill st-ok"><i class="ph-bold ph-check"></i> Aprovada</span>`;
+
+            tr.innerHTML = `
+                <td><div class="strong mono">${d.guia}</div></td>
+                <td class="mono">${d.senha}</td>
+                <td>
+                    <div class="date-cell">
+                        <span class="date-main">${d.dtGuia.toLocaleDateString('pt-BR')}</span>
+                        <span class="date-sub">Prazo: ${d.dtLimite.toLocaleDateString('pt-BR')} (${d.diasPrazo}d)</span>
+                    </div>
+                </td>
+                <td><div class="strong" style="color:var(--primary)">${d.dtEnvio.toLocaleDateString('pt-BR')}</div></td>
+                <td>${badge}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function atualizarDashboard(c) {
+        document.getElementById('valTotalGeral').innerText = c.total;
+        document.getElementById('valTotalOk').innerText = c.ok;
+        document.getElementById('valTotalErr').innerText = c.vencidas;
+        const pOk = c.total > 0 ? Math.round(((c.total - c.vencidas) / c.total) * 100) : 0;
+        document.getElementById('percentOk').innerText = pOk + "%";
+        document.getElementById('chartPie').style.background = `conic-gradient(var(--danger) 0% ${100-pOk}%, var(--success) ${100-pOk}% 100%)`;
+    }
+
+    function filtrar(tipo, btn) {
+        document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('#corpoTabela tr').forEach(tr => {
+            if(tipo === 'todos') tr.style.display = '';
+            else if (tipo === 'ok') tr.style.display = tr.classList.contains('row-ok') ? '' : 'none';
+            else tr.style.display = tr.classList.contains('row-vencida') ? '' : 'none';
+        });
+    }
+
+    function pesquisar() {
+        const termo = document.getElementById('searchInput').value.toLowerCase();
+        document.querySelectorAll('#corpoTabela tr').forEach(tr => {
+            tr.style.display = tr.innerText.toLowerCase().includes(termo) ? '' : 'none';
+        });
+    }
+
+    function exportToCSV() {
+        if(!dadosGlobais.length) return;
+        let csv = "Guia;Senha;Data Guia;Prazo Limite;Simulacao Envio;Status\n";
+        dadosGlobais.forEach(d => {
+            csv += `${d.guia};${d.senha};${d.dtGuia.toLocaleDateString()};${d.dtLimite.toLocaleDateString()};${d.dtEnvio.toLocaleDateString()};${d.isVencida ? 'VENCIDA' : 'OK'}\n`;
+        });
+        const link = document.createElement("a");
+        link.href = "data:text/csv;charset=utf-8," + encodeURI(csv);
+        link.download = "Auditoria_TISS.csv";
+        link.click();
+    }
+
+    function showToast(msg, type = 'info') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.innerText = msg;
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
 </script>
 
 </body>
