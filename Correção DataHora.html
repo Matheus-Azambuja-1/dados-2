@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Corretor XML TISS - HNSA</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="icon" type="image/png" href="https://hospitalauxiliadora.com.br/wp-content/uploads/2025/03/logo-hospital-auxiliadora.png" />
+
+  <style>
+    /* --- VARIÁVEIS DE TEMA (Design HNSA) --- */
+    :root {
+      /* -- MODO ESCURO (PADRÃO) -- */
+      --primary: #00e0ff;
+      --secondary: #0072ff;
+      --accent: #ffd166;
+      --success: #00ff80;
+      --danger: #ff4d4d;
+      
+      --bg-glass: rgba(20, 20, 20, 0.94);
+      --bg-container: rgba(0, 0, 0, 0.6);
+      --bg-input: #1a1a1a;
+      --bg-card: rgba(255, 255, 255, 0.05);
+      --bg-card-header: rgba(0, 224, 255, 0.1);
+      
+      --text-main: #fff;
+      --text-muted: #bbb;
+      --border-color: rgba(255,255,255,0.1);
+      --input-border: #333;
+      
+      /* Tabelas */
+      --table-head-bg: #0072ff;
+      --table-head-text: #fff;
+      --table-row-bg: rgba(255,255,255,0.02);
+      --table-row-hover: rgba(255,255,255,0.1);
+      
+      /* Overlay de fundo (Escuro) */
+      --overlay-bg: linear-gradient(45deg, rgba(0,0,0,0.7), rgba(0,30,60,0.8));
+    }
+
+    /* -- MODO CLARO (LIGHT MODE) -- */
+    body.light-mode {
+      --primary: #0072ff;
+      --secondary: #00c6ff;
+      --accent: #f39c12;
+      
+      --bg-glass: rgba(255, 255, 255, 0.85);
+      --bg-container: rgba(255, 255, 255, 0.6);
+      --bg-input: #f0f4f8;
+      --bg-card: #ffffff;
+      --bg-card-header: rgba(0, 114, 255, 0.1);
+      
+      --text-main: #333;
+      --text-muted: #666;
+      --border-color: rgba(0,0,0,0.1);
+      --input-border: #ccc;
+
+      /* Tabelas */
+      --table-head-bg: #e2e8f0;
+      --table-head-text: #333;
+      --table-row-bg: #f8fafc;
+      --table-row-hover: #e2e8f0;
+
+      /* Overlay de fundo (Claro) */
+      --overlay-bg: linear-gradient(45deg, rgba(255,255,255,0.7), rgba(200, 230, 255, 0.8));
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: url('https://hospitalauxiliadora.com.br/wp-content/uploads/2025/03/img-onde-estamos-1024x657.png') no-repeat center center fixed;
+      background-size: cover;
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      transition: color 0.5s ease;
+    }
+
+    body::before {
+      content: ""; position: fixed; inset: 0; 
+      background: var(--overlay-bg);
+      backdrop-filter: blur(8px); z-index: -1;
+      transition: background 0.5s ease;
+    }
+
+    /* --- NOVO SWITCH ANIMADO (Uiverse.io) --- */
+    /* Wrapper para posicionar na tela */
+    .theme-switch-wrapper {
+        position: absolute; 
+        top: 20px; 
+        right: 20px;
+        z-index: 100;
+        transform: scale(0.8); /* Ajuste de tamanho */
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+
+    .switch #theme-toggle {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #2196f3;
+      -webkit-transition: 0.4s;
+      transition: 0.4s;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .sun-moon {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: yellow;
+      -webkit-transition: 0.4s;
+      transition: 0.4s;
+    }
+
+    #theme-toggle:checked + .slider {
+      background-color: black;
+    }
+
+    #theme-toggle:focus + .slider {
+      box-shadow: 0 0 1px #2196f3;
+    }
+
+    #theme-toggle:checked + .slider .sun-moon {
+      -webkit-transform: translateX(26px);
+      -ms-transform: translateX(26px);
+      transform: translateX(26px);
+      background-color: white;
+      -webkit-animation: rotate-center 0.6s ease-in-out both;
+      animation: rotate-center 0.6s ease-in-out both;
+    }
+
+    .moon-dot {
+      opacity: 0;
+      transition: 0.4s;
+      fill: gray;
+    }
+
+    #theme-toggle:checked + .slider .sun-moon .moon-dot {
+      opacity: 1;
+    }
+
+    .slider.round {
+      border-radius: 34px;
+    }
+
+    .slider.round .sun-moon {
+      border-radius: 50%;
+    }
+
+    #moon-dot-1 { left: 10px; top: 3px; position: absolute; width: 6px; height: 6px; z-index: 4; }
+    #moon-dot-2 { left: 2px; top: 10px; position: absolute; width: 10px; height: 10px; z-index: 4; }
+    #moon-dot-3 { left: 16px; top: 18px; position: absolute; width: 3px; height: 3px; z-index: 4; }
+
+    #light-ray-1 { left: -8px; top: -8px; position: absolute; width: 43px; height: 43px; z-index: -1; fill: white; opacity: 10%; }
+    #light-ray-2 { left: -50%; top: -50%; position: absolute; width: 55px; height: 55px; z-index: -1; fill: white; opacity: 10%; }
+    #light-ray-3 { left: -18px; top: -18px; position: absolute; width: 60px; height: 60px; z-index: -1; fill: white; opacity: 10%; }
+
+    .cloud-light { position: absolute; fill: #eee; animation-name: cloud-move; animation-duration: 6s; animation-iteration-count: infinite; }
+    .cloud-dark { position: absolute; fill: #ccc; animation-name: cloud-move; animation-duration: 6s; animation-iteration-count: infinite; animation-delay: 1s; }
+
+    #cloud-1 { left: 30px; top: 15px; width: 40px; }
+    #cloud-2 { left: 44px; top: 10px; width: 20px; }
+    #cloud-3 { left: 18px; top: 24px; width: 30px; }
+    #cloud-4 { left: 36px; top: 18px; width: 40px; }
+    #cloud-5 { left: 48px; top: 14px; width: 20px; }
+    #cloud-6 { left: 22px; top: 26px; width: 30px; }
+
+    @keyframes cloud-move {
+      0% { transform: translateX(0px); }
+      40% { transform: translateX(4px); }
+      80% { transform: translateX(-4px); }
+      100% { transform: translateX(0px); }
+    }
+
+    .stars { transform: translateY(-32px); opacity: 0; transition: 0.4s; }
+    .star { fill: white; position: absolute; transition: 0.4s; animation-name: star-twinkle; animation-duration: 2s; animation-iteration-count: infinite; }
+
+    #theme-toggle:checked + .slider .stars {
+      transform: translateY(0); opacity: 1;
+    }
+
+    #star-1 { width: 20px; top: 2px; left: 3px; animation-delay: 0.3s; }
+    #star-2 { width: 6px; top: 16px; left: 3px; }
+    #star-3 { width: 12px; top: 20px; left: 10px; animation-delay: 0.6s; }
+    #star-4 { width: 18px; top: 0px; left: 18px; animation-delay: 1.3s; }
+
+    @keyframes star-twinkle {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.2); }
+      80% { transform: scale(0.8); }
+      100% { transform: scale(1); }
+    }
+    
+    @keyframes rotate-center {
+        0% { transform: rotate(0); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* --- CONTAINER PRINCIPAL --- */
+    .app-container {
+      width: 100%; max-width: 1200px;
+      background: var(--bg-glass);
+      border-radius: 20px;
+      padding: 40px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+      animation: fadeIn 0.8s ease-out;
+      transition: background 0.5s;
+    }
+
+    h1 {
+      color: var(--primary); font-size: 2rem; margin-bottom: 10px;
+      text-transform: uppercase; letter-spacing: 1px;
+      text-shadow: 0 0 15px rgba(0, 224, 255, 0.2);
+    }
+    p.subtitle { color: var(--text-muted); margin-bottom: 30px; }
+
+    /* --- CONTROLES (Inputs e Botões) --- */
+    .controls-wrapper {
+      display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 20px;
+      background: var(--bg-card); padding: 20px; border-radius: 15px;
+      border: 1px solid var(--border-color); margin-bottom: 30px;
+    }
+
+    input[type="file"] {
+      width: 100%; padding: 10px;
+      background: var(--bg-input); border: 1px solid var(--input-border);
+      border-radius: 10px; color: var(--text-muted); cursor: pointer;
+    }
+    input[type="file"]::file-selector-button {
+      background: var(--primary); color: #fff; border: none;
+      padding: 8px 16px; border-radius: 5px; cursor: pointer; margin-right: 15px;
+      font-weight: bold; transition: 0.3s;
+    }
+    input[type="file"]::file-selector-button:hover { filter: brightness(1.1); }
+
+    .btn {
+      border: none; border-radius: 10px; font-size: 14px; font-weight: bold;
+      cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;
+      color: white; padding: 12px; text-transform: uppercase;
+    }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
+    .btn-primary { background: linear-gradient(135deg, var(--primary), #0072ff); box-shadow: 0 4px 15px rgba(0,114,255,0.4); }
+    .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,114,255,0.6); }
+    
+    .btn-success { background: linear-gradient(135deg, var(--success), #00b894); box-shadow: 0 4px 15px rgba(0,255,128,0.4); color: #000; }
+    .btn-success:hover:not(:disabled) { transform: translateY(-2px); }
+
+    /* --- RESULTADOS --- */
+    .result-card {
+      background: var(--bg-card); border: 1px solid var(--border-color);
+      border-radius: 12px; margin-bottom: 25px; overflow: hidden;
+      animation: slideUp 0.5s ease-out;
+    }
+    .result-header {
+      background: var(--bg-card-header); padding: 15px 20px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .result-header h2 { font-size: 1.2rem; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+    .result-body { padding: 20px; }
+
+    /* Grid de Resumo */
+    .info-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;
+    }
+    .info-box {
+      background: var(--bg-input); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);
+    }
+    .info-label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; }
+    .info-value { font-size: 1rem; color: var(--text-main); font-weight: bold; margin-top: 5px; }
+
+    /* Tabela */
+    .table-responsive { overflow-x: auto; border-radius: 8px; border: 1px solid var(--border-color); }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    th { 
+      background: var(--table-head-bg); color: var(--table-head-text); 
+      padding: 12px; text-align: left; text-transform: uppercase; font-size: 0.8rem;
+    }
+    td { padding: 12px; border-bottom: 1px solid var(--border-color); color: var(--text-main); }
+    tr { background: var(--table-row-bg); transition: 0.2s; }
+    tr:hover { background: var(--table-row-hover); }
+    
+    .text-success { color: var(--success); font-weight: bold; }
+    .text-danger { color: var(--danger); font-weight: bold; }
+    .text-through { text-decoration: line-through; opacity: 0.6; }
+
+    /* --- MODAL / OVERLAY --- */
+    #loadingOverlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 200;
+      display: none; flex-direction: column; justify-content: center; align-items: center;
+      backdrop-filter: blur(5px);
+    }
+    .spinner {
+      width: 50px; height: 50px; border: 5px solid rgba(255,255,255,0.1);
+      border-top-color: var(--primary); border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    /* Summary Box (Totalizadores) */
+    .summary-box {
+      text-align: center; padding: 25px; border-radius: 15px; margin-bottom: 30px;
+      border: 2px solid; background: rgba(0,0,0,0.2);
+    }
+    .summary-box.success { border-color: var(--success); }
+    .summary-box.warning { border-color: var(--accent); }
+    .summary-count { font-size: 3rem; font-weight: 800; margin: 10px 0; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    /* Responsivo */
+    @media (max-width: 768px) {
+      .controls-wrapper { grid-template-columns: 1fr; }
+      .app-container { padding: 20px; }
+      .theme-switch-wrapper { top: 10px; right: 10px; transform: scale(0.8); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="theme-switch-wrapper">
+    <label class="switch">
+      <input id="theme-toggle" type="checkbox" checked />
+      <div class="slider round">
+        <div class="sun-moon">
+          <svg id="moon-dot-1" class="moon-dot" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50"></circle></svg>
+          <svg id="moon-dot-2" class="moon-dot" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50"></circle></svg>
+          <svg id="moon-dot-3" class="moon-dot" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50"></circle></svg>
+          <svg id="light-ray-1" class="light-ray" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50"></circle></svg>
+          <svg id="light-ray-2" class="light-ray" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50"></circle></svg>
+          <svg id="light-ray-3" class="light-ray" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50"></circle></svg>
+
+          <svg id="cloud-1" class="cloud-dark" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50"></circle></svg>
+          <svg id="cloud-2" class="cloud-dark" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50"></circle></svg>
+          <svg id="cloud-3" class="cloud-dark" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50"></circle></svg>
+          <svg id="cloud-4" class="cloud-light" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50"></circle></svg>
+          <svg id="cloud-5" class="cloud-light" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50"></circle></svg>
+          <svg id="cloud-6" class="cloud-light" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50"></circle></svg>
+        </div>
+        <div class="stars">
+          <svg id="star-1" class="star" viewBox="0 0 20 20"><path d="M 0 10 C 10 10,10 10 ,0 10 C 10 10 , 10 10 , 10 20 C 10 10 , 10 10 , 20 10 C 10 10 , 10 10 , 10 0 C 10 10,10 10 ,0 10 Z"></path></svg>
+          <svg id="star-2" class="star" viewBox="0 0 20 20"><path d="M 0 10 C 10 10,10 10 ,0 10 C 10 10 , 10 10 , 10 20 C 10 10 , 10 10 , 20 10 C 10 10 , 10 10 , 10 0 C 10 10,10 10 ,0 10 Z"></path></svg>
+          <svg id="star-3" class="star" viewBox="0 0 20 20"><path d="M 0 10 C 10 10,10 10 ,0 10 C 10 10 , 10 10 , 10 20 C 10 10 , 10 10 , 20 10 C 10 10 , 10 10 , 10 0 C 10 10,10 10 ,0 10 Z"></path></svg>
+          <svg id="star-4" class="star" viewBox="0 0 20 20"><path d="M 0 10 C 10 10,10 10 ,0 10 C 10 10 , 10 10 , 10 20 C 10 10 , 10 10 , 20 10 C 10 10 , 10 10 , 10 0 C 10 10,10 10 ,0 10 Z"></path></svg>
+        </div>
+      </div>
+    </label>
+  </div>
+
+  <div class="app-container">
+    <h1><i class="fas fa-file-code mr-2"></i> Corretor XML TISS</h1>
+    <p class="subtitle">
+      Carregue um XML de Internação para analisar e corrigir datas de execução que estejam fora do período de faturamento declarado na guia (ajuste automático de 20s).
+    </p>
+
+    <div class="controls-wrapper">
+      <input type="file" id="xmlFileInput" accept=".xml" />
+      <button id="processButton" class="btn btn-primary" disabled>
+        <i class="fas fa-bolt"></i> Processar XML
+      </button>
+      <button id="downloadButton" class="btn btn-success" disabled>
+        <i class="fas fa-download"></i> Baixar XML
+      </button>
+    </div>
+
+    <div id="results">
+      <div style="text-align:center; padding: 40px; color: var(--text-muted); border: 2px dashed var(--border-color); border-radius: 12px;">
+        <i class="fas fa-cloud-upload-alt" style="font-size: 40px; margin-bottom: 15px; display:block;"></i>
+        Aguardando arquivo XML para análise...
+      </div>
+    </div>
+  </div>
+
+  <div id="loadingOverlay">
+    <div class="spinner"></div>
+    <p style="color:white; margin-top:20px; font-weight:bold;">Analisando e corrigindo...</p>
+  </div>
+
+  <div id="messageBox" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:300; justify-content:center; align-items:center;">
+    <div style="background:var(--bg-glass); padding:30px; border-radius:15px; max-width:400px; text-align:center; border:1px solid var(--border-color);">
+      <h3 id="messageTitle" style="color:var(--text-main); margin-bottom:10px;">Mensagem</h3>
+      <p id="messageContent" style="color:var(--text-muted); margin-bottom:20px;"></p>
+      <button onclick="document.getElementById('messageBox').style.display='none'" class="btn btn-primary" style="width:100%">Fechar</button>
+    </div>
+  </div>
+
+<script>
+    // --- LÓGICA DO TEMA ---
+    const toggle = document.getElementById('theme-toggle');
+    const body = document.body;
+    const currentTheme = localStorage.getItem('theme');
+
+    // Neste switch específico: 
+    // CHECKED = NOITE (Dark Mode - Padrão)
+    // UNCHECKED = DIA (Light Mode)
+    
+    if (currentTheme === 'light') {
+        body.classList.add('light-mode');
+        toggle.checked = false; // Desmarcado = Dia
+    } else {
+        body.classList.remove('light-mode');
+        toggle.checked = true; // Marcado = Noite
+    }
+
+    toggle.addEventListener('change', function() {
+        if (this.checked) {
+            // Usuário marcou (Lua/Noite)
+            body.classList.remove('light-mode');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            // Usuário desmarcou (Sol/Dia)
+            body.classList.add('light-mode');
+            localStorage.setItem('theme', 'light');
+        }
+    });
+
+    // --- VARIÁVEIS DO SCRIPT ---
+    const fileInput = document.getElementById('xmlFileInput');
+    const processButton = document.getElementById('processButton');
+    const downloadButton = document.getElementById('downloadButton');
+    const resultsDiv = document.getElementById('results');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+
+    let correctedXmlDoc = null;
+    let originalFileName = 'guias.xml';
+
+    // CONSTANTES XML TISS
+    const TAG_GUIA_INTERNACAO = 'ans:guiaResumoInternacao';
+    const TAG_DADOS_INTERNACAO = 'ans:dadosInternacao';
+    const TAG_DATA_INICIO_FATURAMENTO = 'ans:dataInicioFaturamento';
+    const TAG_HORA_INICIO_FATURAMENTO = 'ans:horaInicioFaturamento';
+    const TAG_DATA_FIM_FATURAMENTO = 'ans:dataFinalFaturamento';
+    const TAG_HORA_FIM_FATURAMENTO = 'ans:horaFinalFaturamento';
+    const TAG_PROCEDIMENTO_SERVICO = 'ans:servicosExecutados';     
+    const TAG_PROCEDIMENTO_EXECUTADO = 'ans:procedimentoExecutado'; 
+    const TAG_DATA_EXECUCAO = 'ans:dataExecucao';
+    const TAG_HORA_INICIAL = 'ans:horaInicial';
+    const TAG_HORA_FINAL = 'ans:horaFinal';
+    const TAG_SEQUENCIAL_ITEM = 'ans:sequencialItem';
+    const TAG_DESCRICAO = 'ans:descricaoProcedimento';
+    const CORRECTION_INTERVAL_MS = 20 * 1000;
+
+    // --- UI FUNCTIONS ---
+    function showLoading() {
+        processButton.disabled = true;
+        downloadButton.disabled = true;
+        loadingOverlay.style.display = 'flex';
+    }
+
+    function hideLoading(enableDownload = false) {
+        processButton.disabled = fileInput.files.length === 0;
+        downloadButton.disabled = !enableDownload;
+        loadingOverlay.style.display = 'none';
+    }
+
+    function showMessageBox(title, content) {
+        hideLoading(false);
+        document.getElementById('messageTitle').textContent = title;
+        document.getElementById('messageContent').textContent = content;
+        document.getElementById('messageBox').style.display = 'flex';
+    }
+
+    // --- XML HELPERS ---
+    function getElementText(parentElement, tagName) {
+        if (!parentElement) return null;
+        const localName = tagName.includes(':') ? tagName.split(':')[1] : tagName;
+        let element = parentElement.getElementsByTagName(tagName)[0];
+        if (!element) element = Array.from(parentElement.getElementsByTagName('*')).find(e => e.localName === localName);
+        return element ? element.textContent.trim() : null;
+    }
+
+    function setElementText(parentElement, tagName, newText) {
+        if (!parentElement) return false;
+        const localName = tagName.includes(':') ? tagName.split(':')[1] : tagName;
+        let element = parentElement.getElementsByTagName(tagName)[0];
+        if (!element) element = Array.from(parentElement.getElementsByTagName('*')).find(e => e.localName === localName);
+        if (element) {
+            element.textContent = newText;
+            return true;
+        }
+        return false;
+    }
+
+    function dateToDateStr(date) {
+        if (!date) return null;
+        const year = date.getUTCFullYear();
+        const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+        const day = String(date.getUTCDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    function dateToTimeStr(date) {
+        if (!date) return null;
+        const hours = String(date.getUTCHours()).padStart(2, '0');
+        const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+        const seconds = String(date.getUTCSeconds()).padStart(2, '0');
+        return `${hours}:${minutes}:${seconds}`;
+    }
+
+    function createDateObject(dateStr, timeStr) {
+        if (!dateStr || !timeStr) return null;
+        const date = new Date(`${dateStr}T${timeStr}.000Z`);
+        return isNaN(date) ? null : date;
+    }
+
+    function formatDateTime(dateStr, timeStr) {
+        const dateParts = dateStr ? dateStr.split('-') : null;
+        const datePart = dateParts ? `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}` : '--/--/----';
+        const timePart = timeStr || '--:--';
+        if (!dateStr && !timeStr) return 'Ausentes';
+        return `${datePart} ${timePart}`;
+    }
+
+    // --- LÓGICA DE CORREÇÃO ---
+    function processAndCorrectItems(itemElements, inicioFaturamentoDate, dataInicioFaturamentoStr, horaInicioFaturamentoStr, fimFaturamentoDate, dataFimFaturamentoStr, horaFimFaturamentoStr, itensCorrigidos) {
+        let correctionCandidatesBefore = [];
+        let correctionCandidatesAfter = [];
+
+        Array.from(itemElements).forEach(item => {
+            const parentItemContainer = item.parentElement;
+            const dataExecucaoStr = getElementText(item, TAG_DATA_EXECUCAO);
+            const horaFinalExecucaoStr = getElementText(item, TAG_HORA_FINAL) || '00:00:00';
+            const itemExecucaoDate = createDateObject(dataExecucaoStr, horaFinalExecucaoStr);
+
+            if (!itemExecucaoDate) return;
+
+            const isProcedimento = item.tagName.includes(TAG_PROCEDIMENTO_EXECUTADO.split(':')[1]);
+            let sequencialItem = isProcedimento ? getElementText(item, TAG_SEQUENCIAL_ITEM) : null;
+            if (!sequencialItem) sequencialItem = getElementText(parentItemContainer, TAG_SEQUENCIAL_ITEM);
+            
+            const candidate = {
+                element: item,
+                sequencial: sequencialItem || "N/A",
+                descricao: getElementText(item, TAG_DESCRICAO) || "Descrição não informada",
+                dataOriginal: formatDateTime(dataExecucaoStr, horaFinalExecucaoStr),
+                tipo: isProcedimento ? 'Procedimento' : 'Serviço'
+            };
+
+            if (inicioFaturamentoDate && itemExecucaoDate < inicioFaturamentoDate) {
+                correctionCandidatesBefore.push(candidate);
+            } else if (fimFaturamentoDate && itemExecucaoDate > fimFaturamentoDate) {
+                correctionCandidatesAfter.push(candidate);
+            }
+        });
+
+        let correctedCount = 0;
+
+        if (correctionCandidatesBefore.length > 0) {
+            const correctionDateBase = createDateObject(dataInicioFaturamentoStr, horaInicioFaturamentoStr);
+            for (let i = 0; i < correctionCandidatesBefore.length; i++) {
+                const item = correctionCandidatesBefore[i];
+                const correctionTimeOffset = (i + 1) * CORRECTION_INTERVAL_MS;
+                const newExecutionDate = new Date(correctionDateBase.getTime() + correctionTimeOffset);
+                const newDateStr = dateToDateStr(newExecutionDate);
+                const newTimeStr = dateToTimeStr(newExecutionDate);
+
+                setElementText(item.element, TAG_DATA_EXECUCAO, newDateStr);
+                setElementText(item.element, TAG_HORA_INICIAL, newTimeStr);
+                setElementText(item.element, TAG_HORA_FINAL, newTimeStr);
+
+                itensCorrigidos.push({
+                    ...item,
+                    dataCorrigida: formatDateTime(newDateStr, newTimeStr),
+                    regraViolada: 'Antes do Início',
+                    baseCorrecao: formatDateTime(dataInicioFaturamentoStr, horaInicioFaturamentoStr)
+                });
+            }
+            correctedCount += correctionCandidatesBefore.length;
+        }
+
+        if (correctionCandidatesAfter.length > 0) {
+            const correctionDateBase = createDateObject(dataFimFaturamentoStr, horaFimFaturamentoStr);
+            for (let i = 0; i < correctionCandidatesAfter.length; i++) {
+                const item = correctionCandidatesAfter[i];
+                const correctionTimeOffset = (i + 1) * CORRECTION_INTERVAL_MS;
+                const newTimeDate = new Date(correctionDateBase.getTime() - correctionTimeOffset);
+                const newDateStr = dataFimFaturamentoStr;
+                const newTimeStr = dateToTimeStr(newTimeDate);
+
+                setElementText(item.element, TAG_DATA_EXECUCAO, newDateStr);
+                setElementText(item.element, TAG_HORA_INICIAL, newTimeStr);
+                setElementText(item.element, TAG_HORA_FINAL, newTimeStr);
+
+                itensCorrigidos.push({
+                    ...item,
+                    dataCorrigida: formatDateTime(newDateStr, newTimeStr),
+                    regraViolada: 'Depois do Fim',
+                    baseCorrecao: formatDateTime(dataFimFaturamentoStr, horaFimFaturamentoStr)
+                });
+            }
+            correctedCount += correctionCandidatesAfter.length;
+        }
+        return correctedCount;
+    }
+
+    // --- RELATÓRIO HTML (USANDO CLASSES HNSA) ---
+    function buildGuiaTable(guiaElement, index) {
+        let itensCorrigidos = [];
+        try {
+            const dadosInternacao = guiaElement.getElementsByTagName(TAG_DADOS_INTERNACAO)[0];
+            const numeroGuia = getElementText(guiaElement, 'ans:numeroGuiaPrestador');
+            const nomeBeneficiario = getElementText(guiaElement, 'ans:nomeBeneficiario');
+
+            const dataInicioFaturamentoStr = getElementText(dadosInternacao, TAG_DATA_INICIO_FATURAMENTO);
+            const horaInicioFaturamentoStr = getElementText(dadosInternacao, TAG_HORA_INICIO_FATURAMENTO);
+            const inicioFaturamentoDate = createDateObject(dataInicioFaturamentoStr, horaInicioFaturamentoStr);
+            
+            const dataFimFaturamentoStr = getElementText(dadosInternacao, TAG_DATA_FIM_FATURAMENTO);
+            const horaFimFaturamentoStr = getElementText(dadosInternacao, TAG_HORA_FIM_FATURAMENTO);
+            const fimFaturamentoDate = createDateObject(dataFimFaturamentoStr, horaFimFaturamentoStr);
+
+            const todosServicos = guiaElement.getElementsByTagName(TAG_PROCEDIMENTO_SERVICO);
+            const todosProcedimentos = guiaElement.getElementsByTagName(TAG_PROCEDIMENTO_EXECUTADO);
+            let totalItens = guiaElement.getElementsByTagName(TAG_SEQUENCIAL_ITEM).length;
+            
+            let correcoesFeitas = 0;
+            correcoesFeitas += processAndCorrectItems(todosServicos, inicioFaturamentoDate, dataInicioFaturamentoStr, horaInicioFaturamentoStr, fimFaturamentoDate, dataFimFaturamentoStr, horaFimFaturamentoStr, itensCorrigidos);
+            correcoesFeitas += processAndCorrectItems(todosProcedimentos, inicioFaturamentoDate, dataInicioFaturamentoStr, horaInicioFaturamentoStr, fimFaturamentoDate, dataFimFaturamentoStr, horaFimFaturamentoStr, itensCorrigidos);
+
+            // Criação do Card Visual
+            const card = document.createElement('div');
+            card.className = 'result-card';
+
+            const headerHtml = `
+                <div class="result-header">
+                    <h2><i class="fas fa-file-invoice"></i> Guia ${index + 1}</h2>
+                    <span style="font-size:0.9rem; color:var(--text-muted)">Guia: <b>${numeroGuia || 'N/A'}</b></span>
+                </div>
+            `;
+
+            let bodyHtml = `<div class="result-body">`;
+            
+            // Grid de Informações
+            bodyHtml += `
+                <div class="info-grid">
+                    <div class="info-box">
+                        <div class="info-label">Beneficiário</div>
+                        <div class="info-value" style="color:var(--primary)">${nomeBeneficiario || 'Não Informado'}</div>
+                    </div>
+                    <div class="info-box">
+                        <div class="info-label">Início Faturamento</div>
+                        <div class="info-value">${dataInicioFaturamentoStr || '--'} ${horaInicioFaturamentoStr || '--'}</div>
+                    </div>
+                    <div class="info-box">
+                        <div class="info-label">Fim Faturamento</div>
+                        <div class="info-value">${dataFimFaturamentoStr || '--'} ${horaFimFaturamentoStr || '--'}</div>
+                    </div>
+                    <div class="info-box">
+                        <div class="info-label">Total Itens</div>
+                        <div class="info-value">${totalItens}</div>
+                    </div>
+                </div>
+            `;
+
+            if (itensCorrigidos.length > 0) {
+                bodyHtml += `
+                    <div style="margin-top:20px;">
+                        <p class="text-danger" style="margin-bottom:10px;"><i class="fas fa-exclamation-triangle"></i> ${itensCorrigidos.length} Itens Corrigidos</p>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Seq.</th>
+                                        <th>Tipo</th>
+                                        <th>Data Original</th>
+                                        <th>Correção</th>
+                                        <th>Data Nova</th>
+                                        <th>Descrição</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                `;
+                itensCorrigidos.forEach(item => {
+                    bodyHtml += `
+                        <tr>
+                            <td>${item.sequencial}</td>
+                            <td>${item.tipo}</td>
+                            <td class="text-through">${item.dataOriginal}</td>
+                            <td class="text-danger">${item.regraViolada}</td>
+                            <td class="text-success">${item.dataCorrigida}</td>
+                            <td style="font-size:0.8em; max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.descricao}</td>
+                        </tr>
+                    `;
+                });
+                bodyHtml += `</tbody></table></div></div>`;
+            } else {
+                bodyHtml += `
+                    <div style="background:rgba(0,255,128,0.1); border:1px solid var(--success); padding:15px; border-radius:8px; text-align:center;">
+                        <p class="text-success"><i class="fas fa-check-circle"></i> Tudo certo! Nenhum item fora do período.</p>
+                    </div>
+                `;
+            }
+
+            bodyHtml += `</div>`; // fecha body
+            card.innerHTML = headerHtml + bodyHtml;
+            resultsDiv.appendChild(card);
+
+            return correcoesFeitas;
+
+        } catch (e) {
+            console.error(e);
+            const errDiv = document.createElement('div');
+            errDiv.className = 'result-card';
+            errDiv.innerHTML = `<div class="result-body"><p class="text-danger">Erro ao processar guia ${index+1}: ${e.message}</p></div>`;
+            resultsDiv.appendChild(errDiv);
+            return 0;
+        }
+    }
+
+    // --- MAIN PROCESS ---
+    function processXML(xmlText) {
+        showLoading();
+        resultsDiv.innerHTML = '';
+        const parser = new DOMParser();
+        let xmlDoc;
+
+        try { xmlDoc = parser.parseFromString(xmlText, "text/xml"); } 
+        catch (e) { return showMessageBox("Erro", "Falha ao analisar XML."); }
+
+        if (xmlDoc.querySelector('parsererror')) {
+            return showMessageBox("XML Inválido", "Arquivo malformado.");
+        }
+
+        const guias = xmlDoc.getElementsByTagName(TAG_GUIA_INTERNACAO);
+        if (guias.length === 0) {
+            return showMessageBox("Erro", "Nenhuma guia de internação encontrada.");
+        }
+
+        let totalCorrecoes = 0;
+        for (let i = 0; i < guias.length; i++) {
+            totalCorrecoes += buildGuiaTable(guias[i], i);
+        }
+
+        correctedXmlDoc = xmlDoc;
+        
+        // Caixa de Resumo no Topo
+        const summaryBox = document.createElement('div');
+        summaryBox.className = `summary-box ${totalCorrecoes > 0 ? 'warning' : 'success'}`;
+        summaryBox.innerHTML = `
+            <div style="color:${totalCorrecoes > 0 ? 'var(--accent)' : 'var(--success)'}">
+                <i class="fas ${totalCorrecoes > 0 ? 'fa-tools' : 'fa-check-circle'}" style="font-size:40px;"></i>
+            </div>
+            <div class="summary-count" style="color:var(--text-main)">${totalCorrecoes}</div>
+            <div style="color:var(--text-muted); font-weight:bold; text-transform:uppercase;">Itens Corrigidos</div>
+        `;
+        resultsDiv.insertBefore(summaryBox, resultsDiv.firstChild);
+
+        hideLoading(totalCorrecoes > 0);
+        
+        if (totalCorrecoes > 0) {
+            downloadButton.innerHTML = '<i class="fas fa-download"></i> Baixar XML Corrigido';
+            downloadButton.className = 'btn btn-success';
+        } else {
+            downloadButton.innerHTML = '<i class="fas fa-check"></i> Sem correções';
+            downloadButton.className = 'btn'; 
+            downloadButton.disabled = true;
+        }
+    }
+
+    function downloadCorrectedXML() {
+        if (!correctedXmlDoc) return;
+        try {
+            const serializer = new XMLSerializer();
+            let xmlString = serializer.serializeToString(correctedXmlDoc);
+            const xmlDeclaration = '<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>\n';
+            const finalXmlString = xmlDeclaration + xmlString.replace(/^<\?xml[^?]+\?>\s*/i, '');
+
+            const blob = new Blob([finalXmlString], { type: 'text/xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `corrigido_${originalFileName.replace('.xml', '')}_${new Date().getTime()}.xml`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } catch (error) {
+            showMessageBox("Erro", error.message);
+        }
+    }
+
+    fileInput.addEventListener('change', () => {
+        if (fileInput.files.length > 0) {
+            processButton.disabled = false;
+            originalFileName = fileInput.files[0].name;
+            downloadButton.disabled = true; 
+        }
+    });
+
+    processButton.addEventListener('click', () => {
+        const file = fileInput.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => processXML(e.target.result);
+        reader.onerror = () => showMessageBox("Erro", "Falha na leitura do arquivo.");
+        reader.readAsText(file);
+    });
+
+    downloadButton.addEventListener('click', downloadCorrectedXML);
+</script>
+</body>
+</html>

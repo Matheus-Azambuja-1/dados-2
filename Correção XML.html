@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <title>Gerador Sequencial de Guias XML TISS</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+  <!-- Favicon com o logo do hospital -->
+  <link rel="icon" type="image/png" href="https://hospitalauxiliadora.com.br/wp-content/uploads/2025/03/logo-hospital-auxiliadora.png" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    }
+
+    body {
+      background:
+        linear-gradient(135deg, rgba(20, 30, 48, 0.8), rgba(0, 0, 0, 0.9)),
+        url('https://hospitalauxiliadora.com.br/wp-content/uploads/2025/03/img-onde-estamos-1024x657.png') no-repeat center center fixed;
+      background-size: cover;
+      color: #d4cdcd;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding: 40px 20px;
+      position: relative;
+    }
+
+    .logo-container {
+      position: center;
+      top: 5px;
+      left: 10px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 8px 12px;
+      border-radius: 20px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+    }
+
+    .logo-hospital, .logo-ona {
+      height: 100px;
+      width: auto;
+      transition: transform 0.3s ease;
+    }
+
+    .logo-hospital:hover,
+    .logo-ona:hover {
+      transform: scale(1.05);
+    }
+
+    h1 {
+      font-size: 26px;
+      color: #00e0ff;
+      text-shadow: 0 0 10px rgba(0, 224, 255, 0.5);
+      text-align: center;
+    }
+
+    p.small {
+      color: #ccc;
+      font-size: 14px;
+      text-align: center;
+      max-width: 700px;
+      margin-bottom: 30px;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 25px 30px;
+      border-radius: 50px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      max-width: 800px;
+      width: 100%;
+      margin-top: 80px;
+      backdrop-filter: blur(07px);
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-top: 15px;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+      margin-top: 5px;
+      background: #1b2b34;
+      color: #fff;
+    }
+
+    input[type="file"] {
+      color: #ccc;
+      margin-top: 8px;
+    }
+
+    input[type="checkbox"] {
+      transform: scale(1.2);
+      margin-right: 8px;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .row > div {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      background: linear-gradient(90deg, #00c6ff, #0072ff);
+      color: #fff;
+      transition: 0.3s;
+      width: 100%;
+    }
+
+    button:hover {
+      background: linear-gradient(90deg, #0072ff, #00c6ff);
+      transform: scale(1.03);
+    }
+
+    #resetBtn {
+      background: #ff4444;
+      margin-top: 10px;
+    }
+
+    #resetBtn:hover {
+      background: #cc0000;
+    }
+
+    pre {
+      background: #1b2b34;
+      color: #00ff99;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 15px;
+      max-height: 280px;
+      overflow-y: auto;
+      font-family: "Consolas", monospace;
+      font-size: 14px;
+      border-left: 4px solid #00e0ff;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    footer {
+      margin-top: 30px;
+      color: #00e0ff;
+      text-align: center;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    footer span {
+      color: #ffd166;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="logo-container">
+    <img src="https://hospitalauxiliadora.com.br/wp-content/uploads/2025/03/logo-hospital-auxiliadora.png" alt="Hospital Auxiliadora" class="logo-hospital" />
+    <img src="https://www.inovasaudesa.com.br/img/qualidade/ona.png" alt="Ona Qualidade" class="logo-ona" />
+  </div>
+
+  <div class="container">
+    <h1>Gerador Sequencial de Guias XML</h1>
+    <p class="small">
+      Esta ferramenta gera números sequenciais únicos para a tag <code>&lt;ans:numeroGuiaOperadora&gt;</code>.<br />
+      O contador é salvo no seu navegador e não será reiniciado automaticamente.
+    </p>
+
+    <label>1. Selecione o arquivo XML:</label>
+    <input id="fileInput" type="file" accept=".xml,text/xml" />
+
+    <div class="row">
+      <div>
+        <label>2. Valor alvo (apenas se igual a):</label>
+        <input id="targetValue" type="text" placeholder="Ex: Guia ou  (vazio = todos)" value="" />
+      </div>
+      <div>
+        <label>Sequência atual:</label>
+        <input id="currentSeq" type="number" />
+      </div>
+    </div>
+
+    <label>
+      <input id="alsoUpdateGuiaSolic" type="checkbox" />
+      Atualizar também a tag <code>&lt;ans:guiaSolicInternacao&gt;</code>
+    </label>
+
+    <label>
+      <input id="padZeros" type="checkbox" />
+      Preencher com zeros à esquerda
+    </label>
+
+    <label>Quantidade de dígitos:</label>
+    <input id="digitCount" type="number" min="1" value="7" />
+
+    <button id="processBtn">Gerar e Baixar XML Atualizado</button>
+    <button id="resetBtn">Zerar Contador</button>
+
+    <pre id="log">Aguardando seleção de arquivo...</pre>
+  </div>
+
+  <footer>
+    Ferramenta de apoio à gestão TISS – Desenvolvido por <span> EQUIPE DE CADASTRO HNSA</span>
+  </footer>
+
+  <script>
+    const KEY = "ultimaSequenciaGuia";
+
+    function getUltimaSequencia() {
+      const val = localStorage.getItem(KEY);
+      return val ? parseInt(val, 10) : 1;
+    }
+
+    function setUltimaSequencia(n) {
+      localStorage.setItem(KEY, n.toString());
+    }
+
+    function atualizarCampoSeq() {
+      document.getElementById('currentSeq').value = getUltimaSequencia();
+    }
+
+    atualizarCampoSeq();
+
+    document.getElementById('currentSeq').addEventListener('change', function() {
+      const val = parseInt(this.value, 10);
+      if (!isNaN(val) && val >= 1) {
+        const atual = getUltimaSequencia();
+        if (val < atual) {
+          alert('Não é permitido usar um número já usado.');
+          this.value = atual;
+        } else {
+          setUltimaSequencia(val);
+        }
+      } else {
+        this.value = getUltimaSequencia();
+      }
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      if (confirm('Tem certeza que deseja zerar o contador?')) {
+        setUltimaSequencia(1);
+        atualizarCampoSeq();
+        alert('Contador reiniciado com sucesso.');
+        document.getElementById('log').textContent = 'Contador zerado, aguardando seleção de arquivo...';
+      }
+    });
+
+    document.getElementById('processBtn').addEventListener('click', async function () {
+      const fileInput = document.getElementById('fileInput');
+      const log = document.getElementById('log');
+      log.textContent = '';
+
+      if (!fileInput.files || fileInput.files.length === 0) {
+        alert('Por favor, selecione um arquivo XML.');
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const xmlText = await file.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(xmlText, 'application/xml');
+
+      if (doc.querySelector('parsererror')) {
+        log.textContent = 'Erro ao analisar o conteúdo do XML.';
+        return;
+      }
+
+      const ns = 'http://www.ans.gov.br/padroes/tiss/schemas';
+      let nodes = Array.from(doc.getElementsByTagNameNS(ns, 'numeroGuiaOperadora'));
+      if (nodes.length === 0)
+        nodes = Array.from(doc.getElementsByTagName('*')).filter(n => n.localName === 'numeroGuiaOperadora');
+
+      if (nodes.length === 0) {
+        log.textContent = 'Nenhuma tag <numeroGuiaOperadora> encontrada.';
+        return;
+      }
+
+      const target = (document.getElementById('targetValue').value || '').trim();
+      const alsoUpdateGuiaSolic = document.getElementById('alsoUpdateGuiaSolic').checked;
+      const padZeros = document.getElementById('padZeros').checked;
+      const digitCount = parseInt(document.getElementById('digitCount').value, 10) || 7;
+
+      let seq = getUltimaSequencia();
+      let replaced = 0, skipped = 0;
+
+      function findGuiaSolicSibling(node) {
+        let p = node.parentElement;
+        while (p && p.localName !== 'guiaHonorarios') p = p.parentElement;
+        if (!p) return null;
+        const els = Array.from(p.getElementsByTagNameNS(ns, 'guiaSolicInternacao'));
+        if (els.length) return els[0];
+        return (
+          Array.from(p.getElementsByTagName('*')).find(e => e.localName === 'guiaSolicInternacao') || null
+        );
+      }
+
+      for (let el of nodes) {
+        const cur = (el.textContent || '').trim();
+        if (target === '' || cur === target) {
+          let newVal = String(seq);
+          if (padZeros) newVal = newVal.padStart(digitCount, '0');
+          el.textContent = newVal;
+          replaced++;
+
+          if (alsoUpdateGuiaSolic) {
+            const sib = findGuiaSolicSibling(el);
+            if (sib) sib.textContent = newVal;
+          }
+
+          seq++;
+        } else skipped++;
+      }
+
+      setUltimaSequencia(seq);
+      atualizarCampoSeq();
+
+      const serializer = new XMLSerializer();
+      let out = serializer.serializeToString(doc);
+      const decl = xmlText.match(/<\?xml[^>]*\?>/i);
+      if (decl && !out.startsWith('<?xml')) out = decl[0] + '\n' + out;
+
+      const blob = new Blob([out], { type: 'application/xml;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = file.name.replace(/(\.xml)?$/i, '') + '_sequencial.xml';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+
+      log.textContent = `✅ ${replaced} guia(s) atualizada(s)\n⚙️ ${skipped} ignorada(s)\n📄 Próximo número: ${seq}`;
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Sistema de Chamados - HNSA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="icon" type="image/png" href="https://hospitalauxiliadora.com.br/wp-content/uploads/2025/03/logo-hospital-auxiliadora.png" />
+
+  <style>
+    /* --- VARIÁVEIS DE TEMA --- */
+    :root {
+      /* -- MODO ESCURO (PADRÃO) -- */
+      --primary: #00e0ff;
+      --secondary: #0072ff;
+      --accent: #ffd166;
+      --success: #00ff80;
+      --danger: #ff4d4d;
+      
+      --bg-glass: rgba(20, 20, 20, 0.94);
+      --bg-container: rgba(0, 0, 0, 0.6);
+      --bg-sidebar: rgba(40, 40, 40, 0.95);
+      --bg-input: #1a1a1a;
+      --bg-result: #252525;
+      
+      --text-main: #fff;
+      --text-muted: #bbb;
+      --border-color: rgba(255,255,255,0.1);
+      --input-border: #333;
+      
+      /* Overlay de fundo (Escuro) */
+      --overlay-bg: linear-gradient(45deg, rgba(0,0,0,0.7), rgba(0,30,60,0.8));
+    }
+
+    /* -- MODO CLARO (LIGHT MODE) -- */
+    body.light-mode {
+      --primary: #0072ff; /* Azul mais forte para fundo claro */
+      --secondary: #00c6ff;
+      --accent: #f39c12;
+      
+      --bg-glass: rgba(255, 255, 255, 0.85); /* Vidro branco */
+      --bg-container: rgba(255, 255, 255, 0.5);
+      --bg-sidebar: rgba(240, 244, 248, 0.95);
+      --bg-input: #f0f4f8;
+      --bg-result: #ffffff;
+      
+      --text-main: #333;
+      --text-muted: #666;
+      --border-color: rgba(0,0,0,0.1);
+      --input-border: #ccc;
+
+      /* Overlay de fundo (Claro) */
+      --overlay-bg: linear-gradient(45deg, rgba(255,255,255,0.7), rgba(200, 230, 255, 0.8));
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* --- BODY & FUNDO --- */
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: url('https://hospitalauxiliadora.com.br/wp-content/uploads/2025/03/img-onde-estamos-1024x657.png') no-repeat center center fixed;
+      background-size: cover;
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: color 0.5s ease;
+    }
+
+    /* Overlay animado */
+    body::before {
+      content: ""; position: fixed; inset: 0; 
+      background: var(--overlay-bg);
+      backdrop-filter: blur(8px); z-index: -1;
+      transition: background 0.5s ease;
+      animation: bgPulse 10s infinite alternate;
+    }
+
+    @keyframes bgPulse {
+      0% { backdrop-filter: blur(8px); }
+      100% { backdrop-filter: blur(4px); }
+    }
+
+    /* --- NOVO SWITCH ANIMADO (Uiverse.io) --- */
+    .theme-switch-wrapper {
+        position: absolute; top: 20px; right: 20px;
+        display: flex; align-items: center; z-index: 100;
+        transform: scale(0.8);
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+
+    .switch #theme-toggle {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #2196f3;
+      -webkit-transition: 0.4s;
+      transition: 0.4s;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .sun-moon {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: yellow;
+      -webkit-transition: 0.4s;
+      transition: 0.4s;
+    }
+
+    #theme-toggle:checked + .slider {
+      background-color: black;
+    }
+
+    #theme-toggle:focus + .slider {
+      box-shadow: 0 0 1px #2196f3;
+    }
+
+    #theme-toggle:checked + .slider .sun-moon {
+      -webkit-transform: translateX(26px);
+      -ms-transform: translateX(26px);
+      transform: translateX(26px);
+      background-color: white;
+      -webkit-animation: rotate-center 0.6s ease-in-out both;
+      animation: rotate-center 0.6s ease-in-out both;
+    }
+
+    .moon-dot {
+      opacity: 0;
+      transition: 0.4s;
+      fill: gray;
+    }
+
+    #theme-toggle:checked + .slider .sun-moon .moon-dot {
+      opacity: 1;
+    }
+
+    .slider.round {
+      border-radius: 34px;
+    }
+
+    .slider.round .sun-moon {
+      border-radius: 50%;
+    }
+
+    #moon-dot-1 { left: 10px; top: 3px; position: absolute; width: 6px; height: 6px; z-index: 4; }
+    #moon-dot-2 { left: 2px; top: 10px; position: absolute; width: 10px; height: 10px; z-index: 4; }
+    #moon-dot-3 { left: 16px; top: 18px; position: absolute; width: 3px; height: 3px; z-index: 4; }
+
+    #light-ray-1 { left: -8px; top: -8px; position: absolute; width: 43px; height: 43px; z-index: -1; fill: white; opacity: 10%; }
+    #light-ray-2 { left: -50%; top: -50%; position: absolute; width: 55px; height: 55px; z-index: -1; fill: white; opacity: 10%; }
+    #light-ray-3 { left: -18px; top: -18px; position: absolute; width: 60px; height: 60px; z-index: -1; fill: white; opacity: 10%; }
+
+    .cloud-light { position: absolute; fill: #eee; animation-name: cloud-move; animation-duration: 6s; animation-iteration-count: infinite; }
+    .cloud-dark { position: absolute; fill: #ccc; animation-name: cloud-move; animation-duration: 6s; animation-iteration-count: infinite; animation-delay: 1s; }
+
+    #cloud-1 { left: 30px; top: 15px; width: 40px; }
+    #cloud-2 { left: 44px; top: 10px; width: 20px; }
+    #cloud-3 { left: 18px; top: 24px; width: 30px; }
+    #cloud-4 { left: 36px; top: 18px; width: 40px; }
+    #cloud-5 { left: 48px; top: 14px; width: 20px; }
+    #cloud-6 { left: 22px; top: 26px; width: 30px; }
+
+    @keyframes cloud-move {
+      0% { transform: translateX(0px); }
+      40% { transform: translateX(4px); }
+      80% { transform: translateX(-4px); }
+      100% { transform: translateX(0px); }
+    }
+
+    .stars { transform: translateY(-32px); opacity: 0; transition: 0.4s; }
+    .star { fill: white; position: absolute; transition: 0.4s; animation-name: star-twinkle; animation-duration: 2s; animation-iteration-count: infinite; }
+
+    #theme-toggle:checked + .slider .stars {
+      transform: translateY(0); opacity: 1;
+    }
+
+    #star-1 { width: 20px; top: 2px; left: 3px; animation-delay: 0.3s; }
+    #star-2 { width: 6px; top: 16px; left: 3px; }
+    #star-3 { width: 12px; top: 20px; left: 10px; animation-delay: 0.6s; }
+    #star-4 { width: 18px; top: 0px; left: 18px; animation-delay: 1.3s; }
+
+    @keyframes star-twinkle {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.2); }
+      80% { transform: scale(0.8); }
+      100% { transform: scale(1); }
+    }
+    
+    @keyframes rotate-center {
+        0% { transform: rotate(0); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* --- CONTAINER --- */
+    .app-container {
+      display: flex; width: 95%; max-width: 950px; 
+      background: var(--bg-container); 
+      border-radius: 20px; 
+      box-shadow: 0 0 30px rgba(0, 224, 255, 0.3); 
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      transition: transform 0.3s, background 0.5s;
+    }
+    
+    body.light-mode .app-container { box-shadow: 0 15px 40px rgba(0, 114, 255, 0.2); }
+
+    /* --- SIDEBAR --- */
+    .sidebar {
+      background: var(--bg-sidebar); 
+      width: 80px; transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.5s; 
+      display: flex; flex-direction: column; align-items: center; padding: 20px 0;
+      border-right: 1px solid var(--border-color);
+      z-index: 2;
+    }
+    .sidebar:hover { width: 240px; } 
+    .sidebar.expanded { width: 240px; }
+
+    .sidebar button {
+      background: transparent; border: none; color: var(--text-muted); 
+      font-size: 24px; margin: 15px 0; cursor: pointer; 
+      display: flex; align-items: center; width: 100%; 
+      padding: 10px 0 10px 26px; transition: 0.3s;
+      position: relative; overflow: hidden;
+    }
+    .sidebar button::before {
+      content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 4px;
+      background: var(--primary); transform: scaleY(0); transition: 0.3s;
+    }
+    .sidebar button:hover { color: var(--text-main); background: rgba(125,125,125,0.1); }
+    .sidebar button:hover::before { transform: scaleY(1); }
+    
+    .sidebar button span { 
+      margin-left: 15px; opacity: 0; font-size: 16px; white-space: nowrap; 
+      transition: opacity 0.2s; transform: translateX(-10px);
+    }
+    .sidebar:hover button span, .sidebar.expanded button span { 
+      opacity: 1; transform: translateX(0); 
+    }
+
+    /* --- MAIN CONTENT --- */
+    .main-content { flex: 1; padding: 40px; display: flex; flex-direction: column; align-items: center; position: relative; }
+
+    /* --- CARD STYLE & ANIMAÇÃO DE ENTRADA --- */
+    .card-section {
+      width: 100%; max-width: 650px; 
+      background: var(--bg-glass); 
+      border-radius: 16px; padding: 30px 40px; 
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); 
+      border: 1px solid var(--border-color);
+      animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+      position: relative;
+      transition: background 0.5s;
+    }
+    
+    body.light-mode .card-section { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(40px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    h1 { 
+      color: var(--primary); font-size: 28px; margin-bottom: 20px; 
+      text-shadow: 0 0 15px rgba(0, 224, 255, 0.2); font-weight: 700; letter-spacing: 1px;
+      text-align: center;
+    }
+    body.light-mode h1 { text-shadow: none; }
+
+    /* --- NÚMERO DO CHAMADO (Vivo!) --- */
+    #numChamado { 
+      font-weight: 800; font-size: 20px; margin-bottom: 20px; 
+      color: var(--accent); 
+      background: rgba(255, 209, 102, 0.1);
+      padding: 10px 20px; border-radius: 50px;
+      display: inline-flex; align-items: center; gap: 12px;
+      border: 1px solid rgba(255, 209, 102, 0.3);
+      box-shadow: 0 0 10px rgba(255, 209, 102, 0.1);
+      transition: all 0.5s;
+    }
+    
+    /* Efeito de atualização do número */
+    .num-update-anim {
+      animation: pulseGreen 1s ease-out;
+    }
+    @keyframes pulseGreen {
+      0% { transform: scale(1); box-shadow: 0 0 0 rgba(0,255,128,0); }
+      50% { transform: scale(1.1); background: rgba(0,255,128,0.2); color: #fff; box-shadow: 0 0 20px var(--success); border-color: var(--success); }
+      100% { transform: scale(1); }
+    }
+
+    /* --- INPUTS INTERATIVOS --- */
+    .form-group { margin-bottom: 15px; position: relative; }
+    label { font-size: 14px; color: var(--text-muted); margin-bottom: 5px; display: block; font-weight: 500; }
+    
+    input, select, textarea {
+      width: 100%; padding: 12px 15px; border-radius: 10px; 
+      border: 2px solid var(--input-border); background: var(--bg-input); color: var(--text-main); 
+      font-size: 15px; transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    input:focus, textarea:focus, select:focus { 
+      outline: none; border-color: var(--primary); 
+      box-shadow: 0 0 10px var(--primary);
+      transform: translateY(-2px);
+    }
+    /* Placeholder animado (opcional, apenas remove o padrão) */
+    ::placeholder { color: var(--text-muted); opacity: 0.5; }
+
+    /* --- BOTÃO DE ENVIO (Jelly Button) --- */
+    button.submit-btn {
+      width: 100%; padding: 16px; margin-top: 25px; border: none; border-radius: 12px; 
+      font-size: 18px; font-weight: bold; cursor: pointer;
+      background: linear-gradient(135deg, #00c6ff, #0072ff); color: #fff; 
+      box-shadow: 0 4px 15px rgba(0, 114, 255, 0.4);
+      display: flex; justify-content: center; align-items: center; gap: 10px;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative; overflow: hidden;
+    }
+    
+    button.submit-btn:hover:not(:disabled) { 
+      transform: scale(1.02) translateY(-2px); 
+      box-shadow: 0 8px 25px rgba(0, 224, 255, 0.6); 
+    }
+    button.submit-btn:active:not(:disabled) { transform: scale(0.95); }
+    
+    /* Brilho passando no botão */
+    button.submit-btn::after {
+      content: ""; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      transform: skewX(-20deg); transition: 0.5s;
+    }
+    button.submit-btn:hover::after { left: 150%; transition: 0.7s ease-in-out; }
+
+    button.submit-btn:disabled {
+      background: #333; color: #777; cursor: not-allowed; box-shadow: none; transform: none;
+    }
+
+    /* --- LOADING SPINNERS --- */
+    .spinner-radar {
+      width: 20px; height: 20px; border-radius: 50%; position: relative;
+      background: var(--primary);
+      animation: radarPing 1.5s infinite cubic-bezier(0, 0.2, 0.8, 1);
+    }
+    @keyframes radarPing {
+      0% { transform: scale(0.5); opacity: 1; }
+      100% { transform: scale(2); opacity: 0; }
+    }
+
+    .spinner-rotate {
+      width: 18px; height: 18px;
+      border: 3px solid rgba(255,255,255,0.3); border-top-color: #fff;
+      border-radius: 50%; animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* --- MENSAGEM DE SUCESSO (Modal Fullscreen) --- */
+    #successOverlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85); 
+      backdrop-filter: blur(10px); z-index: 999;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      opacity: 0; pointer-events: none; transition: 0.5s;
+    }
+    #successOverlay.active { opacity: 1; pointer-events: all; }
+    
+    .checkmark-circle {
+      width: 100px; height: 100px; border-radius: 50%; background: var(--success);
+      display: flex; justify-content: center; align-items: center;
+      box-shadow: 0 0 50px var(--success);
+      transform: scale(0); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.5);
+    }
+    #successOverlay.active .checkmark-circle { transform: scale(1); }
+    
+    .checkmark-circle svg { width: 60px; fill: #fff; }
+    
+    .success-text { 
+      color: #fff; font-size: 24px; margin-top: 20px; font-weight: bold; 
+      transform: translateY(20px); opacity: 0; transition: 0.5s 0.2s; 
+    }
+    #successOverlay.active .success-text { transform: translateY(0); opacity: 1; }
+
+    /* --- CONSULTA RESULTADOS --- */
+    .result { 
+      display: none; margin-top: 20px; background: var(--bg-result); 
+      padding: 20px; border-radius: 12px; border-left: 5px solid var(--primary);
+      animation: slideUp 0.4s;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    footer { margin-top: 20px; color: var(--text-muted); font-size: 12px; text-align: center; }
+
+    @media(max-width: 768px){
+      .theme-switch-wrapper { top: 10px; right: 10px; transform: scale(0.8); }
+      .app-container { flex-direction: column; width: 100%; height: 100vh; border-radius: 0; }
+      .sidebar { width: 100%; height: auto; flex-direction: row; justify-content: center; padding: 10px; }
+      .sidebar button { width: auto; padding: 10px; font-size: 28px; }
+      .sidebar button span { display: none !important; }
+      .sidebar button::before { height: 4px; width: 100%; top: auto; bottom: 0; transform: scaleX(0); transform-origin: center; }
+      .sidebar button:hover::before { transform: scaleX(1); }
+      .card-section { padding: 20px; box-shadow: none; border: none; background: transparent; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="theme-switch-wrapper">
+    <label class="switch">
+      <input id="theme-toggle" type="checkbox" checked />
+      <div class="slider round">
+        <div class="sun-moon">
+          <svg id="moon-dot-1" class="moon-dot" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50"></circle></svg>
+          <svg id="moon-dot-2" class="moon-dot" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50"></circle></svg>
+          <svg id="moon-dot-3" class="moon-dot" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50"></circle></svg>
+          <svg id="light-ray-1" class="light-ray" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50"></circle></svg>
+          <svg id="light-ray-2" class="light-ray" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50"></circle></svg>
+          <svg id="light-ray-3" class="light-ray" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50"></circle></svg>
+
+          <svg id="cloud-1" class="cloud-dark" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50"></circle></svg>
+          <svg id="cloud-2" class="cloud-dark" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50"></circle></svg>
+          <svg id="cloud-3" class="cloud-dark" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50"></circle></svg>
+          <svg id="cloud-4" class="cloud-light" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50"></circle></svg>
+          <svg id="cloud-5" class="cloud-light" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50"></circle></svg>
+          <svg id="cloud-6" class="cloud-light" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50"></circle></svg>
+        </div>
+        <div class="stars">
+          <svg id="star-1" class="star" viewBox="0 0 20 20"><path d="M 0 10 C 10 10,10 10 ,0 10 C 10 10 , 10 10 , 10 20 C 10 10 , 10 10 , 20 10 C 10 10 , 10 10 , 10 0 C 10 10,10 10 ,0 10 Z"></path></svg>
+          <svg id="star-2" class="star" viewBox="0 0 20 20"><path d="M 0 10 C 10 10,10 10 ,0 10 C 10 10 , 10 10 , 10 20 C 10 10 , 10 10 , 20 10 C 10 10 , 10 10 , 10 0 C 10 10,10 10 ,0 10 Z"></path></svg>
+          <svg id="star-3" class="star" viewBox="0 0 20 20"><path d="M 0 10 C 10 10,10 10 ,0 10 C 10 10 , 10 10 , 10 20 C 10 10 , 10 10 , 20 10 C 10 10 , 10 10 , 10 0 C 10 10,10 10 ,0 10 Z"></path></svg>
+          <svg id="star-4" class="star" viewBox="0 0 20 20"><path d="M 0 10 C 10 10,10 10 ,0 10 C 10 10 , 10 10 , 10 20 C 10 10 , 10 10 , 20 10 C 10 10 , 10 10 , 10 0 C 10 10,10 10 ,0 10 Z"></path></svg>
+        </div>
+      </div>
+    </label>
+</div>
+
+<div id="successOverlay">
+  <div class="checkmark-circle">
+    <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+  </div>
+  <div class="success-text">Chamado Enviado! 🚀</div>
+  <p style="color: #ccc; margin-top: 10px;">Preparando próximo número...</p>
+</div>
+
+<div class="app-container">
+  <div class="sidebar">
+    <button onclick="showSection('abrir')" title="Abrir Chamado">
+      📥<span>Abrir</span>
+    </button>
+    <button onclick="showSection('consultar')" title="Consultar Chamado">
+      🔎<span>Consultar</span>
+    </button>
+  </div>
+
+  <div class="main-content">
+    <div id="abrir" class="card-section">
+      
+      <div style="text-align: center;">
+        <div id="numChamado">
+          <div class="spinner-radar"></div> Buscando...
+        </div>
+      </div>
+
+      <h1>Abertura de Chamado</h1>
+      <form id="chamadoForm" action="https://docs.google.com/forms/d/e/1FAIpQLSet9e3M9f1P0u129dBgXWZ1oYnVxnkX1BPUGE0nGUOiSVMXRw/formResponse" method="POST" target="hidden_iframe">
+        
+        <input type="hidden" name="entry.1571614162" id="numeroAuto" />
+        <input type="hidden" name="entry.1839160253" value="Aguardando Correção" />
+        
+        <div class="form-group">
+          <label>Nome:</label>
+          <input type="text" name="entry.1110581321" id="nome" required placeholder="Seu nome completo" />
+        </div>
+        
+        <div class="form-group">
+          <label>Setor:</label>
+          <input type="text" name="entry.1392422900" id="setor" required placeholder="Ex: Recepção" />
+        </div>
+        
+        <div class="form-group">
+          <label>Tipo de Regra:</label>
+          <select name="entry.2135599596" id="tipo" required>
+            <option value="" disabled selected>Selecione o tipo...</option>
+            <option>Regra de Procedimento</option>
+            <option>Regra de CID</option>
+            <option>Regra de Médico</option>
+            <option>Regra de Convênio</option>
+            <option>Outros</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Descrição:</label>
+          <textarea name="entry.268485453" id="descricao" rows="4" required placeholder="Descreva o problema detalhadamente..."></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label>Prioridade:</label>
+          <select name="entry.471503770" id="prioridade" required>
+            <option value="" disabled selected>Nível de urgência...</option>
+            <option>Alta - Urgente</option>
+            <option>Média - Necessário</option>
+            <option>Baixa - Quando possível</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Observação (opcional):</label>
+          <textarea name="entry.1435554265" id="obs" rows="2"></textarea>
+        </div>
+        
+        <button type="submit" id="btnSalvar" class="submit-btn" disabled>
+           <div class="spinner-rotate"></div> Sincronizando...
+        </button>
+      </form>
+    </div>
+
+    <div id="consultar" class="card-section" style="display:none;">
+      <h1>Consulta de Chamado</h1>
+      <div class="form-group">
+        <input type="text" id="numeroConsulta" placeholder="Digite o nº do chamado (Ex: 1050)">
+      </div>
+      <button class="submit-btn" onclick="consultarChamado()">🔍 Pesquisar</button>
+      
+      <div id="loader" style="display:none; margin: 20px auto;" class="spinner-rotate"></div>
+      
+      <div id="resultado" class="result">
+        <h2 style="color:var(--primary); margin-bottom:10px;">Detalhes</h2>
+        <p><strong>Nome:</strong> <span id="nomeC"></span></p>
+        <p><strong>Setor:</strong> <span id="setorC"></span></p>
+        <p><strong>Tipo:</strong> <span id="tipoC"></span></p>
+        <p><strong>Descrição:</strong> <span id="descricaoC"></span></p>
+        <p><strong>Prioridade:</strong> <span id="prioridadeC"></span></p>
+        <p id="linhaObsC"><strong>Obs:</strong> <span id="observacaoC"></span></p>
+        <p id="linhaObsCadastroC"><strong>Obs Cadastro:</strong> <span id="obsCadastroC"></span></p>
+        <div style="margin-top:15px; padding:10px; background:rgba(125,125,125,0.1); border-radius:8px;">
+            <strong>Status:</strong> <span id="statusC" style="font-size:18px;"></span>
+        </div>
+      </div>
+    </div>
+    
+    <footer>&copy; 2025 Cadastro HNSA | Sistema Inteligente</footer>
+  </div>
+</div>
+
+<iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+
+<script>
+  // --- LÓGICA DO TEMA (Claro/Escuro) ---
+  const toggle = document.getElementById('theme-toggle');
+  const body = document.body;
+
+  // Verifica preferência salva
+  const currentTheme = localStorage.getItem('theme');
+  
+  // Lógica para este botão: Checked = Noite (Dark Mode), Unchecked = Dia (Light Mode)
+  if (currentTheme === 'light') {
+      body.classList.add('light-mode');
+      toggle.checked = false; // Dia
+  } else {
+      body.classList.remove('light-mode');
+      toggle.checked = true; // Noite
+  }
+
+  // Ouve o clique
+  toggle.addEventListener('change', function() {
+      if (this.checked) {
+          // Usuário marcou (Lua) -> Modo Escuro
+          body.classList.remove('light-mode');
+          localStorage.setItem('theme', 'dark');
+      } else {
+          // Usuário desmarcou (Sol) -> Modo Claro
+          body.classList.add('light-mode');
+          localStorage.setItem('theme', 'light');
+      }
+  });
+
+  // --- CONFIGURAÇÃO DA API DE CHAMADOS ---
+  const SHEET_ID = "13LKHk0FBzz9icZFAAiFKG1Oz18Zp61OJC8UA39AgzsU";
+  const API_URL = `https://opensheet.elk.sh/${SHEET_ID}/api`;
+
+  // --- ELEMENTOS ---
+  const numeroSpan = document.getElementById("numChamado");
+  const numeroAutoInput = document.getElementById("numeroAuto");
+  const btnSalvar = document.getElementById("btnSalvar");
+  const successOverlay = document.getElementById("successOverlay");
+  
+  // --- ESTADO ---
+  let ultimoNumeroConhecido = 0;
+  let pollingInterval = null;
+  let isSubmitting = false;
+
+  // 1. FUNÇÃO DE BUSCA INTELIGENTE (POLLING)
+  async function buscarProximoNumero(silencioso = false) {
+    if (isSubmitting) return; // Não busca se estiver enviando
+
+    try {
+      const response = await fetch(API_URL);
+      if (!response.ok) throw new Error("Erro API");
+      const data = await response.json();
+
+      // Lógica para achar o último número
+      const numeros = data.map(l => l["S1"]).filter(v => v && v.trim() !== "");
+      const ultimoSheet = parseInt(numeros[numeros.length - 1]) || 0;
+      const proximo = ultimoSheet + 1;
+      const proximoStr = proximo.toString().padStart(1, "0");
+
+      // Se o número mudou (alguém abriu um chamado enquanto vc digitava)
+      if (proximo !== ultimoNumeroConhecido) {
+        ultimoNumeroConhecido = proximo;
+        numeroAutoInput.value = proximoStr;
+        
+        // Atualiza UI com cor correta dependendo do tema (o span usa color: var(--text-main) agora no CSS, mas aqui forçamos)
+        // Note: No modo claro o texto branco ficaria ruim, vamos deixar herdar ou usar var
+        numeroSpan.innerHTML = `<span>Nº ATUAL:</span> <span style="font-size:24px;">${proximoStr}</span>`;
+        
+        // Efeito visual "PISCAR" para avisar que mudou
+        numeroSpan.classList.remove("num-update-anim");
+        void numeroSpan.offsetWidth; // Trigger reflow
+        numeroSpan.classList.add("num-update-anim");
+
+        // Libera botão
+        btnSalvar.disabled = false;
+        btnSalvar.innerHTML = "🚀 Enviar Chamado";
+        btnSalvar.style.cursor = "pointer";
+        btnSalvar.style.background = "linear-gradient(135deg, #00c6ff, #0072ff)";
+      }
+
+    } catch (e) {
+      console.error("Polling error", e);
+      if(!silencioso) {
+        numeroSpan.innerHTML = "⚠️ Reconectando...";
+        btnSalvar.disabled = true;
+      }
+    }
+  }
+
+  // 2. INICIA O MONITORAMENTO CONSTANTE
+  function iniciarMonitoramento() {
+    // Busca imediata
+    buscarProximoNumero();
+    // Repete a cada 3 segundos
+    if(pollingInterval) clearInterval(pollingInterval);
+    pollingInterval = setInterval(() => {
+      buscarProximoNumero(true); // true = modo silencioso (não reseta texto de erro se falhar um ping)
+    }, 3000);
+  }
+
+  // Inicia ao carregar
+  iniciarMonitoramento();
+
+  // 3. CONTROLE DE ABAS
+  window.showSection = function(sec) {
+    document.querySelectorAll('.card-section').forEach(el => {
+      el.style.display = 'none';
+      el.style.animation = 'none'; // Reset animation
+    });
+    const active = document.getElementById(sec);
+    active.style.display = 'block';
+    setTimeout(() => active.style.animation = 'slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1)', 10);
+
+    if(sec === 'abrir') {
+      iniciarMonitoramento(); // Retoma busca
+    } else {
+      clearInterval(pollingInterval); // Para busca para economizar recurso
+    }
+  }
+
+  // 4. ENVIO SEGURO
+  const form = document.getElementById("chamadoForm");
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault(); // Impede envio padrão momentaneamente
+    isSubmitting = true;
+    
+    // Trava botão
+    btnSalvar.disabled = true;
+    btnSalvar.innerHTML = '<div class="spinner-rotate"></div> Confirmando Vaga...';
+
+    // ÚLTIMA CHECAGEM DE SEGURANÇA
+    try {
+      const response = await fetch(API_URL);
+      const data = await response.json();
+      const numeros = data.map(l => l["S1"]).filter(v => v && v.trim() !== "");
+      const ultimoReal = parseInt(numeros[numeros.length - 1]) || 0;
+      const meuNumero = parseInt(numeroAutoInput.value);
+
+      // Se o número que estou tentando enviar já foi usado (é menor ou igual ao ultimo real)
+      if (meuNumero <= ultimoReal) {
+        alert("Opa! Alguém pegou esse número agora mesmo. Atualizando para o próximo...");
+        isSubmitting = false;
+        buscarProximoNumero(); // Pega o novo
+        return; // Cancela envio e obriga usuário a clicar de novo (segurança)
+      }
+
+      // Se tudo ok, envia de verdade
+      btnSalvar.innerHTML = '<div class="spinner-rotate"></div> Enviando...';
+      form.submit(); // Dispara o form para o iframe
+      
+    } catch (err) {
+      alert("Erro de conexão. Tente novamente.");
+      isSubmitting = false;
+      btnSalvar.disabled = false;
+      btnSalvar.innerHTML = "🚀 Enviar Chamado";
+    }
+  });
+
+  // 5. ANIMAÇÃO DE SUCESSO (Ao carregar o iframe)
+  document.getElementById("hidden_iframe").addEventListener("load", () => {
+    if (isSubmitting) {
+      // Mostra Overlay
+      successOverlay.classList.add("active");
+      form.reset();
+      
+      // Depois de 3 segundos, volta ao normal
+      setTimeout(() => {
+        successOverlay.classList.remove("active");
+        isSubmitting = false;
+        // Reseta busca para pegar próximo número
+        ultimoNumeroConhecido = 0; 
+        numeroSpan.innerHTML = '<div class="spinner-radar"></div> Buscando...';
+        buscarProximoNumero(); 
+      }, 3500);
+    }
+  });
+
+  // 6. CONSULTA (Mantida e estilizada)
+  const urlConsulta = "https://script.google.com/macros/s/AKfycbwBvsFuSh7zjUS7yzflKAeQAzUwKWi2eAI_ByMuKADa8erqbd6907dXA2VnByEMcZDucA/exec?acao=listar";
+  
+  function findValue(obj, keys) {
+    for (const key of keys) {
+      for (const k in obj) {
+        if (k.toLowerCase().trim() === key.toLowerCase().trim()) return obj[k] || '';
+      }
+    }
+    return '';
+  }
+
+  window.consultarChamado = async function() {
+    const numero = document.getElementById('numeroConsulta').value.trim();
+    const resultado = document.getElementById('resultado');
+    const loader = document.getElementById('loader');
+    const statusEl = document.getElementById('statusC');
+
+    if (!numero) { alert('Digite o número!'); return; }
+    resultado.style.display = 'none';
+    loader.style.display = 'block';
+
+    try {
+      const res = await fetch(urlConsulta);
+      const data = await res.json();
+      loader.style.display = 'none';
+
+      const chamado = data.find(c => (c['numero do chamado']||'').toString().trim() === numero);
+      if(!chamado) { alert("Chamado não encontrado 😕"); return; }
+
+      document.getElementById('nomeC').textContent = findValue(chamado, ['Nome']);
+      document.getElementById('setorC').textContent = findValue(chamado, ['Setor']);
+      document.getElementById('tipoC').textContent = findValue(chamado, ['tipo de regra']);
+      document.getElementById('descricaoC').textContent = findValue(chamado, ['descrição']);
+      document.getElementById('prioridadeC').textContent = findValue(chamado, ['Prioridade']);
+      document.getElementById('observacaoC').textContent = findValue(chamado, ['observação', 'Coluna G']);
+      document.getElementById('obsCadastroC').textContent = findValue(chamado, ['Observação do Cadastro', 'Coluna L']);
+
+      const statusValor = findValue(chamado, ['Status']);
+      statusEl.textContent = statusValor || 'Pendente';
+      
+      // Ajuste de cores do status para funcionar em ambos temas
+      statusEl.style.color = 'var(--text-main)';
+      statusEl.style.fontWeight = 'bold';
+      
+      if(statusValor.toLowerCase().includes('aguardando')) statusEl.style.color = '#ff4d4d';
+      if(statusValor.toLowerCase().includes('corrigido')) statusEl.style.color = '#00ff80';
+
+      resultado.style.display = 'block';
+    } catch(err) {
+      loader.style.display = 'none';
+      console.error(err);
+      alert('Erro ao consultar.');
+    }
+  }
+</script>
+</body>
+</html>

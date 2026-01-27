@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XML Engine Pro | TISS Analytics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #05070a;
+            --accent: #00f2ff;
+            --accent-glow: rgba(0, 242, 255, 0.4);
+            --card-bg: #0d1117;
+            --card-border: #30363d;
+            --text-main: #c9d1d9;
+            --text-dim: #8b949e;
+            --success: #238636;
+            --error: #da3633;
+            --warning: #d29922;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* SIDEBAR */
+        aside {
+            width: 320px;
+            background: #010409;
+            border-right: 1px solid var(--card-border);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 1.2rem;
+            letter-spacing: -1px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .logo span { color: var(--accent); }
+
+        /* MAIN AREA */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: radial-gradient(circle at top right, #10151d, #05070a);
+        }
+
+        header {
+            padding: 16px 32px;
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* CARDS E INPUTS */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .section-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            background: #010409;
+            border: 1px solid var(--card-border);
+            border-radius: 6px;
+            padding: 10px;
+            color: white;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        input:focus { border-color: var(--accent); outline: none; }
+
+        .btn {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid transparent;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary { background: var(--accent); color: black; }
+        .btn-primary:hover { background: #b3faff; transform: translateY(-1px); }
+
+        .btn-outline { background: transparent; border-color: var(--card-border); color: white; }
+        .btn-outline:hover { background: #161b22; }
+
+        /* VIEWER */
+        #viewer-container {
+            flex: 1;
+            padding: 10px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #code-display {
+            flex: 1;
+            background: #010409;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: #d1d5db;
+            white-space: pre-wrap;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+
+        /* CONSOLE LOG */
+        #console-log {
+            height: 150px;
+            background: #010409;
+            border-top: 1px solid var(--card-border);
+            padding: 12px 24px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            overflow-y: auto;
+            color: var(--text-dim);
+        }
+
+        .log-entry { margin-bottom: 4px; }
+        .log-time { color: #58a6ff; margin-right: 8px; }
+
+        /* MODAL */
+        #modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal {
+            background: var(--card-bg);
+            border: 1px solid var(--warning);
+            padding: 32px;
+            border-radius: 12px;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        /* FILE INPUT */
+        .dropzone {
+            border: 2px dashed var(--card-border);
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        .dropzone:hover { border-color: var(--accent); }
+    </style>
+</head>
+<body>
+
+<div id="modal-overlay">
+    <div class="modal">
+        <h2 style="color: var(--warning); margin-top:0">Aviso de Segurança</h2>
+        <p style="font-size: 14px; color: var(--text-dim); line-height: 1.5;">A utilização desta ferramenta é de inteira responsabilidade do usuário. Não nos responsabilizamos por perdas de dados ou erros de faturamento perante terceiros.</p>
+        <button class="btn btn-primary" onclick="closeModal()">CONCORDAR E ENTRAR</button>
+    </div>
+</div>
+
+<aside>
+    <div class="logo">XML<span>ENGINE</span> PRO</div>
+
+    <div class="section-title">Dados de Entrada</div>
+    <div class="dropzone" onclick="document.getElementById('fileInput').click()">
+        <span id="fileName" style="font-size: 12px; color: var(--text-dim);">Importar XML TISS</span>
+        <input type="file" id="fileInput" accept=".xml" style="display:none">
+    </div>
+
+    <div class="section-title">Engine de Substituição</div>
+    <div class="card">
+        <input type="text" id="searchValue" placeholder="Localizar...">
+        <input type="text" id="replaceValue" placeholder="Substituir...">
+        <button class="btn btn-outline" onclick="runReplace()">Executar Regex</button>
+    </div>
+
+    <div class="section-title">Smart Rules (ANS)</div>
+    <div class="card">
+        <div style="font-size: 11px; color: var(--text-dim); margin-bottom: 10px;">
+            Procedimentos Monitorados: 10103023, 10103015 (G:10) e 10104020 (G:13).
+        </div>
+        <button class="btn btn-outline" onclick="validateRules()">Validar Regras</button>
+        <button id="fixBtn" class="btn btn-primary" style="display:none; margin-top:8px;" onclick="applyFixes()">Corrigir Divergências</button>
+    </div>
+
+    <button id="dlBtn" class="btn btn-primary" style="display:none; margin-top: auto;" onclick="downloadFinal()">BAIXAR RESULTADO</button>
+</aside>
+
+<main>
+    <header>
+        <div id="statusIndicator" style="font-size: 12px; color: var(--text-dim);">Pronto para processamento.</div>
+        <div style="display: flex; gap: 12px;">
+            </div>
+    </header>
+
+    <div id="viewer-container">
+        <div class="section-title">Preview do Buffer</div>
+        <div id="code-display">O sistema aguarda a importação de um arquivo XML para iniciar a renderização...</div>
+    </div>
+
+    <div id="console-log">
+        <div class="log-entry"><span class="log-time">[00:00:00]</span> Kernel iniciado. Aguardando input...</div>
+    </div>
+</main>
+
+<script>
+    let xmlDoc = null;
+    let errorQueue = [];
+    const RULES = {
+        "10103023": "10",
+        "10103015": "10",
+        "10104020": "13"
+    };
+
+    function closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
+
+    function log(msg, type = 'info') {
+        const consoleEl = document.getElementById('console-log');
+        const time = new Date().toLocaleTimeString('pt-BR');
+        const color = type === 'error' ? 'var(--error)' : (type === 'success' ? 'var(--success)' : 'inherit');
+        consoleEl.innerHTML += `<div class="log-entry"><span class="log-time">[${time}]</span> <span style="color:${color}">${msg}</span></div>`;
+        consoleEl.scrollTop = consoleEl.scrollHeight;
+    }
+
+    document.getElementById('fileInput').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        document.getElementById('fileName').textContent = file.name;
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            xmlDoc = new DOMParser().parseFromString(event.target.result, "application/xml");
+            log(`Arquivo "${file.name}" carregado com sucesso.`);
+            updateUI();
+        };
+        reader.readAsText(file);
+    });
+
+    function validateRules() {
+        if (!xmlDoc) return alert('Nenhum dado carregado.');
+        errorQueue = [];
+        let totalChecked = 0;
+        const targetCodes = Object.keys(RULES);
+        const allElements = xmlDoc.getElementsByTagName("*");
+
+        for (let el of allElements) {
+            const code = el.textContent.trim();
+            if (el.tagName.includes("codigoProcedimento") && targetCodes.includes(code)) {
+                totalChecked++;
+                const expected = RULES[code];
+                const serviceBlock = el.parentElement.parentElement;
+                const grauNode = findTag(serviceBlock, "grauPart");
+
+                if (grauNode) {
+                    const current = grauNode.textContent.trim();
+                    if (current !== expected) {
+                        errorQueue.push({ node: grauNode, value: expected });
+                        log(`Divergência: Cod ${code} está com Grau ${current} (Esperado: ${expected})`, 'error');
+                    } else {
+                        log(`Validado: Cod ${code} Grau ${current}`, 'success');
+                    }
+                }
+            }
+        }
+
+        if (errorQueue.length > 0) {
+            document.getElementById('fixBtn').style.display = 'flex';
+            document.getElementById('statusIndicator').textContent = `${errorQueue.length} erros encontrados.`;
+        } else {
+            log('Nenhuma inconsistência encontrada nas regras vigentes.', 'success');
+        }
+    }
+
+    function findTag(parent, name) {
+        const items = parent.getElementsByTagName("*");
+        for (let i of items) if (i.tagName.includes(name)) return i;
+        return null;
+    }
+
+    function applyFixes() {
+        errorQueue.forEach(err => err.node.textContent = err.value);
+        log(`${errorQueue.length} correções aplicadas.`, 'success');
+        errorQueue = [];
+        document.getElementById('fixBtn').style.display = 'none';
+        updateUI();
+    }
+
+    function runReplace() {
+        if (!xmlDoc) return;
+        const s = document.getElementById('searchValue').value;
+        const r = document.getElementById('replaceValue').value;
+        if (!s) return;
+
+        const walk = (node) => {
+            node.childNodes.forEach(child => {
+                if (child.nodeType === 3) child.nodeValue = child.nodeValue.split(s).join(r);
+                else if (child.nodeType === 1) walk(child);
+            });
+        };
+        walk(xmlDoc.documentElement);
+        log(`Replace executado: "${s}" -> "${r}"`);
+        updateUI();
+    }
+
+    function updateUI() {
+        const raw = new XMLSerializer().serializeToString(xmlDoc);
+        document.getElementById('code-display').textContent = formatXml(raw);
+        document.getElementById('dlBtn').style.display = 'flex';
+        document.getElementById('statusIndicator').textContent = "Buffer atualizado.";
+    }
+
+    function formatXml(xml) {
+        let formatted = '';
+        const reg = /(>)(<)(\/*)/g;
+        xml = xml.replace(reg, '$1\n$2$3');
+        let pad = 0;
+        xml.split('\n').forEach((node) => {
+            let indent = 0;
+            if (node.match(/.+<\/\w[^>]*>$/)) indent = 0;
+            else if (node.match(/^<\/\w/)) { if (pad !== 0) pad -= 1; }
+            else if (node.match(/^<\w[^>]*[^\/]>.*$/)) indent = 1;
+            formatted += '  '.repeat(pad) + node + '\n';
+            pad += indent;
+        });
+        return formatted.trim();
+    }
+
+    function downloadFinal() {
+        const blob = new Blob([new XMLSerializer().serializeToString(xmlDoc)], {type: 'application/xml'});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'faturamento_corrigido_pro.xml';
+        a.click();
+        log('Download concluído.');
+    }
+</script>
+</body>
+</html>

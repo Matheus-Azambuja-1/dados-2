@@ -1,0 +1,651 @@
+<!doctype html>  
+<html lang="pt-BR">  
+<head>  
+  <meta charset="utf-8" />  
+  <title>HNSA | Enterprise Portal</title>  
+  <meta name="viewport" content="width=device-width,initial-scale=1" />  
+    
+  <link rel="preconnect" href="https://fonts.googleapis.com">  
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">  
+    
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">  
+  <link rel="icon" type="image/png" href="https://hospitalauxiliadora.com.br/wp-content/uploads/2025/03/logo-hospital-auxiliadora.png" />  
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>  
+    /* --- DESIGN SYSTEM TOKENS --- */  
+    :root {  
+      --color-sidebar-bg: #0B1120;  
+      --color-sidebar-hover: #1E293B;  
+        
+      --color-brand-primary: #0284C7;  
+      --color-brand-dark: #0f172a;  
+        
+      --color-bg-canvas: #F8FAFC;  
+      --color-surface: #FFFFFF;  
+        
+      --color-text-main: #334155;  
+      --color-text-muted: #64748B;  
+        
+      --color-success: #10B981;  
+      --color-warning: #F59E0B;  
+      --color-danger: #EF4444;  
+        
+      --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);  
+      --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.03);  
+        
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);  
+    }  
+  
+    body.dark-mode {  
+      --color-bg-canvas: #0F172A;  
+      --color-surface: #1E293B;  
+      --color-text-main: #F1F5F9;  
+      --color-text-muted: #94A3B8;  
+      --color-brand-dark: #FFFFFF;  
+      --shadow-card: 0 4px 6px -1px rgba(0,0,0,0.3);  
+    }  
+  
+    * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }  
+    html { scroll-behavior: smooth; }  
+  
+    body {  
+      font-family: 'Inter', sans-serif;  
+      background-color: var(--color-bg-canvas);  
+      color: var(--color-text-main);  
+      display: flex;  
+      height: 100vh;  
+      overflow: hidden;  
+      transition: background-color 0.3s ease;  
+    }  
+  
+    /* --- SIDEBAR --- */  
+    .sidebar {  
+      width: 260px; background-color: var(--color-sidebar-bg); color: #fff;  
+      display: flex; flex-direction: column; flex-shrink: 0; padding: 24px 16px;  
+      z-index: 100; box-shadow: 4px 0 24px rgba(0,0,0,0.05);  
+    }  
+  
+    .brand {  
+      display: flex; align-items: center; gap: 12px; padding-bottom: 30px;  
+      border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px;  
+    }  
+    .brand img { height: 32px; filter: brightness(0) invert(1); }  
+    .brand-text { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 1.1rem; }  
+  
+    .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 8px; flex: 1; }  
+    .nav-item {  
+      display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 8px;  
+      color: #94A3B8; text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: all 0.2s;  
+      cursor: pointer;  
+    }  
+    .nav-item:hover, .nav-item.active { background-color: var(--color-sidebar-hover); color: #fff; }  
+    .nav-header { font-size: 0.75rem; text-transform: uppercase; color: #475569; margin: 20px 0 10px 10px; font-weight: 700; letter-spacing: 1px; }  
+  
+    /* Botão de Chamado */  
+    .support-box {  
+        margin-top: auto;  
+        padding-top: 15px;  
+    }  
+    .btn-support {  
+        display: flex; align-items: center; justify-content: center; gap: 10px;  
+        width: 100%; padding: 12px; border-radius: 8px;  
+        background: rgba(239, 68, 68, 0.15); color: #FCA5A5;  
+        border: 1px solid rgba(239, 68, 68, 0.3);  
+        font-weight: 600; font-size: 0.85rem; text-decoration: none;  
+        transition: all 0.2s;  
+    }  
+    .btn-support:hover {  
+        background: var(--color-danger); color: white;  
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);  
+    }  
+  
+    .user-mini {  
+      display: flex; align-items: center; gap: 12px; padding-top: 20px;  
+      margin-top: 20px;  
+      border-top: 1px solid rgba(255,255,255,0.1);  
+    }  
+    .avatar {  
+      width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #3B82F6, #06B6D4);  
+      display: flex; align-items: center; justify-content: center; font-weight: 700; color: white;  
+    }  
+    .user-info h4 { font-size: 0.8rem; color: #fff; }  
+    .user-info span { font-size: 0.75rem; color: #94A3B8; }  
+  
+    /* --- ÁREA PRINCIPAL --- */  
+    .main-content {  
+      flex: 1; display: flex; flex-direction: column; overflow-y: auto; position: relative;  
+    }  
+  
+    .topbar {  
+      height: 70px; display: flex; align-items: center; justify-content: space-between;  
+      padding: 0 40px; background: transparent; flex-shrink: 0;  
+    }  
+    .breadcrumbs { font-size: 0.85rem; color: var(--color-text-muted); }  
+    .breadcrumbs b { color: var(--color-text-main); }  
+      
+    .system-status {  
+      display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--color-success);  
+      font-weight: 600; background: rgba(16, 185, 129, 0.1); padding: 6px 12px; border-radius: 20px;  
+    }  
+    .status-dot { width: 8px; height: 8px; background: var(--color-success); border-radius: 50%; box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2); }  
+    .theme-toggle { background: none; border: none; font-size: 1.2rem; color: var(--color-text-muted); cursor: pointer; margin-left: 20px; }  
+  
+    .dashboard-wrapper {  
+      max-width: 1400px; margin: 0 auto; width: 100%; padding: 10px 40px 80px 40px;  
+    }  
+  
+    /* --- LÓGICA DE EXIBIÇÃO (SPA) --- */  
+    .section-group {   
+        display: none;   
+        margin-bottom: 50px;   
+        animation: fadeIn 0.4s ease-out;  
+    }  
+    .section-group.active {  
+        display: block;   
+    }  
+  
+    @keyframes fadeIn {  
+        from { opacity: 0; transform: translateY(10px); }  
+        to { opacity: 1; transform: translateY(0); }  
+    }  
+      
+    .section-title {  
+      display: flex; align-items: center; gap: 12px;  
+      margin-bottom: 24px; padding-bottom: 10px;  
+      border-bottom: 1px solid rgba(0,0,0,0.05);  
+    }  
+    body.dark-mode .section-title { border-color: rgba(255,255,255,0.05); }  
+  
+    .section-title h2 {  
+      font-size: 1.25rem; font-weight: 700; color: var(--color-brand-dark);  
+      letter-spacing: -0.02em;  
+    }  
+    .section-badge {  
+      font-size: 0.75rem; background: rgba(2, 132, 199, 0.1); color: var(--color-brand-primary);  
+      padding: 4px 8px; border-radius: 4px; font-weight: 600; text-transform: uppercase;  
+    }  
+  
+    /* HERO BANNER DO INÍCIO */  
+    .hero-banner {  
+        background: linear-gradient(135deg, var(--color-brand-primary) 0%, #3B82F6 100%);  
+        border-radius: 20px;  
+        padding: 40px;  
+        color: white;  
+        margin-bottom: 40px;  
+        position: relative;  
+        overflow: hidden;  
+        box-shadow: 0 20px 25px -5px rgba(59, 130, 246, 0.3);  
+        display: flex;  
+        justify-content: space-between;  
+        align-items: center;  
+    }  
+    .hero-content { position: relative; z-index: 2; max-width: 600px; }  
+    .hero-content h1 { font-family: 'Manrope', sans-serif; font-size: 2rem; font-weight: 800; margin-bottom: 12px; line-height: 1.2; }  
+    .hero-content p { font-size: 1rem; opacity: 0.9; line-height: 1.6; margin-bottom: 25px; }  
+      
+    .hero-stats {  
+        display: flex; gap: 20px;  
+    }  
+    .stat-item {  
+        background: rgba(255,255,255,0.15); backdrop-filter: blur(5px);  
+        padding: 10px 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2);  
+    }  
+    .stat-item h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 2px; }  
+    .stat-item span { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8; }  
+      
+    /* Decoração de fundo do banner */  
+    .hero-decoration {  
+        position: absolute; right: -50px; top: -50px;  
+        font-size: 15rem; opacity: 0.1; color: white;  
+        transform: rotate(-15deg);  
+    }  
+  
+    /* --- GRID --- */  
+    .app-grid {  
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px;  
+    }  
+  
+    /* --- CARDS --- */  
+    .card {  
+      background: var(--color-surface); border-radius: 16px; padding: 28px;  
+      text-decoration: none; border: 1px solid rgba(0,0,0,0.03);  
+      box-shadow: var(--shadow-card);  
+      transition: transform 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out);  
+      display: flex; flex-direction: column; justify-content: space-between;  
+      height: 220px; position: relative; overflow: hidden;  
+    }  
+    .card:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); border-color: rgba(2, 132, 199, 0.2); }  
+    .card::before {  
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;  
+      background: var(--color-brand-primary); opacity: 0; transition: opacity 0.3s;  
+    }  
+    .card:hover::before { opacity: 1; }  
+  
+    .card-icon-wrapper {  
+      width: 54px; height: 54px; background: #F0F9FF; color: var(--color-brand-primary);  
+      border-radius: 12px; display: flex; align-items: center; justify-content: center;  
+      font-size: 1.6rem; margin-bottom: 20px; transition: background 0.3s;  
+    }  
+    body.dark-mode .card-icon-wrapper { background: rgba(2, 132, 199, 0.15); }  
+    .card:hover .card-icon-wrapper { background: var(--color-brand-primary); color: white; }  
+  
+    .card-title { font-size: 1.15rem; font-weight: 700; color: var(--color-brand-dark); margin-bottom: 8px; font-family: 'Manrope', sans-serif; }  
+    .card-desc { font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.5; }  
+      
+    .card-footer {  
+      margin-top: auto; padding-top: 15px; display: flex; align-items: center; justify-content: space-between;  
+      font-size: 0.75rem; font-weight: 600; color: var(--color-brand-primary);  
+      text-transform: uppercase; letter-spacing: 0.5px; opacity: 0; transform: translateY(10px); transition: all 0.3s;  
+    }  
+    .card:hover .card-footer { opacity: 1; transform: translateY(0); }  
+  
+    .card.accent { background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%); border: 1px solid rgba(2, 132, 199, 0.1); }  
+    body.dark-mode .card.accent { background: linear-gradient(145deg, #1E293B 0%, #0f172a 100%); border-color: #334155; }  
+      
+    .card.disabled { opacity: 0.6; cursor: not-allowed; background: repeating-linear-gradient(45deg, var(--color-surface), var(--color-surface) 10px, rgba(0,0,0,0.02) 10px, rgba(0,0,0,0.02) 20px); }  
+    .card.disabled:hover { transform: none; box-shadow: var(--shadow-card); }  
+    .badge-wip {  
+      position: absolute; top: 20px; right: 20px; background: var(--color-warning); color: #fff;  
+      font-size: 0.65rem; padding: 4px 8px; border-radius: 4px; font-weight: 700;  
+    }  
+  
+    /* FOOTER FIXO */  
+    footer {   
+        position: fixed;   
+        bottom: 0;   
+        right: 0;  
+        width: calc(100% - 260px);   
+        background-color: var(--color-bg-canvas);  
+        text-align: center;   
+        padding: 15px;  
+        color: var(--color-text-muted);   
+        font-size: 0.8rem;   
+        border-top: 1px solid rgba(0,0,0,0.05);  
+        z-index: 90;  
+    }  
+    body.dark-mode footer { border-top-color: rgba(255,255,255,0.05); }  
+  
+    @media (max-width: 900px) {  
+      .sidebar { display: none; }  
+      .dashboard-wrapper { padding: 20px 20px 80px 20px; }  
+      footer { width: 100%; }   
+      .hero-banner { flex-direction: column; align-items: flex-start; }  
+      .hero-decoration { display: none; }  
+    } 
+     
+    /* --- PASSWORD PROMPT STYLING --- */ 
+    .password-prompt-overlay { 
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); 
+      z-index: 1000; display: flex; align-items: center; justify-content: center; 
+      opacity: 0; visibility: hidden; transition: all 0.3s; 
+    } 
+    .password-prompt-overlay.visible { 
+      opacity: 1; visibility: visible; 
+    } 
+    .password-box { 
+      background: var(--color-surface); padding: 32px; border-radius: 16px; 
+      box-shadow: var(--shadow-hover); text-align: center; 
+      width: 90%; max-width: 380px; 
+      transform: scale(0.95); transition: transform 0.3s; 
+    } 
+    .password-prompt-overlay.visible .password-box { 
+      transform: scale(1); 
+    } 
+    .password-box h3 { font-size: 1.2rem; margin-bottom: 12px; color: var(--color-brand-dark); } 
+    .password-box p { font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 24px; } 
+    .password-input { 
+      width: 100%; padding: 12px 16px; border-radius: 8px; 
+      border: 1px solid; border-color: rgba(0,0,0,0.1); 
+      background: var(--color-bg-canvas); color: var(--color-text-main); 
+      margin-bottom: 16px; font-size: 1rem; 
+    } 
+    body.dark-mode .password-input { border-color: #334155; } 
+    .btn-group button { 
+      width: 100%; padding: 12px; border-radius: 8px; font-weight: 600; 
+      border: none; cursor: pointer; transition: all 0.2s; 
+    } 
+    .btn-submit { background: var(--color-brand-primary); color: white; } 
+    .btn-submit:hover { background: #0369A1; } 
+    .btn-cancel { background: transparent; color: var(--color-text-muted); margin-top: 8px; } 
+    .btn-cancel:hover { background: rgba(0,0,0,0.05); } 
+    body.dark-mode .btn-cancel:hover { background: rgba(255,255,255,0.05); } 
+    
+  </style>  
+</head>  
+  
+<body>  
+  
+  <aside class="sidebar">  
+    <div class="brand">  
+      <img src="https://hospitalauxiliadora.com.br/wp-content/uploads/2025/03/logo-hospital-auxiliadora.png" alt="HNSA">  
+      <span class="brand-text">HNSA Portal</span>  
+    </div>  
+  
+    <ul class="nav-menu">  
+      <div class="nav-header">Módulos</div>  
+        
+      <a onclick="switchSection('sec-inicio', this)" class="nav-item active">  
+        <i class="fa-solid fa-house"></i> Início  
+      </a>  
+
+      <a onclick="requestKpiAccess(this)" class="nav-item">  
+        <i class="fa-solid fa-chart-column"></i> KPI Performance  
+      </a> 
+  
+      <a onclick="switchSection('sec-faturamento', this)" class="nav-item">  
+        <i class="fa-solid fa-file-invoice-dollar"></i> Faturamento  
+      </a>  
+  
+      <a onclick="switchSection('sec-gerencial', this)" class="nav-item">  
+        <i class="fa-solid fa-briefcase"></i> Gerencial  
+      </a>  
+        
+    </ul>  
+  
+    <div class="support-box">  
+        <a href="Abertura de Chamado.html" class="btn-support">  
+            <i class="fa-solid fa-bug"></i> Reportar Bug  
+        </a>  
+    </div>  
+  
+    <div class="user-mini">  
+      <div class="avatar">MA</div>  
+      <div class="user-info">  
+        <h4>CADASTRO HNSA</h4>  
+        <span>Administrador</span>  
+      </div>  
+    </div>  
+  </aside>  
+  
+  <main class="main-content">  
+      
+    <header class="topbar">  
+      <div class="breadcrumbs">Portal HNSA / <b id="page-title">Visão Geral</b></div>  
+      <div style="display:flex; align-items:center;">  
+        <div class="system-status"><span class="status-dot"></span> Online</div>  
+        <button class="theme-toggle" id="theme-toggle"><i class="fa-regular fa-moon"></i></button>  
+      </div>  
+    </header>  
+  
+    <div class="dashboard-wrapper">  
+  
+      <div class="section-group active" id="sec-inicio">  
+          
+        <div class="hero-banner">  
+            <i class="fa-solid fa-rocket hero-decoration"></i>  
+            <div class="hero-content">  
+                <h1>Otimização Inteligente de Processos Hospitalares</h1>  
+                <p>Este portal centraliza ferramentas estratégicas desenvolvidas para <b>eliminar retrabalho manual</b>, garantir a integridade dos dados e acelerar o ciclo de receita do hospital. Menos burocracia, mais resultados.</p>  
+                  
+                <div class="hero-stats">  
+                    <div class="stat-item">  
+                        <h3>+ Eficiência</h3>  
+                        <span>Automação</span>  
+                    </div>  
+                    <div class="stat-item">  
+                        <h3>Zero</h3>  
+                        <span>Erros Manuais</span>  
+                    </div>  
+                </div>  
+            </div>  
+        </div>  
+  
+        <div class="section-title">  
+          <h2>Destaques Operacionais</h2>  
+          <span class="section-badge">Acesso Rápido</span>  
+        </div>  
+  
+        <div class="app-grid">  
+            <a onclick="switchSection('sec-faturamento', document.querySelectorAll('.nav-item')[2])" class="card accent" style="cursor: pointer;">  
+                <div>  
+                  <div class="card-icon-wrapper"><i class="fa-solid fa-wand-magic-sparkles"></i></div>  
+                  <div class="card-title">Correções Automatizadas</div>  
+                  <div class="card-desc">Acesse o módulo de Faturamento para correções em lote de XML e datas.</div>  
+                </div>  
+                <div class="card-footer">  
+                  <span>Ir para Faturamento</span> <i class="fa-solid fa-arrow-right"></i>  
+                </div>  
+            </a>  
+  
+            <a onclick="requestKpiAccess()" class="card accent" style="cursor:pointer;">  
+                <div>  
+                  <div class="card-icon-wrapper" style="color: var(--color-success);"><i class="fa-solid fa-chart-line"></i></div>  
+                  <div class="card-title">Monitoramento de KPIs</div>  
+                  <div class="card-desc">Otimizando o tempo da equipe para focar em análise estratégica ao invés de digitação.</div>  
+                </div>  
+                <div class="card-footer">  
+                  <span>Ver Performance</span> <i class="fa-solid fa-arrow-right"></i>  
+                </div>  
+            </a>  
+        </div>  
+  
+      </div>  
+  
+      <div class="section-group" id="sec-gerencial">  
+        <div class="section-title">  
+          <h2>Gerencial</h2>  
+          <span class="section-badge">Financeiro</span>  
+        </div>  
+  
+        <div class="app-grid">  
+          <a href="https://hsna-app.vercel.app/" class="card accent">  
+            <div>  
+              <div class="card-icon-wrapper"><i class="fa-solid fa-money-bill-transfer"></i></div>  
+              <div class="card-title">Movimentação de Contas</div>  
+              <div class="card-desc">Visão estratégica e conciliação de contas médicas e repasses.</div>  
+            </div>  
+            <div class="card-footer">  
+              <span>Acessar Painel</span> <i class="fa-solid fa-arrow-right"></i>  
+            </div>  
+          </a>  
+  
+          <a href="sus.html" class="card accent">  
+            <div>  
+              <div class="card-icon-wrapper"><i class="fa-solid fa-hospital-user"></i></div>  
+              <div class="card-title">Movimentação AIH</div>  
+              <div class="card-desc">Acesse o módulo para a Movimentação de Internação SUS.</div>  
+            </div>  
+            <div class="card-footer">  
+              <span>Acessar Módulo</span> <i class="fa-solid fa-arrow-right"></i>  
+            </div>  
+        </a>  
+  
+        </div>  
+      </div>  
+  
+      <div class="section-group" id="sec-faturamento">  
+        <div class="section-title">  
+          <h2>Faturamento & Auditoria</h2>  
+          <span class="section-badge">Operacional</span>  
+        </div>  
+  
+        <div class="app-grid">  
+            
+          <a href="Correção XML Ambulatorial.html" class="card">  
+            <div>  
+              <div class="card-icon-wrapper" style="color: #8B5CF6; background: #F5F3FF;"><i class="fa-solid fa-file-medical"></i></div>  
+              <div class="card-title">XML Ambulatorial</div>  
+              <div class="card-desc">Validação de arquivos de produção ambulatorial SUS/Convênios.</div>  
+            </div>  
+            <div class="card-footer">  
+              <span>Ferramenta</span> <i class="fa-solid fa-arrow-right"></i>  
+            </div>  
+          </a>  
+  
+          <a href="Correção XML.html" class="card">  
+            <div>  
+              <div class="card-icon-wrapper"><i class="fa-solid fa-file-code"></i></div>  
+              <div class="card-title">Correção XML</div>  
+              <div class="card-desc">Validador estrutural de esquemas de faturamento central.</div>  
+            </div>  
+            <div class="card-footer">  
+              <span>Validar</span> <i class="fa-solid fa-arrow-right"></i>  
+            </div>  
+          </a>  
+  
+          <a href="Correção DataHora.HTML" class="card">  
+            <div>  
+              <div class="card-icon-wrapper" style="color: #F59E0B; background: #FFFBEB;"><i class="fa-regular fa-clock"></i></div>  
+              <div class="card-title">Ajuste Data/Hora</div>  
+              <div class="card-desc">Correção em lote de inconsistências temporais nos registros.</div>  
+            </div>  
+            <div class="card-footer">  
+              <span>Executar</span> <i class="fa-solid fa-arrow-right"></i>  
+            </div>  
+          </a>  
+  
+          <a href="Buscar e Substituir.html" class="card">  
+            <div>  
+              <div class="card-icon-wrapper" style="color: #10B981; background: #ECFDF5;"><i class="fa-solid fa-magnifying-glass"></i></div>  
+              <div class="card-title">Buscar e Substituir</div>  
+              <div class="card-desc">Ferramenta auxiliar para edição rápida de strings em arquivos grandes.</div>  
+            </div>  
+            <div class="card-footer">  
+              <span>Editar</span> <i class="fa-solid fa-arrow-right"></i>  
+            </div>  
+          </a>
+
+          <a href="xml.html" class="card">  
+            <div>  
+              <div class="card-icon-wrapper" style="color: #10B981; background: #ECFDF5;">
+                <i class="fa-solid fa-calendar-check"></i>
+              </div>  
+              <div class="card-title">Vencidas Unimed</div>  
+              <div class="card-desc">Consulta e auditoria de guias Unimed com base na regra de 30/45 dias e 1º útil.</div>  
+            </div>  
+            <div class="card-footer">  
+              <span>Consultar</span> <i class="fa-solid fa-arrow-right"></i>  
+            </div>  
+          </a>  
+  
+        </div>   
+      </div>
+
+      </div>  
+ 
+    <div id="password-prompt" class="password-prompt-overlay"> 
+      <div class="password-box"> 
+        <h3>Acesso Restrito</h3> 
+        <p>Por favor, insira a senha para acessar esta seção.</p> 
+        <p id="password-error" style="display: none; color: var(--color-danger); font-size: 0.85rem; margin-bottom: 16px;">Senha incorreta. Tente novamente.</p> 
+        <input type="password" id="password-input" class="password-input" placeholder="Digite a senha"> 
+        <div class="btn-group"> 
+          <button onclick="checkPassword()" class="btn-submit">Acessar</button> 
+          <button onclick="closePasswordPrompt()" class="btn-cancel">Cancelar</button> 
+        </div> 
+      </div> 
+    </div> 
+      
+    <footer>© 2025 Hospital Nossa Senhora Auxiliadora - CADASTRO</footer>  
+  
+  </main>  
+  
+  <script>  
+    /* Lógica de Tema */  
+    const themeBtn = document.getElementById('theme-toggle');  
+    const icon = themeBtn.querySelector('i');  
+    const body = document.body;  
+    const savedTheme = localStorage.getItem('hnsa-theme');  
+      
+    function setTheme(isDark) {  
+      if (isDark) {  
+        body.classList.add('dark-mode');  
+        icon.classList.remove('fa-moon');  
+        icon.classList.add('fa-sun');  
+      } else {  
+        body.classList.remove('dark-mode');  
+        icon.classList.remove('fa-sun');  
+        icon.classList.add('fa-moon');  
+      }  
+    }  
+  
+    if (savedTheme === 'dark') setTheme(true);  
+  
+    themeBtn.addEventListener('click', () => {  
+      const isDark = !body.classList.contains('dark-mode');  
+      setTheme(isDark);  
+      localStorage.setItem('hnsa-theme', isDark ? 'dark' : 'light');  
+    });  
+  
+    /* --- LÓGICA DE NAVEGAÇÃO (SPA) --- */ 
+    let pendingSection = null; 
+    let pendingElement = null; 
+    let isKpiRequest = false;
+
+    function requestKpiAccess(element) {
+        isKpiRequest = true;
+        if(element) pendingElement = element;
+        document.getElementById('password-prompt').classList.add('visible'); 
+        const passInput = document.getElementById('password-input'); 
+        passInput.focus();
+        
+        passInput.addEventListener('keypress', function(e) { 
+          if (e.key === 'Enter') { 
+              checkPassword(); 
+          } 
+        }); 
+    }
+ 
+    function closePasswordPrompt() { 
+      document.getElementById('password-prompt').classList.remove('visible'); 
+      document.getElementById('password-input').value = ''; 
+      document.getElementById('password-error').style.display = 'none'; 
+      pendingSection = null; 
+      pendingElement = null; 
+      isKpiRequest = false;
+    } 
+ 
+    function checkPassword() { 
+      const password = document.getElementById('password-input').value; 
+      const errorElement = document.getElementById('password-error'); 
+ 
+      if (password === 'hnsa2025') { 
+        if(isKpiRequest) {
+            window.location.href = 'KPI.html';
+        } else if(pendingSection) {
+            proceedToSection(pendingSection, pendingElement); 
+        }
+        closePasswordPrompt(); 
+      } else { 
+        errorElement.style.display = 'block'; 
+        document.getElementById('password-input').value = ''; 
+        document.getElementById('password-input').focus(); 
+      } 
+    } 
+     
+    function switchSection(sectionId, element) { 
+        proceedToSection(sectionId, element); 
+    } 
+  
+    function proceedToSection(sectionId, element) { 
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active')); 
+        if (element) { 
+            element.classList.add('active'); 
+        } else { 
+            const matchingNavItem = Array.from(document.querySelectorAll('.nav-item')).find(item => item.getAttribute('onclick') && item.getAttribute('onclick').includes(sectionId)); 
+            if (matchingNavItem) matchingNavItem.classList.add('active'); 
+        } 
+ 
+        document.querySelectorAll('.section-group').forEach(sec => sec.classList.remove('active')); 
+        const target = document.getElementById(sectionId); 
+        if (target) target.classList.add('active'); 
+ 
+        const titleMap = { 
+            'sec-inicio': 'Visão Geral', 
+            'sec-gerencial': 'Gerencial', 
+            'sec-faturamento': 'Faturamento'
+        }; 
+        document.getElementById('page-title').innerText = titleMap[sectionId] || 'Dashboard'; 
+    } 
+     
+    document.addEventListener('DOMContentLoaded', () => { 
+        switchSection('sec-inicio', document.querySelectorAll('.nav-item')[0]); 
+    }); 
+  </script>  
+	  
+</body>  
+</html>
