@@ -1118,7 +1118,7 @@
                     const numGuia = node.textContent.trim(); 
                     const senha = getText("senha") || "---"; 
                     const carteira = getText("numeroCarteira") || "N/D"; 
-                    const dataStr = getText("dataFimFaturamento") || getText("dataInicioFaturamento") || getText("dataSolicitacao") || getText("dataAutorizacao"); 
+                    const dataStr = getText("dataFimFaturamento") || getText("dataFinalFaturamento") || getText("dataSolicitacao") || getText("dataAutorizacao"); 
                     const validacaoProcedimento = validarProcedimento(parent); 
                     const isEldorado = carteira.startsWith("08650004"); 
                     const is0075 = carteira.startsWith("0075"); 
