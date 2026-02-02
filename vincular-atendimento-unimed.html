@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conciliador Master | Fluido</title>
+    
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #4f46e5; 
+            --primary-hover: #4338ca;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+        }
+
+        * { box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0; padding: 40px 20px;
+            color: var(--text-main);
+            display: flex; justify-content: center;
+        }
+
+        .container { width: 100%; max-width: 900px; display: flex; flex-direction: column; gap: 25px; }
+
+        /* HEADER */
+        .header { text-align: center; margin-bottom: 10px; }
+        .header h1 { margin: 0; color: var(--primary); font-size: 2rem; letter-spacing: -0.5px; }
+        .header p { color: #6b7280; margin-top: 5px; }
+
+        /* CARD */
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        /* UPLOAD */
+        .upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        
+        .drop-zone {
+            border: 2px dashed #e5e7eb;
+            border-radius: 12px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #f9fafb;
+        }
+
+        .drop-zone:hover {
+            border-color: var(--primary);
+            background: #eef2ff;
+            transform: translateY(-2px);
+        }
+
+        .drop-zone.active {
+            border-color: var(--success);
+            background: #ecfdf5;
+        }
+
+        .icon { font-size: 32px; margin-bottom: 10px; display: block; }
+        
+        /* BUTTON */
+        .btn-process {
+            width: 100%;
+            padding: 16px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 25px;
+            transition: background 0.2s, transform 0.1s;
+            box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
+        }
+
+        .btn-process:hover { background-color: var(--primary-hover); }
+        .btn-process:active { transform: scale(0.98); }
+
+        /* LOADING OVERLAY (Tela de Carregamento) */
+        .loading-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            z-index: 9999;
+            display: none; /* Oculto por padrão */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .spinner {
+            width: 50px; height: 50px;
+            border: 5px solid #e5e7eb;
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* DASHBOARD & TABLE */
+        .dashboard { display: none; margin-top: 20px; animation: slideUp 0.5s ease; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .stat-box { padding: 15px; border-radius: 10px; text-align: center; color: white; font-weight: bold; }
+        .bg-green { background: var(--success); }
+        .bg-red { background: var(--danger); }
+
+        .error-table { width: 100%; margin-top: 20px; border-collapse: collapse; font-size: 0.9rem; }
+        .error-table th { text-align: left; padding: 10px; background: #f3f4f6; color: #6b7280; }
+        .error-table td { padding: 10px; border-bottom: 1px solid #e5e7eb; }
+        .badge { background: #fee2e2; color: #991b1b; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
+
+        @media (max-width: 600px) { .upload-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <h3 style="color: var(--primary); margin-top: 20px;">Processando dados...</h3>
+    <p style="color: #6b7280;">Isso pode levar alguns segundos.</p>
+</div>
+
+<div class="container">
+    <div class="header">
+        <h1>Conciliador Master</h1>
+        <p>Formatação Automática de Data & VLRBASE</p>
+    </div>
+
+    <div class="card">
+        <div class="upload-grid">
+            <div class="drop-zone" id="dropA" onclick="document.getElementById('inputA').click()">
+                <span class="icon">📄</span>
+                <strong>Arquivo A (Base)</strong>
+                <div id="fileInfoA" style="font-size: 0.85rem; margin-top: 5px; color: var(--success);"></div>
+                <input type="file" id="inputA" accept=".xlsx, .xls" hidden onchange="updateFileName('A', this)">
+            </div>
+            
+            <div class="drop-zone" id="dropB" onclick="document.getElementById('inputB').click()">
+                <span class="icon">📗</span>
+                <strong>Arquivo B (Guia)</strong>
+                <div id="fileInfoB" style="font-size: 0.85rem; margin-top: 5px; color: var(--success);"></div>
+                <input type="file" id="inputB" accept=".xlsx, .xls" hidden onchange="updateFileName('B', this)">
+            </div>
+        </div>
+
+        <button class="btn-process" onclick="iniciarProcessamento()">Processar Conciliação</button>
+    </div>
+
+    <div class="dashboard" id="resultsArea">
+        <div class="card">
+            <div style="height: 250px; position: relative;">
+                <canvas id="chartResults"></canvas>
+            </div>
+            <div class="stats">
+                <div class="stat-box bg-green">
+                    <div style="font-size: 2rem;" id="valAchados">0</div>
+                    <div>Conciliados</div>
+                </div>
+                <div class="stat-box bg-red">
+                    <div style="font-size: 2rem;" id="valFaltantes">0</div>
+                    <div>Pendentes</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="errorSection" style="display: none; margin-top: 20px;">
+            <h3 style="margin: 0 0 15px 0; color: var(--danger);">⚠️ Itens Não Localizados</h3>
+            <div style="max-height: 300px; overflow-y: auto;">
+                <table class="error-table">
+                    <thead><tr><th>Documento</th><th>Data (Formatada)</th><th>VLRBASE</th><th>Status</th></tr></thead>
+                    <tbody id="errorBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- UI Helpers ---
+    function updateFileName(type, input) {
+        if(input.files[0]) {
+            document.getElementById(`fileInfo${type}`).textContent = input.files[0].name;
+            document.getElementById(`drop${type}`).classList.add('active');
+        }
+    }
+
+    function toggleLoading(show) {
+        document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+    }
+
+    // --- Utilitários de Dados ---
+    const limpar = (v) => v ? String(v).replace(/\D/g, "").trim() : "";
+
+    function formatarDataHora(val) {
+        if (!val) return "";
+        let dateObj = null;
+
+        // Tenta parsear data Excel ou String
+        if (typeof val === 'number') {
+            const excelEpoch = new Date(1899, 11, 30);
+            dateObj = new Date(excelEpoch.getTime() + val * 86400000);
+            const userTimezoneOffset = dateObj.getTimezoneOffset() * 60000;
+            dateObj = new Date(dateObj.getTime() + userTimezoneOffset); 
+        } else {
+            dateObj = new Date(val);
+        }
+
+        if (isNaN(dateObj)) return val;
+
+        const dia = String(dateObj.getDate()).padStart(2, '0');
+        const mes = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const ano = dateObj.getFullYear();
+        const hora = String(dateObj.getHours()).padStart(2, '0');
+        const min = String(dateObj.getMinutes()).padStart(2, '0');
+
+        return `${dia}/${mes}/${ano} ${hora}:${min}`;
+    }
+
+    function extrairValor(row) {
+        // Lógica de prioridade para VLRBASE
+        let raw = row['VLRBASE'] || row['Valor'] || row['VALOR'] || 0;
+        if (typeof raw === 'number') return raw;
+        return parseFloat(String(raw).replace("R$", "").replace(/\./g, "").replace(",", ".")) || 0;
+    }
+
+    // --- Processamento ---
+    
+    // Wrapper para permitir que a UI atualize antes de travar no cálculo
+    function iniciarProcessamento() {
+        const fileA = document.getElementById('inputA').files[0];
+        const fileB = document.getElementById('inputB').files[0];
+
+        if (!fileA || !fileB) {
+            Swal.fire({ icon: 'warning', title: 'Arquivos Faltando', text: 'Selecione os arquivos A e B.' });
+            return;
+        }
+
+        toggleLoading(true);
+
+        // setTimeout dá um respiro para o navegador renderizar o loading antes de travar processando
+        setTimeout(() => {
+            executarLogica(fileA, fileB);
+        }, 100);
+    }
+
+    async function executarLogica(fileA, fileB) {
+        try {
+            const dataA = await lerExcel(fileA);
+            const dataB = await lerExcel(fileB);
+
+            // Hash Map para performance instantânea
+            const mapaB = new Map();
+            dataB.forEach(row => {
+                let chave = limpar(row['Guia'] || row['GUIA']);
+                if (chave) mapaB.set(chave, row['Atendimento'] || row['ATENDIMENTO']);
+            });
+
+            let achados = 0, faltantes = 0;
+            const erros = [];
+
+            const resultadoFinal = dataA.map((row, index) => {
+                let doc = limpar(row['DOCUM'] || row['DOCUMENTO']);
+                let valor = extrairValor(row);
+                let dataF = formatarDataHora(row['DATA'] || row['Data']);
+
+                let atend = mapaB.get(doc);
+                let status = atend ? "OK" : "PENDENTE";
+
+                if (atend) achados++;
+                else {
+                    faltantes++;
+                    erros.push({ doc, valor, data: dataF, linha: index + 2 });
+                }
+
+                return {
+                    ...row,
+                    "DATA": dataF,       // Coluna formatada
+                    "VLRBASE": valor,    // Coluna valor padronizada
+                    "ATENDIMENTO_GUIA": atend || "",
+                    "STATUS_CONCILIACAO": status
+                };
+            });
+
+            // Atualiza UI
+            renderizarDashboard(achados, faltantes, erros);
+            
+            // Download
+            gerarDownload(resultadoFinal);
+            
+            toggleLoading(false);
+            Swal.fire({ icon: 'success', title: 'Sucesso!', text: 'Conciliação finalizada e download iniciado.' });
+
+        } catch (e) {
+            console.error(e);
+            toggleLoading(false);
+            Swal.fire({ icon: 'error', title: 'Erro', text: 'Falha ao processar arquivos Excel.' });
+        }
+    }
+
+    function renderizarDashboard(achados, faltantes, erros) {
+        document.getElementById('resultsArea').style.display = 'block';
+        document.getElementById('valAchados').textContent = achados;
+        document.getElementById('valFaltantes').textContent = faltantes;
+
+        // Gráfico
+        const ctx = document.getElementById('chartResults').getContext('2d');
+        if (window.myChart) window.myChart.destroy();
+        window.myChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Sucesso', 'Pendentes'],
+                datasets: [{ data: [achados, faltantes], backgroundColor: ['#10b981', '#ef4444'], borderWidth: 0 }]
+            },
+            options: { maintainAspectRatio: false, cutout: '75%', plugins: { legend: { position: 'bottom' } } }
+        });
+
+        // Lista de Erros
+        const tbody = document.getElementById('errorBody');
+        tbody.innerHTML = "";
+        const section = document.getElementById('errorSection');
+        
+        if (faltantes > 0) {
+            section.style.display = 'block';
+            // Mostra apenas os primeiros 100 erros para não travar a tela se houver muitos
+            erros.slice(0, 100).forEach(err => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${err.doc || 'N/A'}</strong></td>
+                        <td>${err.data}</td>
+                        <td>R$ ${err.valor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                        <td><span class="badge">PENDENTE</span></td>
+                    </tr>`;
+            });
+            if (erros.length > 100) {
+                 tbody.innerHTML += `<tr><td colspan="4" style="text-align:center; color:#666;">... e mais ${erros.length - 100} itens (veja no Excel)</td></tr>`;
+            }
+        } else {
+            section.style.display = 'none';
+        }
+    }
+
+    function gerarDownload(json) {
+        const ws = XLSX.utils.json_to_sheet(json);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Resultado");
+        XLSX.writeFile(wb, `Conciliacao_${Date.now()}.xlsx`);
+    }
+
+    function lerExcel(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const wb = XLSX.read(e.target.result, { type: 'array' });
+                    resolve(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { raw: true }));
+                } catch (err) { reject(err); }
+            };
+            reader.readAsArrayBuffer(file);
+        });
+    }
+</script>
+</body>
+</html>
