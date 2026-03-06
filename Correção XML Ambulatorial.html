@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Atualizador TISS - XML & Excel</title>
+<title>Atualizador TISS - Unificado</title>
 <link rel="icon" href="https://hospitalauxiliadora.com.br/wp-content/uploads/2025/03/logo-hospital-auxiliadora.png" />
 
 <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
@@ -11,11 +11,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <style>
-  /* --- RESET E BASE --- */
   :root {
     --primary-color: #00e0ff;
-    --primary-hover: #00b3cc;
-    --bg-glass: rgba(16, 24, 39, 0.75);
+    --bg-glass: rgba(16, 24, 39, 0.8);
     --border-glass: rgba(255, 255, 255, 0.1);
     --text-main: #f3f4f6;
     --text-muted: #9ca3af;
@@ -25,167 +23,85 @@
 
   body {
     font-family: 'Inter', sans-serif;
-    background: linear-gradient(135deg, rgba(10, 15, 30, 0.9), rgba(0, 0, 0, 0.85)),
+    background: linear-gradient(135deg, rgba(10, 15, 30, 0.95), rgba(0, 0, 0, 0.9)),
                 url('https://hospitalauxiliadora.com.br/wp-content/uploads/2025/03/img-onde-estamos-1024x657.png') no-repeat center center fixed;
     background-size: cover;
     color: var(--text-main);
     min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
+    display: flex; justify-content: center; align-items: center; padding: 20px;
   }
 
-  /* --- CONTAINER PRINCIPAL (CARTÃO DE VIDRO) --- */
   .app-container {
     background: var(--bg-glass);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(15px);
     border: 1px solid var(--border-glass);
     border-radius: 24px;
-    padding: 40px;
-    width: 100%;
-    max-width: 700px;
+    padding: 35px;
+    width: 100%; max-width: 650px;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-    animation: fadeIn 0.6s ease-out;
   }
 
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-  /* --- CABEÇALHO --- */
-  header { text-align: center; margin-bottom: 30px; }
-  
-  h1 {
-    font-size: 1.8rem;
-    font-weight: 700;
-    background: linear-gradient(90deg, #fff, var(--primary-color));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 10px;
-  }
-  
-  p.subtitle { color: var(--text-muted); font-size: 0.95rem; }
-
-  /* --- ÁREA DE UPLOAD CUSTOMIZADA --- */
-  .upload-group { display: grid; gap: 20px; margin-bottom: 30px; }
+  header { text-align: center; margin-bottom: 25px; }
+  h1 { font-size: 1.6rem; background: linear-gradient(90deg, #fff, var(--primary-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
   .file-drop-area {
-    position: relative;
-    display: flex;
-    align-items: center;
-    padding: 20px;
-    border: 2px dashed var(--border-glass);
-    border-radius: 12px;
-    transition: 0.3s;
-    background: rgba(255, 255, 255, 0.03);
+    position: relative; display: flex; align-items: center; padding: 15px;
+    border: 2px dashed var(--border-glass); border-radius: 12px; margin-bottom: 15px;
+    background: rgba(255, 255, 255, 0.03); transition: 0.3s;
   }
+  .file-drop-area:hover { border-color: var(--primary-color); background: rgba(0, 224, 255, 0.05); }
+  .file-icon { font-size: 1.5rem; margin-right: 12px; color: var(--text-muted); }
+  .file-input { position: absolute; left: 0; top: 0; height: 100%; width: 100%; cursor: pointer; opacity: 0; }
+  .file-name { color: var(--primary-color); font-weight: 600; font-size: 0.9rem; }
 
-  .file-drop-area:hover, .file-drop-area.drag-active {
-    background: rgba(0, 224, 255, 0.05);
-    border-color: var(--primary-color);
+  .options-group {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 20px; border-radius: 12px; margin-bottom: 25px;
+    display: flex; flex-direction: column; gap: 12px;
   }
-
-  .file-icon { font-size: 1.8rem; color: var(--text-muted); margin-right: 15px; transition: 0.3s; }
-  .file-drop-area:hover .file-icon { color: var(--primary-color); transform: scale(1.1); }
-
-  .file-msg { font-size: 0.9rem; color: var(--text-muted); font-weight: 500; flex-grow: 1; }
-  
-  .file-input {
-    position: absolute; left: 0; top: 0; height: 100%; width: 100%;
-    cursor: pointer; opacity: 0;
+  .check-item {
+    display: flex; align-items: center; gap: 12px; cursor: pointer;
+    font-size: 0.95rem; padding: 8px; border-radius: 8px; transition: 0.2s;
   }
+  .check-item:hover { background: rgba(255, 255, 255, 0.05); }
+  .check-item input { width: 18px; height: 18px; accent-color: var(--primary-color); }
+  .check-item i { width: 20px; text-align: center; color: var(--primary-color); }
 
-  .file-name {
-    color: var(--primary-color);
-    font-weight: 600;
-    margin-left: 10px;
-    display: none; /* Escondido até selecionar */
-  }
-
-  /* --- OPÇÕES --- */
-  .options-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-    background: rgba(0,0,0,0.2);
-    padding: 10px 15px;
-    border-radius: 8px;
-  }
-
-  .checkbox-wrapper {
-    display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: var(--text-muted); cursor: pointer;
-  }
-  .checkbox-wrapper input { cursor: pointer; accent-color: var(--primary-color); }
-
-  /* --- BOTÕES --- */
-  .btn-group { display: flex; gap: 15px; margin-bottom: 30px; }
-
-  button {
-    flex: 1;
-    padding: 15px;
-    border: none;
-    border-radius: 12px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-  }
-
-  .btn-secondary {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--text-main);
-    border: 1px solid transparent;
-  }
-  .btn-secondary:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(255,255,255,0.3); }
-
-  .btn-primary {
+  .btn-main {
+    width: 100%; padding: 18px; border: none; border-radius: 12px;
     background: linear-gradient(135deg, #00c6ff, #0072ff);
-    color: white;
-    box-shadow: 0 4px 15px rgba(0, 114, 255, 0.3);
+    color: white; font-size: 1.1rem; font-weight: 700; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    transition: 0.3s; box-shadow: 0 4px 15px rgba(0, 114, 255, 0.3);
   }
-  .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 114, 255, 0.5);
-  }
+  .btn-main:hover { transform: translateY(-2px); filter: brightness(1.1); }
 
-  /* --- LOG / RESULTADOS --- */
   .log-container {
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 12px;
-    padding: 20px;
-    max-height: 300px;
-    overflow-y: auto;
-    display: none; /* Escondido inicialmente */
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 0.85rem;
-    border-left: 4px solid var(--primary-color);
+    margin-top: 20px; background: rgba(0, 0, 0, 0.4); border-radius: 12px;
+    padding: 15px; max-height: 250px; overflow-y: auto; display: none;
+    font-size: 0.85rem; border-left: 4px solid var(--primary-color);
   }
-  
-  .log-summary { font-weight: bold; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); color: #fff; }
-  .log-item { margin-bottom: 5px; color: var(--text-muted); }
-  .log-item.success { color: #4ade80; } /* Verde */
-  .log-item span { color: #fff; }
-
-  /* Scrollbar customizada */
-  .log-container::-webkit-scrollbar { width: 8px; }
-  .log-container::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
-  .log-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
-
-  /* Loader */
+  .success { color: #4ade80; }
+  .error { color: #f87171; }
   .loader {
-    display: none; margin: 10px auto; border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--primary-color);
-    border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite;
+    display: none; margin: 15px auto; border: 3px solid rgba(255,255,255,0.1);
+    border-top: 3px solid var(--primary-color); border-radius: 50%;
+    width: 30px; height: 30px; animation: spin 1s linear infinite;
   }
-  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  @keyframes spin { 100% { transform: rotate(360deg); } }
 
-  @media (max-width: 600px) {
-    .btn-group { flex-direction: column; }
-    .app-container { padding: 20px; }
+  /* ESTILO DA MARCA AZAMBUJA */
+  .footer-brand {
+    margin-top: 35px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-glass);
+    text-align: center;
+  }
+  .brand {
+    font-weight: 800; 
+    letter-spacing: 4px; 
+    color: var(--text-muted);
+    font-size: 0.8rem;
   }
 </style>
 </head>
@@ -193,245 +109,162 @@
 
 <div class="app-container">
   <header>
-    <h1>Atualizador de Guias XML</h1>
-    <p class="subtitle">Cruze dados do XML TISS com sua planilha Excel</p>
+    <h1>Validador & Atualizador TISS</h1>
+    <p style="color: var(--text-muted); font-size: 0.85rem;">AXON</p>
   </header>
 
-  <div class="upload-group">
-    
-    <div class="file-drop-area">
-      <i class="fa-solid fa-file-code file-icon"></i>
-      <span class="file-msg">Arraste o <b>XML TISS</b> aqui ou clique</span>
-      <span class="file-name" id="xmlName"></span>
-      <input class="file-input" type="file" id="xmlFile" accept=".xml" onchange="updateFileName('xmlFile', 'xmlName')">
-    </div>
-
-    <div class="file-drop-area">
-      <i class="fa-solid fa-file-excel file-icon" style="color: #10b981;"></i>
-      <span class="file-msg">Arraste o <b>Excel (.xlsx)</b> aqui ou clique</span>
-      <span class="file-name" id="excelName"></span>
-      <input class="file-input" type="file" id="excelFile" accept=".xlsx,.xls" onchange="updateFileName('excelFile', 'excelName')">
-    </div>
-
+  <div class="file-drop-area">
+    <i class="fa-solid fa-file-code file-icon"></i>
+    <span class="file-name" id="xmlName">Selecionar XML TISS</span>
+    <input type="file" id="xmlFile" class="file-input" accept=".xml" onchange="updateName('xmlFile', 'xmlName')">
   </div>
 
-  <div class="options-bar">
-    <label class="checkbox-wrapper">
-      <input type="checkbox" id="padZeros"> 
-      Preencher Prestador com zeros à esquerda?
+  <div class="file-drop-area">
+    <i class="fa-solid fa-file-excel file-icon" style="color: #10b981;"></i>
+    <span class="file-name" id="excelName">Selecionar Excel De/Para (Opcional)</span>
+    <input type="file" id="excelFile" class="file-input" accept=".xlsx,.xls" onchange="updateName('excelFile', 'excelName')">
+  </div>
+
+  <div class="options-group">
+    <label class="check-item">
+      <input type="checkbox" id="checkGatto" checked>
+      <i class="fa-solid fa-user-doctor"></i>
+      Substituir Código Prestador (11000101 → 16983 gatto)
     </label>
-    <input type="hidden" id="digitCount" value="7">
+    
+    <label class="check-item">
+      <input type="checkbox" id="checkExcel" checked>
+      <i class="fa-solid fa-table"></i>
+      Trocar Guias de Prestador conforme Excel
+    </label>
+
+    <label class="check-item">
+      <input type="checkbox" id="checkZeros">
+      <i class="fa-solid fa-0"></i>
+      Completar zeros à esquerda (7 dígitos)
+    </label>
   </div>
 
-  <div class="btn-group">
-    <button id="downloadExcelBtn" class="btn-secondary">
-      <i class="fa-solid fa-download"></i> Baixar Modelo
-    </button>
-    <button id="processBtn" class="btn-primary">
-      <i class="fa-solid fa-bolt"></i> Processar Arquivos
-    </button>
-  </div>
+  <button id="processBtn" class="btn-main">
+    <i class="fa-solid fa-wand-magic-sparkles"></i> PROCESSAR E VALIDAR
+  </button>
 
   <div class="loader" id="loader"></div>
+  <div class="log-container" id="log"></div>
 
-  <div class="log-container" id="log" aria-live="polite"></div>
+  <footer class="footer-brand">
+    <div class="brand">AZAMBUJA</div>
+    <div style="font-size: 0.65rem; color: rgba(156, 163, 175, 0.5); margin-top: 5px; letter-spacing: 1px;">© 2026 | TODOS OS DIREITOS RESERVADOS</div>
+  </footer>
 </div>
 
 <script>
-  // Atualiza o texto quando o arquivo é selecionado
-  function updateFileName(inputId, spanId) {
-    const input = document.getElementById(inputId);
-    const span = document.getElementById(spanId);
-    if (input.files && input.files.length > 0) {
-      span.textContent = input.files[0].name;
-      span.style.display = "inline";
-      input.parentElement.querySelector('.file-msg').style.display = "none";
-      input.parentElement.style.borderColor = "#00e0ff";
-      input.parentElement.style.background = "rgba(0, 224, 255, 0.05)";
-    }
+  function updateName(inputId, spanId) {
+    const file = document.getElementById(inputId).files[0];
+    if (file) document.getElementById(spanId).textContent = file.name;
   }
 
-  function getTextContentSafe(el) {
-    return el?.textContent?.trim() || '';
-  }
-
-  async function lerExcelComoMapa(file) {
-    return new Promise((resolve, reject) => {
+  async function lerExcel(file) {
+    return new Promise((resolve) => {
       const reader = new FileReader();
       reader.onload = (e) => {
-        try {
-          const data = new Uint8Array(e.target.result);
-          const workbook = XLSX.read(data, { type: 'array' });
-          const sheet = workbook.Sheets[workbook.SheetNames[0]];
-          const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-
-          const mapa = new Map();
-          // Começa do 1 para pular o cabeçalho
-          for (let i = 1; i < rows.length; i++) {
-            const linha = rows[i];
-            if (linha.length >= 2) {
-              const guiaOperadora = linha[0]?.toString().trim();
-              const guiaPrestador = linha[1]?.toString().trim();
-              if (guiaOperadora && guiaPrestador) {
-                // Remove zeros à esquerda da chave para garantir o match
-                mapa.set(guiaOperadora.replace(/^0+/, ''), guiaPrestador);
-              }
-            }
+        const workbook = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+        const mapa = new Map();
+        rows.forEach((row, i) => {
+          if (i > 0 && row[0] && row[1]) {
+            const key = row[0].toString().trim().replace(/^0+/, '') || '0';
+            mapa.set(key, row[1].toString().trim());
           }
-          resolve(mapa);
-        } catch (err) {
-          reject(err);
-        }
+        });
+        resolve(mapa);
       };
-      reader.onerror = reject;
       reader.readAsArrayBuffer(file);
     });
   }
 
-  // --- DOWNLOAD MODELO ---
-  document.getElementById('downloadExcelBtn').addEventListener('click', () => {
-    const ws_data = [
-      ["Guia Operadora (Chave)", "Guia Prestador (Novo Valor)"],
-      ["7654321", "1234567"],
-      ["00098765", "999888"]
-    ];
-    const ws = XLSX.utils.aoa_to_sheet(ws_data);
-    // Ajusta largura das colunas
-    ws['!cols'] = [{ wch: 25 }, { wch: 25 }];
-    
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Modelo de Importação");
-    XLSX.writeFile(wb, "modelo_guias.xlsx");
-  });
-
-  // --- PROCESSAMENTO ---
   document.getElementById('processBtn').addEventListener('click', async () => {
-    const xmlInput = document.getElementById('xmlFile');
-    const excelInput = document.getElementById('excelFile');
+    const xmlFile = document.getElementById('xmlFile').files[0];
+    const excelFile = document.getElementById('excelFile').files[0];
+    const doGatto = document.getElementById('checkGatto').checked;
+    const doExcel = document.getElementById('checkExcel').checked;
+    const doZeros = document.getElementById('checkZeros').checked;
     const logEl = document.getElementById('log');
     const loader = document.getElementById('loader');
-    
-    // Opções
-    const padZeros = document.getElementById('padZeros').checked;
-    const digitCount = parseInt(document.getElementById('digitCount').value, 10) || 7;
 
-    // Validação
-    if (!xmlInput.files[0]) {
-      alert("⚠️ Por favor, selecione o arquivo XML primeiro.");
-      return;
-    }
-    
-    // UI de Carregamento
-    logEl.style.display = 'none';
+    if (!xmlFile) return alert("Selecione o arquivo XML!");
+    if (doExcel && !excelFile) return alert("Para usar a opção de Excel, anexe o arquivo .xlsx!");
+
     loader.style.display = 'block';
-    
+    logEl.style.display = 'none';
+    logEl.innerHTML = '';
+
     try {
-      // Ler XML
-      const xmlText = await xmlInput.files[0].text();
+      const xmlText = await xmlFile.text();
       const parser = new DOMParser();
       const xmlDoc = parser.parseFromString(xmlText, "application/xml");
+      let logs = [];
+      let alteracoes = 0;
 
-      // Check erro de parse
-      if (xmlDoc.querySelector('parsererror')) {
-        throw new Error("O arquivo XML parece estar corrompido ou inválido.");
+      // 1. LÓGICA DR GATTO (11000101 -> 16983)
+      if (doGatto) {
+        const codNodes = Array.from(xmlDoc.getElementsByTagName('*')).filter(el => el.localName === 'codigoPrestadorNaOperadora');
+        codNodes.forEach(node => {
+          if (node.textContent.trim() === '11000101') {
+            node.textContent = '16983';
+            alteracoes++;
+            logs.push(`<div class="success">✔ Código Prestador: 11000101 alterado para '16983'</div>`);
+          }
+        });
       }
 
-      // Ler Excel (se houver)
-      let mapaExcel = new Map();
-      if (excelInput.files[0]) {
-        mapaExcel = await lerExcelComoMapa(excelInput.files[0]);
+      // 2. LÓGICA EXCEL (GUIAS)
+      if (doExcel) {
+        const mapaExcel = await lerExcel(excelFile);
+        const opNodes = Array.from(xmlDoc.getElementsByTagName('*')).filter(el => el.localName === 'numeroGuiaOperadora');
+
+        opNodes.forEach(opNode => {
+          const valorOp = opNode.textContent.trim();
+          const key = valorOp.replace(/^0+/, '') || '0';
+
+          if (mapaExcel.has(key)) {
+            let novoValor = mapaExcel.get(key);
+            if (doZeros) novoValor = novoValor.padStart(7, '0');
+
+            // Busca tag prestador subindo para o pai da guia (Busca Profunda)
+            const guiaBloco = opNode.parentNode;
+            const prestNodes = Array.from(guiaBloco.getElementsByTagName('*')).filter(el => el.localName === 'numeroGuiaPrestador');
+
+            if (prestNodes.length > 0) {
+              prestNodes[0].textContent = novoValor;
+              alteracoes++;
+              logs.push(`<div class="success">✔ Guia Op ${valorOp} → Prestador: ${novoValor}</div>`);
+            }
+          }
+        });
+      }
+
+      // Finalização
+      if (alteracoes > 0) {
+        const xmlString = new XMLSerializer().serializeToString(xmlDoc);
+        const blob = new Blob([xmlString], { type: "application/xml" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "TISS_PROCESSADO_AZAMBUJA.xml";
+        link.click();
+        logEl.innerHTML = `<strong>Sucesso! ${alteracoes} alterações feitas.</strong><br>` + logs.join('');
       } else {
-        // Se não tiver excel, o script roda mas não substitui nada (apenas padZeros se ativo)
-        // O ideal é avisar, mas vamos seguir a lógica original
+        logEl.innerHTML = `<div class="error">Nenhuma alteração foi necessária com base nas opções marcadas.</div>`;
       }
-
-      // Encontrar tags que parecem ser guias
-      // Procuramos elementos que contenham numeroGuiaOperadora
-      const guiasOperadoraNodes = Array.from(xmlDoc.getElementsByTagName('*'))
-        .filter(el => el.localName === 'numeroGuiaOperadora');
-
-      let logHTML = '';
-      let totalGuias = 0;
-      let atualizadas = 0;
-
-      guiasOperadoraNodes.forEach((operadoraNode, index) => {
-        const parent = operadoraNode.parentNode; // A tag "guia" (ex: dadosGuia, guiaResumo, etc)
-        
-        // Tenta achar o irmão "numeroGuiaPrestador"
-        let prestadorNode = Array.from(parent.children).find(e => e.localName === 'numeroGuiaPrestador');
-
-        // Se não existir a tag prestador no XML, podemos criar? 
-        // A lógica original apenas atualizava se existisse. Vamos manter assim por segurança.
-        
-        const valorOriginalOperadora = getTextContentSafe(operadoraNode);
-        let novoValorPrestador = '';
-        let novoValorOperadora = valorOriginalOperadora;
-
-        // Busca no Mapa (chave sem zeros a esquerda)
-        const key = valorOriginalOperadora.replace(/^0+/, '');
-        
-        let encontrouNoExcel = false;
-        if (mapaExcel.has(key)) {
-          novoValorPrestador = mapaExcel.get(key);
-          encontrouNoExcel = true;
-        }
-
-        // Aplica Zero Pad se solicitado
-        if (padZeros) {
-            if (novoValorPrestador) novoValorPrestador = novoValorPrestador.padStart(digitCount, '0');
-            novoValorOperadora = novoValorOperadora.padStart(digitCount, '0'); // Opcional: Pad na operadora também? O original fazia.
-        }
-
-        // Aplica Alterações no DOM XML
-        if (prestadorNode && novoValorPrestador) {
-          prestadorNode.textContent = novoValorPrestador;
-          atualizadas++;
-        }
-        // Atualiza operadora (apenas formatação de zeros, se houver)
-        operadoraNode.textContent = novoValorOperadora; 
-
-        totalGuias++;
-
-        // Gera Log Visual
-        if (encontrouNoExcel && novoValorPrestador) {
-          logHTML += `<div class="log-item success">✔ Guia #${index + 1}: Op. <span>${valorOriginalOperadora}</span> → Prest. <span>${novoValorPrestador}</span></div>`;
-        } else if (encontrouNoExcel && !prestadorNode) {
-            logHTML += `<div class="log-item" style="color:#eab308">⚠ Guia #${index + 1}: Encontrada no Excel, mas XML não tem campo 'numeroGuiaPrestador'.</div>`;
-        } 
-      });
-
-      // Gerar Download
-      const serializer = new XMLSerializer();
-      const xmlString = serializer.serializeToString(xmlDoc);
-      const blob = new Blob([xmlString], { type: "application/xml;charset=utf-8" });
-      const url = URL.createObjectURL(blob);
-      
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "guias_atualizadas_" + new Date().getTime() + ".xml";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-
-      // Exibir Resultado
-      const resumoHTML = `<div class="log-summary">
-        PROCESSAMENTO CONCLUÍDO<br>
-        Total de Guias encontradas: ${totalGuias}<br>
-        Guias Atualizadas com Sucesso: ${atualizadas}
-      </div>`;
-      
-      logEl.innerHTML = resumoHTML + (logHTML || '<div class="log-item">Nenhuma alteração necessária baseada no Excel fornecido.</div>');
       logEl.style.display = 'block';
 
-    } catch (error) {
-      alert("Erro ao processar: " + error.message);
-      console.error(error);
+    } catch (e) {
+      alert("Erro no processamento: " + e.message);
     } finally {
       loader.style.display = 'none';
     }
   });
 </script>
-
 </body>
 </html>
