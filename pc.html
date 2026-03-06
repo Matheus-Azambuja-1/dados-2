@@ -1,270 +1,454 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Atualizador TISS - Unificado</title>
-<link rel="icon" href="https://hospitalauxiliadora.com.br/wp-content/uploads/2025/03/logo-hospital-auxiliadora.png" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Portal | Grupo Azambuja</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-dark: #0f172a;      
+            --primary-light: #f8fafc;     
+            --accent-brand: #0ea5e9;      
+            --accent-hover: #0284c7;      
+            --text-main: #334155;         
+            --text-muted: #64748b;        
+            --border-light: #e2e8f0;      
+            --price-bg: #ecfdf5;          
+            --price-text: #059669;        
+            --bg-page: #f1f5f9;           
+            --card-bg: #ffffff;
+            --code-bg: #f1f5f9;
+        }
 
-<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+        body.dark-mode {
+            --primary-dark: #f8fafc;      
+            --primary-light: #1e293b;     
+            --accent-brand: #38bdf8;      
+            --accent-hover: #7dd3fc;      
+            --text-main: #cbd5e1;         
+            --text-muted: #94a3b8;        
+            --border-light: #334155;      
+            --price-bg: rgba(5, 150, 105, 0.15); 
+            --price-text: #34d399;        
+            --bg-page: #0f172a;           
+            --card-bg: #1e293b;           
+            --code-bg: #0f172a;
+        }
 
-<style>
-  :root {
-    --primary-color: #00e0ff;
-    --bg-glass: rgba(16, 24, 39, 0.8);
-    --border-glass: rgba(255, 255, 255, 0.1);
-    --text-main: #f3f4f6;
-    --text-muted: #9ca3af;
-  }
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-page); color: var(--text-main); margin: 0; transition: background 0.3s; }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+        /* Login */
+        #login-overlay { position: fixed; inset: 0; background: var(--bg-page); z-index: 10000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(15px); }
+        .login-card { background: var(--card-bg); padding: 40px; border-radius: 24px; border: 1px solid var(--border-light); text-align: center; width: 90%; max-width: 400px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+        .login-card input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid var(--border-light); background: var(--bg-page); color: var(--text-main); text-align: center; outline: none; }
+        .login-card button { width: 100%; padding: 12px; border-radius: 8px; border: none; background: var(--accent-brand); color: white; font-weight: bold; cursor: pointer; }
 
-  body {
-    font-family: 'Inter', sans-serif;
-    background: linear-gradient(135deg, rgba(10, 15, 30, 0.95), rgba(0, 0, 0, 0.9)),
-                url('https://hospitalauxiliadora.com.br/wp-content/uploads/2025/03/img-onde-estamos-1024x657.png') no-repeat center center fixed;
-    background-size: cover;
-    color: var(--text-main);
-    min-height: 100vh;
-    display: flex; justify-content: center; align-items: center; padding: 20px;
-  }
+        /* Layout */
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        
+        /* Filtros */
+        .filter-container { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 25px; }
+        .filter-btn { padding: 10px 20px; border-radius: 99px; border: 1px solid var(--border-light); background: var(--card-bg); color: var(--text-muted); cursor: pointer; font-weight: 500; transition: 0.2s; }
+        .filter-btn.active { background: var(--accent-brand); color: white; border-color: var(--accent-brand); }
 
-  .app-container {
-    background: var(--bg-glass);
-    backdrop-filter: blur(15px);
-    border: 1px solid var(--border-glass);
-    border-radius: 24px;
-    padding: 35px;
-    width: 100%; max-width: 650px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  }
-
-  header { text-align: center; margin-bottom: 25px; }
-  h1 { font-size: 1.6rem; background: linear-gradient(90deg, #fff, var(--primary-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-  .file-drop-area {
-    position: relative; display: flex; align-items: center; padding: 15px;
-    border: 2px dashed var(--border-glass); border-radius: 12px; margin-bottom: 15px;
-    background: rgba(255, 255, 255, 0.03); transition: 0.3s;
-  }
-  .file-drop-area:hover { border-color: var(--primary-color); background: rgba(0, 224, 255, 0.05); }
-  .file-icon { font-size: 1.5rem; margin-right: 12px; color: var(--text-muted); }
-  .file-input { position: absolute; left: 0; top: 0; height: 100%; width: 100%; cursor: pointer; opacity: 0; }
-  .file-name { color: var(--primary-color); font-weight: 600; font-size: 0.9rem; }
-
-  .options-group {
-    background: rgba(0, 0, 0, 0.2);
-    padding: 20px; border-radius: 12px; margin-bottom: 25px;
-    display: flex; flex-direction: column; gap: 12px;
-  }
-  .check-item {
-    display: flex; align-items: center; gap: 12px; cursor: pointer;
-    font-size: 0.95rem; padding: 8px; border-radius: 8px; transition: 0.2s;
-  }
-  .check-item:hover { background: rgba(255, 255, 255, 0.05); }
-  .check-item input { width: 18px; height: 18px; accent-color: var(--primary-color); }
-  .check-item i { width: 20px; text-align: center; color: var(--primary-color); }
-
-  .btn-main {
-    width: 100%; padding: 18px; border: none; border-radius: 12px;
-    background: linear-gradient(135deg, #00c6ff, #0072ff);
-    color: white; font-size: 1.1rem; font-weight: 700; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-    transition: 0.3s; box-shadow: 0 4px 15px rgba(0, 114, 255, 0.3);
-  }
-  .btn-main:hover { transform: translateY(-2px); filter: brightness(1.1); }
-
-  .log-container {
-    margin-top: 20px; background: rgba(0, 0, 0, 0.4); border-radius: 12px;
-    padding: 15px; max-height: 250px; overflow-y: auto; display: none;
-    font-size: 0.85rem; border-left: 4px solid var(--primary-color);
-  }
-  .success { color: #4ade80; }
-  .error { color: #f87171; }
-  .loader {
-    display: none; margin: 15px auto; border: 3px solid rgba(255,255,255,0.1);
-    border-top: 3px solid var(--primary-color); border-radius: 50%;
-    width: 30px; height: 30px; animation: spin 1s linear infinite;
-  }
-  @keyframes spin { 100% { transform: rotate(360deg); } }
-
-  /* ESTILO DA MARCA AZAMBUJA */
-  .footer-brand {
-    margin-top: 35px;
-    padding-top: 20px;
-    border-top: 1px solid var(--border-glass);
-    text-align: center;
-  }
-  .brand {
-    font-weight: 800; 
-    letter-spacing: 4px; 
-    color: var(--text-muted);
-    font-size: 0.8rem;
-  }
-</style>
+        /* Tabela e Estilos Originais */
+        .search-box { background: var(--card-bg); border-radius: 99px; display: flex; margin-bottom: 20px; border: 1px solid var(--border-light); overflow: hidden; }
+        #busca { flex: 1; border: none; padding: 15px 25px; outline: none; background: transparent; color: var(--text-main); }
+        .table-card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-light); overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 15px; background: var(--primary-light); font-size: 0.8rem; color: var(--text-muted); }
+        td { padding: 15px; border-bottom: 1px solid var(--border-light); }
+        .sector-badge { font-size: 0.7rem; background: var(--code-bg); padding: 4px 10px; border-radius: 4px; font-weight: 700; }
+        .price-tag { background: var(--price-bg); color: var(--price-text); padding: 5px 10px; border-radius: 6px; font-weight: 700; }
+        
+        .theme-toggle { width: 45px; height: 45px; border-radius: 50%; border: 1px solid var(--border-light); background: var(--card-bg); color: var(--text-main); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .btn-logout { background: #fee2e2; color: #ef4444; border-color: #fecaca; }
+    </style>
 </head>
 <body>
 
-<div class="app-container">
-  <header>
-    <h1>Validador & Atualizador TISS</h1>
-    <p style="color: var(--text-muted); font-size: 0.85rem;">AXON</p>
-  </header>
+<div id="login-overlay">
+    <div class="login-card">
+        <i class="fa-solid fa-lock" style="font-size: 2rem; color: var(--accent-brand); margin-bottom: 15px;"></i>
+        <h2>Acesso Restrito</h2>
+        <input type="text" id="user-input" placeholder="Utilizador">
+        <input type="password" id="pass-input" placeholder="Palavra-passe">
+        <button onclick="validarAcesso()">Entrar</button>
+        <p id="error-msg" style="color: #ef4444; margin-top: 10px; display: none; font-size: 0.8rem;">Dados incorretos.</p>
+    </div>
+</div>
 
-  <div class="file-drop-area">
-    <i class="fa-solid fa-file-code file-icon"></i>
-    <span class="file-name" id="xmlName">Selecionar XML TISS</span>
-    <input type="file" id="xmlFile" class="file-input" accept=".xml" onchange="updateName('xmlFile', 'xmlName')">
-  </div>
+<div class="container">
+    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <div>
+            <h1 style="margin:0">Pacotes em Sitema</h1>
+            <p id="counter" style="color: var(--accent-brand); font-weight: 600; margin:0">0 Procedimentos</p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button onclick="fazerLogout()" class="theme-toggle btn-logout" title="Sair"><i class="fa-solid fa-power-off"></i></button>
+            <button class="theme-toggle" id="theme-btn">🌓</button>
+        </div>
+    </header>
 
-  <div class="file-drop-area">
-    <i class="fa-solid fa-file-excel file-icon" style="color: #10b981;"></i>
-    <span class="file-name" id="excelName">Selecionar Excel De/Para (Opcional)</span>
-    <input type="file" id="excelFile" class="file-input" accept=".xlsx,.xls" onchange="updateName('excelFile', 'excelName')">
-  </div>
+    <div class="search-box">
+        <input type="text" id="busca" placeholder="Pesquisar por nome ou código...">
+    </div>
 
-  <div class="options-group">
-    <label class="check-item">
-      <input type="checkbox" id="checkGatto" checked>
-      <i class="fa-solid fa-user-doctor"></i>
-      Substituir Código Prestador (11000101 → 16983 gatto)
-    </label>
-    
-    <label class="check-item">
-      <input type="checkbox" id="checkExcel" checked>
-      <i class="fa-solid fa-table"></i>
-      Trocar Guias de Prestador conforme Excel
-    </label>
+    <div class="filter-container" id="filter-group">
+        </div>
 
-    <label class="check-item">
-      <input type="checkbox" id="checkZeros">
-      <i class="fa-solid fa-0"></i>
-      Completar zeros à esquerda (7 dígitos)
-    </label>
-  </div>
+    <div class="table-card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Setor</th>
+                    <th>Procedimento</th>
+                    <th>Valor Pacote</th>
+                    <th>Valor Cartão</th>
+                </tr>
+            </thead>
+            <tbody id="tabela"></tbody>
+        </table>
+    </div>
+      <footer style="margin-top: 60px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-light); padding-top: 20px;">
+        <div class="count-info" id="counter" style="color: var(--text-muted); font-size: 0.9rem;"></div>
+        <div class="brand" style="font-weight: 800; letter-spacing: 4px; color: var(--text-muted);">AZAMBUJA</div>
+    </footer>
 
-  <button id="processBtn" class="btn-main">
-    <i class="fa-solid fa-wand-magic-sparkles"></i> PROCESSAR E VALIDAR
-  </button>
-
-  <div class="loader" id="loader"></div>
-  <div class="log-container" id="log"></div>
-
-  <footer class="footer-brand">
-    <div class="brand">AZAMBUJA</div>
-    <div style="font-size: 0.65rem; color: rgba(156, 163, 175, 0.5); margin-top: 5px; letter-spacing: 1px;">© 2026 | TODOS OS DIREITOS RESERVADOS</div>
-  </footer>
 </div>
 
 <script>
-  function updateName(inputId, spanId) {
-    const file = document.getElementById(inputId).files[0];
-    if (file) document.getElementById(spanId).textContent = file.name;
-  }
+    const USUARIOS = {
+        "admin": "azambuja",
+        "diretoria": "dir2025",
+        "faturamento": "fat600",
+        "comercial": "hnsa123"
+       
+    };
 
-  async function lerExcel(file) {
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const workbook = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
-        const sheet = workbook.Sheets[workbook.SheetNames[0]];
-        const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-        const mapa = new Map();
-        rows.forEach((row, i) => {
-          if (i > 0 && row[0] && row[1]) {
-            const key = row[0].toString().trim().replace(/^0+/, '') || '0';
-            mapa.set(key, row[1].toString().trim());
-          }
-        });
-        resolve(mapa);
-      };
-      reader.readAsArrayBuffer(file);
-    });
-  }
+    let currentFilter = "TODOS";
 
-  document.getElementById('processBtn').addEventListener('click', async () => {
-    const xmlFile = document.getElementById('xmlFile').files[0];
-    const excelFile = document.getElementById('excelFile').files[0];
-    const doGatto = document.getElementById('checkGatto').checked;
-    const doExcel = document.getElementById('checkExcel').checked;
-    const doZeros = document.getElementById('checkZeros').checked;
-    const logEl = document.getElementById('log');
-    const loader = document.getElementById('loader');
+    const DATA = [
+        { s: "AMBULATÓRIO", p: "Biopsia de Prostata - HNSA", c: "31201040-10999972", v1: 1000.00, v2: 898.08 },
+{ s: "AMBULATÓRIO", p: "Biopsia de Vulva", c: "31301029-10999992", v1: 560.00, v2: 480.00 },
+{ s: "AMBULATÓRIO", p: "Biopsia Orofaringe", c: "30205077-10999993", v1: 550.00, v2: 475.00 },
+{ s: "AMBULATÓRIO", p: "Blefaroplastia Inferior ou Superior", c: "30301106-10999994", v1: 500.00, v2: 445.00 },
+{ s: "AMBULATÓRIO", p: "Bloqueio Facetário", c: "31602126-10999939", v1: 300.00, v2: 265.42 },
+{ s: "AMBULATÓRIO", p: "Bloqueio ou Infiltração Triancil (Dra Bruna)", c: "30713137-99999996", v1: 500.00, v2: 440.11 },
+{ s: "AMBULATÓRIO", p: "Cantoplastia", c: "30301050-10999995", v1: 250.00, v2: 230.00 },
+{ s: "AMBULATÓRIO", p: "Catarata", c: "30306027-99999947", v1: 0.00, v2: 0.00 },
+{ s: "AMBULATÓRIO", p: "Pterigio", c: "30303060-91500575", v1: 0.00, v2: 0.00 },
+{ s: "AMBULATÓRIO", p: "Cisto Sebaceo", c: "98040175-10999951", v1: 370.00, v2: 306.28 },
+{ s: "AMBULATÓRIO", p: "Cistoscopia Ambulatorial", c: "40201066-10999996", v1: 940.00, v2: 804.00 },
+{ s: "AMBULATÓRIO", p: "Colocação DIU Ambulatorial", c: "31303269-09999906/31303293-09999907", v1: 270.00, v2: 234.00 },
+{ s: "AMBULATÓRIO", p: "Colocação DIU em CC", c: "", v1: 780.00, v2: 671.05 },
+{ s: "AMBULATÓRIO", p: "Correção de Cicatriz", c: "", v1: 650.00, v2: 567.39 },
+{ s: "AMBULATÓRIO", p: "Crioterapia - Pacote 5 Sessões", c: "20104073-10999998", v1: 900.00, v2: 782.52 },
+{ s: "AMBULATÓRIO", p: "Crioterapia ou Eletrocoagulação", c: "98040174-10999999", v1: 250.00, v2: 220.92 },
+{ s: "AMBULATÓRIO", p: "Dedo em Gatilho", c: "30722276-10999997", v1: 800.00, v2: 715.22 },
+{ s: "AMBULATÓRIO", p: "Drenagem Hematoma", c: "", v1: 400.00, v2: 346.31 },
+{ s: "AMBULATÓRIO", p: "Exerese de Lipoma", c: "", v1: 500.00, v2: 445.76 },
+{ s: "AMBULATÓRIO", p: "Exerese e Sutura", c: "30101450-10999950", v1: 350.00, v2: 300.30 },
+{ s: "AMBULATÓRIO", p: "Exerese Tumor de Pele", c: "30101468-99999965", v1: 400.00, v2: 328.76 },
+{ s: "AMBULATÓRIO", p: "Fisioterapia pacote com 10 sessao e 1 consulta", c: "50000365-99999995", v1: 350.00, v2: 350.00 },
+{ s: "AMBULATÓRIO", p: "Exploração de Nervo", c: "", v1: 730.00, v2: 647.95 },
+{ s: "AMBULATÓRIO", p: "Implante Capilar", c: "", v1: 490.00, v2: 471.30 },
+{ s: "AMBULATÓRIO", p: "Implante implanon", c: "", v1: 680.00, v2: 581.59 },
+{ s: "AMBULATÓRIO", p: "Infiltração Medicação", c: "", v1: 320.00, v2: 285.32 },
+{ s: "AMBULATÓRIO", p: "Microcirurgia de Varizes", c: "30907152-99999982", v1: 580.00, v2: 525.00 },
+{ s: "AMBULATÓRIO", p: "Naso / Laringo / videofaringo - HNSA", c: "40202488-99999988", v1: 50.00, v2: 45.00 },
+{ s: "AMBULATÓRIO", p: "Ninfoplastia Amb", c: "31301096-99999960", v1: 500.00, v2: 410.18 },
+{ s: "AMBULATÓRIO", p: "Otoplastia", c: "30401054-10999923", v1: 500.00, v2: 440.88 },
+{ s: "AMBULATÓRIO", p: "Pesquisa de Bandas", c: "", v1: 1100.00, v2: 1089.79 },
+{ s: "AMBULATÓRIO", p: "Biopsia de Medula Ossea + Mielograma", c: "40304485-99999980", v1: 1350.00, v2: 1130.00 },
+{ s: "AMBULATÓRIO", p: "Postectomia", c: "31206220-95150022", v1: 600.00, v2: 526.12 },
+{ s: "AMBULATÓRIO", p: "Punção Lombar", c: "", v1: 700.00, v2: 663.40 },
+{ s: "AMBULATÓRIO", p: "Punção Lombar ou Infiltração em CC", c: "31309289-99999986", v1: 800.00, v2: 700.00 },
+{ s: "AMBULATÓRIO", p: "Reconstrução Lobulo", c: "", v1: 330.00, v2: 281.61 },
+{ s: "AMBULATÓRIO", p: "Remoção Cerume - Uni ou Bil.", c: "", v1: 20.00, v2: 20.00 },
+{ s: "AMBULATÓRIO", p: "Ressecção de Tumor de Halux", c: "", v1: 550.00, v2: 479.61 },
+{ s: "AMBULATÓRIO", p: "Retirada Corpo Estranho - Nikolas", c: "", v1: 800.00, v2: 680.86 },
+{ s: "AMBULATÓRIO", p: "Retirada Duplo J.", c: "", v1: 300.00, v2: 262.69 },
+{ s: "AMBULATÓRIO", p: "Retirada Implanon", c: "", v1: 290.00, v2: 251.16 },
+{ s: "AMBULATÓRIO", p: "Rizotomia Ambulatorial", c: "", v1: 300.00, v2: 262.69 },
+{ s: "AMBULATÓRIO", p: "Tunel do Carpo", c: "", v1: 800.00, v2: 665.68 },
+{ s: "AMBULATÓRIO", p: "Vasectomia Ambulatorial", c: "", v1: 600.00, v2: 531.38 },
+{ s: "AMBULATÓRIO", p: "Yag Laser", c: "", v1: 700.00, v2: 0.00 },
+{ s: "AMBULATÓRIO", p: "PACOTE ACNE (DERMATO)", c: "31309292-99999902", v1: 90.00, v2: 80.00 },
+{ s: "AMBULATÓRIO", p: "Cauterização de Lesão - Dr Delso", c: "", v1: 50.00, v2: 46.00 },
+{ s: "AMBULATÓRIO", p: "Infiltração Dr Bruna - Sem Medicação", c: "30713145-11000006", v1: 250.00, v2: 220.00 },
+        { s: "BUCO MAXILO", p: "Exodontia com Internação", c: "82000832-11000011", v1: 2500.00, v2: 2190.00 },
+        { s: "BUCO MAXILO", p: "Implante Zigomático (com diária)", c: "", v1: 2300.00, v2: 1990.00 },
+        { s: "BUCO MAXILO", p: "Implante Zigomático (sem diária)", c: "", v1: 1500.00, v2: 1275.00 },
+        { s: "CIRURGIA GERAL", p: "Apendicectomia", c: "31003079-80000000", v1: 2500.00, v2: 2149.98 },
+{ s: "CIRURGIA GERAL", p: "Cisto Pilonidal", c: "31009042-80000001", v1: 1800.00, v2: 1552.99 },
+{ s: "CIRURGIA GERAL", p: "Cisto Tireoglosso", c: "30212074-10999976", v1: 2450.00, v2: 1936.00 },
+{ s: "CIRURGIA GERAL", p: "Colecistectomia", c: "31005497-99999952", v1: 2800.00, v2: 2400.00 },
+{ s: "CIRURGIA GERAL", p: "Cisto Tireoglosso (2 diárias)", c: "30212073-10999971", v1: 3070.00, v2: 2660.00 },
+{ s: "CIRURGIA GERAL", p: "Colecistectomia e Laparatomia", c: "", v1: 3650.00, v2: 3152.73 },
+{ s: "CIRURGIA GERAL", p: "CPRE", c: "", v1: 3350.00, v2: 2909.60 },
+{ s: "CIRURGIA GERAL", p: "Esfincterotomia", c: "31004334-10999984", v1: 1800.00, v2: 1506.82 },
+{ s: "CIRURGIA GERAL", p: "Fechamento de Colostomia", c: "", v1: 4600.00, v2: 3981.38 },
+{ s: "CIRURGIA GERAL", p: "Fistula Anal", c: "", v1: 1800.00, v2: 1544.56 },
+{ s: "CIRURGIA GERAL", p: "Gastroplastia", c: "31002390-10999101", v1: 5500.00, v2: 4797.42 },
+{ s: "CIRURGIA GERAL", p: "Gastrotomia", c: "40202283-10999979", v1: 2400.00, v2: 2075.00 },
+{ s: "CIRURGIA GERAL", p: "Hemorroidectomia", c: "31004202-99999001", v1: 1800.00, v2: 1545.79 },
+{ s: "CIRURGIA GERAL", p: "Hemorroidectomia e Herniorrafia Umbilical", c: "", v1: 3150.00, v2: 2727.15 },
+{ s: "CIRURGIA GERAL", p: "Herniorrafia Ingui. Unilateral Video", c: "31009336-99999983", v1: 3000.00, v2: 2600.40 },
+{ s: "CIRURGIA GERAL", p: "Herniorrafia Inguinal Bilateral Convencional", c: "30602359-99999990", v1: 2850.00, v2: 2462.79 },
+{ s: "CIRURGIA GERAL", p: "Hernia de Hiato - Video", c: "", v1: 3150.00, v2: 2733.81 },
+{ s: "CIRURGIA GERAL", p: "Herniorrafia Epigastrica", c: "", v1: 2900.00, v2: 2524.11 },
+{ s: "CIRURGIA GERAL", p: "Herniorrafia Incisional Convencional", c: "", v1: 2220.00, v2: 1922.97 },
+{ s: "CIRURGIA GERAL", p: "Herniorrafia Incisional e Umbilical Video", c: "", v1: 3450.00, v2: 2975.45 },
+{ s: "CIRURGIA GERAL", p: "Herniorrafia Incisional Vídeo", c: "", v1: 2850.00, v2: 2426.33 },
+{ s: "CIRURGIA GERAL", p: "Herniorrafia Ingui. Unilateral Convencional e Hidrocele", c: "", v1: 2950.00, v2: 2575.21 },
+{ s: "CIRURGIA GERAL", p: "Herniorrafia Inguinal Bilateral Convencional + Hidrocele", c: "", v1: 3250.00, v2: 2848.38 },
+{ s: "CIRURGIA GERAL", p: "Herniorrafia Inguinal Bilateral Video", c: "30602365-99999937", v1: 3350.00, v2: 2870.00 },
+{ s: "CIRURGIA GERAL", p: "Herniorrafia Inguinal Bilateral Video e Hernia Incisional", c: "", v1: 3865.00, v2: 3347.68 },
+{ s: "CIRURGIA GERAL", p: "Herniorrafia Umbilical", c: "", v1: 2850.00, v2: 2470.00 },
+{ s: "CIRURGIA GERAL", p: "Implante de Porto Cath e Laparoscopia", c: "", v1: 4200.00, v2: 3667.76 },
+{ s: "CIRURGIA GERAL", p: "Laparoscopia Diag.", c: "", v1: 2380.00, v2: 2060.85 },
+{ s: "CIRURGIA GERAL", p: "Linfadenectomia", c: "", v1: 2300.00, v2: 2026.02 },
+{ s: "CIRURGIA GERAL", p: "Ooforectomia - Oncologia", c: "", v1: 2500.00, v2: 2152.62 },
+{ s: "CIRURGIA GERAL", p: "Retirada de Balão Gast.", c: "", v1: 1650.00, v2: 1429.95 },
+{ s: "CIRURGIA GERAL", p: "Tiroidectomia", c: "", v1: 2700.00, v2: 2339.75 },
+{ s: "CIRURGIA GERAL", p: "Traqueostomia", c: "", v1: 2200.00, v2: 1897.05 },
+{ s: "CIRURGIA GERAL", p: "Colecistectomia e Hernia Umbilical", c: "31309278-10999902", v1: 3300.00, v2: 2860.00 },
+        { s: "GINECOLOGIA", p: "Cesária/Normal", c: "31309054-10999940", v1: 2200.00, v2: 1860.00 },
+{ s: "GINECOLOGIA", p: "Cesária/Normal (GEMELAR) - Acrescimo exames RN", c: "31309287-99999984", v1: 2380.00, v2: 2040.00 },
+{ s: "GINECOLOGIA", p: "Cesária + Laqueadura", c: "31309260-10999941", v1: 2350.00, v2: 2000.00 },
+{ s: "GINECOLOGIA", p: "Cesária + Laqueadura (GEMELAR) - Acrescimo exames RN", c: "31309288-99999985", v1: 2530.00, v2: 2180.00 },
+{ s: "GINECOLOGIA", p: "Histerectomia (com 2 diárias)", c: "31303102-10999942", v1: 3150.00, v2: 2750.00 },
+{ s: "GINECOLOGIA", p: "Histerectomia (com 1 diária)", c: "31002396-09999915", v1: 2650.00, v2: 2330.00 },
+{ s: "GINECOLOGIA", p: "Histerectomia + Ooforect", c: "31002397-10999943", v1: 3400.00, v2: 2933.00 },
+{ s: "GINECOLOGIA", p: "Histerectomia + Herniorrafia Umbilical", c: "", v1: 3990.00, v2: 3460.00 },
+{ s: "GINECOLOGIA", p: "Histerectomia + Perineoplastia", c: "31303102-11000038", v1: 3600.00, v2: 3140.00 },
+{ s: "GINECOLOGIA", p: "Histerectomia + Sling", c: "", v1: 3950.00, v2: 3420.25 },
+{ s: "GINECOLOGIA", p: "Histerectomia + Anexectomia", c: "31309276-10999946", v1: 3750.00, v2: 3265.00 },
+{ s: "GINECOLOGIA", p: "Ooforectomia", c: "31305016-10999947", v1: 1860.00, v2: 1611.00 },
+{ s: "GINECOLOGIA", p: "Eletrocoagulação", c: "", v1: 1800.00, v2: 1571.01 },
+{ s: "GINECOLOGIA", p: "Miomectomia", c: "31303145-11000047", v1: 2500.00, v2: 2140.00 },
+{ s: "GINECOLOGIA", p: "Exerese Lesão Mama unilateral", c: "31309294-99999003", v1: 2000.00, v2: 1700.00 },
+{ s: "GINECOLOGIA", p: "Exerese Lesão Mama Bilateral", c: "31309295-99999004", v1: 2300.00, v2: 1982.05 },
+{ s: "GINECOLOGIA", p: "Cisto no Ovário", c: "", v1: 2750.00, v2: 2385.55 },
+{ s: "GINECOLOGIA", p: "Sling", c: "31103332-11000073", v1: 1800.00, v2: 1590.00 },
+{ s: "GINECOLOGIA", p: "Perineoplastia", c: "31004300-10999954", v1: 1800.00, v2: 1575.00 },
+{ s: "GINECOLOGIA", p: "Perineo + Sling", c: "31103332-11000037", v1: 2300.00, v2: 2000.00 },
+{ s: "GINECOLOGIA", p: "Histeroscopia Video", c: "", v1: 2350.00, v2: 2033.42 },
+{ s: "GINECOLOGIA", p: "Conização", c: "", v1: 1650.00, v2: 1433.85 },
+{ s: "GINECOLOGIA", p: "Laqueadura Tubária", c: "", v1: 2735.00, v2: 2370.33 },
+{ s: "GINECOLOGIA", p: "Cisto Bartholin", c: "", v1: 2100.00, v2: 1818.14 },
+{ s: "GINECOLOGIA", p: "Curetagem", c: "", v1: 2500.00, v2: 2184.49 },
+{ s: "GINECOLOGIA", p: "Cerclagem Uterina", c: "", v1: 2000.00, v2: 1690.33 },
+{ s: "GINECOLOGIA", p: "Ninfoplastia", c: "", v1: 2300.00, v2: 2030.00 },
+{ s: "GINECOLOGIA", p: "Salpingectomia", c: "", v1: 2400.00, v2: 2080.64 },
+{ s: "GINECOLOGIA", p: "Cirurgia de Alta Frequência - CAF", c: "", v1: 1150.00, v2: 984.05 },
+{ s: "GINECOLOGIA", p: "Implante de Protese (Troca) e Redução de Mamilo", c: "30602327-11000051", v1: 4410.00, v2: 3820.00 },
+{ s: "GINECOLOGIA", p: "Histerectomia + Perineoplastia + Sling", c: "", v1: 4500.00, v2: 3900.00 },
+{ s: "GINECOLOGIA", p: "Endometrioma (Endometriose)", c: "91040207-11000067", v1: 1860.00, v2: 1610.00 },
+       { s: "HEMODINAMICA", p: "Internação pós Angioplastia em Enfermaria + UTI", c: "91040199-11000057", v1: 5950.00, v2: 5063.17 },
+{ s: "HEMODINAMICA", p: "Internação pós Angioplastia em Angioplastia Enfermaria", c: "30102025-99999925", v1: 850.00, v2: 740.00 },
+        { s: "ONCOLOGIA", p: "Colectomia Parcial Vídeo (sem UTI)", c: "", v1: 5250.00, v2: 4545.00 },
+{ s: "ONCOLOGIA", p: "Implante Porto Cath (com diária)", c: "", v1: 3225.00, v2: 2795.00 },
+{ s: "ONCOLOGIA", p: "Implante Porto Cath (sem diária)", c: "", v1: 2400.00, v2: 2075.00 },
+{ s: "ONCOLOGIA", p: "TIREOIDECTOMIA", c: "30213053-10999974", v1: 2950.00, v2: 2565.54 },
+{ s: "ONCOLOGIA", p: "OOFORECTOMIA", c: "", v1: 2650.00, v2: 2300.35 },
+{ s: "ONCOLOGIA", p: "Histerectomia ou Anexectomia (em oncologia)", c: "31309297-99999006", v1: 5700.00, v2: 4900.00 },
+{ s: "ONCOLOGIA", p: "Setorectomia e Linfadenectomia", c: "31309284-99999977", v1: 2850.00, v2: 2461.63 },
+{ s: "ONCOLOGIA", p: "Mastectomia e Linfadenectomia", c: "31309285-99999978", v1: 3570.00, v2: 3096.69 },
+{ s: "ONCOLOGIA", p: "Metastasectomia Hepatica Recons. Trânsito e Colec.", c: "31303103-99999981", v1: 13850.00, v2: 12601.45 },
+{ s: "ONCOLOGIA", p: "Setorectomia e Mamoplastia", c: "30602366-09999918", v1: 4800.00, v2: 4200.00 },
+{ s: "ONCOLOGIA", p: "Exerese Tumor Pele e Enxerto", c: "30101441-11000012", v1: 2200.00, v2: 1900.00 },
+{ s: "ONCOLOGIA", p: "Laringoscopia com Biopsia - ONCOLOGICA", c: "91040196-10999920", v1: 2695.00, v2: 2335.00 },
+{ s: "ONCOLOGIA", p: "Endometriose profunda (peritoneal) + Colectomia segmentar ONCOLOGICA", c: "91040198-11000056", v1: 5515.00, v2: 4780.00 },
+        { s: "VASCULAR", p: "Endarterectomia", c: "31309296-99999005", v1: 9800.00, v2: 9070.00 },
+{ s: "VASCULAR", p: "Fistula Arteriovenosa", c: "", v1: 1850.00, v2: 1585.97 },
+{ s: "VASCULAR", p: "Implante de Porto-a-Cath", c: "30913101-10999978", v1: 2800.00, v2: 2406.85 },
+{ s: "VASCULAR", p: "Varizes Bilateral", c: "30907136-10999903", v1: 2550.00, v2: 2230.00 },
+{ s: "VASCULAR", p: "Varizes Bilateral_Safenectomia", c: "", v1: 3850.00, v2: 3336.10 },
+{ s: "VASCULAR", p: "Desbridamento de Tecidos - Vascular", c: "", v1: 1875.00, v2: 1630.00 },
+        { s: "UROLOGIA", p: "Hidrocele Unilateral", c: "", v1: 1850.00, v2: 1606.84 },
+{ s: "UROLOGIA", p: "Hidrocele Bilateral", c: "91040197-11000055", v1: 2550.00, v2: 2215.00 },
+{ s: "UROLOGIA", p: "Hidrocele Bilateral e Hernia Umbilical", c: "", v1: 3000.00, v2: 2597.92 },
+{ s: "UROLOGIA", p: "Hidrocele Uni e Hernia Inguinal Uni", c: "", v1: 2650.00, v2: 2300.32 },
+{ s: "UROLOGIA", p: "Prostatectomia Radica Aberta", c: "31201121-99999998", v1: 4870.00, v2: 4225.00 },
+{ s: "UROLOGIA", p: "RTU de Bexiga", c: "", v1: 2150.00, v2: 1855.06 },
+{ s: "UROLOGIA", p: "RTU_Prostata", c: "31201130-10999977", v1: 3600.00, v2: 3147.70 },
+{ s: "UROLOGIA", p: "Ureterorrenolitotripsia+Duplo J", c: "31104275-99999955", v1: 2500.00, v2: 2170.00 },
+{ s: "UROLOGIA", p: "Evacuação Coagulo Intravesical", c: "", v1: 1600.00, v2: 1398.23 },
+{ s: "UROLOGIA", p: "CISTOSCOPIA", c: "40201066-10999989", v1: 1690.00, v2: 1462.98 },
+{ s: "UROLOGIA", p: "Postectomia", c: "31206220-10999983", v1: 1850.00, v2: 1599.78 },
+{ s: "UROLOGIA", p: "Nefrectomia, Histerectomia e Enterectomia", c: "31002394-10999988", v1: 6350.00, v2: 5487.70 },
+{ s: "UROLOGIA", p: "Biospia de Prostata CC", c: "31309277-10999901", v1: 1550.00, v2: 1350.00 },
+{ s: "UROLOGIA", p: "Retirada de Duplo J (com 1 diária)", c: "", v1: 1800.00, v2: 1570.00 },
+{ s: "UROLOGIA", p: "Retirada de Duplo J (sem diária)", c: "31103472-99999007", v1: 1000.00, v2: 850.00 },
+{ s: "UROLOGIA", p: "Reversão Vasectomia (Vaso vasostomia)", c: "31205038-09999916", v1: 3500.00, v2: 3030.00 },
+        { s: "PLÁSTICA", p: "Lipoaspiração e Enxerto", c: "31309298-99999008", v1: 4200.00, v2: 3650.00 },
+{ s: "PLÁSTICA", p: "Abdominoplastia, Lipoaspiração e Enxerto", c: "30102030-99999931", v1: 6000.00, v2: 5217.00 },
+{ s: "PLÁSTICA", p: "Abdominoplastia, Lipoaspiração e Enxerto com técnicas", c: "31309282-99999976", v1: 9300.00, v2: 8050.00 },
+{ s: "PLÁSTICA", p: "Abdominoplastia e Lipoaspiração", c: "30102032-99999951", v1: 5800.00, v2: 5045.00 },
+{ s: "PLÁSTICA", p: "Abdominoplastia", c: "30101973-10999982", v1: 4800.00, v2: 4156.00 },
+{ s: "PLÁSTICA", p: "Blefaroplastia", c: "31002391-10999986", v1: 2300.00, v2: 1969.04 },
+{ s: "PLÁSTICA", p: "Lipoaspiração de Braços", c: "31002392-10999985", v1: 2230.00, v2: 1932.53 },
+{ s: "PLÁSTICA", p: "Lipoaspiração com Técnicas", c: "31002394-10999988", v1: 6400.00, v2: 5570.00 },
+{ s: "PLÁSTICA", p: "Ritidoplastia", c: "30102031-99999936", v1: 8500.00, v2: 7400.00 },
+{ s: "PLÁSTICA", p: "Mastopexia com Protese e Lipoaspiração com técnicas", c: "99999974-31309280", v1: 9000.00, v2: 7821.00 },
+{ s: "PLÁSTICA", p: "Abdominoplastia, Lipoaspiração e Cruroplastia", c: "99999969-31309275", v1: 8250.00, v2: 7156.31 },
+{ s: "PLÁSTICA", p: "Mastopexia com prótese e Lipoaspiração pré Axila", c: "31309281-99999975", v1: 5850.00, v2: 5059.94 },
+{ s: "PLÁSTICA", p: "Assimetria Mamaria e Correção Cicatriz", c: "31309290-99999987", v1: 4000.00, v2: 3468.47 },
+{ s: "PLÁSTICA", p: "Mastopexia com prótese", c: "31309293-99999002", v1: 5100.00, v2: 4440.00 },
+{ s: "PLÁSTICA", p: "Retirada Protese", c: "31309299-99999009", v1: 3100.00, v2: 2800.00 },
+{ s: "PLÁSTICA", p: "Mamoplastia Redutora ou Mastopexia sem protese", c: "31309249-99999012", v1: 4700.00, v2: 4070.00 },
+{ s: "PLÁSTICA", p: "Abdominoplastia, Lipoaspiração com técnicas (Enxerto Gluteos) e Mastopexia", c: "31309247-99999011", v1: 9780.00, v2: 8480.00 },
+{ s: "PLÁSTICA", p: "Lipoaspiração com Técnicas e Morpheus", c: "98040173-99999912", v1: 8400.00, v2: 7300.00 },
+{ s: "PLÁSTICA", p: "Implante de Protese", c: "31309251-10999904", v1: 2850.00, v2: 2490.00 },
+{ s: "PLÁSTICA", p: "Lipoaspiração, Enxerto e Explante de Protese", c: "31309252-99999928", v1: 5450.00, v2: 4750.00 },
+{ s: "PLÁSTICA", p: "Implante de Protese (Troca)", c: "31309253-99999929", v1: 3200.00, v2: 2850.00 },
+{ s: "PLÁSTICA", p: "Mamoplastia Redutora sem Protese e Lipoaspiração pré Axila", c: "98040178-09999909", v1: 5500.00, v2: 4790.00 },
+{ s: "PLÁSTICA", p: "Mini Lifting Facil, Blefaroplastia (ou Suspensão de Supercilio), Laser (CO2)", c: "98040177-09999908", v1: 4000.00, v2: 3470.00 },
+{ s: "PLÁSTICA", p: "Mastopexia com Protese, Braqueoplastia e Dermolipectomia (Torax)", c: "31309254-09999910", v1: 7200.00, v2: 6260.00 },
+{ s: "PLÁSTICA", p: "Ginecomastia", c: "30602114-9999919", v1: 3400.00, v2: 2970.00 },
+{ s: "PLÁSTICA", p: "Lipoaspiração e Implante de Protese com técnicas", c: "31309300-99999905", v1: 8300.00, v2: 7215.00 },
+{ s: "PLÁSTICA", p: "Correção de Cicatriz", c: "31309301-9999920", v1: 1620.00, v2: 1400.00 },
+{ s: "PLÁSTICA", p: "Troca de Protese por Ruptura (Unilateral)", c: "91040180-11000009", v1: 2400.00, v2: 2100.00 },
+{ s: "PLÁSTICA", p: "Lipoaspiração, Implante de Prótese e Enxerto", c: "30301033-11000020", v1: 5300.00, v2: 4600.00 },
+{ s: "PLÁSTICA", p: "Abdominoplastia e Blefaroplatia (JJ)", c: "30301033-11000019", v1: 5250.00, v2: 4550.00 },
+{ s: "PLÁSTICA", p: "MiniAbdominoplastia, Lipoaspiração, Enxerto Gluteos e Mastopexia (ou Mama Redutora) com Renuvion", c: "", v1: 7900.00, v2: 6850.00 },
+{ s: "PLÁSTICA", p: "Morpheus e Nanofat", c: "31309301-11000035", v1: 4400.00, v2: 3800.00 },
+{ s: "PLÁSTICA", p: "Abdominoplastia e Mamoplastia Redutora", c: "30602351-11000036", v1: 6350.00, v2: 5480.00 },
+{ s: "PLÁSTICA", p: "Mastopexia com Protese e Lipoaspiração de Braço", c: "91040190-11000041", v1: 5850.00, v2: 5070.00 },
+{ s: "PLÁSTICA", p: "Lipoaspiração", c: "91040191-11000042", v1: 3800.00, v2: 3300.00 },
+{ s: "PLÁSTICA", p: "Mastopexia ou Mamo Redutora, Lipoaspiração e Enxerto", c: "", v1: 6700.00, v2: 5775.00 },
+{ s: "PLÁSTICA", p: "Abdominoplastia, Lipoaspiração, Enxerto e Mamoplastia Redutora", c: "91040192-11000043", v1: 7700.00, v2: 6680.00 },
+{ s: "PLÁSTICA", p: "Implante de Prótese e Otoplastia", c: "91040193-11000052", v1: 3550.00, v2: 3075.00 },
+{ s: "PLÁSTICA", p: "Implante de Prótese - José Jorge", c: "", v1: 3500.00, v2: 3045.00 },
+{ s: "PLÁSTICA", p: "Blefaroplastia Inferior e Superior - Sem Diária", c: "", v1: 1450.00, v2: 1250.00 },
+{ s: "PLÁSTICA", p: "Rinoplastia", c: "", v1: 3250.00, v2: 2820.00 },
+{ s: "PLÁSTICA", p: "Mastopexia com Protese e Braqueoplastia", c: "91040205-11000065", v1: 9600.00, v2: 8300.00 },
+{ s: "PLÁSTICA", p: "Lipoaspiração (com Renuvion), Enxerto e Lifting Facial", c: "91040206-11000066", v1: 8400.00, v2: 7280.00 },
+{ s: "PLÁSTICA", p: "Mamoplastia Redutora, lipoaspiração e Renuvion", c: "91040211-11000069", v1: 7385.00, v2: 6400.00 },
+{ s: "PLÁSTICA", p: "Lifting Facial", c: "91040212-11000070", v1: 4090.00, v2: 3545.00 },
+{ s: "PLÁSTICA", p: "Mastopexia com Protese JJ", c: "91040214-11000072", v1: 6275.00, v2: 5440.00 },
+{ s: "PLÁSTICA", p: "Abdominoplastia, Lipoaspiração, Enxerto e Correção de Mama Acessoria (Pre Axila)", c: "91040213-11000071", v1: 7260.00, v2: 6290.00 },
+{ s: "PLÁSTICA", p: "Abdominoplastia, Lipoaspiração e Implante de Prótese", c: "91040215-11000075", v1: 6700.00, v2: 5800.00 },
+        { s: "ORTOPEDIA", p: "Tunel do Carpo", c: "30737079-10999970", v1: 1800.00, v2: 1558.02 },
+{ s: "ORTOPEDIA", p: "Liberação Gatilho Dedo", c: "30722276-10999975", v1: 1000.00, v2: 888.13 },
+{ s: "ORTOPEDIA", p: "Necrose Femur", c: "31309286-99999979", v1: 3750.00, v2: 3248.92 },
+{ s: "ORTOPEDIA", p: "Cisto Sinovial (Sem diária)", c: "30731046-11000008", v1: 1450.00, v2: 1250.00 },
+{ s: "ORTOPEDIA", p: "Sindactilia", c: "30722276-11000007", v1: 2500.00, v2: 2150.00 },
+{ s: "ORTOPEDIA", p: "Retirada de Osteo Síntese", c: "", v1: 2180.00, v2: 1890.00 },
+{ s: "ORTOPEDIA", p: "Neuroma", c: "31403310-11000031", v1: 2100.00, v2: 1800.00 },
+{ s: "ORTOPEDIA", p: "Artroscopia Joelho e Ligamento", c: "91040216-11000076", v1: 3900.00, v2: 3390.00 },
+{ s: "ORTOPEDIA", p: "Luxação Mão", c: "30722284-11000064", v1: 1870.00, v2: 1626.00 },
+        { s: "MEDICAÇÃO", p: "Aplicação de 1 Medicação", c: "60033746", v1: 124.38, v2: 164.05 },
+        { s: "OTORRINO", p: "Adeno+Amigdale", c: "30205034-10999905", v1: 2650.00, v2: 2295.00 },
+{ s: "OTORRINO", p: "Adeno+Amigdale+Corneto", c: "", v1: 2750.00, v2: 2364.25 },
+{ s: "OTORRINO", p: "Adeno+Amigdale+Freno", c: "", v1: 2750.00, v2: 2400.00 },
+{ s: "OTORRINO", p: "Adeno+Amigdale+Timpano", c: "31309291-10999911", v1: 3300.00, v2: 2870.00 },
+{ s: "OTORRINO", p: "Adeno+Freno", c: "", v1: 2100.00, v2: 1823.34 },
+{ s: "OTORRINO", p: "Adeno+Freno+Corneto", c: "", v1: 2550.00, v2: 2213.68 },
+{ s: "OTORRINO", p: "Adeno+Timpano", c: "", v1: 2650.00, v2: 2315.00 },
+{ s: "OTORRINO", p: "Adenoidectomia", c: "", v1: 2000.00, v2: 1750.00 },
+{ s: "OTORRINO", p: "Amigdalectomia", c: "30205050-10999913", v1: 2250.00, v2: 1965.00 },
+{ s: "OTORRINO", p: "Cauterização", c: "", v1: 2000.00, v2: 1769.44 },
+{ s: "OTORRINO", p: "Cirurgia Endoscopica Nasal", c: "", v1: 2400.00, v2: 2088.67 },
+{ s: "OTORRINO", p: "Drenagem de Abscesso (1 diária)", c: "", v1: 2450.00, v2: 2110.72 },
+{ s: "OTORRINO", p: "Etmoidectomia", c: "", v1: 3000.00, v2: 2625.22 },
+{ s: "OTORRINO", p: "Fratura Nasal", c: "", v1: 2350.00, v2: 2062.87 },
+{ s: "OTORRINO", p: "Frenotomia", c: "", v1: 500.00, v2: 432.30 },
+{ s: "OTORRINO", p: "Laringe (Retirada de polipo de cordas vocais)", c: "", v1: 2250.00, v2: 1950.29 },
+{ s: "OTORRINO", p: "Laringoscopia com Biopsia", c: "", v1: 1900.00, v2: 1673.63 },
+{ s: "OTORRINO", p: "Lesão de Septo ou Tumor Intranasal", c: "", v1: 2400.00, v2: 2092.50 },
+{ s: "OTORRINO", p: "Mastoidectomia", c: "", v1: 3950.00, v2: 3426.12 },
+{ s: "OTORRINO", p: "Otoplastia CC (sem diária)", c: "", v1: 1100.00, v2: 959.59 },
+{ s: "OTORRINO", p: "Parasentese + Miringotomia", c: "", v1: 750.00, v2: 639.46 },
+{ s: "OTORRINO", p: "Ressecção de Uvula", c: "", v1: 2300.00, v2: 2009.07 },
+{ s: "OTORRINO", p: "Retirada de Corpo Estranho CC", c: "", v1: 500.00, v2: 465.48 },
+{ s: "OTORRINO", p: "Rino + Septo + Turbo", c: "31002398-9999922", v1: 4450.00, v2: 3860.00 },
+{ s: "OTORRINO", p: "Rinoplastia (Já inclui Septo e Corneto)", c: "30501342-10999928", v1: 4000.00, v2: 3560.00 },
+{ s: "OTORRINO", p: "Septo", c: "", v1: 2000.00, v2: 1748.50 },
+{ s: "OTORRINO", p: "Septo + Turb", c: "30501369-11000039", v1: 2760.00, v2: 2395.00 },
+{ s: "OTORRINO", p: "Septo + Turbino+Amigdala", c: "", v1: 3300.00, v2: 2909.85 },
+{ s: "OTORRINO", p: "Septo + Turbino+Amigdala+Sinusectomia+Timpano", c: "", v1: 5000.00, v2: 4316.62 },
+{ s: "OTORRINO", p: "Septo + Turbino+Sinu", c: "", v1: 3450.00, v2: 2983.09 },
+{ s: "OTORRINO", p: "Septo + Turbino+Timpano", c: "", v1: 3350.00, v2: 2899.57 },
+{ s: "OTORRINO", p: "Septoplastia - Turbinoplastia e Adenoidectomia", c: "", v1: 3300.00, v2: 2861.12 },
+{ s: "OTORRINO", p: "Sinusectomia", c: "", v1: 2200.00, v2: 1906.79 },
+{ s: "OTORRINO", p: "Timpanoplastia", c: "", v1: 2750.00, v2: 2383.13 },
+{ s: "OTORRINO", p: "Timpanotomia", c: "", v1: 2400.00, v2: 2090.45 },
+{ s: "OTORRINO", p: "Rino + Septo + Turbo + Sinusectomia", c: "-9999922", v1: 4450.00, v2: 3859.68 },
+{ s: "OTORRINO", p: "Sinusectomia, Etmoidectomia e Septoplastia", c: "", v1: 3500.00, v2: 3065.00 },
+{ s: "OTORRINO", p: "Amidgalectomia + Septoplastia", c: "11000058", v1: 2650.00, v2: 2293.97 },
+{ s: "PEDIATRIA", p: "Herniorrafia Inguinal Bilateral Vídeo - Pediátrica", c: "31009360-11000021", v1: 2900.00, v2: 2490.00 },
+{ s: "PEDIATRIA", p: "Postectomia - Pediatria", c: "91040195-11000054", v1: 2250.00, v2: 1960.00 },
+    ];
 
-    if (!xmlFile) return alert("Selecione o arquivo XML!");
-    if (doExcel && !excelFile) return alert("Para usar a opção de Excel, anexe o arquivo .xlsx!");
 
-    loader.style.display = 'block';
-    logEl.style.display = 'none';
-    logEl.innerHTML = '';
-
-    try {
-      const xmlText = await xmlFile.text();
-      const parser = new DOMParser();
-      const xmlDoc = parser.parseFromString(xmlText, "application/xml");
-      let logs = [];
-      let alteracoes = 0;
-
-      // 1. LÓGICA DR GATTO (11000101 -> 16983)
-      if (doGatto) {
-        const codNodes = Array.from(xmlDoc.getElementsByTagName('*')).filter(el => el.localName === 'codigoPrestadorNaOperadora');
-        codNodes.forEach(node => {
-          if (node.textContent.trim() === '11000101') {
-            node.textContent = '16983';
-            alteracoes++;
-            logs.push(`<div class="success">✔ Código Prestador: 11000101 alterado para '16983'</div>`);
-          }
-        });
-      }
-
-      // 2. LÓGICA EXCEL (GUIAS)
-      if (doExcel) {
-        const mapaExcel = await lerExcel(excelFile);
-        const opNodes = Array.from(xmlDoc.getElementsByTagName('*')).filter(el => el.localName === 'numeroGuiaOperadora');
-
-        opNodes.forEach(opNode => {
-          const valorOp = opNode.textContent.trim();
-          const key = valorOp.replace(/^0+/, '') || '0';
-
-          if (mapaExcel.has(key)) {
-            let novoValor = mapaExcel.get(key);
-            if (doZeros) novoValor = novoValor.padStart(7, '0');
-
-            // Busca tag prestador subindo para o pai da guia (Busca Profunda)
-            const guiaBloco = opNode.parentNode;
-            const prestNodes = Array.from(guiaBloco.getElementsByTagName('*')).filter(el => el.localName === 'numeroGuiaPrestador');
-
-            if (prestNodes.length > 0) {
-              prestNodes[0].textContent = novoValor;
-              alteracoes++;
-              logs.push(`<div class="success">✔ Guia Op ${valorOp} → Prestador: ${novoValor}</div>`);
-            }
-          }
-        });
-      }
-
-      // Finalização
-      if (alteracoes > 0) {
-        const xmlString = new XMLSerializer().serializeToString(xmlDoc);
-        const blob = new Blob([xmlString], { type: "application/xml" });
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = "TISS_PROCESSADO_AZAMBUJA.xml";
-        link.click();
-        logEl.innerHTML = `<strong>Sucesso! ${alteracoes} alterações feitas.</strong><br>` + logs.join('');
-      } else {
-        logEl.innerHTML = `<div class="error">Nenhuma alteração foi necessária com base nas opções marcadas.</div>`;
-      }
-      logEl.style.display = 'block';
-
-    } catch (e) {
-      alert("Erro no processamento: " + e.message);
-    } finally {
-      loader.style.display = 'none';
+    function validarAcesso() {
+        const u = document.getElementById('user-input').value;
+        const p = document.getElementById('pass-input').value;
+        if (USUARIOS[u] && USUARIOS[u] === p) {
+            document.getElementById('login-overlay').style.display = 'none';
+        } else {
+            document.getElementById('error-msg').style.display = 'block';
+        }
     }
-  });
+
+    function fazerLogout() { window.location.reload(); }
+
+    function initFilters() {
+        const sectors = ["TODOS", ...new Set(DATA.map(d => d.s))];
+        const container = document.getElementById('filter-group');
+        container.innerHTML = sectors.map(s => `
+            <button class="filter-btn ${s === 'TODOS' ? 'active' : ''}" onclick="filterBy('${s}', this)">${s}</button>
+        `).join('');
+    }
+
+    function filterBy(sector, btn) {
+        currentFilter = sector;
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        render();
+    }
+
+    function render() {
+        const search = document.getElementById('busca').value.toLowerCase();
+        const tbody = document.getElementById('tabela');
+        
+        const filtered = DATA.filter(d => {
+            const matchesSearch = d.p.toLowerCase().includes(search) || d.c.toLowerCase().includes(search);
+            const matchesSector = currentFilter === "TODOS" || d.s === currentFilter;
+            return matchesSearch && matchesSector;
+        });
+
+        document.getElementById('counter').innerText = `${filtered.length} Procedimentos Localizados`;
+
+        tbody.innerHTML = filtered.map(d => `
+            <tr>
+                <td><span class="sector-badge">${d.s}</span></td>
+                <td>
+                    <div style="font-weight:600">${d.p}</div>
+                    <div style="font-size:0.7rem; color:var(--text-muted)">${d.c || 'AGUARDANDO VALIDAÇÃO'}</div>
+                </td>
+                <td style="font-weight:700">R$ ${d.v1.toFixed(2)}</td>
+                <td><span class="price-tag">R$ ${d.v2.toFixed(2)}</span></td>
+            </tr>
+        `).join('');
+    }
+
+    // Eventos
+    document.getElementById('busca').addEventListener('input', render);
+    document.getElementById('theme-btn').addEventListener('click', () => document.body.classList.toggle('dark-mode'));
+    document.addEventListener('keypress', (e) => { if(e.key === 'Enter') validarAcesso(); });
+
+    window.onload = () => {
+        initFilters();
+        render();
+    };
 </script>
 </body>
 </html>
