@@ -67,14 +67,28 @@
   .check-item input { width: 18px; height: 18px; accent-color: var(--primary-color); }
   .check-item i { width: 20px; text-align: center; color: var(--primary-color); }
 
+  .actions-row {
+    display: flex; gap: 10px; margin-bottom: 15px;
+  }
+
   .btn-main {
-    width: 100%; padding: 18px; border: none; border-radius: 12px;
+    flex: 2; padding: 18px; border: none; border-radius: 12px;
     background: linear-gradient(135deg, #00c6ff, #0072ff);
     color: white; font-size: 1.1rem; font-weight: 700; cursor: pointer;
     display: flex; align-items: center; justify-content: center; gap: 10px;
     transition: 0.3s; box-shadow: 0 4px 15px rgba(0, 114, 255, 0.3);
   }
+
+  .btn-download {
+    flex: 1; padding: 18px; border: 1px solid var(--border-glass); border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-main); font-size: 0.9rem; font-weight: 600; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: 0.3s;
+  }
+
   .btn-main:hover { transform: translateY(-2px); filter: brightness(1.1); }
+  .btn-download:hover { background: rgba(255, 255, 255, 0.15); border-color: var(--primary-color); }
 
   .log-container {
     margin-top: 20px; background: rgba(0, 0, 0, 0.4); border-radius: 12px;
@@ -83,6 +97,7 @@
   }
   .success { color: #4ade80; }
   .error { color: #f87171; }
+  
   .loader {
     display: none; margin: 15px auto; border: 3px solid rgba(255,255,255,0.1);
     border-top: 3px solid var(--primary-color); border-radius: 50%;
@@ -90,18 +105,13 @@
   }
   @keyframes spin { 100% { transform: rotate(360deg); } }
 
-  /* ESTILO DA MARCA AZAMBUJA */
   .footer-brand {
-    margin-top: 35px;
-    padding-top: 20px;
-    border-top: 1px solid var(--border-glass);
-    text-align: center;
+    margin-top: 35px; padding-top: 20px;
+    border-top: 1px solid var(--border-glass); text-align: center;
   }
   .brand {
-    font-weight: 800; 
-    letter-spacing: 4px; 
-    color: var(--text-muted);
-    font-size: 0.8rem;
+    font-weight: 800; letter-spacing: 4px; 
+    color: var(--text-muted); font-size: 0.8rem;
   }
 </style>
 </head>
@@ -145,9 +155,14 @@
     </label>
   </div>
 
-  <button id="processBtn" class="btn-main">
-    <i class="fa-solid fa-wand-magic-sparkles"></i> PROCESSAR E VALIDAR
-  </button>
+  <div class="actions-row">
+    <button id="downloadModel" class="btn-download">
+      <i class="fa-solid fa-file-arrow-down"></i> Modelo Excel
+    </button>
+    <button id="processBtn" class="btn-main">
+      <i class="fa-solid fa-wand-magic-sparkles"></i> PROCESSAR
+    </button>
+  </div>
 
   <div class="loader" id="loader"></div>
   <div class="log-container" id="log"></div>
@@ -159,10 +174,30 @@
 </div>
 
 <script>
+  let originalXmlName = "TISS_PROCESSADO"; // Nome padrão caso falhe
+
   function updateName(inputId, spanId) {
     const file = document.getElementById(inputId).files[0];
-    if (file) document.getElementById(spanId).textContent = file.name;
+    if (file) {
+      document.getElementById(spanId).textContent = file.name;
+      if(inputId === 'xmlFile') {
+        // Remove a extensão .xml para guardar apenas o nome
+        originalXmlName = file.name.replace(/\.[^/.]+$/, "");
+      }
+    }
   }
+
+  document.getElementById('downloadModel').addEventListener('click', () => {
+    const data = [
+      ["Guia Operadora", "Guia Prestador"],
+      ["3498917", "matheus"],
+      ["3498931", "matheus"]
+    ];
+    const ws = XLSX.utils.aoa_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Modelo_Importação");
+    XLSX.writeFile(wb, "modelo_guias_axon.xlsx");
+  });
 
   async function lerExcel(file) {
     return new Promise((resolve) => {
@@ -207,19 +242,17 @@
       let logs = [];
       let alteracoes = 0;
 
-      // 1. LÓGICA DR GATTO (11000101 -> 16983)
       if (doGatto) {
         const codNodes = Array.from(xmlDoc.getElementsByTagName('*')).filter(el => el.localName === 'codigoPrestadorNaOperadora');
         codNodes.forEach(node => {
           if (node.textContent.trim() === '11000101') {
             node.textContent = '16983';
             alteracoes++;
-            logs.push(`<div class="success">✔ Código Prestador: 11000101 alterado para '16983'</div>`);
+            logs.push(`<div class="success">✔ Código Prestador: 11000101 → 16983</div>`);
           }
         });
       }
 
-      // 2. LÓGICA EXCEL (GUIAS)
       if (doExcel) {
         const mapaExcel = await lerExcel(excelFile);
         const opNodes = Array.from(xmlDoc.getElementsByTagName('*')).filter(el => el.localName === 'numeroGuiaOperadora');
@@ -232,7 +265,6 @@
             let novoValor = mapaExcel.get(key);
             if (doZeros) novoValor = novoValor.padStart(7, '0');
 
-            // Busca tag prestador subindo para o pai da guia (Busca Profunda)
             const guiaBloco = opNode.parentNode;
             const prestNodes = Array.from(guiaBloco.getElementsByTagName('*')).filter(el => el.localName === 'numeroGuiaPrestador');
 
@@ -245,17 +277,19 @@
         });
       }
 
-      // Finalização
       if (alteracoes > 0) {
         const xmlString = new XMLSerializer().serializeToString(xmlDoc);
         const blob = new Blob([xmlString], { type: "application/xml" });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
-        link.download = "TISS_PROCESSADO_AZAMBUJA.xml";
+        
+        // AQUI ESTÁ A MUDANÇA: Nome original + _ATUALIZADO.xml
+        link.download = originalXmlName + "_ATUALIZADO.xml";
+        
         link.click();
         logEl.innerHTML = `<strong>Sucesso! ${alteracoes} alterações feitas.</strong><br>` + logs.join('');
       } else {
-        logEl.innerHTML = `<div class="error">Nenhuma alteração foi necessária com base nas opções marcadas.</div>`;
+        logEl.innerHTML = `<div class="error">Nenhuma alteração necessária.</div>`;
       }
       logEl.style.display = 'block';
 
