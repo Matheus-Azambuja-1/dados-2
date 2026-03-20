@@ -3,1804 +3,1175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auditor TISS Enterprise | Sistema de Auditoria Médica</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-
+    <title>Facilitador TISS Pro | Healthcare Analytics</title>
+    <link rel="icon" type="image/png" href="https://i.imgur.com/vNrUft9.png">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --primary-light: #dbeafe;
-            --primary-soft: #eff6ff;
-            --secondary: #475569;
+            --primary: #0b2b40;
+            --primary-light: #1a4b63;
+            --primary-dark: #06212e;
+            --secondary: #00a896;
+            --secondary-light: #02c3a8;
+            --accent: #2a9d8f;
+            --accent-gradient: linear-gradient(135deg, #2a9d8f 0%, #00a896 100%);
             --success: #10b981;
             --success-light: #d1fae5;
-            --danger: #ef4444;
-            --danger-light: #fee2e2;
             --warning: #f59e0b;
             --warning-light: #fef3c7;
+            --danger: #ef4444;
+            --danger-light: #fee2e2;
             --info: #3b82f6;
             --info-light: #dbeafe;
-            --personal: #8b5cf6;
-            --personal-light: #ede9fe;
-            --tl: #06b6d4;
-            --tl-light: #cffafe;
-            --bg-body: #f8fafc;
-            --bg-surface: #ffffff;
-            --bg-sidebar: #ffffff;
-            --border: #e2e8f0;
-            --border-light: #f1f5f9;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --text-light: #94a3b8;
-            
-            --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-            
-            --radius-sm: 8px;
-            --radius-md: 12px;
-            --radius-lg: 20px;
-            
-            --sidebar-width: 280px;
-            --header-height: 80px;
-            
-            --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            --gradient-danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg-body);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            line-height: 1.5;
-        }
-
-        /* Scrollbar Personalizada */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: var(--border-light);
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--text-light);
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--text-muted);
-        }
-
-        /* Sidebar Premium */
-        .sidebar {
-            width: var(--sidebar-width);
-            background: var(--bg-sidebar);
-            border-right: 1px solid var(--border);
-            height: 100vh;
-            position: fixed;
-            left: 0;
-            top: 0;
-            display: flex;
-            flex-direction: column;
-            z-index: 100;
-            backdrop-filter: blur(10px);
-        }
-
-        .sidebar-brand {
-            padding: 28px 24px;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            border-bottom: 1px solid var(--border);
-            background: linear-gradient(135deg, var(--bg-surface) 0%, #fafcff 100%);
-        }
-
-        .sidebar-brand i {
-            font-size: 36px;
-            color: var(--primary);
-            filter: drop-shadow(0 4px 6px var(--primary-light));
-        }
-
-        .sidebar-brand h2 {
-            font-size: 1.4rem;
-            font-weight: 800;
-            margin: 0;
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -0.5px;
-        }
-
-        .nav-list {
-            list-style: none;
-            padding: 24px 16px;
-            margin: 0;
-            flex-grow: 1;
-        }
-
-        .nav-item {
-            margin-bottom: 6px;
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 14px 16px;
-            text-decoration: none;
-            color: var(--text-muted);
-            font-weight: 600;
-            border-radius: var(--radius-md);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .nav-link::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 3px;
-            background: var(--gradient-primary);
-            transform: scaleY(0);
-            transition: transform 0.3s ease;
-            border-radius: 0 4px 4px 0;
-        }
-
-        .nav-link:hover::before,
-        .nav-link.active::before {
-            transform: scaleY(1);
-        }
-
-        .nav-link i {
-            font-size: 20px;
-            transition: transform 0.3s ease;
-        }
-
-        .nav-link:hover i {
-            transform: translateX(2px);
-        }
-
-        .nav-link:hover, .nav-link.active {
-            background: var(--primary-soft);
-            color: var(--primary);
-            transform: translateX(4px);
-        }
-
-        .sidebar-footer {
-            padding: 24px;
-            border-top: 1px solid var(--border);
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            text-align: center;
-        }
-
-        .sidebar-footer div:first-child {
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        /* Main Container */
-        .main-container {
-            margin-left: var(--sidebar-width);
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-width: 0;
-        }
-
-        /* Top Bar Premium */
-        .top-bar {
-            height: var(--header-height);
-            background: var(--bg-surface);
-            border-bottom: 1px solid var(--border);
-            padding: 0 32px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 90;
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.95);
-        }
-
-        .page-title {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .page-title i {
-            font-size: 28px;
-            color: var(--primary);
-        }
-
-        .page-title h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin: 0;
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .top-bar-actions {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-        }
-
-        .ref-date-display {
-            background: var(--primary-soft);
-            padding: 10px 20px;
-            border-radius: 40px;
-            font-size: 0.9rem;
-            border: 1px solid var(--primary-light);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .ref-date-display strong {
-            color: var(--primary);
-            font-weight: 700;
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding-left: 24px;
-            border-left: 1px solid var(--border);
-        }
-
-        .user-profile div:first-child div:first-child {
-            font-weight: 700;
-            color: var(--text-main);
-        }
-
-        .user-avatar {
-            width: 44px;
-            height: 44px;
-            background: var(--gradient-primary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            box-shadow: var(--shadow-md);
-            transition: transform 0.3s ease;
-        }
-
-        .user-avatar:hover {
-            transform: scale(1.05);
-        }
-
-        .user-avatar i {
-            font-size: 20px;
-        }
-
-        /* Content Body */
-        .content-body {
-            padding: 32px;
-            max-width: 1600px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        /* Upload Area Premium */
-        .upload-card {
-            background: var(--bg-surface);
-            border-radius: var(--radius-lg);
-            border: 2px dashed var(--border);
-            padding: 80px 40px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: var(--shadow-lg);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .upload-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--gradient-primary);
-            transform: translateX(-100%);
-            transition: transform 0.4s ease;
-        }
-
-        .upload-card:hover::before {
-            transform: translateX(0);
-        }
-
-        .upload-card:hover {
-            border-color: var(--primary);
-            background: var(--primary-soft);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-xl);
-        }
-
-        .upload-card i {
-            font-size: 80px;
-            color: var(--primary);
-            margin-bottom: 24px;
-            animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .upload-card h2 {
-            margin: 0 0 12px 0;
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--text-main);
-        }
-
-        .upload-card p {
-            color: var(--text-muted);
-            margin: 0;
-            font-size: 1.1rem;
-        }
-
-        /* Dashboard Layout */
-        .dashboard-layout {
-            display: grid;
-            grid-template-columns: 340px 1fr;
-            gap: 28px;
-            display: none;
-            animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Stats Sidebar Premium */
-        .stats-sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-
-        .card {
-            background: var(--bg-surface);
-            border-radius: var(--radius-lg);
-            padding: 28px;
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow-lg);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-xl);
-        }
-
-        .chart-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-        .chart-pie {
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            background: conic-gradient(var(--danger) 0% 0%, var(--success) 0% 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            margin-bottom: 24px;
-            box-shadow: var(--shadow-lg);
-        }
-
-        .chart-pie::after {
-            content: '';
-            width: 130px;
-            height: 130px;
-            background: var(--bg-surface);
-            border-radius: 50%;
-            position: absolute;
-            box-shadow: inset var(--shadow-sm);
-        }
-
-        .chart-inner {
-            position: absolute;
-            z-index: 10;
-        }
-
-        .chart-inner strong {
-            font-size: 2rem;
-            display: block;
-            color: var(--text-main);
-            font-weight: 800;
-        }
-
-        .chart-inner span {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
-
-        .stat-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            margin-top: 24px;
-            padding-top: 24px;
-            border-top: 2px solid var(--border-light);
-        }
-
-        .stat-item {
-            background: var(--primary-soft);
-            padding: 16px;
-            border-radius: var(--radius-md);
-            transition: all 0.3s ease;
-        }
-
-        .stat-item:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .stat-item span {
-            display: block;
-            font-size: 1.5rem;
-            font-weight: 800;
-            margin-bottom: 6px;
-            color: var(--primary);
-        }
-
-        .stat-item label {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-
-        /* Results Area Premium */
-        .results-area {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-
-        .toolbar-card {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 24px;
-            background: var(--bg-surface);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow-lg);
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-
-        .filter-group {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 12px 20px;
-            border-radius: 40px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid var(--border);
-            background: white;
-            color: var(--text-muted);
-            letter-spacing: 0.3px;
-        }
-
-        .btn i {
-            font-size: 18px;
-        }
-
-        .btn:hover {
-            background: var(--primary-soft);
-            border-color: var(--primary);
-            color: var(--primary);
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .btn.primary {
-            background: var(--gradient-primary);
-            color: white;
-            border: none;
-            box-shadow: 0 4px 12px var(--primary-light);
-        }
-
-        .btn.primary:hover {
-            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
-            box-shadow: 0 6px 16px var(--primary-light);
-            transform: translateY(-2px);
-        }
-
-        .btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-            box-shadow: 0 4px 12px var(--primary-light);
-        }
-
-        .search-input-wrapper {
-            position: relative;
-            flex: 1;
-            max-width: 360px;
-        }
-
-        .search-input-wrapper i {
-            position: absolute;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            font-size: 18px;
-        }
-
-        .search-input-wrapper input {
-            width: 100%;
-            padding: 12px 16px 12px 48px;
-            border: 1px solid var(--border);
-            border-radius: 40px;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-            background: var(--bg-surface);
-        }
-
-        .search-input-wrapper input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px var(--primary-light);
-            outline: none;
-        }
-
-        /* Tabela Premium */
-        .table-card {
-            background: var(--bg-surface);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow-lg);
-            overflow: hidden;
-            transition: transform 0.3s ease;
-        }
-
-        .table-card:hover {
-            box-shadow: var(--shadow-xl);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            padding: 18px 16px;
-            text-align: left;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            letter-spacing: 0.5px;
-            border-bottom: 2px solid var(--border);
-        }
-
-        td {
-            padding: 18px 16px;
-            border-bottom: 1px solid var(--border-light);
-            font-size: 0.95rem;
-            vertical-align: middle;
-            transition: background 0.2s ease;
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        tr:hover td {
-            background: var(--primary-soft);
-        }
-
-        /* Status Pills Premium */
-        .status-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            border-radius: 40px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: none;
-            letter-spacing: 0.3px;
-        }
-
-        .status-pill:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .st-ok {
-            background: var(--success-light);
-            color: #065f46;
-        }
-
-        .st-err {
-            background: var(--danger-light);
-            color: #991b1b;
-        }
-
-        .st-warning {
-            background: var(--warning-light);
-            color: #92400e;
-        }
-
-        /* Badges Premium */
-        .badge {
-            font-size: 0.7rem;
-            padding: 4px 10px;
-            border-radius: 40px;
-            font-weight: 700;
-            display: inline-block;
-            margin-top: 6px;
-            letter-spacing: 0.3px;
-            transition: all 0.2s ease;
-        }
-
-        .badge:hover {
-            transform: translateY(-1px);
-            filter: brightness(0.95);
-        }
-
-        .badge-info {
-            background: var(--info-light);
-            color: #1e40af;
-        }
-
-        .badge-warning {
-            background: var(--warning-light);
-            color: #92400e;
-        }
-
-        .badge-purple {
-            background: var(--personal-light);
-            color: #6b21a8;
-        }
-
-        .badge-pink {
-            background: #fce7f3;
-            color: #9d174d;
-        }
-
-        .badge-personal {
-            background: var(--personal-light);
-            color: #6b21a8;
-        }
-
-        .badge-tl {
-            background: var(--tl-light);
-            color: #155e75;
-        }
-
-        .mono {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .patient-cell {
-            line-height: 1.5;
-        }
-
-        .patient-cell .carteira {
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .patient-cell .info {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        /* Modais Premium */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            background: var(--bg-surface);
-            padding: 36px;
-            border-radius: var(--radius-lg);
-            width: 90%;
-            max-width: 1000px;
-            max-height: 85vh;
-            display: flex;
-            flex-direction: column;
-            box-shadow: var(--shadow-xl);
-            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 2px solid var(--border-light);
-        }
-
-        .modal-header h3 {
-            margin: 0;
-            font-size: 1.5rem;
-            font-weight: 700;
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .modal-close {
-            cursor: pointer;
-            font-size: 28px;
-            color: var(--text-muted);
-            transition: all 0.2s ease;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-        }
-
-        .modal-close:hover {
-            background: var(--danger-light);
-            color: var(--danger);
-            transform: rotate(90deg);
-        }
-
-        .xml-viewer {
-            background: #1e293b;
-            color: #e2e8f0;
-            padding: 24px;
-            border-radius: var(--radius-md);
-            overflow: auto;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
-            white-space: pre-wrap;
-            flex-grow: 1;
-            line-height: 1.6;
-        }
-
-        .error-details {
-            max-width: 600px;
-        }
-
-        .error-item {
-            background: var(--primary-soft);
-            border-radius: var(--radius-md);
-            padding: 20px;
-            margin-bottom: 16px;
-            border-left: 4px solid var(--danger);
-            transition: transform 0.2s ease;
-        }
-
-        .error-item:hover {
-            transform: translateX(4px);
-        }
-
-        .error-item.ok {
-            border-left-color: var(--success);
-            background: var(--success-light);
-        }
-
-        .error-code {
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 700;
-            color: var(--text-main);
-            margin-bottom: 12px;
-            font-size: 1rem;
-        }
-
-        .error-message {
-            font-size: 0.95rem;
-            color: var(--text-muted);
-            line-height: 1.6;
-        }
-
-        .error-value {
-            display: inline-block;
-            padding: 4px 12px;
-            background: white;
-            border-radius: 40px;
-            border: 1px solid var(--border);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9rem;
-            margin: 0 4px;
-            font-weight: 500;
-        }
-
-        .error-value.expected {
-            background: #dcfce7;
-            color: #166534;
-            border-color: #22c55e;
-        }
-
-        .error-value.found {
-            background: #fee2e2;
-            color: #991b1b;
-            border-color: #ef4444;
-        }
-
-        .error-summary {
-            background: linear-gradient(135deg, var(--primary-soft) 0%, var(--primary-light) 100%);
-            padding: 20px;
-            border-radius: var(--radius-md);
-            margin-bottom: 24px;
-            border: 1px solid var(--primary-light);
-        }
-
-        /* Toast Premium */
-        #toast-container {
-            position: fixed;
-            bottom: 32px;
-            right: 32px;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .toast {
-            background: #1e293b;
-            color: white;
-            padding: 18px 28px;
-            border-radius: 50px;
-            box-shadow: var(--shadow-xl);
-            animation: slideInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            font-size: 0.95rem;
-            border-left: 4px solid var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            min-width: 320px;
-            backdrop-filter: blur(10px);
-            background: rgba(30, 41, 59, 0.95);
-        }
-
-        .toast i {
-            font-size: 20px;
-        }
-
-        .toast.success {
-            border-left-color: var(--success);
-        }
-
-        .toast.error {
-            border-left-color: var(--danger);
-        }
-
-        .toast.warning {
-            border-left-color: var(--warning);
-        }
-
-        @keyframes slideInRight {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        /* Responsive */
-        @media (max-width: 1400px) {
-            .dashboard-layout {
-                grid-template-columns: 1fr;
-            }
-            .stats-sidebar {
-                flex-direction: row;
-                flex-wrap: wrap;
-            }
-            .stats-sidebar > * {
-                flex: 1;
-                min-width: 300px;
-            }
-        }
-
-        @media (max-width: 1200px) {
-            .content-body {
-                padding: 20px;
-            }
-            .toolbar-card {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .filter-group {
-                justify-content: center;
-            }
-            .search-input-wrapper {
-                max-width: 100%;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
-            .main-container {
-                margin-left: 0;
-            }
-            .stats-sidebar {
-                flex-direction: column;
-            }
+            --purple: #8b5cf6;
+            --purple-light: #ede9fe;
+            --orange: #f97316;
+            --orange-light: #ffedd5;
+            --gray-50: #f9fafc;
+            --gray-100: #f1f4f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --glass-bg: rgba(255,255,255,0.95);
+            --glass-border: 1px solid rgba(255,255,255,0.2);
+            --shadow-xs: 0 2px 4px rgba(0,0,0,0.02);
+            --shadow-sm: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --shadow-md: 0 10px 15px -3px rgba(0,0,0,0.1);
+            --shadow-lg: 0 20px 25px -5px rgba(0,0,0,0.1);
+            --shadow-xl: 0 25px 50px -12px rgba(0,0,0,0.25);
+            --shadow-glow: 0 0 20px rgba(42,157,143,0.3);
+            --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px;
+            --radius-xl: 24px; --radius-2xl: 32px;
+            --transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--gray-50); color:var(--gray-800); line-height:1.6; min-height:100vh; overflow-x:hidden; }
+
+        /* ── HEADER ─────────────────────────────────────────────── */
+        .header-premium {
+            background: linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);
+            padding:1.5rem 2rem; position:sticky; top:0; z-index:1000;
+            overflow:hidden; box-shadow:var(--shadow-lg); isolation:isolate;
+        }
+        .header-premium::before {
+            content:''; position:absolute; top:-50%; right:-50%; width:200%; height:200%;
+            background:radial-gradient(circle,rgba(255,255,255,0.1) 0%,transparent 70%);
+            animation:rotate 20s linear infinite; z-index:-1;
+        }
+        @keyframes rotate { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+        .header-content { max-width:1600px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; position:relative; z-index:2; }
+        .brand-premium { display:flex; align-items:center; gap:1.5rem; }
+        .logo-wrapper { background:rgba(255,255,255,0.15); padding:0.75rem; border-radius:var(--radius-lg); backdrop-filter:blur(10px); border:var(--glass-border); box-shadow:var(--shadow-glow); }
+        .logo-wrapper img { width:100px; height:60px; filter:brightness(0) invert(1); }
+        .brand-text h1 { color:white; font-size:2rem; font-weight:800; letter-spacing:-0.5px; line-height:1.2; }
+        .brand-text span { font-size:0.875rem; opacity:0.8; display:block; font-weight:400; }
+        .header-stats { display:flex; gap:2rem; }
+        .header-stat-item { text-align:right; color:white; }
+        .header-stat-label { font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; opacity:0.7; }
+        .header-stat-value { font-size:1.5rem; font-weight:800; }
+
+        /* ── CONTAINER / TOOLBAR ────────────────────────────────── */
+        .container-premium { max-width:1600px; margin:2rem auto; padding:0 2rem; }
+        .toolbar-premium {
+            background:white; padding:1.25rem; border-radius:var(--radius-xl);
+            margin-bottom:2rem; display:flex; gap:1rem; align-items:center;
+            flex-wrap:wrap; box-shadow:var(--shadow-lg); border:1px solid var(--gray-200);
+            position:relative; overflow:hidden; z-index:100;
+        }
+        .toolbar-premium::after { content:''; position:absolute; top:0; left:0; right:0; height:4px; background:var(--accent-gradient); z-index:1; }
+        .btn-premium {
+            padding:0.875rem 1.75rem; border-radius:var(--radius-lg); border:none; cursor:pointer;
+            font-weight:700; font-size:0.875rem; display:inline-flex; align-items:center; gap:0.75rem;
+            transition:var(--transition); position:relative; overflow:hidden; letter-spacing:0.3px; z-index:2;
+        }
+        .btn-premium::before { content:''; position:absolute; top:50%; left:50%; width:0; height:0; border-radius:50%; background:rgba(255,255,255,0.3); transform:translate(-50%,-50%); transition:width 0.6s,height 0.6s; z-index:-1; }
+        .btn-premium:hover::before { width:300px; height:300px; }
+        .btn-premium:hover { transform:translateY(-2px); }
+        .btn-premium-primary { background:var(--accent-gradient); color:white; box-shadow:0 4px 15px rgba(42,157,143,0.3); }
+        .btn-premium-primary:hover { box-shadow:0 8px 25px rgba(42,157,143,0.4); }
+        .btn-premium-outline { background:white; border:2px solid var(--gray-200); color:var(--gray-700); }
+        .btn-premium-outline:hover { border-color:var(--accent); color:var(--accent); }
+        .btn-premium-danger { background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%); color:white; box-shadow:0 4px 15px rgba(239,68,68,0.3); }
+        .search-premium { flex:1; position:relative; min-width:300px; }
+        .search-premium i { position:absolute; left:1.25rem; top:50%; transform:translateY(-50%); color:var(--gray-400); font-size:1rem; z-index:3; }
+        .search-premium input { width:100%; padding:0.875rem 1.25rem 0.875rem 3rem; border-radius:var(--radius-lg); border:2px solid var(--gray-200); font-size:0.875rem; transition:var(--transition); background:var(--gray-50); }
+        .search-premium input:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 4px rgba(42,157,143,0.1); background:white; }
+
+        /* ── STATS CARDS ────────────────────────────────────────── */
+        .stats-grid-premium { display:grid; grid-template-columns:repeat(4,1fr); gap:1.5rem; margin-bottom:2rem; }
+        .stat-card-premium { background:white; padding:1.75rem; border-radius:var(--radius-xl); cursor:pointer; transition:var(--transition); border:1px solid var(--gray-200); position:relative; overflow:hidden; box-shadow:var(--shadow-md); }
+        .stat-card-premium::before { content:''; position:absolute; top:0; left:0; right:0; height:6px; background:var(--accent-gradient); transform:translateY(-100%); transition:var(--transition); }
+        .stat-card-premium:hover { transform:translateY(-4px); box-shadow:var(--shadow-xl); }
+        .stat-card-premium:hover::before { transform:translateY(0); }
+        .stat-card-premium.active { border:2px solid var(--accent); background:linear-gradient(135deg,rgba(42,157,143,0.05) 0%,rgba(0,168,150,0.05) 100%); }
+        .stat-icon { width:48px; height:48px; border-radius:var(--radius-lg); display:flex; align-items:center; justify-content:center; margin-bottom:1rem; font-size:1.5rem; }
+        .stat-icon.total  { background:linear-gradient(135deg,#3b82f6 0%,#2563eb 100%); color:white; }
+        .stat-icon.errors { background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%); color:white; }
+        .stat-icon.expired{ background:linear-gradient(135deg,#8b5cf6 0%,#7c3aed 100%); color:white; }
+        .stat-icon.value  { background:linear-gradient(135deg,#10b981 0%,#059669 100%); color:white; }
+        .stat-info-premium small { font-size:0.75rem; text-transform:uppercase; letter-spacing:0.5px; color:var(--gray-500); font-weight:600; }
+        .stat-info-premium strong { font-size:2rem; font-weight:800; display:block; line-height:1.2; color:var(--gray-900); }
+
+        /* ── ERROR FILTERS ──────────────────────────────────────── */
+        .error-filters-premium { display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:2rem; }
+        .filter-btn-premium { padding:0.75rem 1.75rem; border-radius:2rem; border:2px solid var(--gray-200); background:white; cursor:pointer; font-size:0.875rem; font-weight:700; display:inline-flex; align-items:center; gap:0.75rem; transition:var(--transition); color:var(--gray-700); position:relative; overflow:hidden; }
+        .filter-btn-premium:hover { border-color:var(--accent); color:var(--accent); transform:translateY(-2px); box-shadow:var(--shadow-md); }
+        .filter-btn-premium.active { background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%); color:white; border-color:transparent; box-shadow:0 4px 15px rgba(239,68,68,0.3); }
+        .filter-btn-premium.filter-nascido.active { background:linear-gradient(135deg,#f97316 0%,#ea580c 100%); box-shadow:0 4px 15px rgba(249,115,22,0.35); }
+        /* ── NOVO: filtro óbito — cor cinza-roxo escuro ── */
+        .filter-btn-premium.filter-obito.active { background:linear-gradient(135deg,#6b21a8 0%,#581c87 100%); box-shadow:0 4px 15px rgba(107,33,168,0.35); }
+        .filter-count { background:rgba(0,0,0,0.1); padding:0.25rem 0.75rem; border-radius:2rem; font-size:0.75rem; font-weight:700; }
+
+        /* ── MIXED LOCK ─────────────────────────────────────────── */
+        .mixed-lock-premium { background:linear-gradient(135deg,#fee2e2 0%,#fecaca 100%); color:#991b1b; padding:1.25rem 2rem; border-radius:var(--radius-xl); margin-bottom:2rem; display:none; align-items:center; gap:1rem; border:2px solid #fecaca; font-weight:700; box-shadow:var(--shadow-md); animation:pulse 2s infinite; }
+        .mixed-lock-premium.is-visible { display:flex; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.9} }
+
+        /* ── ACTIVE FILTERS ─────────────────────────────────────── */
+        .active-filters-premium { background:linear-gradient(135deg,var(--gray-100) 0%,var(--gray-200) 100%); padding:1rem 1.5rem; border-radius:var(--radius-lg); margin-bottom:2rem; display:flex; align-items:center; gap:1rem; flex-wrap:wrap; border:1px solid var(--gray-300); }
+        .filter-tag-premium { background:var(--accent-gradient); color:white; padding:0.5rem 1.25rem; border-radius:2rem; font-size:0.875rem; font-weight:600; display:inline-flex; align-items:center; gap:0.75rem; box-shadow:var(--shadow-md); }
+
+        /* ── TABS ───────────────────────────────────────────────── */
+        .tabs-premium { background:white; border-radius:var(--radius-xl); border:1px solid var(--gray-200); margin-bottom:2rem; overflow:visible; box-shadow:var(--shadow-lg); }
+        .tabs-header-premium { display:flex; flex-wrap:wrap; background:linear-gradient(135deg,var(--gray-50) 0%,white 100%); border-bottom:1px solid var(--gray-200); padding:0.5rem; gap:0.5rem; border-radius:var(--radius-xl) var(--radius-xl) 0 0; overflow:hidden; }
+        .tab-btn-premium { padding:1rem 2rem; background:none; border:none; cursor:pointer; font-weight:700; color:var(--gray-600); display:flex; align-items:center; gap:1rem; border-radius:var(--radius-lg); transition:var(--transition); font-size:0.875rem; flex:1; justify-content:center; }
+        .tab-btn-premium:hover { background:white; color:var(--accent); box-shadow:var(--shadow-md); transform:translateY(-1px); }
+        .tab-btn-premium.active { background:var(--accent-gradient); color:white; box-shadow:var(--shadow-lg); }
+        .tab-badge { background:rgba(255,255,255,0.2); padding:0.25rem 0.75rem; border-radius:2rem; font-size:0.75rem; }
+
+        /* ── SUMMARY ────────────────────────────────────────────── */
+        .summary-premium { display:grid; grid-template-columns:repeat(9,minmax(0,1fr)); gap:0.75rem; margin-bottom:2rem; padding:1.25rem; background:linear-gradient(135deg,var(--gray-50) 0%,white 100%); border-radius:var(--radius-xl); border:1px solid var(--gray-200); }
+        .summary-item-premium { text-align:center; cursor:pointer; padding:0.875rem 0.375rem; border-radius:var(--radius-lg); transition:var(--transition); background:white; border:1px solid var(--gray-200); position:relative; overflow:hidden; min-width:0; }
+        .summary-item-premium::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; background:var(--accent-gradient); transform:translateY(-100%); transition:var(--transition); }
+        .summary-item-premium:hover { transform:translateY(-2px); box-shadow:var(--shadow-lg); }
+        .summary-item-premium:hover::before { transform:translateY(0); }
+        .summary-item-premium.active { background:var(--accent-gradient); color:white; border-color:transparent; }
+        .summary-item-premium.active .value, .summary-item-premium.active .label { color:white; }
+        .summary-item-premium.nascido-item.active { background:linear-gradient(135deg,#f97316 0%,#ea580c 100%); }
+        /* ── NOVO: summary item óbito ── */
+        .summary-item-premium.obito-item.active { background:linear-gradient(135deg,#6b21a8 0%,#581c87 100%); }
+        .summary-item-premium .label { font-size:clamp(0.5rem,0.9vw,0.625rem); text-transform:uppercase; letter-spacing:0.3px; color:var(--gray-500); font-weight:700; margin-bottom:0.2rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .summary-item-premium .value { font-size:clamp(0.95rem,1.6vw,1.5rem); font-weight:800; color:var(--gray-900); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+        /* ── CARDS GRID ─────────────────────────────────────────── */
+        .cards-grid-premium { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,600px),1fr)); gap:1.5rem; position:relative; z-index:1; width:100%; min-width:0; }
+
+        /* ── GUIA CARD ──────────────────────────────────────────── */
+        .guia-card-premium { background:white; border-radius:var(--radius-xl); border:1px solid var(--gray-200); border-left:6px solid transparent; transition:all 0.3s ease; box-shadow:var(--shadow-md); position:relative; }
+        .guia-card-premium::before { display:none; }
+        .guia-card-premium.has-error       { border-left-color:#ef4444; }
+        .guia-card-premium.is-vencida      { border-left-color:#8b5cf6; }
+        .guia-card-premium.sem-declaracao-nascido { border-left-color:#f97316; }
+        .guia-card-premium.has-error.sem-declaracao-nascido { border-left-color:#ef4444; }
+        /* ── NOVO: borda lateral roxa para óbito ausente ── */
+        .guia-card-premium.sem-declaracao-obito { border-left-color:#7e22ce; }
+        .guia-card-premium.has-error.sem-declaracao-obito { border-left-color:#ef4444; }
+
+        .guia-card-premium:hover { transform:translateY(-4px); box-shadow:var(--shadow-xl); z-index:10; }
+
+        /* ── GUIA HEADER — 2 linhas ─────────────────────────────── */
+        .guia-header-premium { padding:1.25rem 1.5rem; cursor:pointer; background:linear-gradient(135deg,rgba(255,255,255,0.9) 0%,white 100%); backdrop-filter:blur(10px); position:relative; z-index:3; display:flex; flex-direction:column; gap:0.6rem; }
+        .guia-header-row1 { display:flex; align-items:center; gap:0.6rem; flex-wrap:nowrap; width:100%; min-width:0; }
+        .guia-header-row1 .guia-numero { font-size:1rem; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex-shrink:1; min-width:0; }
+        .guia-header-spacer { flex:1 1 auto; min-width:0.5rem; }
+        .guia-header-valor { font-weight:800; font-size:1.125rem; background:var(--accent-gradient); -webkit-background-clip:text; -webkit-text-fill-color:transparent; white-space:nowrap; flex-shrink:0; }
+        .guia-header-row2 { display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap; width:100%; min-width:0; }
+        .guia-header-row2 .guia-beneficiario { font-size:0.875rem; color:var(--gray-700); flex:1 1 0; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+        /* ── BADGES ─────────────────────────────────────────────── */
+        .badge-premium { padding:0.4rem 0.85rem; border-radius:2rem; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:white; box-shadow:var(--shadow-md); white-space:nowrap; flex-shrink:0; }
+        .badge-local          { background:linear-gradient(135deg,#0ea5e9 0%,#0284c7 100%); }
+        .badge-inter          { background:linear-gradient(135deg,#64748b 0%,#475569 100%); }
+        .badge-personal-local { background:linear-gradient(135deg,#0369a1 0%,#075985 100%); }
+        .badge-personal-inter { background:linear-gradient(135deg,#4338ca 0%,#3730a3 100%); }
+        .badge-sem-nascido    { background:linear-gradient(135deg,#f97316 0%,#ea580c 100%) !important; animation:nascidoPulse 2.5s ease-in-out infinite; }
+        /* ── NOVO: badge óbito ── */
+        .badge-sem-obito      { background:linear-gradient(135deg,#7e22ce 0%,#581c87 100%) !important; animation:obitoPulse 2.5s ease-in-out infinite; }
+
+        @keyframes nascidoPulse { 0%,100%{box-shadow:0 4px 10px rgba(249,115,22,0.3)} 50%{box-shadow:0 4px 22px rgba(249,115,22,0.65)} }
+        @keyframes obitoPulse   { 0%,100%{box-shadow:0 4px 10px rgba(126,34,206,0.3)} 50%{box-shadow:0 4px 22px rgba(126,34,206,0.65)} }
+
+        /* ── ALERTA NASCIDO ─────────────────────────────────────── */
+        .nascido-alert { background:linear-gradient(135deg,#fff7ed 0%,#ffedd5 100%); border:2px solid #fed7aa; border-radius:var(--radius-lg); padding:1rem 1.25rem; margin-bottom:1.25rem; display:flex; align-items:flex-start; gap:0.875rem; color:#9a3412; }
+        .nascido-alert i { font-size:1.25rem; flex-shrink:0; margin-top:0.1rem; color:#ea580c; }
+        .nascido-alert-content strong { display:block; font-size:0.9rem; margin-bottom:0.25rem; }
+        .nascido-alert-content ul { margin:0; padding-left:1.2rem; font-size:0.8rem; opacity:0.85; }
+
+        /* ── ALERTA ÓBITO (novo) ────────────────────────────────── */
+        .obito-alert { background:linear-gradient(135deg,#faf5ff 0%,#f3e8ff 100%); border:2px solid #d8b4fe; border-radius:var(--radius-lg); padding:1rem 1.25rem; margin-bottom:1.25rem; display:flex; align-items:flex-start; gap:0.875rem; color:#4c1d95; }
+        .obito-alert i { font-size:1.25rem; flex-shrink:0; margin-top:0.1rem; color:#7e22ce; }
+        .obito-alert-content strong { display:block; font-size:0.9rem; margin-bottom:0.25rem; }
+        .obito-alert-content ul { margin:0; padding-left:1.2rem; font-size:0.8rem; opacity:0.85; }
+
+        /* ── BADGE VÍNCULO ──────────────────────────────────────── */
+        .badge-vinculo { background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%); display:inline-flex; align-items:center; gap:0.4rem; animation:vinculoPulse 2.5s ease-in-out infinite; cursor:pointer; }
+        .badge-vinculo:hover { box-shadow:0 0 0 3px rgba(245,158,11,0.35); }
+        .guia-card-premium.vinculo-highlight { outline:3px solid #f59e0b; outline-offset:2px; box-shadow:0 0 20px rgba(245,158,11,0.35); z-index:20; }
+        @keyframes vinculoPulse { 0%,100%{box-shadow:0 4px 10px rgba(245,158,11,0.3)} 50%{box-shadow:0 4px 22px rgba(245,158,11,0.6)} }
+
+        /* ── GRUPO CARTEIRINHA ──────────────────────────────────── */
+        .grupo-carteirinha { background:white; border-radius:var(--radius-xl); border:2px solid var(--primary); box-shadow:0 4px 20px rgba(11,43,64,0.15); overflow:visible; transition:var(--transition); }
+        .grupo-carteirinha:hover { box-shadow:0 8px 32px rgba(11,43,64,0.22); transform:translateY(-2px); }
+        .grupo-header { display:flex; align-items:center; gap:1rem; padding:1.1rem 1.5rem; cursor:pointer; background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%); color:white; user-select:none; flex-wrap:wrap; position:relative; overflow:hidden; border-radius:calc(var(--radius-xl) - 2px) calc(var(--radius-xl) - 2px) 0 0; }
+        .grupo-header::after { content:''; position:absolute; inset:0; background:rgba(255,255,255,0); transition:background 0.2s; }
+        .grupo-header:hover::after { background:rgba(255,255,255,0.06); }
+        .grupo-icon { width:36px; height:36px; background:rgba(255,255,255,0.15); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.9rem; flex-shrink:0; border:1px solid rgba(255,255,255,0.2); }
+        .grupo-carteira-num { font-family:monospace; font-size:0.82rem; font-weight:700; letter-spacing:0.5px; background:rgba(255,255,255,0.15); padding:0.3rem 0.85rem; border-radius:2rem; border:1px solid rgba(255,255,255,0.2); white-space:nowrap; }
+        .grupo-beneficiario { flex:1; font-size:0.9rem; font-weight:600; opacity:0.92; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .grupo-meta { display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap; }
+        .grupo-pill { padding:0.28rem 0.75rem; border-radius:2rem; font-size:0.72rem; font-weight:700; white-space:nowrap; display:inline-flex; align-items:center; gap:0.35rem; }
+        .grupo-pill-default { background:rgba(255,255,255,0.18); border:1px solid rgba(255,255,255,0.25); color:white; }
+        .grupo-pill-erro    { background:rgba(239,68,68,0.4);   border:1px solid rgba(239,68,68,0.6);   color:#fecaca; }
+        .grupo-pill-vencida { background:rgba(139,92,246,0.4);  border:1px solid rgba(139,92,246,0.6);  color:#ddd6fe; }
+        .grupo-pill-nascido { background:rgba(249,115,22,0.4);  border:1px solid rgba(249,115,22,0.6);  color:#fed7aa; }
+        /* ── NOVO: pill óbito ── */
+        .grupo-pill-obito   { background:rgba(126,34,206,0.4);  border:1px solid rgba(126,34,206,0.6);  color:#e9d5ff; }
+        .grupo-valor { font-weight:800; font-size:1.05rem; color:var(--secondary-light); white-space:nowrap; }
+        .grupo-chevron { width:28px; height:28px; background:rgba(255,255,255,0.15); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.75rem; transition:transform 0.25s,background 0.2s; border:1px solid rgba(255,255,255,0.2); flex-shrink:0; }
+        .grupo-carteirinha.is-open .grupo-chevron { transform:rotate(180deg); background:rgba(255,255,255,0.25); }
+        .grupo-guias { display:none; border-top:3px solid var(--secondary); }
+        .grupo-carteirinha.is-open .grupo-guias { display:block; animation:slideDown 0.25s ease; }
+        .grupo-guias .guia-card-premium { border-radius:0; border-right:none; border-top:none; border-bottom:1px solid var(--gray-100); box-shadow:none; }
+        .grupo-guias .guia-card-premium:last-child { border-bottom:none; }
+        .grupo-guias .guia-card-premium:hover { transform:none; box-shadow:none; background:var(--gray-50); }
+        .grupo-guias .guia-header-premium { background:white; }
+        .grupo-guias .guia-card-premium:hover .guia-header-premium { background:var(--gray-50); }
+
+        /* ── GUIA BODY ──────────────────────────────────────────── */
+        .guia-body-premium { display:none; padding:2rem; border-top:2px dashed var(--gray-200); background:linear-gradient(135deg,var(--gray-50) 0%,white 100%); overflow:visible; }
+        .is-open .guia-body-premium { display:block; animation:slideDown 0.3s ease; }
+        @keyframes slideDown { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
+
+        /* ── TABLE WRAPPER + TABLE ──────────────────────────────── */
+        .table-wrapper { width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:var(--radius-lg); box-shadow:var(--shadow-md); }
+        .table-premium { width:100%; min-width:520px; border-collapse:separate; border-spacing:0; font-size:0.875rem; background:white; border-radius:var(--radius-lg); overflow:hidden; table-layout:auto; }
+        .table-premium th { background:linear-gradient(135deg,var(--gray-100) 0%,var(--gray-200) 100%); color:var(--gray-700); font-weight:700; text-transform:uppercase; font-size:0.75rem; letter-spacing:0.5px; padding:0.875rem 1rem; text-align:left; white-space:nowrap; }
+        .table-premium th:last-child, .table-premium td:last-child { text-align:right !important; white-space:nowrap; min-width:90px; font-weight:700; }
+        .table-premium td { padding:0.875rem 1rem; border-bottom:1px solid var(--gray-200); background:white; vertical-align:middle; }
+        .table-premium tr:last-child td { border-bottom:none; }
+        .table-premium tr:hover td { background:var(--gray-50); }
+        .table-premium tr.row-sem-nascido td { background:#fff7ed; }
+        .table-premium tr.row-sem-nascido:hover td { background:#ffedd5; }
+        /* ── NOVO: linha óbito ausente ── */
+        .table-premium tr.row-sem-obito td { background:#faf5ff; }
+        .table-premium tr.row-sem-obito:hover td { background:#f3e8ff; }
+
+        /* ── RA / GRAU / BADGES ─────────────────────────────────── */
+        .ra-value-premium { font-weight:700; padding:0.5rem 1rem; border-radius:2rem; font-size:0.75rem; display:inline-block; border:2px solid transparent; white-space:nowrap; }
+        .ra-correct-premium   { background:var(--success-light); color:#166534; border-color:#86efac; box-shadow:0 2px 4px rgba(16,185,129,0.2); }
+        .ra-incorrect-premium { background:var(--danger-light);  color:#991b1b; border-color:#fecaca; box-shadow:0 2px 4px rgba(239,68,68,0.2); }
+        .nascido-missing-badge { display:inline-flex; align-items:center; gap:0.35rem; background:#ffedd5; color:#9a3412; border:2px solid #fed7aa; border-radius:2rem; padding:0.35rem 0.85rem; font-size:0.7rem; font-weight:700; white-space:nowrap; animation:nascidoPulse 2.5s ease-in-out infinite; }
+        /* ── NOVO: badge óbito ausente na tabela ── */
+        .obito-missing-badge  { display:inline-flex; align-items:center; gap:0.35rem; background:#f3e8ff; color:#4c1d95; border:2px solid #d8b4fe; border-radius:2rem; padding:0.35rem 0.85rem; font-size:0.7rem; font-weight:700; white-space:nowrap; animation:obitoPulse 2.5s ease-in-out infinite; }
+
+        /* ── LOADING ────────────────────────────────────────────── */
+        .loading-premium { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(10px); z-index:9999; justify-content:center; align-items:center; }
+        .loading-content-premium { text-align:center; color:white; animation:float 3s ease-in-out infinite; }
+        .loading-spinner { width:80px; height:80px; border:4px solid rgba(255,255,255,0.1); border-top:4px solid var(--secondary); border-right:4px solid var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 1.5rem; box-shadow:var(--shadow-glow); }
+        @keyframes spin  { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+
+        /* ── TOAST ──────────────────────────────────────────────── */
+        .toast-premium { position:fixed; top:2rem; right:2rem; padding:1rem 2rem; border-radius:var(--radius-lg); color:white; font-weight:600; font-size:0.875rem; z-index:10000; animation:slideInRight 0.3s ease; box-shadow:var(--shadow-xl); backdrop-filter:blur(10px); border:var(--glass-border); }
+        .toast-success { background:linear-gradient(135deg,rgba(16,185,129,0.95) 0%,rgba(5,150,105,0.95) 100%); }
+        .toast-error   { background:linear-gradient(135deg,rgba(239,68,68,0.95)  0%,rgba(220,38,38,0.95)  100%); }
+        .toast-info    { background:linear-gradient(135deg,rgba(59,130,246,0.95)  0%,rgba(37,99,235,0.95)  100%); }
+        @keyframes slideInRight { from{transform:translateX(100%);opacity:0} to{transform:translateX(0);opacity:1} }
+
+        /* ── EMPTY STATE ────────────────────────────────────────── */
+        .empty-state-premium { text-align:center; padding:4rem; background:linear-gradient(135deg,white 0%,var(--gray-50) 100%); border-radius:var(--radius-xl); border:2px dashed var(--gray-300); color:var(--gray-500); }
+        .empty-state-premium i { font-size:4rem; margin-bottom:1.5rem; opacity:0.5; color:var(--accent); }
+        .item-name { max-width:250px; white-space:normal; word-wrap:break-word; }
+
+        /* ── SCROLLBAR ──────────────────────────────────────────── */
+        ::-webkit-scrollbar { width:10px; height:10px; }
+        ::-webkit-scrollbar-track { background:var(--gray-100); border-radius:10px; }
+        ::-webkit-scrollbar-thumb { background:linear-gradient(135deg,var(--accent) 0%,var(--secondary) 100%); border-radius:10px; }
+        ::-webkit-scrollbar-thumb:hover { background:linear-gradient(135deg,var(--secondary) 0%,var(--accent) 100%); }
+
+        /* ── RESPONSIVO COMPLETO ────────────────────────────────── */
+        @media (max-width:1400px) {
+            .summary-premium { grid-template-columns:repeat(5,minmax(0,1fr)); }
+            .cards-grid-premium { grid-template-columns:1fr; }
+        }
+        @media (max-width:1200px) {
+            .stats-grid-premium { grid-template-columns:repeat(2,1fr); }
+            .summary-premium { grid-template-columns:repeat(5,minmax(0,1fr)); }
+            .brand-text h1 { font-size:1.6rem; }
+        }
+        @media (max-width:1024px) {
+            .container-premium { padding:0 1.25rem; margin:1.25rem auto; }
+            .toolbar-premium { gap:0.75rem; padding:1rem; }
+            .search-premium { min-width:200px; }
+            .btn-premium { padding:0.75rem 1.25rem; font-size:0.8rem; }
+            .summary-premium { grid-template-columns:repeat(5,minmax(0,1fr)); gap:0.75rem; padding:1rem; }
+            .stats-grid-premium { grid-template-columns:repeat(2,1fr); gap:1rem; }
+        }
+        @media (max-width:768px) {
+            .container-premium { padding:0 0.875rem; margin:1rem auto; }
+            .header-premium { padding:1rem; position:relative; }
+            .header-content { flex-direction:column; gap:0.875rem; text-align:center; }
+            .brand-premium { flex-direction:column; gap:0.75rem; align-items:center; }
+            .logo-wrapper img { width:70px; height:42px; }
+            .brand-text h1 { font-size:1.4rem; }
+            .header-stats { flex-wrap:wrap; justify-content:center; gap:1rem; }
+            .header-stat-value { font-size:1.2rem; }
+            .toolbar-premium { flex-direction:column; align-items:stretch; gap:0.75rem; padding:1rem; }
+            .search-premium { min-width:unset; width:100%; }
+            .toolbar-premium .btn-premium { width:100%; justify-content:center; }
+            .stats-grid-premium { grid-template-columns:repeat(2,1fr); gap:0.875rem; }
+            .stat-card-premium { padding:1.25rem; }
+            .summary-premium { grid-template-columns:repeat(3,minmax(0,1fr)); gap:0.625rem; padding:0.875rem; }
+            .filter-btn-premium { padding:0.6rem 1rem; font-size:0.8rem; flex:1 1 calc(50% - 0.25rem); justify-content:center; }
+            .tab-btn-premium { padding:0.75rem 1rem; font-size:0.8rem; flex:1 1 100%; }
+            .guia-header-premium { padding:1rem; gap:0.5rem; }
+            .guia-header-row1 { flex-wrap:wrap; gap:0.4rem; }
+            .guia-header-spacer { display:none; }
+            .guia-header-valor { font-size:1rem; margin-left:auto; }
+            .badge-premium { font-size:0.68rem; padding:0.35rem 0.7rem; }
+            .guia-body-premium { padding:1rem; }
+            .table-premium { font-size:0.8rem; }
+            .table-premium th, .table-premium td { padding:0.7rem 0.625rem; }
+            .item-name { max-width:140px; }
+        }
+        @media (max-width:480px) {
+            .summary-premium { grid-template-columns:repeat(3,minmax(0,1fr)); gap:0.5rem; padding:0.75rem; }
+            .summary-item-premium { padding:0.625rem 0.375rem; }
+            .stats-grid-premium { grid-template-columns:1fr 1fr; gap:0.625rem; }
+            .filter-btn-premium { flex:1 1 100%; }
+            .table-premium { font-size:0.75rem; }
+            .table-premium th, .table-premium td { padding:0.6rem 0.5rem; }
+        }
+        @media (max-width:360px) {
+            .brand-text h1 { font-size:1.1rem; }
+            .summary-premium { grid-template-columns:repeat(2,minmax(0,1fr)); }
+            .table-premium { font-size:0.7rem; }
+            .table-premium th, .table-premium td { padding:0.5rem 0.4rem; }
         }
     </style>
 </head>
 <body>
-    <!-- Mantive todo o HTML igual, apenas atualizei os estilos -->
-    <aside class="sidebar">
-        <div class="sidebar-brand">
-            <i class="ph-duotone ph-shield-check"></i>
-            <h2>Auditor TISS</h2>
+
+<div class="loading-premium" id="loading">
+    <div class="loading-content-premium">
+        <div class="loading-spinner"></div>
+        <h2 style="font-size:1.5rem;margin-bottom:0.5rem;">Processando Arquivos</h2>
+        <p style="opacity:0.8;">Aguarde, estamos analisando seus dados...</p>
+    </div>
+</div>
+
+<div class="header-premium">
+    <div class="header-content">
+        <div class="brand-premium">
+            <div class="logo-wrapper"><img src="https://i.imgur.com/vNrUft9.png" alt="Validador"></div>
+            <div class="brand-text">
+                <h1>Validador TISS Pro</h1>
+                <span>Sistema Avançado de Análise de Guias</span>
+            </div>
         </div>
-        
-        <nav class="nav-list">
-            <div class="nav-item">
-                <a href="#" class="nav-link active">
-                    <i class="ph ph-squares-four"></i> Dashboard
-                </a>
-            </div>
-            <div class="nav-item">
-                <a onclick="visualizarXML()" class="nav-link">
-                    <i class="ph ph-file-search"></i> Visualizar XML
-                </a>
-            </div>
-            <div class="nav-item">
-                <a onclick="exportToCSV()" class="nav-link">
-                    <i class="ph ph-download-simple"></i> Exportar Dados
-                </a>
-            </div>
-        </nav>
-
-        <div class="sidebar-footer">
-            <div>AXON</div>
-            <div style="margin-top: 8px; font-size: 0.75rem;">© 2025 - Auditoria TISS v2.0</div>
+        <div class="header-stats" id="headerStats" style="display:none;">
+            <div class="header-stat-item"><div class="header-stat-label">Arquivos</div><div class="header-stat-value" id="headerFileCount">0</div></div>
+            <div class="header-stat-item"><div class="header-stat-label">Guias</div><div class="header-stat-value" id="headerGuiaCount">0</div></div>
+            <div class="header-stat-item"><div class="header-stat-label">Valor Total</div><div class="header-stat-value" id="headerValorTotal">R$ 0</div></div>
         </div>
-    </aside>
+    </div>
+</div>
 
-    <div class="main-container">
-        <header class="top-bar">
-            <div class="page-title">
-                <i class="ph ph-shield-check"></i>
-                <h1>Validação de Lotes TISS</h1>
-            </div>
-            
-            <div class="top-bar-actions">
-                <button id="btnReset" class="btn" style="display:none" onclick="resetarPagina()">
-                    <i class="ph ph-arrow-counter-clockwise"></i> Trocar Arquivo
-                </button>
-                
-                <div class="ref-date-display">
-                    <i class="ph ph-calendar" style="margin-right: 8px;"></i>
-                    Envio: <strong id="displayEnvioHeader">--/--/----</strong>
-                </div>
+<div class="container-premium">
+    <div class="toolbar-premium">
+        <input type="file" id="xmlInput" style="display:none" accept=".xml" multiple>
+        <button class="btn-premium btn-premium-primary" onclick="document.getElementById('xmlInput').click()">
+            <i class="fas fa-cloud-upload-alt"></i><span>Importar XMLs</span>
+        </button>
+        <div class="search-premium">
+            <i class="fas fa-search"></i>
+            <input type="text" id="search" placeholder="Buscar por guia, paciente, carteira, convênio ou procedimento...">
+        </div>
+        <button class="btn-premium btn-premium-outline" onclick="app.toggleAll(true)"><i class="fas fa-expand-alt"></i> Expandir</button>
+        <button class="btn-premium btn-premium-outline" onclick="app.toggleAll(false)"><i class="fas fa-compress-alt"></i> Recolher</button>
+        <button class="btn-premium btn-premium-danger" onclick="app.clearAllFilters()" id="clearFiltersBtn" style="display:none"><i class="fas fa-times"></i> Limpar Filtros</button>
+    </div>
 
-                <div class="user-profile">
-                    <div style="text-align: right">
-                        <div>Validação de Lotes TISS</div>
-                        <div style="font-size: 0.7rem; color: var(--text-light)">Auditoria Médica</div>
-                    </div>
-                    <div class="user-avatar">
-                        <i class="ph ph-user"></i>
-                    </div>
-                </div>
-            </div>
-        </header>
+    <div id="activeFilters" class="active-filters-premium" style="display:none">
+        <i class="fas fa-filter" style="color:var(--accent);"></i>
+        <span style="font-weight:600;">Filtro ativo:</span>
+        <span id="activeFilterTag" class="filter-tag-premium">
+            <span id="activeFilterText"></span>
+            <i class="fas fa-times" onclick="app.clearAllFilters()" style="cursor:pointer;opacity:0.8;"></i>
+        </span>
+    </div>
 
-        <div class="content-body">
-            <div class="upload-card" id="dropZone" onclick="document.getElementById('fileInput').click()">
-                <input type="file" id="fileInput" accept=".xml" onchange="handleFileSelect(this)" style="display:none">
-                <i class="ph-duotone ph-cloud-arrow-up"></i>
-                <h2>Importar XML TISS</h2>
-                <p>Arraste o arquivo .xml ou clique para selecionar</p>
-                <div style="margin-top: 24px; font-size: 0.9rem; color: var(--text-light)">
-                    <i class="ph ph-shield-check" style="margin-right: 6px;"></i>
-                    Processamento 100% local e seguro
-                </div>
-            </div>
-
-            <div id="dashboard" class="dashboard-layout">
-                <aside class="stats-sidebar">
-                    <div class="card chart-section">
-                        <div class="chart-pie" id="chartPie">
-                            <div class="chart-inner">
-                                <strong id="percentOk">0%</strong>
-                                <span>Aprovado</span>
-                            </div>
-                        </div>
-                        <div style="font-size: 1rem; font-weight: 700; margin-bottom: 4px;">Status do Lote</div>
-                        <div style="font-size: 0.8rem; color: var(--text-muted)" id="fileNameDisplay">Processando...</div>
-                        
-                        <div class="stat-grid">
-                            <div class="stat-item">
-                                <span style="color: var(--success)" id="valTotalOk">0</span>
-                                <label>No Prazo</label>
-                            </div>
-                            <div class="stat-item">
-                                <span style="color: var(--danger)" id="valTotalErr">0</span>
-                                <label>Expiradas</label>
-                            </div>
-                            <div class="stat-item">
-                                <span style="color: var(--tl)" id="valTotalTL">0</span>
-                                <label>0075 TL</label>
-                            </div>
-                            <div class="stat-item">
-                                <span style="color: var(--personal)" id="valTotalTLPersonal">0</span>
-                                <label>TL Personal</label>
-                            </div>
-                            <div class="stat-item">
-                                <span style="color: var(--personal)" id="valTotalPersonal0865">0</span>
-                                <label>0865 Personal</label>
-                            </div>
-                            <div class="stat-item">
-                                <span style="color: var(--warning)" id="valTotalProc">0</span>
-                                <label>Procedimentos</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                            <span style="font-size: 1rem; font-weight: 700">Resumo</span>
-                            <i class="ph ph-users-three" style="font-size: 24px; color: var(--primary)"></i>
-                        </div>
-                        <div style="display: flex; flex-direction: column; gap: 16px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-light);">
-                                <span style="color: var(--text-muted)">Total de Pacientes</span>
-                                <strong style="font-size: 1.2rem; color: var(--primary)" id="totalPacientes">0</strong>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-light);">
-                                <span style="color: var(--text-muted)">Guias Filtradas</span>
-                                <strong style="font-size: 1.2rem" id="guiasFiltradas">0</strong>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0;">
-                                <span style="color: var(--text-muted)">Total de Guias</span>
-                                <strong style="font-size: 1.2rem" id="guiasTotais">0</strong>
-                            </div>
-                        </div>
-                    </div>
-                </aside>
-
-                <div class="results-area">
-                    <div class="toolbar-card">
-                        <div class="filter-group">
-                            <button class="btn btn-filter active" onclick="filtrar('todos', this)">Todos</button>
-                            <button class="btn btn-filter" onclick="filtrar('ok', this)">Aprovadas</button>
-                            <button class="btn btn-filter" onclick="filtrar('vencida', this)">Vencidas</button>
-                            <button id="toggleView" class="btn" onclick="toggleViewMode()">
-                                <i class="ph ph-users"></i> Por Paciente
-                            </button>
-                        </div>
-
-                        <div class="search-input-wrapper">
-                            <i class="ph ph-magnifying-glass"></i>
-                            <input type="text" id="searchInput" placeholder="Buscar carteira, guia ou senha..." onkeyup="pesquisar()">
-                        </div>
-
-                        <button class="btn primary" onclick="exportToCSV()">
-                            <i class="ph ph-download-simple"></i> Exportar
-                        </button>
-                    </div>
-
-                    <div class="table-card">
-                        <table id="tabelaDados">
-                            <thead>
-                                <tr>
-                                    <th>Paciente / Carteira</th>
-                                    <th>Guia</th>
-                                    <th>Autorização</th>
-                                    <th>Prazos</th>
-                                    <th>Envio</th>
-                                    <th>Validação</th>
-                                    <th>Procedimento</th>
-                                </tr>
-                            </thead>
-                            <tbody id="corpoTabela"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+    <div id="mixedLockMsg" class="mixed-lock-premium">
+        <i class="fas fa-exclamation-triangle" style="font-size:1.5rem;"></i>
+        <div>
+            <strong style="font-size:1rem;">LOTE MISTO DETECTADO</strong>
+            <p style="font-size:0.875rem;margin-top:0.25rem;">Separe as guias Locais das de Intercâmbio para processamento correto!</p>
         </div>
     </div>
 
-    <!-- Modais (mantidos iguais) -->
-    <div id="xmlModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Conteúdo do XML TISS</h3>
-                <span class="modal-close" onclick="fecharModal()">&times;</span>
-            </div>
-            <pre id="xmlContent" class="xml-viewer"></pre>
+    <div id="stats" class="stats-grid-premium" style="display:none">
+        <div class="stat-card-premium" onclick="app.filterByType('all')">
+            <div class="stat-icon total"><i class="fas fa-file-invoice"></i></div>
+            <div class="stat-info-premium"><small>Total de Guias</small><strong id="vTotal">0</strong></div>
+        </div>
+        <div class="stat-card-premium" onclick="app.filterByType('error')">
+            <div class="stat-icon errors"><i class="fas fa-exclamation-triangle"></i></div>
+            <div class="stat-info-premium"><small>Guias com Erros</small><strong id="vErros">0</strong></div>
+        </div>
+        <div class="stat-card-premium" onclick="app.filterByType('expired')">
+            <div class="stat-icon expired"><i class="fas fa-clock"></i></div>
+            <div class="stat-info-premium"><small>Fora do Prazo</small><strong id="vVencidas">0</strong></div>
+        </div>
+        <div class="stat-card-premium">
+            <div class="stat-icon value"><i class="fas fa-coins"></i></div>
+            <div class="stat-info-premium"><small>Valor Total</small><strong id="vValor">R$ 0,00</strong></div>
         </div>
     </div>
 
-    <div id="errorModal" class="modal">
-        <div class="modal-content error-details">
-            <div class="modal-header">
-                <h3>Detalhes da Validação</h3>
-                <span class="modal-close" onclick="fecharErrorModal()">&times;</span>
-            </div>
-            <div id="errorContent"></div>
-        </div>
+    <div id="errorFilters" class="error-filters-premium" style="display:none"></div>
+
+    <div id="fileTabs" class="tabs-premium" style="display:none">
+        <div class="tabs-header-premium" id="tabsHeader"></div>
+        <div id="tabsContent"></div>
     </div>
+</div>
 
-    <div id="toast-container"></div>
+<script>
+class TISSAnalyzerPro {
+    constructor() {
+        this.ns = "http://www.ans.gov.br/padroes/tiss/schemas";
+        this.CODIGOS_RA = ["31309054","10102019","10103015","10103023"];
+        this.CODIGOS_DECLARACAO_NASCIDO = ["31309054","31309127","31309208","31309097"];
 
-    <script>
-        // Mantive todo o JavaScript original intacto
-        let dadosGlobais = [];
-        let pacientesAgrupados = [];
-        let viewMode = 'paciente';
-        let xmlBruto = "";
-        
-        const CODIGOS_GATILHO_1_00 = ["60000694", ""];
-        const CODIGOS_GATILHO_2_00 = ["60000554", ""];
-        const CODIGOS_PARA_VALIDAR = ["31309054", "10102019", "10103015", "10103023"];
-        
-        const VALIDACAO_GRAU = {
-            "10103023": "10",
-            "10103015": "10",
-            "10104020": "13"
+        // ── NOVO: motivos de encerramento que exigem <declaracaoObito> ──────────
+        this.MOTIVOS_OBITO = ["41","42","43"];
+        // ────────────────────────────────────────────────────────────────────────
+
+        this.REGRAS_GRAU = {
+            "Unimed":   { "10103023":10, "10103015":10, "10104020":13 },
+            "Bradesco": { "10103023":10, "10103015":12 }
         };
+        this.REGRAS_CONVENIO = {
+            "Unimed":            { dias:30,  cor:"linear-gradient(135deg,#10b981 0%,#059669 100%)" },
+            "Bradesco Saúde":    { dias:120, cor:"linear-gradient(135deg,#ef4444 0%,#dc2626 100%)" },
+            "Bradesco Operadora":{ dias:120, cor:"linear-gradient(135deg,#ef4444 0%,#dc2626 100%)" },
+            "DEFAULT":           { dias:30,  cor:"linear-gradient(135deg,#1e293b 0%,#0f172a 100%)" }
+        };
+        this.arquivos = [];
+        this.filtroAtual = { tipo:'all', erro:null, codigo:null };
+        this.arquivoAtivo = null;
+        this.init();
+    }
 
-        function getPrimeiroDiaUtilProximoMes(dataBase) {
-            let proximoMes = new Date(dataBase.getFullYear(), dataBase.getMonth() + 1, 1);
-            while (proximoMes.getDay() === 0 || proximoMes.getDay() === 6) {
-                proximoMes.setDate(proximoMes.getDate() + 1);
-            }
-            return proximoMes;
-        }
-
-        function resetarPagina() {
-            document.getElementById('fileInput').value = "";
-            document.getElementById('dashboard').style.display = 'none';
-            document.getElementById('btnReset').style.display = 'none';
-            document.getElementById('dropZone').style.display = 'block';
-            dadosGlobais = [];
-            pacientesAgrupados = [];
-            xmlBruto = "";
-            showToast("Pronto para novo arquivo.", "info");
-        }
-
-        function toggleViewMode() {
-            const btn = document.getElementById('toggleView');
-            if (viewMode === 'paciente') {
-                viewMode = 'todas';
-                btn.innerHTML = '<i class="ph ph-list"></i> Todas as Guias';
-                btn.classList.add('active');
-                showToast("Mostrando todas as guias", "info");
-            } else {
-                viewMode = 'paciente';
-                btn.innerHTML = '<i class="ph ph-users"></i> Por Paciente';
-                btn.classList.remove('active');
-                showToast("Mostrando 1 guia por paciente", "info");
-            }
-            renderizarTabela();
-        }
-
-        const dropZone = document.getElementById('dropZone');
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(e => {
-            dropZone.addEventListener(e, (ev) => { ev.preventDefault(); ev.stopPropagation(); });
+    init() {
+        document.getElementById('xmlInput').addEventListener('change', e => this.handleFileUpload(e));
+        let timeout;
+        document.getElementById('search').addEventListener('input', () => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => this.filterSearch(), 300);
         });
+    }
 
-        dropZone.addEventListener('drop', (e) => {
-            handleFile(e.dataTransfer.files[0]);
-        });
+    showLoading(show) { document.getElementById('loading').style.display = show ? 'flex' : 'none'; }
 
-        function handleFileSelect(input) { if(input.files.length) handleFile(input.files[0]); }
+    showToast(message, type='info') {
+        const toast = document.createElement('div');
+        toast.className = `toast-premium toast-${type}`;
+        toast.innerHTML = `<i class="fas ${type==='success'?'fa-check-circle':type==='error'?'fa-exclamation-circle':'fa-info-circle'}" style="margin-right:0.75rem;"></i>${message}`;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
 
-        function handleFile(file) {
-            if(!file) return;
-            document.getElementById('fileNameDisplay').innerText = file.name;
-            document.getElementById('dropZone').style.display = 'none';
-            document.getElementById('btnReset').style.display = 'flex';
-            
+    parseDate(dateStr) {
+        if (!dateStr) return null;
+        try {
+            dateStr = dateStr.split('T')[0];
+            if (dateStr.includes('/')) { const [d,m,y]=dateStr.split('/'); return new Date(y,m-1,d); }
+            if (dateStr.includes('-')) { const [y,m,d]=dateStr.split('-'); return new Date(y,m-1,d); }
+        } catch(e) {}
+        return null;
+    }
+
+    formatDateDisplay(dateStr) {
+        if (!dateStr) return '-';
+        const d = this.parseDate(dateStr);
+        return d ? d.toLocaleDateString('pt-BR') : dateStr;
+    }
+
+    getCorteProximoMes() {
+        const hoje = new Date();
+        let pDia = new Date(hoje.getFullYear(), hoje.getMonth()+1, 1);
+        while (pDia.getDay()===0 || pDia.getDay()===6) pDia.setDate(pDia.getDate()+1);
+        return pDia;
+    }
+
+    checarVencimento(dataStr, nomeConvenio) {
+        if (!dataStr) return false;
+        const dataGuia = this.parseDate(dataStr);
+        if (!dataGuia) return false;
+        const regra = this.REGRAS_CONVENIO[nomeConvenio] || this.REGRAS_CONVENIO["DEFAULT"];
+        const dataLimite = new Date(dataGuia);
+        dataLimite.setDate(dataLimite.getDate() + regra.dias);
+        return dataLimite < this.getCorteProximoMes();
+    }
+
+    identificarCarteira(num) {
+        num = num || '';
+        if (num.startsWith('00758'))    return { label:'LOCAL PERSONAL',  class:'badge-personal-local', isLocal:true  };
+        if (num.startsWith('08650004')) return { label:'INTER. PERSONAL', class:'badge-personal-inter', isLocal:false };
+        if (num.startsWith('0075'))     return { label:'LOCAL',           class:'badge-local',          isLocal:true  };
+        return { label:'INTERCAMBIO', class:'badge-inter', isLocal:false };
+    }
+
+    identificarConvenio(codigo, carteira='') {
+        const map = { "11000101":"Unimed","990396":"Bradesco","58076":"Bradesco","284610":"Bradesco" };
+        let nome = map[codigo] || "Convênio Desconhecido";
+        if (nome === "Bradesco") return carteira.startsWith("954") ? "Bradesco Operadora" : "Bradesco Saúde";
+        return nome;
+    }
+
+    formatCurrency(value) {
+        return value.toLocaleString('pt-BR',{style:'currency',currency:'BRL',minimumFractionDigits:2,maximumFractionDigits:2});
+    }
+
+    async handleFileUpload(event) {
+        const files = Array.from(event.target.files);
+        if (!files.length) return;
+        event.target.value = '';
+        this.showLoading(true);
+        this.arquivos = [];
+        for (const file of files) {
+            if (this.arquivos.find(a => a.nome===file.name)) { this.showToast(`"${file.name}" já foi importado`,'info'); continue; }
+            await this.processFile(file);
+        }
+        this.renderTabs();
+        this.renderErrorFilters();
+        this.updateHeaderStats();
+        this.showLoading(false);
+        this.showToast(`${files.length} arquivo(s) processado(s) com sucesso!`,'success');
+    }
+
+    updateHeaderStats() {
+        document.getElementById('headerStats').style.display = 'flex';
+        const totalGuias = this.arquivos.reduce((a,arq)=>a+arq.stats.total,0);
+        const totalValor = this.arquivos.reduce((a,arq)=>a+arq.stats.valor,0);
+        document.getElementById('headerFileCount').innerText = this.arquivos.length;
+        document.getElementById('headerGuiaCount').innerText = totalGuias;
+        document.getElementById('headerValorTotal').innerText = this.formatCurrency(totalValor);
+    }
+
+    async processFile(file) {
+        return new Promise(resolve => {
             const reader = new FileReader();
-            reader.onload = e => {
-                xmlBruto = e.target.result;
-                processarXML(xmlBruto);
+            reader.onload = ev => {
+                try {
+                    const doc = new DOMParser().parseFromString(ev.target.result,'text/xml');
+                    if (doc.querySelector('parsererror')) throw new Error('XML inválido');
+                    const guias = this.extractDataFromXML(doc);
+                    this.identificarVinculos(guias);
+                    this.arquivos.push({ nome:file.name, guias, stats:this.calcularStats(guias) });
+                } catch(e) {
+                    this.showToast(`Erro em ${file.name}: ${e.message}`,'error');
+                    this.arquivos.push({ nome:file.name, guias:[], stats:{ total:0,erros:0,erros694:0,erros554:0,errosGrau:0,errosNascido:0,errosObito:0,vencidas:0,valor:0,locais:0,intercambio:0 }, erro:true });
+                }
+                resolve();
             };
+            reader.onerror = () => resolve();
             reader.readAsText(file);
-        }
+        });
+    }
 
-        function visualizarXML() {
-            if(!xmlBruto) {
-                showToast("Nenhum arquivo carregado.", "warning");
-                return;
-            }
-            document.getElementById('xmlContent').innerText = xmlBruto;
-            document.getElementById('xmlModal').style.display = 'flex';
-        }
+    extractDataFromXML(doc) {
+        const guias = [];
+        const elements = doc.querySelectorAll('guiaSP-SADT, guiaResumoInternacao, guiaConsulta');
 
-        function fecharModal() {
-            document.getElementById('xmlModal').style.display = 'none';
-        }
+        elements.forEach(guia => {
+            const numG = this.getXMLTag(guia,"numeroGuiaPrestador") || "-";
+            const cart = this.getXMLTag(guia,"numeroCarteira") || "";
+            const nomeB= this.getXMLTag(guia,"nomeBeneficiario") || "Beneficiário não identificado";
+            const info = this.identificarCarteira(cart);
 
-        function fecharErrorModal() {
-            document.getElementById('errorModal').style.display = 'none';
-        }
+            let codPrestador = this.getXMLTag(guia,"codigoPrestadorNaOperadora") || this.getXMLTag(doc,"codigoPrestadorNaOperadora");
+            const nomeConvenio = this.identificarConvenio(codPrestador, cart);
 
-        window.onclick = function(event) {
-            const modal = document.getElementById('xmlModal');
-            const errorModal = document.getElementById('errorModal');
-            if (event.target == modal) modal.style.display = "none";
-            if (event.target == errorModal) errorModal.style.display = "none";
-        }
+            const dataRef = this.getXMLTag(guia,"dataFinalFaturamento") ||
+                            this.getXMLTag(guia,"dataAutorizacao") ||
+                            this.getXMLTag(guia,"dataExecucao") || "";
 
-        function mostrarDetalhesErro(item) {
-            const errorContent = document.getElementById('errorContent');
-            
-            let html = `<div class="error-summary">
-                <h4 style="margin: 0 0 8px 0;">Guia: ${item.guia}</h4>
-                <p style="margin: 0; font-size: 0.9rem;">Paciente: ${item.carteira}</p>
-            </div>`;
-            
-            if (item.validacaoProcedimento) {
-                const validacao = item.validacaoProcedimento;
-                
-                if (validacao.tipoValidacao) {
-                    html += `<h4 style="margin-bottom: 16px;">Validação de Redução/Acréscimo</h4>`;
-                    html += `<p style="color: var(--text-muted); margin-bottom: 16px;">Gatilho detectado: Código(s) que exigem validação ${validacao.tipoValidacao}</p>`;
-                } else {
-                    html += `<h4 style="margin-bottom: 16px;">Validação de Grau</h4>`;
+            const procs = guia.querySelectorAll('procedimentoExecutado, servicosExecutados');
+
+            // ── Presença de tags especiais na guia ──────────────────────────────
+            const temDeclaracaoNascido = !!(
+                guia.getElementsByTagNameNS(this.ns,"declaracaoNascido")[0] ||
+                guia.getElementsByTagName("declaracaoNascido")[0]
+            );
+
+            // ── NOVO: motivoEncerramento e declaracaoObito ───────────────────────
+            const motivoEncerramentoTag =
+                guia.getElementsByTagNameNS(this.ns,"motivoEncerramento")[0] ||
+                guia.getElementsByTagName("motivoEncerramento")[0];
+            const motivoEncerramento = motivoEncerramentoTag ? motivoEncerramentoTag.textContent.trim() : null;
+
+            const temDeclaracaoObito = !!(
+                guia.getElementsByTagNameNS(this.ns,"declaracaoObito")[0] ||
+                guia.getElementsByTagName("declaracaoObito")[0]
+            );
+
+            // Precisa de declaracaoObito se motivoEncerramento for 41, 42 ou 43
+            const exigeObito = motivoEncerramento && this.MOTIVOS_OBITO.includes(motivoEncerramento);
+            // ────────────────────────────────────────────────────────────────────
+
+            // 60000694 e, para Bradesco, também 60000805 acionam RA = 1
+            const CODIGOS_694 = ["60000694", "60000805"];
+            // 60000554 e, para Bradesco, também 60000511 acionam RA = 2
+            const CODIGOS_554 = ["60000554", "60000511"];
+
+            const isBradesco = nomeConvenio.includes("Bradesco");
+
+            const tem694 = Array.from(procs).some(p => {
+                const c = this.getXMLTag(p,"codigoProcedimento");
+                if (c === "60000694") return true;
+                // 60000805 só aciona para Bradesco
+                if (c === "60000805" && isBradesco) return true;
+                return false;
+            });
+
+            const tem554 = Array.from(procs).some(p => {
+                const c = this.getXMLTag(p,"codigoProcedimento");
+                if (c === "60000554") return true;
+                // 60000511 só aciona para Bradesco
+                if (c === "60000511" && isBradesco) return true;
+                return false;
+            });
+
+            // Qual código disparador foi encontrado (para exibir no erro)
+            const cod694Encontrado = Array.from(procs).map(p => this.getXMLTag(p,"codigoProcedimento"))
+                .find(c => c==="60000694" || (c==="60000805" && isBradesco)) || "60000694";
+            const cod554Encontrado = Array.from(procs).map(p => this.getXMLTag(p,"codigoProcedimento"))
+                .find(c => c==="60000554" || (c==="60000511" && isBradesco)) || "60000554";
+
+            let items=[], valorTotal=0, temErro=false, erros=[], codigosNascidoPresentes=[];
+
+            procs.forEach(p => {
+                const cod      = this.getXMLTag(p,"codigoProcedimento") || "";
+                const nomeProc = this.getXMLTag(p,"descricaoProcedimento") || this.getXMLTag(p,"nomeProcedimento") || "Procedimento sem descrição";
+                const dataE    = this.getXMLTag(p,"dataExecucao") || "";
+                const grauPartNum = parseInt((this.getXMLTag(p,"grauPart")||"0").trim(),10) || 0;
+                const raNum    = parseFloat(this.getXMLTag(p,"reducaoAcrescimo")||"0");
+                const raDisplay= Number.isInteger(raNum) ? raNum.toString() : raNum.toFixed(2);
+                const vU       = this.parseCurrency(this.getXMLTag(p,"valorUnitario")||"0");
+                valorTotal += vU;
+
+                let erroRA=null, raCorreto=null, erroGrau=null, grauCorreto=null, erroNascido=null;
+
+                // Validação RA
+                if (this.CODIGOS_RA.includes(cod)) {
+                    if (tem694) {
+                        raCorreto="1";
+                        if(raNum!==1){
+                            erroRA=`RA deve ser 1 — disparado por ${cod694Encontrado} (enviado: ${raDisplay})`;
+                            temErro=true;
+                            erros.push({tipo:'ra_694',mensagem:erroRA,codigo:cod,codigoDisparador:cod694Encontrado});
+                        }
+                    } else if(tem554){
+                        raCorreto="2";
+                        if(raNum!==2){
+                            erroRA=`RA deve ser 2 — disparado por ${cod554Encontrado} (enviado: ${raDisplay})`;
+                            temErro=true;
+                            erros.push({tipo:'ra_554',mensagem:erroRA,codigo:cod,codigoDisparador:cod554Encontrado});
+                        }
+                    }
                 }
-                
-                validacao.resultados.forEach(resultado => {
-                    const isOk = resultado.isValid;
-                    html += `<div class="error-item ${isOk ? 'ok' : ''}">
-                        <div class="error-code">Código: ${resultado.codigo}</div>
-                        <div class="error-message">
-                            Tipo: ${resultado.tipo}<br>
-                            Esperado: <span class="error-value expected">${resultado.valorEsperado}</span>
-                            Encontrado: <span class="error-value found ${isOk ? 'expected' : ''}">${resultado.valorEncontrado}</span>
-                            <br>
-                            Status: <strong style="color: ${isOk ? 'var(--success)' : 'var(--danger)'}">${isOk ? 'CORRETO' : 'INCORRETO'}</strong>
-                        </div>
-                    </div>`;
+
+                // Validação Grau
+                const chaveConvenio = nomeConvenio.includes("Bradesco")?"Bradesco":nomeConvenio.includes("Unimed")?"Unimed":null;
+                const regrasConv = chaveConvenio ? (this.REGRAS_GRAU[chaveConvenio]||{}) : {};
+                if (regrasConv.hasOwnProperty(cod)) {
+                    grauCorreto = regrasConv[cod];
+                    if (grauPartNum !== grauCorreto) {
+                        erroGrau=`Grau deve ser ${grauCorreto} (enviado: ${grauPartNum})`;
+                        temErro=true;
+                        erros.push({tipo:'grau_incorreto',mensagem:erroGrau,codigo:cod,grauEnviado:grauPartNum,grauCorreto});
+                    }
+                }
+
+                // Validação declaracaoNascido
+                if (this.CODIGOS_DECLARACAO_NASCIDO.includes(cod)) {
+                    codigosNascidoPresentes.push(cod);
+                    if (!temDeclaracaoNascido) {
+                        erroNascido=`Tag <declaracaoNascido> ausente (exigida pelo código ${cod})`;
+                        temErro=true;
+                        if (!erros.some(e=>e.tipo==='sem_declaracao_nascido'))
+                            erros.push({tipo:'sem_declaracao_nascido',mensagem:erroNascido,codigo:cod});
+                    }
+                }
+
+                items.push({ data:dataE,codigo:cod,nome:nomeProc,ra:raDisplay,raNum,raCorreto,grau:grauPartNum,grauCorreto,erroGrau,valor:vU,erro:erroRA,erroNascido });
+            });
+
+            // ── NOVO: Validação declaracaoObito — fora do loop de itens ─────────
+            // O motivoEncerramento é da guia inteira, não de cada item.
+            // Registra um único erro na guia se exigir e não tiver.
+            let erroObito = false;
+            if (exigeObito && !temDeclaracaoObito) {
+                temErro = true;
+                erroObito = true;
+                erros.push({
+                    tipo: 'sem_declaracao_obito',
+                    mensagem: `Tag <declaracaoObito> ausente (motivoEncerramento = ${motivoEncerramento})`,
+                    motivo: motivoEncerramento
                 });
-                
-                if (validacao.temErro) {
-                    html += `<div style="margin-top: 20px; padding: 16px; background: #fef2f2; border-radius: var(--radius-sm); border: 1px solid #fecaca;">
-                        <h4 style="color: #991b1b; margin: 0 0 8px 0;">⚠️ Ações Recomendadas:</h4>
-                        <ul style="margin: 0; padding-left: 20px; color: #991b1b;">
-                            <li>Verificar o campo <strong>reducaoAcrescimo</strong> ou <strong>grauPart</strong> no XML</li>
-                            <li>Corrigir o valor para <strong>${validacao.resultados.find(r => !r.isValid).valorEsperado}</strong></li>
-                            <li>Reenviar a guia com os valores corretos</li>
-                        </ul>
-                    </div>`;
-                } else {
-                    html += `<div style="margin-top: 20px; padding: 16px; background: #ecfdf5; border-radius: var(--radius-sm); border: 1px solid #a7f3d0;">
-                        <h4 style="color: #065f46; margin: 0 0 8px 0;">✅ Todos os procedimentos estão corretos!</h4>
-                        <p style="margin: 0; color: #065f46;">Nenhuma ação necessária para validação de procedimentos.</p>
-                    </div>`;
-                }
-            } else {
-                html += `<div style="margin-top: 20px; padding: 16px; background: #f0f9ff; border-radius: var(--radius-sm); border: 1px solid #bae6fd;">
-                    <h4 style="color: #0369a1; margin: 0 0 8px 0;">ℹ️ Sem Validação Especial</h4>
-                    <p style="margin: 0; color: #0369a1;">Esta guia não contém procedimentos que requerem validação especial.</p>
-                </div>`;
             }
-            
-            if (item.isVencida) {
-                html += `<div class="error-item" style="margin-top: 20px;">
-                    <div class="error-code">Prazo Vencido</div>
-                    <div class="error-message">
-                        Data da Guia: <strong>${item.dtGuia.toLocaleDateString('pt-BR')}</strong><br>
-                        Limite para Envio: <strong>${item.dtLimite.toLocaleDateString('pt-BR')}</strong><br>
-                        Envio Previsto: <strong>${item.dtEnvio.toLocaleDateString('pt-BR')}</strong><br>
-                        <br>
-                        <span style="color: var(--danger); font-weight: 600;">A guia está fora do prazo de envio.</span>
+            // ────────────────────────────────────────────────────────────────────
+
+            guias.push({
+                numero:numG, carteira:cart, beneficiario:nomeB, tipo:info,
+                convenio:nomeConvenio, dataReferencia:dataRef,
+                vencida:this.checarVencimento(dataRef,nomeConvenio),
+                valorTotal, items, temErro, erros, qtdItens:procs.length,
+                temDeclaracaoNascido,
+                codigosNascido:codigosNascidoPresentes,
+                motivoEncerramento,
+                temDeclaracaoObito,
+                erroObito           // flag rápida para CSS / card
+            });
+        });
+
+        return guias;
+    }
+
+    calcularStats(guias) {
+        let erros694=0,erros554=0,errosGrau=0,errosNascido=0,errosObito=0;
+        guias.forEach(g => g.erros.forEach(e => {
+            if(e.tipo==='ra_694') erros694++;
+            if(e.tipo==='ra_554') erros554++;
+            if(e.tipo==='grau_incorreto') errosGrau++;
+            if(e.tipo==='sem_declaracao_nascido') errosNascido++;
+            if(e.tipo==='sem_declaracao_obito')   errosObito++;   // NOVO
+        }));
+        return {
+            total:guias.length,
+            erros:guias.filter(g=>g.temErro).length,
+            erros694,erros554,errosGrau,errosNascido,
+            errosObito,   // NOVO
+            vencidas:guias.filter(g=>g.vencida).length,
+            valor:guias.reduce((a,g)=>a+g.valorTotal,0),
+            locais:guias.filter(g=>g.tipo.isLocal).length,
+            intercambio:guias.filter(g=>!g.tipo.isLocal).length
+        };
+    }
+
+    identificarVinculos(guias) {
+        const indice={};
+        guias.forEach(guia => {
+            if (!guia.carteira) return;
+            const datasItens = (guia.items||[]).map(it=>this.parseDate(it.data)).filter(Boolean).map(d=>d.getTime());
+            const dataBase = datasItens.length>0 ? new Date(Math.min(...datasItens)) : this.parseDate(guia.dataReferencia);
+            if (!dataBase) return;
+            const chave=`${guia.carteira}|${dataBase.toISOString().slice(0,10)}`;
+            if (!indice[chave]) indice[chave]=[];
+            indice[chave].push(guia);
+        });
+        Object.values(indice).forEach(grupo=>{
+            if(grupo.length<2) return;
+            grupo.forEach((guia,idx)=>{ guia.vinculada=true; guia.grupoVinculo=grupo.filter((_,i)=>i!==idx).map(g=>g.numero); });
+        });
+    }
+
+    getXMLTag(element, tagName) {
+        let tag = element.getElementsByTagNameNS(this.ns,tagName)[0];
+        if (!tag) tag = element.getElementsByTagName(tagName)[0];
+        return tag ? tag.textContent.trim() : null;
+    }
+
+    parseCurrency(value) { if(!value) return 0; return parseFloat(value.toString().replace(',','.'))||0; }
+
+    renderErrorFilters() {
+        const container = document.getElementById('errorFilters');
+        container.style.display = 'flex';
+        const t694     = this.arquivos.reduce((a,arq)=>a+arq.stats.erros694,0);
+        const t554     = this.arquivos.reduce((a,arq)=>a+arq.stats.erros554,0);
+        const tGrau    = this.arquivos.reduce((a,arq)=>a+arq.stats.errosGrau,0);
+        const tNascido = this.arquivos.reduce((a,arq)=>a+arq.stats.errosNascido,0);
+        const tObito   = this.arquivos.reduce((a,arq)=>a+arq.stats.errosObito,0); // NOVO
+
+            container.innerHTML = `
+            <button class="filter-btn-premium ${this.filtroAtual.erro==='694'?'active':''}" onclick="app.filterByError('694')">
+                <i class="fas fa-exclamation-triangle"></i>Erro RA 694 / 805<span class="filter-count">${t694}</span>
+            </button>
+            <button class="filter-btn-premium ${this.filtroAtual.erro==='554'?'active':''}" onclick="app.filterByError('554')">
+                <i class="fas fa-exclamation-triangle"></i>Erro RA 554 / 511<span class="filter-count">${t554}</span>
+            </button>
+            <button class="filter-btn-premium ${this.filtroAtual.erro==='grau'?'active':''}" onclick="app.filterByError('grau')">
+                <i class="fas fa-exclamation-triangle"></i>Erro Grau Part.<span class="filter-count">${tGrau}</span>
+            </button>
+            <button class="filter-btn-premium filter-nascido ${this.filtroAtual.erro==='nascido'?'active':''}" onclick="app.filterByError('nascido')">
+                <i class="fas fa-baby"></i>Decl. Nascido Ausente<span class="filter-count">${tNascido}</span>
+            </button>
+            <button class="filter-btn-premium filter-obito ${this.filtroAtual.erro==='obito'?'active':''}" onclick="app.filterByError('obito')">
+                <i class="fas fa-skull"></i>Decl. Óbito Ausente<span class="filter-count">${tObito}</span>
+            </button>
+        `;
+    }
+
+    renderTabs() {
+        document.getElementById('fileTabs').style.display='block';
+        document.getElementById('stats').style.display='grid';
+        this.renderTabsHeader();
+        this.renderGlobalStats();
+        if(this.arquivos.length>0) this.ativarAba(this.arquivos[0].nome);
+    }
+
+    renderTabsHeader() {
+        const header = document.getElementById('tabsHeader');
+        header.innerHTML='';
+        this.arquivos.forEach(arquivo => {
+            const btn = document.createElement('button');
+            btn.className=`tab-btn-premium ${this.arquivoAtivo===arquivo.nome?'active':''}`;
+            btn.setAttribute('data-file',arquivo.nome);
+            btn.innerHTML=`<i class="fas fa-file-code"></i><span>${arquivo.nome}</span><span class="tab-badge" style="background:${arquivo.stats.erros>0?'rgba(239,68,68,0.2)':'rgba(16,185,129,0.2)'}">${arquivo.stats.erros} erro${arquivo.stats.erros!==1?'s':''}</span>`;
+            btn.onclick=()=>this.ativarAba(arquivo.nome);
+            header.appendChild(btn);
+        });
+    }
+
+    renderGlobalStats() {
+        document.getElementById('vTotal').innerText    = this.arquivos.reduce((a,arq)=>a+arq.stats.total,0);
+        document.getElementById('vErros').innerText    = this.arquivos.reduce((a,arq)=>a+arq.stats.erros,0);
+        document.getElementById('vVencidas').innerText = this.arquivos.reduce((a,arq)=>a+arq.stats.vencidas,0);
+        document.getElementById('vValor').innerText    = this.formatCurrency(this.arquivos.reduce((a,arq)=>a+arq.stats.valor,0));
+    }
+
+    ativarAba(nomeArquivo) {
+        this.arquivoAtivo = nomeArquivo;
+        document.querySelectorAll('.tab-btn-premium').forEach(btn=>btn.classList.toggle('active',btn.getAttribute('data-file')===nomeArquivo));
+        this.renderTabContent(nomeArquivo);
+    }
+
+    renderTabContent(nomeArquivo) {
+        const content  = document.getElementById('tabsContent');
+        const arquivo  = this.arquivos.find(a=>a.nome===nomeArquivo);
+        if (!arquivo) return;
+        const stats = arquivo.stats;
+
+        content.innerHTML = `
+            <div class="summary-premium" style="padding:1.25rem;">
+                <div class="summary-item-premium ${this.filtroAtual.tipo==='all'&&!this.filtroAtual.erro?'active':''}" onclick="app.filterByType('all')">
+                    <div class="label">Total</div><div class="value">${stats.total}</div>
+                </div>
+                <div class="summary-item-premium ${this.filtroAtual.tipo==='error'?'active':''}" onclick="app.filterByType('error')">
+                    <div class="label">Erros</div><div class="value">${stats.erros}</div>
+                </div>
+                <div class="summary-item-premium ${this.filtroAtual.erro==='694'?'active':''}" onclick="app.filterByError('694')">
+                    <div class="label">RA 694/805</div><div class="value">${stats.erros694}</div>
+                </div>
+                <div class="summary-item-premium ${this.filtroAtual.erro==='554'?'active':''}" onclick="app.filterByError('554')">
+                    <div class="label">RA 554/511</div><div class="value">${stats.erros554}</div>
+                </div>
+                <div class="summary-item-premium ${this.filtroAtual.erro==='grau'?'active':''}" onclick="app.filterByError('grau')">
+                    <div class="label">Erro Grau</div><div class="value">${stats.errosGrau}</div>
+                </div>
+                <div class="summary-item-premium nascido-item ${this.filtroAtual.erro==='nascido'?'active':''}" onclick="app.filterByError('nascido')">
+                    <div class="label">Decl. Nascido</div><div class="value">${stats.errosNascido}</div>
+                </div>
+                <div class="summary-item-premium obito-item ${this.filtroAtual.erro==='obito'?'active':''}" onclick="app.filterByError('obito')">
+                    <div class="label">Decl. Óbito</div><div class="value">${stats.errosObito}</div>
+                </div>
+                <div class="summary-item-premium ${this.filtroAtual.tipo==='expired'?'active':''}" onclick="app.filterByType('expired')">
+                    <div class="label">Vencidas</div><div class="value">${stats.vencidas}</div>
+                </div>
+                <div class="summary-item-premium">
+                    <div class="label">Valor</div><div class="value">${this.formatCurrency(stats.valor)}</div>
+                </div>
+            </div>
+            <div style="padding:0 1.5rem 1.5rem;">
+                <div id="cards-${nomeArquivo.replace(/[^a-zA-Z0-9]/g,'_')}" class="cards-grid-premium"></div>
+            </div>
+        `;
+
+        this.renderGuiaCards(arquivo.guias,`cards-${nomeArquivo.replace(/[^a-zA-Z0-9]/g,'_')}`);
+        const mixedMsg = document.getElementById('mixedLockMsg');
+        (stats.locais>0 && stats.intercambio>0) ? mixedMsg.classList.add('is-visible') : mixedMsg.classList.remove('is-visible');
+    }
+
+    renderGuiaCards(guias, containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        container.innerHTML='';
+
+        let gf = guias;
+        if(this.filtroAtual.tipo==='error')   gf=gf.filter(g=>g.temErro);
+        else if(this.filtroAtual.tipo==='expired') gf=gf.filter(g=>g.vencida);
+        if(this.filtroAtual.erro==='694')     gf=gf.filter(g=>g.erros.some(e=>e.tipo==='ra_694'));
+        else if(this.filtroAtual.erro==='554')     gf=gf.filter(g=>g.erros.some(e=>e.tipo==='ra_554'));
+        else if(this.filtroAtual.erro==='grau')    gf=gf.filter(g=>g.erros.some(e=>e.tipo==='grau_incorreto'));
+        else if(this.filtroAtual.erro==='nascido') gf=gf.filter(g=>g.erros.some(e=>e.tipo==='sem_declaracao_nascido'));
+        else if(this.filtroAtual.erro==='obito')   gf=gf.filter(g=>g.erros.some(e=>e.tipo==='sem_declaracao_obito')); // NOVO
+
+        if (!gf.length) {
+            container.innerHTML=`<div class="empty-state-premium" style="grid-column:1/-1;"><i class="fas fa-search"></i><h3 style="margin-bottom:0.5rem;">Nenhuma guia encontrada</h3><p>Tente ajustar os filtros ou buscar por outros termos</p></div>`;
+            return;
+        }
+
+        const grupos = new Map();
+        gf.forEach(g=>{ const k=g.carteira||'__sem_carteira__'; if(!grupos.has(k)) grupos.set(k,[]); grupos.get(k).push(g); });
+        grupos.forEach((gs,carteira)=>{ container.appendChild(gs.length===1 ? this.createGuiaCard(gs[0]) : this.createGrupoCard(gs,carteira)); });
+        this.updateActiveFiltersDisplay();
+    }
+
+    createGrupoCard(guias, carteira) {
+        const beneficiario = guias.find(g=>g.beneficiario!=='Beneficiário não identificado')?.beneficiario||'Beneficiário não identificado';
+        const temErro    = guias.some(g=>g.temErro);
+        const temVencida = guias.some(g=>g.vencida);
+        const temNascido = guias.some(g=>g.erros.some(e=>e.tipo==='sem_declaracao_nascido'));
+        const temObito   = guias.some(g=>g.erros.some(e=>e.tipo==='sem_declaracao_obito')); // NOVO
+        const valorTotal = guias.reduce((s,g)=>s+g.valorTotal,0);
+        const convenios  = [...new Set(guias.map(g=>g.convenio))].join(' · ');
+
+        const grupo = document.createElement('div');
+        grupo.className='grupo-carteirinha is-open';
+        grupo.dataset.carteira=carteira;
+        grupo.innerHTML=`
+            <div class="grupo-header" onclick="this.parentElement.classList.toggle('is-open')">
+                <div class="grupo-icon"><i class="fas fa-users"></i></div>
+                <span class="grupo-carteira-num"><i class="fas fa-id-card" style="margin-right:0.35rem;opacity:0.7;"></i>${carteira}</span>
+                <span class="grupo-beneficiario">${beneficiario}</span>
+                <div class="grupo-meta">
+                    ${temErro    ?'<span class="grupo-pill grupo-pill-erro"><i class="fas fa-exclamation-triangle"></i> Com erros</span>':''}
+                    ${temVencida ?'<span class="grupo-pill grupo-pill-vencida"><i class="fas fa-clock"></i> Vencida</span>':''}
+                    ${temNascido ?'<span class="grupo-pill grupo-pill-nascido"><i class="fas fa-baby"></i> Sem Decl. Nascido</span>':''}
+                    ${temObito   ?'<span class="grupo-pill grupo-pill-obito"><i class="fas fa-skull"></i> Sem Decl. Óbito</span>':''}
+                    <span class="grupo-pill grupo-pill-default"><i class="fas fa-file-invoice"></i> ${guias.length} guias</span>
+                    <span class="grupo-pill grupo-pill-default"><i class="fas fa-hospital"></i> ${convenios}</span>
+                    <span class="grupo-valor">${this.formatCurrency(valorTotal)}</span>
+                </div>
+                <div class="grupo-chevron">▼</div>
+            </div>
+            <div class="grupo-guias"></div>
+        `;
+        const guiasContainer = grupo.querySelector('.grupo-guias');
+        guias.forEach(g=>guiasContainer.appendChild(this.createGuiaCard(g)));
+        return grupo;
+    }
+
+    createGuiaCard(guia) {
+        const regra = this.REGRAS_CONVENIO[guia.convenio]||this.REGRAS_CONVENIO["DEFAULT"];
+        const temErroNascido = guia.erros.some(e=>e.tipo==='sem_declaracao_nascido');
+        const temErroObito   = guia.erros.some(e=>e.tipo==='sem_declaracao_obito'); // NOVO
+
+        const card = document.createElement('div');
+        let cardClasses = 'guia-card-premium';
+        if (guia.temErro)    cardClasses += ' has-error';
+        if (guia.vencida)    cardClasses += ' is-vencida';
+        if (temErroNascido)  cardClasses += ' sem-declaracao-nascido';
+        if (temErroObito)    cardClasses += ' sem-declaracao-obito';   // NOVO
+        card.className = cardClasses;
+        card.dataset.numero       = guia.numero;
+        card.dataset.beneficiario = guia.beneficiario;
+        card.dataset.carteira     = guia.carteira;
+        card.dataset.convenio     = guia.convenio;
+        card.dataset.hasError     = guia.temErro;
+        card.dataset.vencida      = guia.vencida;
+        card.dataset.errorTypes   = guia.erros.map(e=>e.tipo).join(',');
+        if (guia.vinculada) { card.dataset.vinculada='true'; card.dataset.grupoVinculo=(guia.grupoVinculo||[]).join(','); }
+
+        const dataFormatada = this.formatDateDisplay(guia.dataReferencia);
+        const displayBeneficiario = guia.beneficiario==="Beneficiário não identificado"
+            ? `<i class="fas fa-id-card"></i> ${guia.carteira}`
+            : `${guia.beneficiario} <small style="color:var(--gray-500);font-weight:400;">(${guia.carteira})</small>`;
+
+        // Alerta nascido
+        let nascidoAlertHtml='';
+        if (temErroNascido) {
+            const cods = [...new Set(guia.erros.filter(e=>e.tipo==='sem_declaracao_nascido').map(e=>e.codigo))].join(', ');
+            nascidoAlertHtml=`
+                <div class="nascido-alert">
+                    <i class="fas fa-baby"></i>
+                    <div class="nascido-alert-content">
+                        <strong>Tag &lt;declaracaoNascido&gt; ausente nesta guia</strong>
+                        <ul>
+                            <li>Código(s) que exigem a tag: <strong>${cods}</strong></li>
+                            <li>Inclua a tag <code>&lt;ans:declaracaoNascido&gt;</code> com o número da DN do recém-nascido.</li>
+                        </ul>
                     </div>
                 </div>`;
-            }
-            
-            errorContent.innerHTML = html;
-            document.getElementById('errorModal').style.display = 'flex';
         }
 
-        function validarProcedimento(parentNode) {
-            const procedimentos = [
-                ...parentNode.getElementsByTagName("ans:codigoProcedimento"),
-                ...parentNode.getElementsByTagName("codigoProcedimento")
-            ];
-            
-            if (procedimentos.length === 0) return null;
-
-            const resultados = [];
-            let temProcedimentoEspecial = false;
-            
-            let validacaoNecessaria = null;
-            let temCodigoGatilho = false;
-            
-            procedimentos.forEach(procNode => {
-                const codigoProcedimento = procNode.textContent.trim();
-                
-                if (CODIGOS_GATILHO_1_00.includes(codigoProcedimento)) {
-                    validacaoNecessaria = "1.00";
-                    temCodigoGatilho = true;
-                } else if (CODIGOS_GATILHO_2_00.includes(codigoProcedimento)) {
-                    validacaoNecessaria = "2.00";
-                    temCodigoGatilho = true;
-                }
-            });
-            
-            if (!temCodigoGatilho) {
-                procedimentos.forEach(procNode => {
-                    const codigoProcedimento = procNode.textContent.trim();
-                    const valorGrauEsperado = VALIDACAO_GRAU[codigoProcedimento];
-                    
-                    if (valorGrauEsperado) {
-                        temProcedimentoEspecial = true;
-                        let grauPartNode = null;
-                        let current = procNode.parentNode;
-                        while (current && !grauPartNode) {
-                            grauPartNode = current.getElementsByTagName("ans:grauPart")[0] || 
-                                           current.getElementsByTagName("grauPart")[0];
-                            current = current.parentNode;
-                        }
-                        const valorEncontrado = grauPartNode ? grauPartNode.textContent.trim() : "N/D";
-                        const isValid = valorEncontrado === valorGrauEsperado;
-                        
-                        resultados.push({
-                            codigo: codigoProcedimento,
-                            valorEsperado: valorGrauEsperado,
-                            valorEncontrado,
-                            isValid,
-                            tipo: 'GrauPart'
-                        });
-                    }
-                });
-                
-                if (!temProcedimentoEspecial) return null;
-                
-                const temErro = resultados.some(r => !r.isValid);
-                
-                return {
-                    temErro: temErro,
-                    resultados: resultados,
-                    descricao: resultados.map(r => 
-                        `${r.codigo}: ${r.valorEncontrado} (${r.isValid?'OK':'Erro'})`
-                    ).join(', ')
-                };
-            }
-            
-            procedimentos.forEach(procNode => {
-                const codigoProcedimento = procNode.textContent.trim();
-                
-                if (CODIGOS_PARA_VALIDAR.includes(codigoProcedimento)) {
-                    temProcedimentoEspecial = true;
-                    
-                    let reducaoAcrescimoNode = null;
-                    
-                    let current = procNode.parentNode;
-                    while (current && !reducaoAcrescimoNode) {
-                        reducaoAcrescimoNode = current.getElementsByTagName("ans:reducaoAcrescimo")[0] || 
-                                               current.getElementsByTagName("reducaoAcrescimo")[0];
-                        current = current.parentNode;
-                    }
-                    
-                    const valorEncontrado = reducaoAcrescimoNode ? reducaoAcrescimoNode.textContent.trim() : "N/D";
-                    const isValid = valorEncontrado === validacaoNecessaria;
-                    
-                    resultados.push({
-                        codigo: codigoProcedimento,
-                        valorEsperado: validacaoNecessaria,
-                        valorEncontrado,
-                        isValid,
-                        tipo: 'Redução',
-                        gatilho: validacaoNecessaria === "1.00" ? "1.00" : "2.00"
-                    });
-                }
-            });
-
-            if (!temProcedimentoEspecial) return null;
-
-            const temErro = resultados.some(r => !r.isValid);
-
-            return {
-                temErro: temErro,
-                resultados: resultados,
-                descricao: resultados.map(r =>
-                    `${r.codigo}: ${r.valorEncontrado} (${r.isValid ? 'OK' : 'Erro'})`
-                ).join(', '),
-                tipoValidacao: validacaoNecessaria
-            };
+        // ── NOVO: alerta óbito ───────────────────────────────────────────────────
+        let obitoAlertHtml='';
+        if (temErroObito) {
+            const erroO = guia.erros.find(e=>e.tipo==='sem_declaracao_obito');
+            obitoAlertHtml=`
+                <div class="obito-alert">
+                    <i class="fas fa-skull"></i>
+                    <div class="obito-alert-content">
+                        <strong>Tag &lt;declaracaoObito&gt; ausente nesta guia</strong>
+                        <ul>
+                            <li>Motivo de encerramento informado: <strong>${erroO?.motivo || guia.motivoEncerramento}</strong> (${
+                                {'41':'Alta por óbito sem causar direto','42':'Alta por óbito com causa direta','43':'Alta por óbito com causa indireta'}[erroO?.motivo||guia.motivoEncerramento] || 'óbito'
+                            })</li>
+                            <li>Inclua a tag <code>&lt;ans:declaracaoObito&gt;</code> com o número da DO do paciente.</li>
+                        </ul>
+                    </div>
+                </div>`;
         }
+        // ────────────────────────────────────────────────────────────────────────
 
-        function agruparPorPaciente(dados) {
-            const grupos = {};
-            dados.forEach(guia => {
-                const carteira = guia.carteira || "SEM CARTEIRA";
-                if (!grupos[carteira]) {
-                    grupos[carteira] = {
-                        carteira: carteira,
-                        guias: [],
-                        dataMaisRecente: null,
-                        guiaMaisRecente: null,
-                        temProcedimentoEspecial: false,
-                        temErroProcedimento: false,
-                        tipoPersonal: guia.tipoPersonal,
-                        temVencida: false,
-                        temOk: false
-                    };
-                }
-                grupos[carteira].guias.push(guia);
-                if (!grupos[carteira].dataMaisRecente || guia.dtGuia > grupos[carteira].dataMaisRecente) {
-                    grupos[carteira].dataMaisRecente = guia.dtGuia;
-                    grupos[carteira].guiaMaisRecente = guia;
-                }
-                if (guia.temProcedimentoEspecial) grupos[carteira].temProcedimentoEspecial = true;
-                if (guia.erroProcedimento) grupos[carteira].temErroProcedimento = true;
-                if (guia.isVencida) grupos[carteira].temVencida = true;
-                if (!guia.isVencida) grupos[carteira].temOk = true;
-            });
-            
-            return Object.values(grupos).map(grupo => {
-                let guiaPrincipal = grupo.guiaMaisRecente;
-                const guiasVencidas = grupo.guias.filter(g => g.isVencida);
-                if (guiasVencidas.length > 0) {
-                    guiaPrincipal = guiasVencidas.reduce((maisRecente, atual) => 
-                        atual.dtGuia > maisRecente.dtGuia ? atual : maisRecente
-                    );
-                }
-                return {
-                    carteira: grupo.carteira,
-                    guiaPrincipal: guiaPrincipal,
-                    totalGuias: grupo.guias.length,
-                    temMultiplasGuias: grupo.guias.length > 1,
-                    temVencida: grupo.temVencida,
-                    temOk: grupo.temOk,
-                    tipoPersonal: grupo.tipoPersonal,
-                    temProcedimentoEspecial: grupo.temProcedimentoEspecial,
-                    temErroProcedimento: grupo.temErroProcedimento,
-                    todasGuias: grupo.guias
-                };
-            });
-        }
+        let itemsHtml='';
+        guia.items.forEach(item => {
+            const raClass   = item.erro    ? 'ra-incorrect-premium' : (item.raCorreto   ? 'ra-correct-premium' : '');
+            const grauClass = item.erroGrau ? 'ra-incorrect-premium' : (item.grauCorreto ? 'ra-correct-premium' : '');
+            // Linha destaque: nascido tem prioridade, depois óbito (óbito é da guia, não do item)
+            const rowClass  = item.erroNascido ? 'row-sem-nascido' : (temErroObito ? 'row-sem-obito' : '');
+            const nascidoBadge = item.erroNascido ? `<br><span class="nascido-missing-badge"><i class="fas fa-baby"></i> Decl. Nascido ausente</span>` : '';
+            itemsHtml+=`<tr class="${rowClass}">
+                <td>${this.formatDateDisplay(item.data)}</td>
+                <td><strong>${item.codigo}</strong>${nascidoBadge}</td>
+                <td class="item-name">${item.nome}</td>
+                <td><span class="ra-value-premium ${raClass}">${item.ra}${item.raCorreto?`<br><small style="font-size:0.625rem;">correto: ${item.raCorreto}</small>`:''}</span></td>
+                <td>${item.grauCorreto?`<span class="ra-value-premium ${grauClass}">${item.grau}${item.erroGrau?`<br><small style="font-size:0.625rem;">correto: ${item.grauCorreto}</small>`:''}</span>`:'-'}</td>
+                <td style="text-align:right;font-weight:700;">${this.formatCurrency(item.valor)}</td>
+            </tr>`;
+        });
 
-        function processarXML(xmlText) {
-            try {
-                const parser = new DOMParser();
-                const xml = parser.parseFromString(xmlText, "text/xml");
-                let nodesGuia = [
-                    ...xml.getElementsByTagName("ans:guiaPrincipal"),
-                    ...xml.getElementsByTagName("guiaPrincipal"),
-                    ...xml.getElementsByTagName("ans:numeroGuiaPrestador"),
-                    ...xml.getElementsByTagName("guiaSolicInternacao")
-                ];
+        // ── NOVO: info do motivoEncerramento no header da guia ───────────────────
+        const motivoLabel = guia.motivoEncerramento
+            ? `<span class="badge-premium" style="background:linear-gradient(135deg,#475569 0%,#334155 100%);"><i class="fas fa-door-open" style="margin-right:0.25rem;"></i>Enc.: ${guia.motivoEncerramento}</span>`
+            : '';
+        // ────────────────────────────────────────────────────────────────────────
 
-                if(nodesGuia.length === 0) {
-                    showToast("Erro: Nenhuma guia encontrada.", "error");
-                    resetarPagina();
-                    return;
-                }
+        card.innerHTML=`
+            <div class="guia-header-premium" onclick="this.parentElement.classList.toggle('is-open')">
+                <div class="guia-header-row1">
+                    <span class="badge-premium ${guia.tipo.class}">${guia.tipo.label}</span>
+                    <span class="badge-premium" style="background:${regra.cor};"><i class="fas fa-hospital" style="margin-right:0.25rem;"></i>${guia.convenio}</span>
+                    <span class="guia-numero"><i class="fas fa-file-invoice" style="margin-right:0.4rem;"></i>${guia.numero}</span>
+                    ${motivoLabel}
+                    <span class="guia-header-spacer"></span>
+                    <span class="guia-header-valor">${this.formatCurrency(guia.valorTotal)}</span>
+                </div>
+                <div class="guia-header-row2">
+                    <span class="guia-beneficiario searchableText">${displayBeneficiario}</span>
+                    ${guia.vencida?'<span class="badge-premium" style="background:linear-gradient(135deg,#8b5cf6 0%,#7c3aed 100%);"><i class="fas fa-clock"></i> VENCIDA</span>':''}
+                    ${temErroNascido?'<span class="badge-premium badge-sem-nascido"><i class="fas fa-baby"></i> SEM DECL. NASCIDO</span>':''}
+                    ${temErroObito  ?'<span class="badge-premium badge-sem-obito"><i class="fas fa-skull"></i> SEM DECL. ÓBITO</span>':''}
+                    ${guia.vinculada?`<span class="badge-premium badge-vinculo" title="Vinculada à(s): ${(guia.grupoVinculo||[]).join(', ')}" onclick="event.stopPropagation();app.destacarVinculos(this)"><i class="fas fa-link"></i> VINCULADA</span>`:''}
+                </div>
+            </div>
+            <div class="guia-body-premium">
+                ${nascidoAlertHtml}
+                ${obitoAlertHtml}
+                <div style="margin-bottom:1.5rem;display:flex;gap:2rem;flex-wrap:wrap;font-size:0.875rem;">
+                    <span><i class="fas fa-calendar" style="color:var(--accent);margin-right:0.5rem;"></i>Referência: ${dataFormatada}</span>
+                    <span><i class="fas fa-cubes" style="color:var(--accent);margin-right:0.5rem;"></i>Itens: ${guia.qtdItens}</span>
+                    ${guia.motivoEncerramento?`<span><i class="fas fa-door-open" style="color:var(--gray-500);margin-right:0.5rem;"></i>Motivo Enc.: <strong>${guia.motivoEncerramento}</strong></span>`:''}
+                    ${guia.temErro?'<span style="color:var(--danger);"><i class="fas fa-exclamation-circle"></i> Com irregularidades</span>':''}
+                </div>
+                <div class="table-wrapper">
+                    <table class="table-premium">
+                        <thead><tr><th>Data</th><th>Código</th><th>Procedimento</th><th>RA</th><th>Grau</th><th>Valor</th></tr></thead>
+                        <tbody>${itemsHtml}</tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+        return card;
+    }
 
-                dadosGlobais = [];
-                let contagem = {
-                    total: 0,
-                    ok: 0,
-                    vencidas: 0,
-                    tl: 0,
-                    tlPersonal: 0,
-                    personal0865: 0,
-                    procedimentos: 0,
-                    pacientes: 0
-                };
-                let encontrouProcedimentoErrado = false;
-                const dataHoje = new Date();
-                const dtEnvioGeral = getPrimeiroDiaUtilProximoMes(dataHoje);
-                document.getElementById('displayEnvioHeader').innerText = dtEnvioGeral.toLocaleDateString('pt-BR');
+    filterByType(type) {
+        this.filtroAtual.tipo=type; this.filtroAtual.erro=null;
+        this.updateErrorFiltersUI();
+        if(this.arquivoAtivo) this.renderTabContent(this.arquivoAtivo);
+    }
 
-                nodesGuia.forEach(node => {
-                    let parent = node.parentNode;
-                    if (parent && !parent.getElementsByTagName("ans:numeroCarteira")[0] && !parent.getElementsByTagName("numeroCarteira")[0]) {
-                        parent = parent.parentNode || parent;
-                    }
-                    const getText = (tag) => {
-                        const el = parent.getElementsByTagName("ans:"+tag)[0] || parent.getElementsByTagName(tag)[0];
-                        return el ? el.textContent.trim() : null;
-                    };
+    filterByError(errorType) {
+        if(this.filtroAtual.erro===errorType){ this.filtroAtual.erro=null; this.filtroAtual.tipo='all'; }
+        else { this.filtroAtual.erro=errorType; this.filtroAtual.tipo='error'; }
+        this.updateErrorFiltersUI();
+        if(this.arquivoAtivo) this.renderTabContent(this.arquivoAtivo);
+    }
 
-                    const numGuia = node.textContent.trim();
-                    const senha = getText("senha") || "---";
-                    const carteira = getText("numeroCarteira") || "N/D";
-                    const dataStr = getText("dataFimFaturamento") || getText("dataFinalFaturamento") || getText("dataSolicitacao") || getText("dataAutorizacao");
-                    const validacaoProcedimento = validarProcedimento(parent);
-                    
-                    let tipoPersonal = 'normal';
-                    if (carteira.startsWith("08650004")) {
-                        tipoPersonal = '08650004 Personal';
-                        contagem.personal0865++;
-                    } else if (carteira.startsWith("00758")) {
-                        tipoPersonal = '0075 TL Personal';
-                        contagem.tlPersonal++;
-                    } else if (carteira.startsWith("0075")) {
-                        tipoPersonal = '0075 TL';
-                        contagem.tl++;
-                    }
-                    
-                    if(validacaoProcedimento) {
-                        contagem.procedimentos++;
-                        if(validacaoProcedimento.temErro) encontrouProcedimentoErrado = true;
-                    }
+    updateErrorFiltersUI() {
+        document.querySelectorAll('.filter-btn-premium').forEach(btn=>{
+            const o=btn.getAttribute('onclick')||'';
+            let t=null;
+            if(o.includes("'694'")) t='694';
+            else if(o.includes("'554'")) t='554';
+            else if(o.includes("'grau'")) t='grau';
+            else if(o.includes("'nascido'")) t='nascido';
+            else if(o.includes("'obito'")) t='obito';
+            if(t) btn.classList.toggle('active',this.filtroAtual.erro===t);
+        });
+    }
 
-                    if(dataStr) {
-                        const dtGuia = new Date(dataStr + "T00:00:00");
-                        const diasPrazo = (dtGuia.getFullYear() >= 2026) ? 30 : 45;
-                        const dtLimite = new Date(dtGuia);
-                        dtLimite.setDate(dtGuia.getDate() + diasPrazo);
-                        const isVencida = dtEnvioGeral > dtLimite;
-                        if(isVencida) contagem.vencidas++; else contagem.ok++;
-                        contagem.total++;
-                        dadosGlobais.push({
-                            guia: numGuia,
-                            senha: senha,
-                            carteira: carteira,
-                            tipoPersonal: tipoPersonal,
-                            dtGuia: dtGuia,
-                            dtLimite: dtLimite,
-                            dtEnvio: dtEnvioGeral,
-                            isVencida: isVencida,
-                            validacaoProcedimento: validacaoProcedimento,
-                            temProcedimentoEspecial: !!validacaoProcedimento,
-                            erroProcedimento: validacaoProcedimento ? validacaoProcedimento.temErro : false
-                        });
-                    }
-                });
+    updateActiveFiltersDisplay() {
+        const div=document.getElementById('activeFilters');
+        const btn=document.getElementById('clearFiltersBtn');
+        const txt=document.getElementById('activeFilterText');
+        if(this.filtroAtual.tipo!=='all'||this.filtroAtual.erro){
+            div.style.display='flex'; btn.style.display='inline-flex';
+            const map={'694':'Erro RA 60000694 / 60000805','554':'Erro RA 60000554 / 60000511','grau':'Erro Grau de Participação','nascido':'Declaração Nascido Ausente','obito':'Declaração Óbito Ausente'};
+            if(this.filtroAtual.erro) txt.innerText=map[this.filtroAtual.erro]||'';
+            else if(this.filtroAtual.tipo==='error')   txt.innerText='Todas as guias com erro';
+            else if(this.filtroAtual.tipo==='expired') txt.innerText='Guias vencidas';
+        } else { div.style.display='none'; btn.style.display='none'; }
+    }
 
-                pacientesAgrupados = agruparPorPaciente(dadosGlobais);
-                contagem.pacientes = pacientesAgrupados.length;
-                
-                if(contagem.tl > 0) showToast(`Encontrados ${contagem.tl} pacientes 0075 TL`, "info");
-                if(contagem.tlPersonal > 0) showToast(`Encontrados ${contagem.tlPersonal} pacientes 0075 TL Personal`, "info");
-                if(contagem.personal0865 > 0) showToast(`Encontrados ${contagem.personal0865} pacientes 08650004 Personal`, "info");
-                if(encontrouProcedimentoErrado) showToast("Atenção: Inconsistência em procedimentos.", "warning");
+    clearAllFilters() {
+        this.filtroAtual={tipo:'all',erro:null,codigo:null};
+        this.updateErrorFiltersUI();
+        if(this.arquivoAtivo) this.renderTabContent(this.arquivoAtivo);
+        document.getElementById('search').value='';
+    }
 
-                renderizarTabela();
-                atualizarDashboard(contagem);
-                document.getElementById('dashboard').style.display = 'grid';
-                showToast(`Análise concluída: ${contagem.pacientes} pacientes.`, "success");
+    filterSearch() {
+        const query = document.getElementById('search').value.toLowerCase().trim();
+        document.querySelectorAll('.guia-card-premium').forEach(card=>{
+            if(!query){ card.style.display='block'; return; }
+            const fullText=`${card.dataset.numero||''} ${card.dataset.beneficiario||''} ${card.dataset.carteira||''} ${card.dataset.convenio||''} ${Array.from(card.querySelectorAll('.item-name')).map(el=>el.textContent).join(' ')}`.toLowerCase();
+            const matches=fullText.includes(query);
+            const filtrosAplicados=this.filtroAtual.tipo!=='all'||this.filtroAtual.erro;
+            if(!filtrosAplicados){ card.style.display=matches?'block':'none'; return; }
+            const et=card.dataset.errorTypes||'';
+            let fa=false;
+            if(this.filtroAtual.tipo==='error'  && card.dataset.hasError==='true') fa=true;
+            else if(this.filtroAtual.tipo==='expired'&& card.dataset.vencida==='true') fa=true;
+            else if(this.filtroAtual.erro==='694')     fa=et.includes('ra_694');
+            else if(this.filtroAtual.erro==='554')     fa=et.includes('ra_554');
+            else if(this.filtroAtual.erro==='grau')    fa=et.includes('grau_incorreto');
+            else if(this.filtroAtual.erro==='nascido') fa=et.includes('sem_declaracao_nascido');
+            else if(this.filtroAtual.erro==='obito')   fa=et.includes('sem_declaracao_obito'); // NOVO
+            card.style.display=(fa&&matches)?'block':'none';
+        });
+        document.querySelectorAll('.grupo-carteirinha').forEach(g=>{
+            const filhos=g.querySelectorAll('.guia-card-premium');
+            g.style.display=Array.from(filhos).some(c=>c.style.display!=='none')?'block':'none';
+        });
+    }
 
-            } catch (error) {
-                console.error(error);
-                showToast("Erro ao processar arquivo.", "error");
-                resetarPagina();
-            }
-        }
+    toggleAll(open) {
+        document.querySelectorAll('.grupo-carteirinha').forEach(el=>el.classList.toggle('is-open',open));
+        document.querySelectorAll('.guia-card-premium').forEach(el=>el.classList.toggle('is-open',open));
+    }
 
-        function renderizarTabela() {
-            const tbody = document.getElementById('corpoTabela');
-            tbody.innerHTML = '';
-            const dadosParaExibir = viewMode === 'paciente' ? pacientesAgrupados : dadosGlobais;
-            
-            document.getElementById('totalPacientes').innerText = pacientesAgrupados.length;
-            document.getElementById('guiasFiltradas').innerText = dadosParaExibir.length;
-            document.getElementById('guiasTotais').innerText = dadosGlobais.length;
-            
-            dadosParaExibir.forEach((item, index) => {
-                const tr = document.createElement('tr');
-                let g, isV, temP, erroP, validP, tags = "", pacInfo, guiaI, senha, dtG, dtL, dtE;
-                
-                if (viewMode === 'paciente') {
-                    g = item.guiaPrincipal;
-                    isV = g.isVencida;
-                    temP = item.temProcedimentoEspecial;
-                    erroP = item.temErroProcedimento;
-                    validP = g.validacaoProcedimento;
-                    pacInfo = `<div class="patient-cell"><div class="carteira mono">${item.carteira}</div>`;
-                    if (item.temMultiplasGuias) {
-                        pacInfo += `<div class="info"><strong>${item.totalGuias}</strong> guias encontradas</div>`;
-                        tags += `<span class="badge badge-pink">${item.totalGuias} Guias</span> `;
-                    }
-                    pacInfo += `</div>`;
-                    guiaI = `<div class="mono" style="font-weight:600">${g.guia}</div>`;
-                    senha = g.senha;
-                    dtG = g.dtGuia; dtL = g.dtLimite; dtE = g.dtEnvio;
-                } else {
-                    g = item; isV = g.isVencida; temP = g.temProcedimentoEspecial; erroP = g.erroProcedimento; validP = g.validacaoProcedimento;
-                    pacInfo = `<div class="patient-cell"><div class="carteira mono">${g.carteira}</div></div>`;
-                    guiaI = `<div class="mono" style="font-weight:600">${g.guia}</div>`;
-                    senha = g.senha;
-                    dtG = g.dtGuia; dtL = g.dtLimite; dtE = g.dtEnvio;
-                }
+    destacarVinculos(badgeEl) {
+        const card=badgeEl.closest('.guia-card-premium');
+        const nums=[...(card.dataset.grupoVinculo||'').split(',').map(s=>s.trim()).filter(Boolean),card.dataset.numero];
+        document.querySelectorAll('.guia-card-premium.vinculo-highlight').forEach(c=>c.classList.remove('vinculo-highlight'));
+        document.querySelectorAll('.guia-card-premium').forEach(c=>{ if(nums.includes(c.dataset.numero)){ c.classList.add('vinculo-highlight'); c.scrollIntoView({behavior:'smooth',block:'nearest'}); } });
+        setTimeout(()=>document.querySelectorAll('.vinculo-highlight').forEach(c=>c.classList.remove('vinculo-highlight')),3000);
+    }
+}
 
-                if(g.tipoPersonal === '0075 TL') {
-                    tags += `<span class="badge badge-tl">0075 TL</span> `;
-                } else if(g.tipoPersonal === '0075 TL Personal') {
-                    tags += `<span class="badge badge-personal">0075 TL Personal</span> `;
-                } else if(g.tipoPersonal === '08650004 Personal') {
-                    tags += `<span class="badge badge-personal">08650004 Personal</span> `;
-                }
-                
-                if(temP) tags += `<span class="badge badge-purple"></span> `;
-
-                let statusValid = '';
-                if (isV) {
-                    statusValid = `<span class="status-pill st-err" onclick="mostrarDetalhesErro(dadosGlobais[${viewMode === 'paciente' ? dadosGlobais.findIndex(d => d.guia === g.guia) : index}])">
-                        <i class="ph-bold ph-x"></i> Vencida
-                    </span>`;
-                } else {
-                    statusValid = `<span class="status-pill st-ok">
-                        <i class="ph-bold ph-check"></i> OK
-                    </span>`;
-                }
-                
-                let statusProc = "";
-                if(validP) {
-                    if (erroP) {
-                        statusProc = `<span class="status-pill st-err" onclick="mostrarDetalhesErro(dadosGlobais[${viewMode === 'paciente' ? dadosGlobais.findIndex(d => d.guia === g.guia) : index}])"> Erro </span>`;
-                    } else {
-                        statusProc = `<span class="status-pill st-ok">OK</span>`;
-                    }
-                    statusProc += `<div style="font-size:0.7rem; color:var(--text-muted); margin-top:4px">${validP.descricao}</div>`;
-                } else {
-                    statusProc = `<span style="color:var(--text-muted)">-</span>`;
-                }
-
-                tr.innerHTML = ` 
-                    <td>${pacInfo}${tags}</td> 
-                    <td>${guiaI}</td> 
-                    <td class="mono">${senha}</td> 
-                    <td> 
-                        <div style="font-size:0.85rem">Emissão: <strong>${dtG.toLocaleDateString('pt-BR')}</strong></div> 
-                        <div style="font-size:0.75rem; color:var(--text-muted)">Limite: ${dtL.toLocaleDateString('pt-BR')}</div> 
-                    </td> 
-                    <td><strong style="color:var(--primary)">${dtE.toLocaleDateString('pt-BR')}</strong></td> 
-                    <td>${statusValid}</td> 
-                    <td>${statusProc}</td> 
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function atualizarDashboard(c) {
-            document.getElementById('totalPacientes').innerText = c.pacientes;
-            document.getElementById('valTotalOk').innerText = c.ok;
-            document.getElementById('valTotalErr').innerText = c.vencidas;
-            document.getElementById('valTotalTL').innerText = c.tl;
-            document.getElementById('valTotalTLPersonal').innerText = c.tlPersonal;
-            document.getElementById('valTotalPersonal0865').innerText = c.personal0865;
-            document.getElementById('valTotalProc').innerText = c.procedimentos;
-            const pOk = c.total > 0 ? Math.round(((c.total - c.vencidas) / c.total) * 100) : 0;
-            document.getElementById('percentOk').innerText = pOk + "%";
-            document.getElementById('chartPie').style.background = `conic-gradient(var(--danger) 0% ${100-pOk}%, var(--success) ${100-pOk}% 100%)`;
-        }
-
-        function filtrar(tipo, btn) {
-            document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            const dadosParaFiltrar = viewMode === 'paciente' ? pacientesAgrupados : dadosGlobais;
-            document.querySelectorAll('#corpoTabela tr').forEach((tr, index) => {
-                if (index >= dadosParaFiltrar.length) return;
-                const item = dadosParaFiltrar[index];
-                let show = (tipo === 'todos');
-                if (tipo === 'ok') show = viewMode === 'paciente' ? (item.temOk && !item.temVencida) : !item.isVencida;
-                if (tipo === 'vencida') show = viewMode === 'paciente' ? item.temVencida : item.isVencida;
-                tr.style.display = show ? '' : 'none';
-            });
-        }
-
-        function pesquisar() {
-            const termo = document.getElementById('searchInput').value.toLowerCase();
-            document.querySelectorAll('#corpoTabela tr').forEach(tr => {
-                tr.style.display = tr.innerText.toLowerCase().includes(termo) ? '' : 'none';
-            });
-        }
-
-        function exportToCSV() {
-            if(!pacientesAgrupados.length) return;
-            let csv = "Carteira;Total Guias;Guia;Senha;Tipo;Data;Status;Inter;Proc_Val\n";
-            pacientesAgrupados.forEach(p => {
-                const g = p.guiaPrincipal;
-                csv += `${p.carteira};${p.totalGuias};${g.guia};${g.senha};${g.tipoPersonal};${g.dtGuia.toLocaleDateString()};${g.isVencida?'Vencida':'OK'};${p.temProcedimentoEspecial?'S':'N'};${g.erroProcedimento?'Erro':'OK'}\n`;
-            });
-            const link = document.createElement("a");
-            link.href = "data:text/csv;charset=utf-8," + encodeURI(csv);
-            link.download = `auditoria_${new Date().toISOString().slice(0,10)}.csv`;
-            link.click();
-            showToast("Arquivo CSV exportado com sucesso!", "success");
-        }
-
-        function showToast(msg, type = 'info') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            
-            let icon = 'ph-info';
-            if (type === 'success') icon = 'ph-check-circle';
-            else if (type === 'error') icon = 'ph-x-circle';
-            else if (type === 'warning') icon = 'ph-warning';
-            
-            toast.innerHTML = `<i class="ph-bold ${icon}"></i> ${msg}`;
-            container.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateX(100%)';
-                setTimeout(() => toast.remove(), 500);
-            }, 4000);
-        }
-    </script>
+const app = new TISSAnalyzerPro();
+</script>
 </body>
 </html>
