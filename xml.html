@@ -126,7 +126,6 @@
         .filter-btn-premium:hover { border-color:var(--accent); color:var(--accent); transform:translateY(-2px); box-shadow:var(--shadow-md); }
         .filter-btn-premium.active { background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%); color:white; border-color:transparent; box-shadow:0 4px 15px rgba(239,68,68,0.3); }
         .filter-btn-premium.filter-nascido.active { background:linear-gradient(135deg,#f97316 0%,#ea580c 100%); box-shadow:0 4px 15px rgba(249,115,22,0.35); }
-        /* ── NOVO: filtro óbito — cor cinza-roxo escuro ── */
         .filter-btn-premium.filter-obito.active { background:linear-gradient(135deg,#6b21a8 0%,#581c87 100%); box-shadow:0 4px 15px rgba(107,33,168,0.35); }
         .filter-count { background:rgba(0,0,0,0.1); padding:0.25rem 0.75rem; border-radius:2rem; font-size:0.75rem; font-weight:700; }
 
@@ -156,7 +155,6 @@
         .summary-item-premium.active { background:var(--accent-gradient); color:white; border-color:transparent; }
         .summary-item-premium.active .value, .summary-item-premium.active .label { color:white; }
         .summary-item-premium.nascido-item.active { background:linear-gradient(135deg,#f97316 0%,#ea580c 100%); }
-        /* ── NOVO: summary item óbito ── */
         .summary-item-premium.obito-item.active { background:linear-gradient(135deg,#6b21a8 0%,#581c87 100%); }
         .summary-item-premium .label { font-size:clamp(0.5rem,0.9vw,0.625rem); text-transform:uppercase; letter-spacing:0.3px; color:var(--gray-500); font-weight:700; margin-bottom:0.2rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
         .summary-item-premium .value { font-size:clamp(0.95rem,1.6vw,1.5rem); font-weight:800; color:var(--gray-900); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -171,10 +169,8 @@
         .guia-card-premium.is-vencida      { border-left-color:#8b5cf6; }
         .guia-card-premium.sem-declaracao-nascido { border-left-color:#f97316; }
         .guia-card-premium.has-error.sem-declaracao-nascido { border-left-color:#ef4444; }
-        /* ── NOVO: borda lateral roxa para óbito ausente ── */
         .guia-card-premium.sem-declaracao-obito { border-left-color:#7e22ce; }
         .guia-card-premium.has-error.sem-declaracao-obito { border-left-color:#ef4444; }
-
         .guia-card-premium:hover { transform:translateY(-4px); box-shadow:var(--shadow-xl); z-index:10; }
 
         /* ── GUIA HEADER — 2 linhas ─────────────────────────────── */
@@ -193,7 +189,6 @@
         .badge-personal-local { background:linear-gradient(135deg,#0369a1 0%,#075985 100%); }
         .badge-personal-inter { background:linear-gradient(135deg,#4338ca 0%,#3730a3 100%); }
         .badge-sem-nascido    { background:linear-gradient(135deg,#f97316 0%,#ea580c 100%) !important; animation:nascidoPulse 2.5s ease-in-out infinite; }
-        /* ── NOVO: badge óbito ── */
         .badge-sem-obito      { background:linear-gradient(135deg,#7e22ce 0%,#581c87 100%) !important; animation:obitoPulse 2.5s ease-in-out infinite; }
 
         @keyframes nascidoPulse { 0%,100%{box-shadow:0 4px 10px rgba(249,115,22,0.3)} 50%{box-shadow:0 4px 22px rgba(249,115,22,0.65)} }
@@ -205,7 +200,7 @@
         .nascido-alert-content strong { display:block; font-size:0.9rem; margin-bottom:0.25rem; }
         .nascido-alert-content ul { margin:0; padding-left:1.2rem; font-size:0.8rem; opacity:0.85; }
 
-        /* ── ALERTA ÓBITO (novo) ────────────────────────────────── */
+        /* ── ALERTA ÓBITO ───────────────────────────────────────── */
         .obito-alert { background:linear-gradient(135deg,#faf5ff 0%,#f3e8ff 100%); border:2px solid #d8b4fe; border-radius:var(--radius-lg); padding:1rem 1.25rem; margin-bottom:1.25rem; display:flex; align-items:flex-start; gap:0.875rem; color:#4c1d95; }
         .obito-alert i { font-size:1.25rem; flex-shrink:0; margin-top:0.1rem; color:#7e22ce; }
         .obito-alert-content strong { display:block; font-size:0.9rem; margin-bottom:0.25rem; }
@@ -232,7 +227,6 @@
         .grupo-pill-erro    { background:rgba(239,68,68,0.4);   border:1px solid rgba(239,68,68,0.6);   color:#fecaca; }
         .grupo-pill-vencida { background:rgba(139,92,246,0.4);  border:1px solid rgba(139,92,246,0.6);  color:#ddd6fe; }
         .grupo-pill-nascido { background:rgba(249,115,22,0.4);  border:1px solid rgba(249,115,22,0.6);  color:#fed7aa; }
-        /* ── NOVO: pill óbito ── */
         .grupo-pill-obito   { background:rgba(126,34,206,0.4);  border:1px solid rgba(126,34,206,0.6);  color:#e9d5ff; }
         .grupo-valor { font-weight:800; font-size:1.05rem; color:var(--secondary-light); white-space:nowrap; }
         .grupo-chevron { width:28px; height:28px; background:rgba(255,255,255,0.15); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.75rem; transition:transform 0.25s,background 0.2s; border:1px solid rgba(255,255,255,0.2); flex-shrink:0; }
@@ -250,27 +244,66 @@
         .is-open .guia-body-premium { display:block; animation:slideDown 0.3s ease; }
         @keyframes slideDown { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
 
-        /* ── TABLE WRAPPER + TABLE ──────────────────────────────── */
-        .table-wrapper { width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:var(--radius-lg); box-shadow:var(--shadow-md); }
-        .table-premium { width:100%; min-width:520px; border-collapse:separate; border-spacing:0; font-size:0.875rem; background:white; border-radius:var(--radius-lg); overflow:hidden; table-layout:auto; }
-        .table-premium th { background:linear-gradient(135deg,var(--gray-100) 0%,var(--gray-200) 100%); color:var(--gray-700); font-weight:700; text-transform:uppercase; font-size:0.75rem; letter-spacing:0.5px; padding:0.875rem 1rem; text-align:left; white-space:nowrap; }
-        .table-premium th:last-child, .table-premium td:last-child { text-align:right !important; white-space:nowrap; min-width:90px; font-weight:700; }
-        .table-premium td { padding:0.875rem 1rem; border-bottom:1px solid var(--gray-200); background:white; vertical-align:middle; }
-        .table-premium tr:last-child td { border-bottom:none; }
-        .table-premium tr:hover td { background:var(--gray-50); }
-        .table-premium tr.row-sem-nascido td { background:#fff7ed; }
-        .table-premium tr.row-sem-nascido:hover td { background:#ffedd5; }
-        /* ── NOVO: linha óbito ausente ── */
-        .table-premium tr.row-sem-obito td { background:#faf5ff; }
-        .table-premium tr.row-sem-obito:hover td { background:#f3e8ff; }
+        /* ── TABLE WRAPPER + TABLE — SEM SCROLL HORIZONTAL ─────── */
+        .table-wrapper {
+            width: 100%;
+            overflow-x: hidden;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+        }
+        .table-premium {
+            width: 100%;
+            min-width: 0;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.8rem;
+            background: white;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            table-layout: fixed;
+        }
+        .table-premium th {
+            background: linear-gradient(135deg,var(--gray-100) 0%,var(--gray-200) 100%);
+            color: var(--gray-700);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.68rem;
+            letter-spacing: 0.3px;
+            padding: 0.75rem 0.5rem;
+            text-align: left;
+            white-space: normal;
+            word-break: break-word;
+        }
+        .table-premium td {
+            padding: 0.7rem 0.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            background: white;
+            vertical-align: middle;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+        .table-premium tr:last-child td { border-bottom: none; }
+        .table-premium tr:hover td { background: var(--gray-50); }
+        .table-premium tr.row-sem-nascido td { background: #fff7ed; }
+        .table-premium tr.row-sem-nascido:hover td { background: #ffedd5; }
+        .table-premium tr.row-sem-obito td { background: #faf5ff; }
+        .table-premium tr.row-sem-obito:hover td { background: #f3e8ff; }
+
+        /* Larguras fixas das colunas */
+        .table-premium th:nth-child(1), .table-premium td:nth-child(1) { width: 95px; }
+        .table-premium th:nth-child(2), .table-premium td:nth-child(2) { width: 95px; }
+        .table-premium th:nth-child(3), .table-premium td:nth-child(3) { width: auto; }
+        .table-premium th:nth-child(4), .table-premium td:nth-child(4) { width: 62px; text-align: center; }
+        .table-premium th:nth-child(5), .table-premium td:nth-child(5) { width: 60px; text-align: center; }
+        .table-premium th:nth-child(6), .table-premium td:nth-child(6) { width: 90px; text-align: right !important; white-space: nowrap; font-weight: 700; }
 
         /* ── RA / GRAU / BADGES ─────────────────────────────────── */
-        .ra-value-premium { font-weight:700; padding:0.5rem 1rem; border-radius:2rem; font-size:0.75rem; display:inline-block; border:2px solid transparent; white-space:nowrap; }
+        .ra-value-premium { font-weight:700; padding:0.4rem 0.6rem; border-radius:2rem; font-size:0.7rem; display:inline-block; border:2px solid transparent; white-space:nowrap; }
         .ra-correct-premium   { background:var(--success-light); color:#166534; border-color:#86efac; box-shadow:0 2px 4px rgba(16,185,129,0.2); }
         .ra-incorrect-premium { background:var(--danger-light);  color:#991b1b; border-color:#fecaca; box-shadow:0 2px 4px rgba(239,68,68,0.2); }
-        .nascido-missing-badge { display:inline-flex; align-items:center; gap:0.35rem; background:#ffedd5; color:#9a3412; border:2px solid #fed7aa; border-radius:2rem; padding:0.35rem 0.85rem; font-size:0.7rem; font-weight:700; white-space:nowrap; animation:nascidoPulse 2.5s ease-in-out infinite; }
-        /* ── NOVO: badge óbito ausente na tabela ── */
-        .obito-missing-badge  { display:inline-flex; align-items:center; gap:0.35rem; background:#f3e8ff; color:#4c1d95; border:2px solid #d8b4fe; border-radius:2rem; padding:0.35rem 0.85rem; font-size:0.7rem; font-weight:700; white-space:nowrap; animation:obitoPulse 2.5s ease-in-out infinite; }
+        .nascido-missing-badge { display:inline-flex; align-items:center; gap:0.35rem; background:#ffedd5; color:#9a3412; border:2px solid #fed7aa; border-radius:2rem; padding:0.3rem 0.6rem; font-size:0.65rem; font-weight:700; white-space:nowrap; animation:nascidoPulse 2.5s ease-in-out infinite; }
+        .obito-missing-badge  { display:inline-flex; align-items:center; gap:0.35rem; background:#f3e8ff; color:#4c1d95; border:2px solid #d8b4fe; border-radius:2rem; padding:0.3rem 0.6rem; font-size:0.65rem; font-weight:700; white-space:nowrap; animation:obitoPulse 2.5s ease-in-out infinite; }
+        .item-name { white-space: normal; word-wrap: break-word; word-break: break-word; }
 
         /* ── LOADING ────────────────────────────────────────────── */
         .loading-premium { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(10px); z-index:9999; justify-content:center; align-items:center; }
@@ -289,7 +322,6 @@
         /* ── EMPTY STATE ────────────────────────────────────────── */
         .empty-state-premium { text-align:center; padding:4rem; background:linear-gradient(135deg,white 0%,var(--gray-50) 100%); border-radius:var(--radius-xl); border:2px dashed var(--gray-300); color:var(--gray-500); }
         .empty-state-premium i { font-size:4rem; margin-bottom:1.5rem; opacity:0.5; color:var(--accent); }
-        .item-name { max-width:250px; white-space:normal; word-wrap:break-word; }
 
         /* ── SCROLLBAR ──────────────────────────────────────────── */
         ::-webkit-scrollbar { width:10px; height:10px; }
@@ -338,23 +370,30 @@
             .guia-header-valor { font-size:1rem; margin-left:auto; }
             .badge-premium { font-size:0.68rem; padding:0.35rem 0.7rem; }
             .guia-body-premium { padding:1rem; }
-            .table-premium { font-size:0.8rem; }
-            .table-premium th, .table-premium td { padding:0.7rem 0.625rem; }
-            .item-name { max-width:140px; }
+            .table-premium { font-size:0.75rem; }
+            .table-premium th, .table-premium td { padding:0.6rem 0.4rem; }
+            .table-premium th:nth-child(1), .table-premium td:nth-child(1) { width: 70px; }
+            .table-premium th:nth-child(2), .table-premium td:nth-child(2) { width: 70px; }
+            .table-premium th:nth-child(6), .table-premium td:nth-child(6) { width: 75px; }
         }
         @media (max-width:480px) {
             .summary-premium { grid-template-columns:repeat(3,minmax(0,1fr)); gap:0.5rem; padding:0.75rem; }
             .summary-item-premium { padding:0.625rem 0.375rem; }
             .stats-grid-premium { grid-template-columns:1fr 1fr; gap:0.625rem; }
             .filter-btn-premium { flex:1 1 100%; }
-            .table-premium { font-size:0.75rem; }
-            .table-premium th, .table-premium td { padding:0.6rem 0.5rem; }
+            .table-premium { font-size:0.7rem; }
+            .table-premium th, .table-premium td { padding:0.5rem 0.35rem; }
+            .table-premium th:nth-child(1), .table-premium td:nth-child(1) { width: 60px; }
+            .table-premium th:nth-child(2), .table-premium td:nth-child(2) { width: 60px; }
+            .table-premium th:nth-child(4), .table-premium td:nth-child(4) { width: 48px; }
+            .table-premium th:nth-child(5), .table-premium td:nth-child(5) { width: 48px; }
+            .table-premium th:nth-child(6), .table-premium td:nth-child(6) { width: 70px; }
         }
         @media (max-width:360px) {
             .brand-text h1 { font-size:1.1rem; }
             .summary-premium { grid-template-columns:repeat(2,minmax(0,1fr)); }
-            .table-premium { font-size:0.7rem; }
-            .table-premium th, .table-premium td { padding:0.5rem 0.4rem; }
+            .table-premium { font-size:0.65rem; }
+            .table-premium th, .table-premium td { padding:0.4rem 0.3rem; }
         }
     </style>
 </head>
@@ -450,11 +489,7 @@ class TISSAnalyzerPro {
         this.ns = "http://www.ans.gov.br/padroes/tiss/schemas";
         this.CODIGOS_RA = ["31309054","10102019","10103015","10103023"];
         this.CODIGOS_DECLARACAO_NASCIDO = ["31309054","31309127","31309208","31309097"];
-
-        // ── NOVO: motivos de encerramento que exigem <declaracaoObito> ──────────
         this.MOTIVOS_OBITO = ["41","42","43"];
-        // ────────────────────────────────────────────────────────────────────────
-
         this.REGRAS_GRAU = {
             "Unimed":   { "10103023":10, "10103015":10, "10104020":13 },
             "Bradesco": { "10103023":10, "10103015":12 }
@@ -608,13 +643,11 @@ class TISSAnalyzerPro {
 
             const procs = guia.querySelectorAll('procedimentoExecutado, servicosExecutados');
 
-            // ── Presença de tags especiais na guia ──────────────────────────────
             const temDeclaracaoNascido = !!(
                 guia.getElementsByTagNameNS(this.ns,"declaracaoNascido")[0] ||
                 guia.getElementsByTagName("declaracaoNascido")[0]
             );
 
-            // ── NOVO: motivoEncerramento e declaracaoObito ───────────────────────
             const motivoEncerramentoTag =
                 guia.getElementsByTagNameNS(this.ns,"motivoEncerramento")[0] ||
                 guia.getElementsByTagName("motivoEncerramento")[0];
@@ -625,21 +658,13 @@ class TISSAnalyzerPro {
                 guia.getElementsByTagName("declaracaoObito")[0]
             );
 
-            // Precisa de declaracaoObito se motivoEncerramento for 41, 42 ou 43
             const exigeObito = motivoEncerramento && this.MOTIVOS_OBITO.includes(motivoEncerramento);
-            // ────────────────────────────────────────────────────────────────────
-
-            // 60000694 e, para Bradesco, também 60000805 acionam RA = 1
-            const CODIGOS_694 = ["60000694", "60000805"];
-            // 60000554 e, para Bradesco, também 60000511 acionam RA = 2
-            const CODIGOS_554 = ["60000554", "60000511"];
 
             const isBradesco = nomeConvenio.includes("Bradesco");
 
             const tem694 = Array.from(procs).some(p => {
                 const c = this.getXMLTag(p,"codigoProcedimento");
                 if (c === "60000694") return true;
-                // 60000805 só aciona para Bradesco
                 if (c === "60000805" && isBradesco) return true;
                 return false;
             });
@@ -647,12 +672,10 @@ class TISSAnalyzerPro {
             const tem554 = Array.from(procs).some(p => {
                 const c = this.getXMLTag(p,"codigoProcedimento");
                 if (c === "60000554") return true;
-                // 60000511 só aciona para Bradesco
                 if (c === "60000511" && isBradesco) return true;
                 return false;
             });
 
-            // Qual código disparador foi encontrado (para exibir no erro)
             const cod694Encontrado = Array.from(procs).map(p => this.getXMLTag(p,"codigoProcedimento"))
                 .find(c => c==="60000694" || (c==="60000805" && isBradesco)) || "60000694";
             const cod554Encontrado = Array.from(procs).map(p => this.getXMLTag(p,"codigoProcedimento"))
@@ -672,7 +695,6 @@ class TISSAnalyzerPro {
 
                 let erroRA=null, raCorreto=null, erroGrau=null, grauCorreto=null, erroNascido=null;
 
-                // Validação RA
                 if (this.CODIGOS_RA.includes(cod)) {
                     if (tem694) {
                         raCorreto="1";
@@ -691,7 +713,6 @@ class TISSAnalyzerPro {
                     }
                 }
 
-                // Validação Grau
                 const chaveConvenio = nomeConvenio.includes("Bradesco")?"Bradesco":nomeConvenio.includes("Unimed")?"Unimed":null;
                 const regrasConv = chaveConvenio ? (this.REGRAS_GRAU[chaveConvenio]||{}) : {};
                 if (regrasConv.hasOwnProperty(cod)) {
@@ -703,7 +724,6 @@ class TISSAnalyzerPro {
                     }
                 }
 
-                // Validação declaracaoNascido
                 if (this.CODIGOS_DECLARACAO_NASCIDO.includes(cod)) {
                     codigosNascidoPresentes.push(cod);
                     if (!temDeclaracaoNascido) {
@@ -717,9 +737,6 @@ class TISSAnalyzerPro {
                 items.push({ data:dataE,codigo:cod,nome:nomeProc,ra:raDisplay,raNum,raCorreto,grau:grauPartNum,grauCorreto,erroGrau,valor:vU,erro:erroRA,erroNascido });
             });
 
-            // ── NOVO: Validação declaracaoObito — fora do loop de itens ─────────
-            // O motivoEncerramento é da guia inteira, não de cada item.
-            // Registra um único erro na guia se exigir e não tiver.
             let erroObito = false;
             if (exigeObito && !temDeclaracaoObito) {
                 temErro = true;
@@ -730,7 +747,6 @@ class TISSAnalyzerPro {
                     motivo: motivoEncerramento
                 });
             }
-            // ────────────────────────────────────────────────────────────────────
 
             guias.push({
                 numero:numG, carteira:cart, beneficiario:nomeB, tipo:info,
@@ -741,7 +757,7 @@ class TISSAnalyzerPro {
                 codigosNascido:codigosNascidoPresentes,
                 motivoEncerramento,
                 temDeclaracaoObito,
-                erroObito           // flag rápida para CSS / card
+                erroObito
             });
         });
 
@@ -755,13 +771,13 @@ class TISSAnalyzerPro {
             if(e.tipo==='ra_554') erros554++;
             if(e.tipo==='grau_incorreto') errosGrau++;
             if(e.tipo==='sem_declaracao_nascido') errosNascido++;
-            if(e.tipo==='sem_declaracao_obito')   errosObito++;   // NOVO
+            if(e.tipo==='sem_declaracao_obito')   errosObito++;
         }));
         return {
             total:guias.length,
             erros:guias.filter(g=>g.temErro).length,
             erros694,erros554,errosGrau,errosNascido,
-            errosObito,   // NOVO
+            errosObito,
             vencidas:guias.filter(g=>g.vencida).length,
             valor:guias.reduce((a,g)=>a+g.valorTotal,0),
             locais:guias.filter(g=>g.tipo.isLocal).length,
@@ -801,23 +817,23 @@ class TISSAnalyzerPro {
         const t554     = this.arquivos.reduce((a,arq)=>a+arq.stats.erros554,0);
         const tGrau    = this.arquivos.reduce((a,arq)=>a+arq.stats.errosGrau,0);
         const tNascido = this.arquivos.reduce((a,arq)=>a+arq.stats.errosNascido,0);
-        const tObito   = this.arquivos.reduce((a,arq)=>a+arq.stats.errosObito,0); // NOVO
+        const tObito   = this.arquivos.reduce((a,arq)=>a+arq.stats.errosObito,0);
 
-            container.innerHTML = `
+        container.innerHTML = `
             <button class="filter-btn-premium ${this.filtroAtual.erro==='694'?'active':''}" onclick="app.filterByError('694')">
-                <i class="fas fa-exclamation-triangle"></i>Erro RA 694 / 805<span class="filter-count">${t694}</span>
+                <i class="fas fa-exclamation-triangle"></i>Erro ENFERMARIA<span class="filter-count">${t694}</span>
             </button>
             <button class="filter-btn-premium ${this.filtroAtual.erro==='554'?'active':''}" onclick="app.filterByError('554')">
-                <i class="fas fa-exclamation-triangle"></i>Erro RA 554 / 511<span class="filter-count">${t554}</span>
+                <i class="fas fa-exclamation-triangle"></i>Erro APARTAMENTO<span class="filter-count">${t554}</span>
             </button>
             <button class="filter-btn-premium ${this.filtroAtual.erro==='grau'?'active':''}" onclick="app.filterByError('grau')">
                 <i class="fas fa-exclamation-triangle"></i>Erro Grau Part.<span class="filter-count">${tGrau}</span>
             </button>
             <button class="filter-btn-premium filter-nascido ${this.filtroAtual.erro==='nascido'?'active':''}" onclick="app.filterByError('nascido')">
-                <i class="fas fa-baby"></i>Decl. Nascido Ausente<span class="filter-count">${tNascido}</span>
+                <i class="fas fa-baby">DNV</i><span class="filter-count">${tNascido}</span>
             </button>
             <button class="filter-btn-premium filter-obito ${this.filtroAtual.erro==='obito'?'active':''}" onclick="app.filterByError('obito')">
-                <i class="fas fa-skull"></i>Decl. Óbito Ausente<span class="filter-count">${tObito}</span>
+                <i class="fas fa-skull"></i>DO<span class="filter-count">${tObito}</span>
             </button>
         `;
     }
@@ -914,7 +930,7 @@ class TISSAnalyzerPro {
         else if(this.filtroAtual.erro==='554')     gf=gf.filter(g=>g.erros.some(e=>e.tipo==='ra_554'));
         else if(this.filtroAtual.erro==='grau')    gf=gf.filter(g=>g.erros.some(e=>e.tipo==='grau_incorreto'));
         else if(this.filtroAtual.erro==='nascido') gf=gf.filter(g=>g.erros.some(e=>e.tipo==='sem_declaracao_nascido'));
-        else if(this.filtroAtual.erro==='obito')   gf=gf.filter(g=>g.erros.some(e=>e.tipo==='sem_declaracao_obito')); // NOVO
+        else if(this.filtroAtual.erro==='obito')   gf=gf.filter(g=>g.erros.some(e=>e.tipo==='sem_declaracao_obito'));
 
         if (!gf.length) {
             container.innerHTML=`<div class="empty-state-premium" style="grid-column:1/-1;"><i class="fas fa-search"></i><h3 style="margin-bottom:0.5rem;">Nenhuma guia encontrada</h3><p>Tente ajustar os filtros ou buscar por outros termos</p></div>`;
@@ -932,7 +948,7 @@ class TISSAnalyzerPro {
         const temErro    = guias.some(g=>g.temErro);
         const temVencida = guias.some(g=>g.vencida);
         const temNascido = guias.some(g=>g.erros.some(e=>e.tipo==='sem_declaracao_nascido'));
-        const temObito   = guias.some(g=>g.erros.some(e=>e.tipo==='sem_declaracao_obito')); // NOVO
+        const temObito   = guias.some(g=>g.erros.some(e=>e.tipo==='sem_declaracao_obito'));
         const valorTotal = guias.reduce((s,g)=>s+g.valorTotal,0);
         const convenios  = [...new Set(guias.map(g=>g.convenio))].join(' · ');
 
@@ -965,14 +981,14 @@ class TISSAnalyzerPro {
     createGuiaCard(guia) {
         const regra = this.REGRAS_CONVENIO[guia.convenio]||this.REGRAS_CONVENIO["DEFAULT"];
         const temErroNascido = guia.erros.some(e=>e.tipo==='sem_declaracao_nascido');
-        const temErroObito   = guia.erros.some(e=>e.tipo==='sem_declaracao_obito'); // NOVO
+        const temErroObito   = guia.erros.some(e=>e.tipo==='sem_declaracao_obito');
 
         const card = document.createElement('div');
         let cardClasses = 'guia-card-premium';
         if (guia.temErro)    cardClasses += ' has-error';
         if (guia.vencida)    cardClasses += ' is-vencida';
         if (temErroNascido)  cardClasses += ' sem-declaracao-nascido';
-        if (temErroObito)    cardClasses += ' sem-declaracao-obito';   // NOVO
+        if (temErroObito)    cardClasses += ' sem-declaracao-obito';
         card.className = cardClasses;
         card.dataset.numero       = guia.numero;
         card.dataset.beneficiario = guia.beneficiario;
@@ -988,7 +1004,6 @@ class TISSAnalyzerPro {
             ? `<i class="fas fa-id-card"></i> ${guia.carteira}`
             : `${guia.beneficiario} <small style="color:var(--gray-500);font-weight:400;">(${guia.carteira})</small>`;
 
-        // Alerta nascido
         let nascidoAlertHtml='';
         if (temErroNascido) {
             const cods = [...new Set(guia.erros.filter(e=>e.tipo==='sem_declaracao_nascido').map(e=>e.codigo))].join(', ');
@@ -1005,7 +1020,6 @@ class TISSAnalyzerPro {
                 </div>`;
         }
 
-        // ── NOVO: alerta óbito ───────────────────────────────────────────────────
         let obitoAlertHtml='';
         if (temErroObito) {
             const erroO = guia.erros.find(e=>e.tipo==='sem_declaracao_obito');
@@ -1023,30 +1037,26 @@ class TISSAnalyzerPro {
                     </div>
                 </div>`;
         }
-        // ────────────────────────────────────────────────────────────────────────
 
         let itemsHtml='';
         guia.items.forEach(item => {
             const raClass   = item.erro    ? 'ra-incorrect-premium' : (item.raCorreto   ? 'ra-correct-premium' : '');
             const grauClass = item.erroGrau ? 'ra-incorrect-premium' : (item.grauCorreto ? 'ra-correct-premium' : '');
-            // Linha destaque: nascido tem prioridade, depois óbito (óbito é da guia, não do item)
             const rowClass  = item.erroNascido ? 'row-sem-nascido' : (temErroObito ? 'row-sem-obito' : '');
-            const nascidoBadge = item.erroNascido ? `<br><span class="nascido-missing-badge"><i class="fas fa-baby"></i> Decl. Nascido ausente</span>` : '';
+            const nascidoBadge = item.erroNascido ? `<br><span class="nascido-missing-badge"><i class="fas fa-baby"></i> </span>` : '';
             itemsHtml+=`<tr class="${rowClass}">
                 <td>${this.formatDateDisplay(item.data)}</td>
                 <td><strong>${item.codigo}</strong>${nascidoBadge}</td>
                 <td class="item-name">${item.nome}</td>
-                <td><span class="ra-value-premium ${raClass}">${item.ra}${item.raCorreto?`<br><small style="font-size:0.625rem;">correto: ${item.raCorreto}</small>`:''}</span></td>
-                <td>${item.grauCorreto?`<span class="ra-value-premium ${grauClass}">${item.grau}${item.erroGrau?`<br><small style="font-size:0.625rem;">correto: ${item.grauCorreto}</small>`:''}</span>`:'-'}</td>
+                <td style="text-align:center;"><span class="ra-value-premium ${raClass}">${item.ra}${item.raCorreto?`<br><small style="font-size:0.6rem;">ok: ${item.raCorreto}</small>`:''}</span></td>
+                <td style="text-align:center;">${item.grauCorreto?`<span class="ra-value-premium ${grauClass}">${item.grau}${item.erroGrau?`<br><small style="font-size:0.6rem;">ok: ${item.grauCorreto}</small>`:''}</span>`:'-'}</td>
                 <td style="text-align:right;font-weight:700;">${this.formatCurrency(item.valor)}</td>
             </tr>`;
         });
 
-        // ── NOVO: info do motivoEncerramento no header da guia ───────────────────
         const motivoLabel = guia.motivoEncerramento
             ? `<span class="badge-premium" style="background:linear-gradient(135deg,#475569 0%,#334155 100%);"><i class="fas fa-door-open" style="margin-right:0.25rem;"></i>Enc.: ${guia.motivoEncerramento}</span>`
             : '';
-        // ────────────────────────────────────────────────────────────────────────
 
         card.innerHTML=`
             <div class="guia-header-premium" onclick="this.parentElement.classList.toggle('is-open')">
@@ -1148,7 +1158,7 @@ class TISSAnalyzerPro {
             else if(this.filtroAtual.erro==='554')     fa=et.includes('ra_554');
             else if(this.filtroAtual.erro==='grau')    fa=et.includes('grau_incorreto');
             else if(this.filtroAtual.erro==='nascido') fa=et.includes('sem_declaracao_nascido');
-            else if(this.filtroAtual.erro==='obito')   fa=et.includes('sem_declaracao_obito'); // NOVO
+            else if(this.filtroAtual.erro==='obito')   fa=et.includes('sem_declaracao_obito');
             card.style.display=(fa&&matches)?'block':'none';
         });
         document.querySelectorAll('.grupo-carteirinha').forEach(g=>{
