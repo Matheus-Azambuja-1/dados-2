@@ -691,7 +691,9 @@ class TISSAnalyzerPro {
                 const raNum    = parseFloat(this.getXMLTag(p,"reducaoAcrescimo")||"0");
                 const raDisplay= Number.isInteger(raNum) ? raNum.toString() : raNum.toFixed(2);
                 const vU       = this.parseCurrency(this.getXMLTag(p,"valorUnitario")||"0");
-                valorTotal += vU;
+                const quantidade = parseFloat(this.getXMLTag(p,"quantidadeExecutada")||"1");
+                const valorTotalItem = vU * quantidade;
+                valorTotal += valorTotalItem;
 
                 let erroRA=null, raCorreto=null, erroGrau=null, grauCorreto=null, erroNascido=null;
 
@@ -734,7 +736,22 @@ class TISSAnalyzerPro {
                     }
                 }
 
-                items.push({ data:dataE,codigo:cod,nome:nomeProc,ra:raDisplay,raNum,raCorreto,grau:grauPartNum,grauCorreto,erroGrau,valor:vU,erro:erroRA,erroNascido });
+                items.push({ 
+                    data:dataE,
+                    codigo:cod,
+                    nome:nomeProc,
+                    ra:raDisplay,
+                    raNum,
+                    raCorreto,
+                    grau:grauPartNum,
+                    grauCorreto,
+                    erroGrau,
+                    valor:valorTotalItem,
+                    quantidade:quantidade,
+                    valorUnitario:vU,
+                    erro:erroRA,
+                    erroNascido
+                });
             });
 
             let erroObito = false;
@@ -1029,9 +1046,11 @@ class TISSAnalyzerPro {
                     <div class="obito-alert-content">
                         <strong>Tag &lt;declaracaoObito&gt; ausente nesta guia</strong>
                         <ul>
-                            <li>Motivo de encerramento informado: <strong>${erroO?.motivo || guia.motivoEncerramento}</strong> (${
-                                {'41':'Alta por óbito sem causar direto','42':'Alta por óbito com causa direta','43':'Alta por óbito com causa indireta'}[erroO?.motivo||guia.motivoEncerramento] || 'óbito'
-                            })</li>
+                            <li>Motivo de encerramento informado: <strong>${erroO?.motivo || guia.motivoEncerramento}</strong> (${{
+                                '41':'Alta por óbito sem causar direto',
+                                '42':'Alta por óbito com causa direta',
+                                '43':'Alta por óbito com causa indireta'
+                            }[erroO?.motivo||guia.motivoEncerramento] || 'óbito'})</li>
                             <li>Inclua a tag <code>&lt;ans:declaracaoObito&gt;</code> com o número da DO do paciente.</li>
                         </ul>
                     </div>
@@ -1044,10 +1063,11 @@ class TISSAnalyzerPro {
             const grauClass = item.erroGrau ? 'ra-incorrect-premium' : (item.grauCorreto ? 'ra-correct-premium' : '');
             const rowClass  = item.erroNascido ? 'row-sem-nascido' : (temErroObito ? 'row-sem-obito' : '');
             const nascidoBadge = item.erroNascido ? `<br><span class="nascido-missing-badge"><i class="fas fa-baby"></i> </span>` : '';
+            const quantidadeExibicao = item.quantidade && item.quantidade > 1 ? ` ×${item.quantidade}` : '';
             itemsHtml+=`<tr class="${rowClass}">
                 <td>${this.formatDateDisplay(item.data)}</td>
                 <td><strong>${item.codigo}</strong>${nascidoBadge}</td>
-                <td class="item-name">${item.nome}</td>
+                <td class="item-name">${item.nome}${quantidadeExibicao}</td>
                 <td style="text-align:center;"><span class="ra-value-premium ${raClass}">${item.ra}${item.raCorreto?`<br><small style="font-size:0.6rem;">ok: ${item.raCorreto}</small>`:''}</span></td>
                 <td style="text-align:center;">${item.grauCorreto?`<span class="ra-value-premium ${grauClass}">${item.grau}${item.erroGrau?`<br><small style="font-size:0.6rem;">ok: ${item.grauCorreto}</small>`:''}</span>`:'-'}</td>
                 <td style="text-align:right;font-weight:700;">${this.formatCurrency(item.valor)}</td>
