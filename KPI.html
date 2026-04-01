@@ -1,0 +1,277 @@
+<!DOCTYPE html> 
+<html lang="pt-BR"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0"> 
+    <title>Dashboard Executivo - Faturamento e Glosas</title> 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet"> 
+    <link rel="stylesheet" href="css/styles.css">
+</head> 
+<body> 
+     
+    <!-- Botão de voltar ao topo --> 
+    <button class="back-to-top" id="backToTop" aria-label="Voltar ao topo">↑</button> 
+ 
+    <div class="header"> 
+        <div> 
+            <p>Relatório Executivo</p> 
+            <h1>Painel de Faturamento e Glosas</h1> 
+        </div> 
+        <div class="header-info"> 
+            <small>Foco: Desempenho Global</small><br> 
+            <small id="data-atualizacao">Ano Fiscal: 2026</small> 
+        </div> 
+    </div> 
+
+    <!-- NAVEGAÇÃO DE TABS -->
+    <div class="tab-nav">
+        <button class="tab-btn active" onclick="switchTab('geral')">Visão Geral (Global)</button>
+        <button class="tab-btn" onclick="switchTab('convenio')">Visão por Convênio (Detalhe)</button>
+    </div>
+     
+    <!-- TAB: VISÃO GERAL -->
+    <div id="tab-geral" class="tab-content active">
+        <!-- HERO KPI --> 
+        <div class="hero-kpi"> 
+            <h2>Faturamento Global 2026</h2> 
+            <div class="val"> 
+                <span id="hero-value">R$ 0</span> 
+            </div> 
+            <div class="sub" id="hero-subtitle">Carregando dados...</div> 
+        </div> 
+    
+        <!-- KPIs PRINCIPAIS --> 
+        <div class="kpi-grid"> 
+            <div class="card blue"> 
+                <h3>Faturamento Total 2026</h3> 
+                <div class="val" id="kpi-fat26">R$ 0</div> 
+            </div> 
+            <div class="card red"> 
+                <h3>Total Glosas 2026</h3> 
+                <div class="val" style="color: var(--red)" id="kpi-glosa26">R$ 0</div> 
+            </div> 
+            <div class="card" style="border-top-color: #64748b"> 
+                <h3>Faturamento Total 2025</h3> 
+                <div class="val" style="color: #94a3b8" id="kpi-fat25_base">R$ 0</div> 
+            </div> 
+            <div class="card gold"> 
+                <h3>% Média de Taxas</h3> 
+                <div class="val" style="color: var(--gold)" id="kpi-taxa">0%</div> 
+            </div> 
+        </div> 
+
+        <!-- SETORES PRIORITÁRIOS --> 
+        <div class="priority-section"> 
+            <h4 style="color: var(--text-muted); text-transform: uppercase; margin-bottom: 15px; border-left: 4px solid var(--purple); padding-left: 10px; font-size: 0.9rem;"> 
+                Glosas Acumuladas por Setor (Top 4 - 2025)
+            </h4> 
+            <div class="priority-grid" id="priority-container"> 
+                <!-- Preenchido via JS --> 
+            </div> 
+        </div> 
+    
+        <!-- ANÁLISE POR SETOR --> 
+        <div class="section-container"> 
+            <h3 class="section-title">Análise Detalhada por Setor</h3> 
+            <div class="controls"> 
+                <select id="filtro-setor"> 
+                    <option value="">Selecione um Setor para Detalhar...</option> 
+                </select> 
+                <div class="toggle-container"> 
+                    <input type="checkbox" id="toggle-2024" checked style="cursor: pointer;"> 
+                    <label for="toggle-2024" style="cursor: pointer;">Exibir 2024</label> 
+                </div> 
+            </div> 
+            <div id="setor-detalhe-container" class="hidden"> 
+                <div class="breakdown-grid" style="margin-bottom: 20px;"> 
+                    <div class="chart-box"> 
+                        <canvas id="chartSetor"></canvas> 
+                    </div> 
+                    <div style="display: flex; flex-direction: column; justify-content: center; gap: 15px;"> 
+                        <div class="card red" style="padding: 20px;"> 
+                            <h3>Total Glosa (Setor)</h3> 
+                            <div class="val" id="setor-total-glosa">R$ 0,00</div> 
+                        </div> 
+                        <div style="font-size: 0.8rem; color: var(--text-muted); padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px;"> 
+                            * Evolução mensal das glosas para o setor selecionado.
+                        </div> 
+                    </div> 
+                </div> 
+                <div class="table-wrapper"> 
+                    <table id="setor-table-horizontal"> 
+                        <thead id="setor-thead-h"></thead> 
+                        <tbody id="setor-tbody-h"></tbody> 
+                    </table> 
+                </div> 
+            </div> 
+        </div> 
+    
+        <!-- ANÁLISE EVOLUTIVA POR GRUPO --> 
+        <div class="section-container"> 
+            <h3 class="section-title" style="border-left-color: var(--purple);">Evolução por Grupo de Procedimento</h3> 
+            <div class="controls"> 
+                <select id="filtro-metrica-grupos"> 
+                    <option value="valores">Valor (R$)</option> 
+                    <option value="quantidades">Quantidade</option> 
+                    <option value="porcentagens">Participação (%)</option> 
+                </select> 
+                <select id="filtro-ano-grupos"> 
+                    <option value="2026">Ano 2026</option> 
+                    <option value="2025">Ano 2025</option> 
+                </select> 
+            </div> 
+            <div class="chart-box"> 
+                <canvas id="chartEvolucaoGrupos"></canvas> 
+            </div> 
+            <div class="table-wrapper"> 
+                <table> 
+                    <thead> 
+                        <tr id="grupos-thead"> 
+                            <th>Grupo</th> 
+                            <!-- Meses serão inseridos via JS --> 
+                            <th>Total</th> 
+                            <th>% Ano</th> 
+                        </tr> 
+                    </thead> 
+                    <tbody id="grupos-tbody"></tbody> 
+                </table> 
+            </div> 
+        </div> 
+    
+        <!-- GRÁFICO DE TENDÊNCIA GLOBAL --> 
+        <div class="section-container">
+            <h3 class="section-title">Tendência de Faturamento Global</h3>
+            <div class="chart-box"> 
+                <canvas id="chartEvolucao"></canvas> 
+            </div> 
+        </div>
+    
+        <!-- VISÃO GERAL MENSAL --> 
+        <div class="table-wrapper"> 
+            <h4 style="padding: 20px; margin:0; background: #1e293b; color: #fff; font-size: 1.1rem; border-bottom: 1px solid var(--border);"> 
+                Visão Geral Mensal (Consolidado) 
+            </h4> 
+            <table> 
+                <thead> 
+                    <tr> 
+                        <th style="background:transparent; border:none;"></th> 
+                        <th colspan="3" class="th-group border-r col-2024" style="color:#64748b">2024 (BASE ANTERIOR)</th> 
+                        <th colspan="3" class="th-group border-r" style="color:#94a3b8">2025 (BASE)</th> 
+                        <th colspan="3" class="th-group" style="color:var(--blue)">2026 (ATUAL)</th> 
+                    </tr> 
+                    <tr> 
+                        <th>Mês</th> 
+                        <th class="col-2024">Valor 24</th> 
+                        <th class="col-2024">Glosa 24</th> 
+                        <th class="border-r col-2024" style="color:var(--gold)">% Glosa 24</th> 
+                        <th>Valor 25</th> 
+                        <th>Glosa 25</th> 
+                        <th class="border-r" style="color:var(--gold)">% Glosa 25</th> 
+                        <th>Valor 26</th> 
+                        <th>Glosa 26</th> 
+                        <th style="color:var(--gold)">% Glosa 26</th> 
+                    </tr> 
+                </thead> 
+                <tbody id="tabela-body"></tbody> 
+                <tfoot> 
+                    <tr id="tabela-footer"></tr> 
+                </tfoot> 
+            </table> 
+        </div> 
+    </div>
+
+    <!-- TAB: VISÃO POR CONVÊNIO -->
+    <div id="tab-convenio" class="tab-content">
+        <div class="section-container">
+            <h3 class="section-title">Desempenho por Convênio (Total vs Detalhe)</h3>
+            <div class="controls">
+                <select id="filtro-ano-convenio">
+                    <option value="2026">Ano 2026</option>
+                    <option value="2025">Ano 2025</option>
+                </select>
+            </div>
+
+            <!-- Gráfico de Comparação Barra -->
+            <div class="chart-box" style="margin-bottom: 30px;">
+                <canvas id="chartConvenioBar"></canvas>
+            </div>
+
+            <div class="breakdown-grid">
+                <!-- Gráfico Doughnut (Participação) -->
+                <div class="chart-box">
+                    <canvas id="chartConvenioParticipacao"></canvas>
+                </div>
+                <!-- Tabela de Detalhes -->
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Convênio</th>
+                                <th>Faturamento</th>
+                                <th>Glosa</th>
+                                <th>% Glosa</th>
+                            </tr>
+                        </thead>
+                        <tbody id="convenio-tbody">
+                            <!-- JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-container">
+            <h3 class="section-title">Evolução de Glosas (Top Convênios)</h3>
+            <div style="height: 400px;">
+                <canvas id="chartConvenioEvolucao"></canvas>
+            </div>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 15px; text-align: center;">
+                * Exibe a tendência de glosas dos principais convênios para o ano selecionado.
+            </p>
+        </div>
+
+        <!-- NOVO: GRUPOS POR CONVÊNIO -->
+        <div class="card container">
+    <h3 class="section-title" style="border-left-color: var(--gold);">Distribuição de Grupos por Convênio</h3>
+    
+    <div class="controls" style="display: flex; gap: 10px; margin-bottom: 20px;">
+        <select id="filtro-convenio-detalhe" onchange="renderBreakdown()">
+            <option value="UNIMED">UNIMED</option>
+            <option value="BRADESCO">BRADESCO</option>
+            <option value="PARTICULAR">PARTICULAR</option>
+        </select>
+
+        <select id="filtro-mes-detalhe" onchange="renderBreakdown()">
+            <option value="anual">Acumulado Anual</option>
+            <option value="0">Janeiro</option>
+            <option value="1">Fevereiro</option>
+            <option value="2">Março</option>
+            <option value="11">Dezembro</option>
+        </select>
+    </div>
+
+    <div class="breakdown-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+        <div class="chart-box">
+            <canvas id="chartGruposConvenio"></canvas>
+        </div>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Grupo</th>
+                        <th>Valor (R$)</th>
+                        <th>Part. (%)</th>
+                    </tr>
+                </thead>
+                <tbody id="grupos-convenio-tbody">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+    <!-- DATA SCRIPTS -->
+    <script src="data/dashboard_data.js"></script>
+    <script src="js/dashboard.js"></script>
+</body> 
+</html> 
