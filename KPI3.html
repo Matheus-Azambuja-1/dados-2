@@ -6,7 +6,420 @@
     <title>Dashboard Executivo - Faturamento e Glosas</title> 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet"> 
-    <link rel="stylesheet" href="css/styles.css">
+    <style>
+/* --- DASHBOARD PREMIUM DARK THEME --- */ 
+:root { 
+    --bg-body: #0f172a; 
+    --card-bg: #1e293b; 
+    --card-hover: #2d3748;
+    --text-main: #f8fafc; 
+    --text-muted: #94a3b8; 
+    --gold: #fbbf24; 
+    --green: #34d399; 
+    --red: #f87171; 
+    --blue: #38bdf8; 
+    --purple: #8b5cf6; 
+    --border: #334155;
+} 
+ 
+* { 
+    box-sizing: border-box; 
+} 
+ 
+body { 
+    font-family: 'Inter', sans-serif; 
+    background-color: var(--bg-body); 
+    color: var(--text-main); 
+    margin: 0; 
+    padding: 16px; 
+    font-size: 14px; 
+    overflow-x: hidden; 
+    line-height: 1.5;
+} 
+ 
+/* HEADER */ 
+.header { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 16px; 
+    margin-bottom: 20px; 
+    border-bottom: 1px solid var(--border); 
+    padding-bottom: 16px; 
+} 
+
+/* TAB NAVIGATION */
+.tab-nav {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0;
+}
+
+.tab-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    border-bottom: 3px solid transparent;
+}
+
+.tab-btn:hover {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.tab-btn.active {
+    color: var(--blue);
+    border-bottom-color: var(--blue);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+ 
+@media (min-width: 768px) { 
+    .header { 
+        flex-direction: row; 
+        justify-content: space-between; 
+        align-items: flex-end; 
+    } 
+} 
+ 
+.header h1 { 
+    font-size: 2.2rem; 
+    font-weight: 800; 
+    margin: 0; 
+    background: linear-gradient(90deg, #fff, #94a3b8); 
+    -webkit-background-clip: text; 
+    -webkit-text-fill-color: transparent; 
+} 
+ 
+.header p { 
+    margin: 5px 0 0 0; 
+    color: var(--gold); 
+    text-transform: uppercase; 
+    letter-spacing: 1px; 
+    font-size: 0.8rem; 
+    font-weight: 600; 
+} 
+ 
+.header-info { 
+    text-align: left; 
+    opacity: 0.8; 
+} 
+ 
+@media (min-width: 768px) { 
+    .header-info { 
+        text-align: right; 
+    } 
+} 
+ 
+/* HERO KPI */ 
+.hero-kpi { 
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); 
+    border: 1px solid var(--blue); 
+    border-radius: 16px; 
+    padding: 30px; 
+    text-align: center; 
+    margin-bottom: 30px; 
+    box-shadow: 0 10px 25px -5px rgba(56, 189, 248, 0.1); 
+    position: relative; 
+    overflow: hidden; 
+} 
+ 
+.hero-kpi h2 { 
+    margin: 0; 
+    font-size: 1rem; 
+    color: var(--text-muted); 
+    text-transform: uppercase; 
+    letter-spacing: 2px; 
+} 
+ 
+.hero-kpi .val { 
+    font-size: 3rem; 
+    font-weight: 800; 
+    color: #fff; 
+    margin: 15px 0; 
+    word-break: break-all;
+} 
+ 
+@media (min-width: 768px) { 
+    .hero-kpi .val { 
+        font-size: 4.5rem; 
+    } 
+} 
+ 
+.hero-kpi .sub { 
+    font-size: 0.9rem; 
+    color: var(--gold); 
+    font-weight: bold; 
+} 
+ 
+/* KPI GRID */ 
+.kpi-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+    gap: 20px; 
+    margin-bottom: 30px; 
+} 
+ 
+.card { 
+    background: var(--card-bg); 
+    padding: 24px; 
+    border-radius: 12px; 
+    border-top: 4px solid var(--text-muted); 
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2); 
+    transition: all 0.3s ease; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+} 
+ 
+.card:hover { 
+    transform: translateY(-5px); 
+    background: var(--card-hover);
+} 
+ 
+.card h3 { 
+    margin: 0 0 12px 0; 
+    font-size: 0.8rem; 
+    color: var(--text-muted); 
+    text-transform: uppercase; 
+} 
+ 
+.card .val { 
+    font-size: 1.8rem; 
+    font-weight: 700; 
+    color: var(--text-main); 
+} 
+ 
+.card.blue { border-top-color: var(--blue); } 
+.card.red { border-top-color: var(--red); } 
+.card.gold { border-top-color: var(--gold); } 
+.card.purple { border-top-color: var(--purple); } 
+ 
+/* SECTION CONTAINER */ 
+.section-container { 
+    margin-bottom: 30px; 
+    background: #182235; 
+    padding: 24px; 
+    border-radius: 12px; 
+    border: 1px solid var(--border); 
+} 
+ 
+.section-title { 
+    color: #fff; 
+    margin: 0 0 25px 0; 
+    font-size: 1.4rem; 
+    border-left: 4px solid var(--blue); 
+    padding-left: 15px; 
+} 
+ 
+.controls { 
+    margin-bottom: 25px; 
+    display: flex; 
+    flex-wrap: wrap; 
+    gap: 15px; 
+    align-items: center; 
+} 
+ 
+select, .toggle-container { 
+    background: var(--card-bg); 
+    color: #fff; 
+    padding: 12px 16px; 
+    border: 1px solid var(--border); 
+    border-radius: 8px; 
+    font-size: 0.95rem; 
+    outline: none; 
+    cursor: pointer;
+    transition: border-color 0.2s;
+} 
+ 
+select:focus { 
+    border-color: var(--blue); 
+} 
+ 
+.toggle-container { 
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+    user-select: none; 
+} 
+ 
+/* TABLE STYLES */ 
+.table-wrapper { 
+    background: var(--card-bg); 
+    border-radius: 12px; 
+    overflow-x: auto; 
+    margin-bottom: 30px; 
+    border: 1px solid var(--border);
+} 
+ 
+table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    font-size: 0.9rem; 
+} 
+ 
+th { 
+    background: #0f172a; 
+    color: var(--text-muted); 
+    padding: 15px; 
+    text-align: right; 
+    border-bottom: 1px solid var(--border); 
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+} 
+ 
+th:first-child { 
+    text-align: left; 
+    position: sticky; 
+    left: 0; 
+    z-index: 10; 
+} 
+ 
+td { 
+    padding: 15px; 
+    border-bottom: 1px solid var(--border); 
+    text-align: right; 
+} 
+ 
+td:first-child { 
+    text-align: left; 
+    font-weight: 600; 
+    color: var(--gold); 
+    position: sticky; 
+    left: 0; 
+    background: var(--card-bg); 
+    z-index: 5; 
+} 
+ 
+tr:hover td { 
+    background-color: rgba(51, 65, 85, 0.4); 
+} 
+ 
+.th-group { 
+    text-align: center; 
+    background: #1e293b; 
+    font-weight: 700;
+} 
+ 
+.border-r { 
+    border-right: 1px solid var(--border); 
+} 
+ 
+tfoot { 
+    background: #111827; 
+    font-weight: 800; 
+} 
+ 
+tfoot td { 
+    border-top: 2px solid var(--gold); 
+} 
+ 
+/* CHART BOX */ 
+.chart-box { 
+    background: var(--card-bg); 
+    padding: 24px; 
+    border-radius: 12px; 
+    height: 350px; 
+    margin-bottom: 20px; 
+    border: 1px solid var(--border);
+} 
+ 
+/* CONVENIO BREAKDOWN SECTION */
+.breakdown-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+@media (min-width: 1024px) {
+    .breakdown-grid {
+        grid-template-columns: 1.5fr 1fr;
+    }
+}
+
+/* UTILS */
+.hidden { display: none !important; } 
+.hide-2024 .col-2024 { display: none !important; } 
+.negative { color: var(--red); } 
+.positive { color: var(--green); } 
+ 
+/* BACK TO TOP */ 
+.back-to-top { 
+    position: fixed; 
+    bottom: 30px; 
+    right: 30px; 
+    background: var(--blue); 
+    color: white; 
+    width: 45px; 
+    height: 45px; 
+    border-radius: 50%; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    cursor: pointer; 
+    z-index: 1000; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4); 
+    opacity: 0; 
+    transition: opacity 0.3s, transform 0.3s; 
+    border: none; 
+    font-size: 20px; 
+} 
+ 
+.back-to-top.visible { 
+    opacity: 1; 
+} 
+
+.back-to-top:hover {
+    transform: scale(1.1);
+}
+
+/* PRIORITY GRID */
+.priority-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+    gap: 15px; 
+} 
+ 
+.priority-card { 
+    background: rgba(139, 92, 246, 0.1); 
+    border: 1px solid rgba(139, 92, 246, 0.3); 
+    border-radius: 10px; 
+    padding: 20px; 
+} 
+ 
+.priority-card h4 { 
+    margin: 0 0 8px 0; 
+    color: var(--purple); 
+    font-size: 0.85rem; 
+    text-transform: uppercase; 
+} 
+ 
+.priority-card .p-val { 
+    font-size: 1.4rem; 
+    font-weight: bold; 
+    color: #fff; 
+} 
+ 
+.priority-card small { 
+    color: var(--text-muted); 
+    font-size: 0.75rem; 
+    display: block;
+    margin-top: 5px; 
+}
+    </style>
 </head> 
 <body> 
      
@@ -141,7 +554,7 @@
     
         <!-- GRÁFICO DE TENDÊNCIA GLOBAL --> 
         <div class="section-container">
-            <h3 class="section-title">Tendência de Faturamento Global</h3>
+            <h3 class="section-title">Faturamento Global</h3>
             <div class="chart-box"> 
                 <canvas id="chartEvolucao"></canvas> 
             </div> 
@@ -232,46 +645,841 @@
         </div>
 
         <!-- NOVO: GRUPOS POR CONVÊNIO -->
-        <div class="card container">
-    <h3 class="section-title" style="border-left-color: var(--gold);">Distribuição de Grupos por Convênio</h3>
+        <div class="section-container">
+            <h3 class="section-title" style="border-left-color: var(--gold);">Distribuição de Grupos por Convênio</h3>
+            <div class="controls">
+                <select id="filtro-convenio-ano">
+                    <option value="2026">Ano 2026</option>
+                    <option value="2025">Ano 2025</option>
+                </select>
+                <select id="filtro-convenio-detalhe">
+                    <option value="UNIMED">UNIMED</option>
+                    <option value="BRADESCO">BRADESCO</option>
+                    <option value="SULAMERICA">SULAMERICA</option>
+                    <option value="CASSI">CASSI</option>
+                    <option value="OUTROS">OUTROS</option>
+                </select>
+            </div>
+
+            <div class="breakdown-grid">
+                <div class="chart-box">
+                    <canvas id="chartGruposConvenio"></canvas>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Grupo</th>
+                                <th>Valor (R$)</th>
+                                <th>Qtd</th>
+                                <th>Part. (%)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="grupos-convenio-tbody">
+                            <!-- JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+ 
+    <script>
+// ============================================================================ 
+// DADOS 
+// ============================================================================ 
+const MESES = ["JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"]; 
+ 
+const DADOS_2024 = [ 
+    { faturamento: 3871449.40, glosa: 56576.74 }, 
+    { faturamento: 3835891.91, glosa: 17869.90 }, 
+    { faturamento: 2998816.54, glosa: 73213.03 }, 
+    { faturamento: 3864003.91, glosa: 54898.87 }, 
+    { faturamento: 3778220.88, glosa: 76002.27 }, 
+    { faturamento: 3810112.76, glosa: 70331.32 }, 
+    { faturamento: 3735327.95, glosa: 67740.57 }, 
+    { faturamento: 3577852.97, glosa: 192640.19 }, 
+    { faturamento: 3233048.25, glosa: 67353.41 }, 
+    { faturamento: 3565912.71, glosa: 49699.53 }, 
+    { faturamento: 1580141.80, glosa: 143541.95 }, 
+    { faturamento: 801549.22, glosa: 141372.32 } 
+]; 
+ 
+const DADOS_2025 = [ 
+    { faturamento: 3420101.44, taxa: 10.12, recuperado: 346114.27, glosa: 122197.09 }, 
+    { faturamento: 2794331.59, taxa: 9.44, recuperado: 263784.90, glosa: 119685.86 }, 
+    { faturamento: 2939564.42, taxa: 10.08, recuperado: 296308.09, glosa: 125659.10 }, 
+    { faturamento: 3013069.36, taxa: 9.09, recuperado: 273888.00, glosa: 87547.12 }, 
+    { faturamento: 3058174.55, taxa: 8.97, recuperado: 274318.26, glosa: 98966.31 }, 
+    { faturamento: 3101615.44, taxa: 8.07, recuperado: 250300.37, glosa: 110552.72 }, 
+    { faturamento: 3560435.50, taxa: 6.46, recuperado: 230004.13, glosa: 85856.77 }, 
+    { faturamento: 3031032.01, taxa: 11.61, recuperado: 351902.82, glosa: 153134.09 }, 
+    { faturamento: 3741724.05, taxa: 6.87, recuperado: 257056.44, glosa: 4444.29 }, 
+    { faturamento: 4002721.40, taxa: 8.41, recuperado: 336628.87, glosa: 23300.44 }, 
+    { faturamento: 3862589.20, taxa: 8.09, recuperado: 312483.47, glosa: 0.52 }, 
+    { faturamento: 4013619.16, taxa: 8.40, recuperado: 337144.01, glosa: 0.00 } 
+]; 
+ 
+const DADOS_2026 = [ 
+    { faturamento: 3222238.74, taxa: 0, recuperado: 0, glosa: 0 }, 
+    { faturamento: 3562469.21, taxa: 0, recuperado: 0, glosa: 0 }, 
+    { faturamento: 3228004.22, taxa: 0, recuperado: 0, glosa: 0 }, 
+    { faturamento: 0, taxa: 0, recuperado: 0, glosa: 0 }, 
+    { faturamento: 0, taxa: 0, recuperado: 0, glosa: 0 }, 
+    { faturamento: 0, taxa: 0, recuperado: 0, glosa: 0 }, 
+    { faturamento: 0, taxa: 0, recuperado: 0, glosa: 0 }, 
+    { faturamento: 0, taxa: 0, recuperado: 0, glosa: 0 }, 
+    { faturamento: 0, taxa: 0, recuperado: 0, glosa: 0 }, 
+    { faturamento: 0, taxa: 0, recuperado: 0, glosa: 0 }, 
+    { faturamento: 0, taxa: 0, recuperado: 0, glosa: 0 }, 
+    { faturamento: 0, taxa: 0, recuperado: 0, glosa: 0 } 
+]; 
+ 
+const DATA_SETOR = {"setores_geral":[{"SETORES":"Auditoria","TOTAL":19606.940000000002,"TOTAL GERAL %":0.021072257138081023},{"SETORES":"Ambulatório Especialidades","TOTAL":4565.43,"TOTAL GERAL %":0.004906625659379243},{"SETORES":"Agência transfusional","TOTAL":290.82,"TOTAL GERAL %":0.00031255432111776355},{"SETORES":"Cadastro de regras","TOTAL":291307.25,"TOTAL GERAL %":0.3130779855595648},{"SETORES":"CAF","TOTAL":3169.430000000001,"TOTAL GERAL %":0.003406296134998534},{"SETORES":"CDI","TOTAL":9828.51,"TOTAL GERAL %":0.010563039923833128},{"SETORES":"Central de Guias","TOTAL":10003.810000000001,"TOTAL GERAL %":0.010751440902073773},{"SETORES":"Central de fichas","TOTAL":0.0,"TOTAL GERAL %":0.0},{"SETORES":"Centro Cirúrgico","TOTAL":8296.630000000001,"TOTAL GERAL %":0.008916675459787053},{"SETORES":"CCIH","TOTAL":2620.12,"TOTAL GERAL %":0.002815933662908585},{"SETORES":"Contas Hospitalares","TOTAL":0.0,"TOTAL GERAL %":0.0},{"SETORES":"Comercial ","TOTAL":1868.4099999999999,"TOTAL GERAL %":0.00200804490447576},{"SETORES":"Credenciamento ","TOTAL":217501.88999999998,"TOTAL GERAL %":0.23375681029771156},{"SETORES":"Compras/ Almoxarifado","TOTAL":9.08,"TOTAL GERAL %":9.758590316172523e-06},{"SETORES":"Direção Técnica","TOTAL":115876.59999999999,"TOTAL GERAL %":0.12453659324129922},{"SETORES":"Enfermagem CDI","TOTAL":3020.8700000000003,"TOTAL GERAL %":0.003246633560398248},{"SETORES":"Enfermafem Covid","TOTAL":190.75,"TOTAL GERAL %":0.00020500562806276528},{"SETORES":"Enfermagem P.A","TOTAL":4500.200000000001,"TOTAL GERAL %":0.004836520720356783},{"SETORES":"Enfermagem unidade","TOTAL":11439.98,"TOTAL GERAL %":0.012294942515991997},{"SETORES":"Farmacia","TOTAL":0.0,"TOTAL GERAL %":0.0},{"SETORES":"Faturamento","TOTAL":107917.91,"TOTAL GERAL %":0.11598311359775086},{"SETORES":"Fisioterapia","TOTAL":3673.5,"TOTAL GERAL %":0.003948037613046229},{"SETORES":"Hemodiálise","TOTAL":13.39,"TOTAL GERAL %":1.4390696512505516e-05},{"SETORES":"Hemodinamica ","TOTAL":11090.56,"TOTAL GERAL %":0.011919408746357966},{"SETORES":"Laboratório","TOTAL":8092.000000000002,"TOTAL GERAL %":0.008696752515249788},{"SETORES":"Laura Vicuña","TOTAL":4522.91,"TOTAL GERAL %":0.004860927943493377},{"SETORES":"Oncologia","TOTAL":9609.76,"TOTAL GERAL %":0.10327941726513443},{"SETORES":"PA - Convênio","TOTAL":13153.220000000001,"TOTAL GERAL %":0.014136220850053607},{"SETORES":"PA - Maternidade","TOTAL":339.53,"TOTAL GERAL %":0.00036490464427864057},{"SETORES":"Recepção","TOTAL":63621.93,"TOTAL GERAL %":0.06837669052799626},{"SETORES":"Recurso de Glosa","TOTAL":0.0,"TOTAL GERAL %":0.0},{"SETORES":"Tecnologia da Informação","TOTAL":0.0,"TOTAL GERAL %":0.0},{"SETORES":"Unidade Genny","TOTAL":0.0,"TOTAL GERAL %":0.0},{"SETORES":"UTI COVID","TOTAL":0.0,"TOTAL GERAL %":0.0},{"SETORES":"UTI Geral","TOTAL":4330.83,"TOTAL GERAL %":0.004654492918390908}],"heatmap":{"Agência transfusional":[46.54,0,0,0,0,0,0,0,0,0,0,0],"Ambulatório Especialidades":[126.83,482.05,281.03000000000003,2206.3,248.07,746.57,516.24,100.32000000000001,17.85,0,0,0],"Angência Transfusional":[46.54,0,0,0,0,0,0,0,0,0,0,0],"Auditoria":[3319.84,5596.54,457.09999999999997,3245.86,2120.3,2415.82,1393.53,1057.95,0,0,0,0],"CAF":[36.96,564.3100000000001,1346.4899999999998,810.14,11.440000000000001,360.19,37.17,3.04,0,0,0,0],"CCIH":[0,0,2620.12,0,0,0,0,0,0,0,0,0],"CDI":[1474.1200000000001,970.02,1219.93,1195.99,574.37,865.91,2790.02,2053.9,0,282.17,0,0],"Cadastro Médico":[44480.76,42358.48,24277.68,17814.9,38094.03999999999,25951.34,3032.54,21369.9,122.25,0,0,0],"Cadastro de regras":[48618.42,58699.969999999994,65082.16,25064.379999999997,21327.44,14495.77,31756.149999999998,21094.91,2066.35,7795.090000000001,0.52,0],"Central de Fichas":[0,0,0,0,0,0,0,0,0,0,0,0],"Central de Guias":[83.3,64.36,163.31,624.45,0,0,660,8415.69,0,0,0,0],"Central de fichas":[0,0,0,0,0,0,0,0,0,0,0,0],"Centro Cirúrgico":[724.58,7.67,185.16,358.27000000000004,1.4,0,875.89,6558.21,0,0,0,0],"Comercial":[370.82,18.56,263.65,53.2,0,0,0,374.9,0,0,0,0],"Compras/ Almoxarifado":[0,0,0,0,0,0,0,0,0,0,0,0],"Compras/ almoxarifado":[0,0,0,0,0,0,0,0,0,0,0,0],"Contas Hospitalares":[0,0,0,0,0,0,0,0,0,0,0,0],"Credenciamento":[44480.76,42358.48,24277.68,17814.9,38094.03999999999,25951.34,3032.54,21369.9,122.25,0,0,0],"Direção Técnica":[5749.99,1145,6611.8099999999995,9351.93,15068.31,21328.85,8444.26,47979.28,197.17,0,0,0],"Enfermagem CDI":[104.99,0,275.45,206.95,26.259999999999998,19.86,914.43,1548.93,0,0,0,0],"Enfermagem Covid":[0,0,0,0,0,0,0,0,0,0,0,0],"Enfermagem P.A":[172.17000000000002,24.96,3296.1899999999996,1205.54,38.099999999999994,58.8,16.46,308.35,232.23,0,0,0],"Enfermagem Unid.":[457.09999999999997,302.95,1143.03,487.26000000000005,37.52,0,825.68,8265.84,0,0,0,0],"Farmacia":[0,0,0,0,0,0,0,0,0,0,0,0],"Faturamento":[10107.130000000001,3903.5699999999997,7657.299999999999,5634.39,10137.26,35177.18,28211.019999999997,6234.4,0,2290.7599999999998,0,0],"Fisioterapia":[15.16,0,0,0,0,0,0,3658.34,0,0,0,0],"Hemodiálise":[9.08,8.8,0,0,0,4.59,0,0,0,0,0,0],"Hemodinamica ":[1207.7,671.48,146.12,6506.59,280,0,0,62.99,0,2215.68,0,0],"Laboratório":[509.79,0,3035.2000000000003,1237.11,1669.13,0,392.49,0,1248.2800000000002,0,0,0],"Laura Vicuña":[0,37.74,0,0,53.760000000000005,0,0,4158.62,0,0,0,0],"Oncologia":[0,270.97,409.28,124.45,0,0,0,0,0,0,0,0],"PA - Convênio":[1045.14,1678,111.15,7462.89,19.83,3334.7999999999997,10.11,672.42,411.38,0,0,0],"PA - Maternidade":[0,0,0,190.75,0,0,0,0,148.78,0,0,0],"Recepção":[3263.88,2880.4300000000003,5460.08,3765.77,9204.04,5793.04,5980.78,16557.17,0,10716.74,0,0],"Recurso de Glosa":[0,0,0,0,0,0,0,0,0,0,0,0],"Tecnologia da Informação":[0,0,0,0,0,0,0,0,0,0,0,0],"UTI COVID":[0,0,0,0,0,0,0,0,0,0,0,0],"UTI Geral":[272.79,0,1616.8600000000001,0,55.04,0,0,2658.93,0,0,0,0],"Unidade Genny":[0,0,0,0,0,0,0,0,0,0,0,0]},"months":["JAN.25","FEV.25","MAR.25","ABR.25","MAI.25","JUN.25","JUL.25","AGO.25","SET.25","OUT.25","NOV.25","DEZ.25"],"all_setores":["Agência transfusional","Ambulatório Especialidades","Angência Transfusional","Auditoria","CAF","CCIH","CDI","Cadastro Médico","Cadastro de regras","Central de Fichas","Central de Guias","Central de fichas","Centro Cirúrgico","Comercial","Compras/ Almoxarifado","Compras/ almoxarifado","Contas Hospitalares","Credenciamento","Direção Técnica","Enfermagem CDI","Enfermagem Covid","Enfermagem P.A","Enfermagem Unid.","Farmacia","Faturamento","Fisioterapia","Hemodiálise","Hemodinamica ","Laboratório","Laura Vicuña","Oncologia","PA - Convênio","PA - Maternidade","Recepção","Recurso de Glosa","Tecnologia da Informação","UTI COVID","UTI Geral","Unidade Genny"]}; 
+ 
+const DATA_GRUPOS_2025 = { 
+    labels: ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"], 
+    grupos: [ 
+        { 
+            "nome": "PACOTES ESPECIAIS", 
+            "valores": [698713.81, 566431.13, 752814.33, 780132.22, 828564.33, 726564.33, 835431.21, 622143.22, 895642.11, 907143.22, 781432.11, 925143.21], 
+            "quantidades": [2863, 2163, 2726, 2779, 3171, 2651, 2778, 2036, 3298, 2867, 2634, 2769], 
+            "porcentagens": [20.38, 20.27, 25.61, 25.89, 27.09, 23.43, 23.46, 20.52, 23.94, 22.66, 20.23, 23.05], 
+            "cor": "#38bdf8" 
+        }, 
+        { 
+            "nome": "HONORARIOS MEDICOS", 
+            "valores": [624467.45, 536318.47, 565431.12, 607412.33, 671562.33, 639862.45, 725643.22, 635431.21, 793842.33, 739432.11, 685942.33, 705612.33], 
+            "quantidades": [5947, 4849, 5750, 5952, 6127, 5929, 7031, 4913, 6873, 6795, 6525, 5916], 
+            "porcentagens": [18.21, 19.19, 19.24, 20.16, 21.96, 20.63, 20.38, 20.96, 21.22, 18.47, 17.76, 17.58], 
+            "cor": "#34d399" 
+        }, 
+        { 
+            "nome": "DIARIAS", 
+            "valores": [593717.15, 523825.1, 351433.01, 479133.45, 390143.22, 475643.21, 586432.11, 438431.21, 569123.45, 765123.45, 728123.45, 475432.11], 
+            "quantidades": [811, 688, 693, 708, 592, 754, 635, 710, 767, 1008, 965, 754], 
+            "porcentagens": [17.31, 18.75, 11.96, 15.9, 12.76, 15.34, 16.47, 14.46, 15.21, 19.11, 18.85, 11.85], 
+            "cor": "#8b5cf6" 
+        }, 
+        { 
+            "nome": "MATERIAIS ESPECIAIS (OPME)", 
+            "valores": [366185.08, 72543.82, 45318.17, 110643.21, 103643.21, 53643.12, 38812.33, 51342.33, 168123.45, 80812.33, 103431.21, 328412.33], 
+            "quantidades": [127, 92, 101, 157, 151, 66, 56, 90, 176, 141, 143, 236], 
+            "porcentagens": [10.68, 2.6, 1.54, 3.67, 3.39, 1.73, 1.09, 1.69, 4.49, 2.02, 2.68, 8.18], 
+            "cor": "#fbbf24" 
+        }, 
+        { 
+            "nome": "TAXAS", 
+            "valores": [346850.77, 263884.21, 296317.82, 273942.33, 274382.45, 250317.22, 230132.33, 351942.33, 257143.22, 336712.33, 312413.45, 337213.45], 
+            "quantidades": [1138, 1103, 1200, 1068, 1112, 1356, 1169, 1330, 1221, 1569, 1443, 1478], 
+            "porcentagens": [10.12, 9.44, 10.08, 9.09, 8.97, 8.07, 6.46, 11.61, 6.87, 8.41, 8.09, 8.4], 
+            "cor": "#f87171" 
+        }, 
+        { 
+            "nome": "EXAMES E DIAGNOSTICOS", 
+            "valores": [318237.98, 371902.13, 423812.21, 382564.33, 402133.45, 464562.33, 448123.45, 499132.33, 508432.11, 532431.21, 526431.21, 478643.21], 
+            "quantidades": [6773, 6869, 6585, 7000, 6717, 10840, 7600, 8671, 9711, 11340, 10452, 8298], 
+            "porcentagens": [9.28, 13.31, 14.42, 12.69, 13.15, 14.98, 12.58, 16.47, 13.59, 13.3, 13.63, 11.93], 
+            "cor": "#94a3b8" 
+        }, 
+        { 
+            "nome": "MEDICAMENTOS", 
+            "valores": [281566.21, 273062.14, 268433.47, 202517.36, 207643.21, 233564.33, 304862.33, 224612.33, 271233.12, 335123.45, 342613.45, 443812.33], 
+            "quantidades": [32967, 26986, 27424, 29964, 39902, 42896, 37994, 34618, 51346, 62063, 49016, 30480], 
+            "porcentagens": [8.21, 9.77, 9.13, 6.72, 6.79, 7.53, 8.56, 7.41, 7.25, 8.37, 8.87, 11.06], 
+            "cor": "#6366f1" 
+        }, 
+        { 
+            "nome": "MATERIAIS", 
+            "valores": [143717.36, 150643.58, 211043.91, 154862.33, 149233.12, 184962.33, 263842.11, 168432.11, 199431.21, 202613.45, 256431.21, 288123.45], 
+            "quantidades": [28461, 19904, 22504, 19138, 18651, 22562, 26911, 23876, 40196, 37910, 34238, 27778], 
+            "porcentagens": [4.19, 5.39, 7.18, 5.14, 4.88, 5.96, 7.41, 5.56, 5.33, 5.06, 6.64, 7.18], 
+            "cor": "#ec4899" 
+        }, 
+        { 
+            "nome": "GASES MEDICINAIS", 
+            "valores": [56143.53, 35720.91, 24860.3, 21863.79, 31210.33, 72343.21, 128143.22, 40123.45, 78643.22, 104123.45, 124812.33, 31712.33], 
+            "quantidades": [4705, 4390, 4265, 3847, 4494, 4682, 5425, 5205, 4389, 6097, 6088, 3304], 
+            "porcentagens": [1.64, 1.28, 0.84, 0.73, 1.02, 2.33, 3.6, 1.32, 2.1, 2.6, 3.23, 0.79], 
+            "cor": "#14b8a6" 
+        } 
+    ] 
+}; 
+ 
+const DATA_GRUPOS_2026 = { 
+    labels: ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"], 
+    grupos: [ 
+         { "nome": "PACOTES ESPECIAIS",
+             "valores": [641786.90,765078.90,864289.09,0,0,0,0,0,0,0,0,0], 
+            "quantidades": [2217,2266,2968,0,0,0,0,0,0,0,0,0], 
+            "porcentagens": [21.67,21.48,26.77,0,0,0,0,0,0,0,0,0], "cor": "#38bdf8" }, 
+
+        { "nome": "HONORARIOS MEDICOS", 
+            "valores": [611489.74,625493.32,594174.98,0,0,0,0,0,0,0,0,0],
+            "quantidades": [4655,4728,5660,0,0,0,0,0,0,0,0,0], 
+            "porcentagens": [20.64,17.56,18.41,0,0,0,0,0,0,0,0,0], "cor": "#34d399" }, 
+
+        { "nome": "DIARIAS",
+             "valores": [365570.02,344056.16,411008.77,0,0,0,0,0,0,0,0,0], 
+             "quantidades": [656,555,680,0,0,0,0,0,0,0,0,0], 
+             "porcentagens": [12.34,9.66,12.73,0,0,0,0,0,0,0,0,0], "cor": "#8b5cf6" },
+
+        { "nome": "MATERIAIS ESPECIAIS (OPME)", 
+            "valores": [152011.71,432649.61,90792.39,0,0,0,0,0,0,0,0,0],
+            "quantidades": [170,230,165,0,0,0,0,0,0,0,0,0],
+            "porcentagens": [5.13,12.14,2.81,0,0,0,0,0,0,0,0,0], "cor": "#fbbf24" }, 
+
+        { "nome": "TAXAS",
+            "valores": [249902.05,334471.07,310818.06,0,0,0,0,0,0,0,0,0],
+            "quantidades": [1171,1177,1397,0,0,0,0,0,0,0,0,0],
+            "porcentagens": [8.44,9.39,9.63,0,0,0,0,0,0,0,0,0], "cor": "#f87171" }, 
+
+        { "nome": "EXAMES E DIAGNOSTICOS", 
+            "valores": [458053.49,585060.90,541109.77,0,0,0,0,0,0,0,0,0],
+            "quantidades": [11332,9210,11115,0,0,0,0,0,0,0,0,0],
+            "porcentagens": [15.46,16.42,16.76,0,0,0,0,0,0,0,0,0], "cor": "#94a3b8" },
+
+        { "nome": "MEDICAMENTOS",
+            "valores": [281730.19,243192.74,216670.89,0,0,0,0,0,0,0,0,0],
+            "quantidades": [37191,25232,30728,0,0,0,0,0,0,0,0,0],
+            "porcentagens": [9.51,6.83,6.71,0,0,0,0,0,0,0,0,0], "cor": "#6366f1" }, 
+
+        { "nome": "MATERIAIS", 
+            "valores": [177760.41,200995.18,174696.02,0,0,0,0,0,0,0,0,0], 
+            "quantidades": [23670,23959,23789,0,0,0,0,0,0,0,0,0],
+            "porcentagens": [6,5.64,5.41,0,0,0,0,0,0,0,0,0], "cor": "#ec4899" },
+             
+        { "nome": "GASES MEDICINAIS",
+            "valores": [23984.67,31471.33,24435.25,0,0,0,0,0,0,0,0,0],
+            "quantidades": [2363,3852,4436,0,0,0,0,0,0,0,0,0], 
+            "porcentagens": [0.81,0.88,0.76,0,0,0,0,0,0,0,0,0], "cor": "#14b8a6" }
+    ] 
+}; 
+ 
+const DATA_CONVENIO = { 
+    "2026": [ 
+        { convenio: "UNIMED", faturamento: 1250450.30, glosa: 15430.20 }, 
+        { convenio: "BRADESCO", faturamento: 840320.15, glosa: 8210.45 }, 
+        { convenio: "SULAMERICA", faturamento: 450120.40, glosa: 4320.10 }, 
+        { convenio: "CASSI", faturamento: 320560.10, glosa: 3100.25 }, 
+        { convenio: "OUTROS", faturamento: 360787.79, glosa: 2540.35 } 
+    ], 
+    "2025": [ 
+        { convenio: "UNIMED", faturamento: 11204500.30, glosa: 250430.20 }, 
+        { convenio: "BRADESCO", faturamento: 9403200.15, glosa: 180210.45 }, 
+        { convenio: "SULAMERICA", faturamento: 6501200.40, glosa: 140320.10 }, 
+        { convenio: "CASSI", faturamento: 5205600.10, glosa: 90100.25 }, 
+        { convenio: "OUTROS", faturamento: 7826224.21, glosa: 105430.35 } 
+    ] 
+}; 
+
+const DATA_GRUPOS_POR_CONVENIO = {
+    "2026": {
+        "UNIMED": [
+            { nome: "PACOTES ESPECIAIS", valor: 0.00, qtd: 0, p: 0.00 },
+            { nome: "HONORARIOS MEDICOS", valor: 0.00, qtd: 0, p: 0.0 },
+            { nome: "DIARIAS", valor: 0.00, qtd: 0, p: 0.00 },
+            { nome: "MATERIAIS", valor: 0.00, qtd: 0, p: 0.00 },
+            { nome: "OUTROS", valor: 0.0, qtd: 0, p: 0.0 }
+        ],
+        "BRADESCO": [
+            { nome: "PACOTES ESPECIAIS", valor: 0.00, qtd: 0, p: 0.00 },
+            { nome: "HONORARIOS MEDICOS", valor: 0.00, qtd: 0, p: 0.0 },
+            { nome: "DIARIAS", valor: 0.00, qtd: 0, p: 0.00 },
+            { nome: "MATERIAIS", valor: 0.00, qtd: 0, p: 0.00 },
+            { nome: "OUTROS", valor: 0.0, qtd: 0, p: 0.0 }
+        ],
+        "SULAMERICA": [
+            { nome: "PACOTES ESPECIAIS", valor: 0.00, qtd: 0, p: 0.00 },
+            { nome: "HONORARIOS MEDICOS", valor: 0.00, qtd: 0, p: 0.0 },
+            { nome: "DIARIAS", valor: 0.00, qtd: 0, p: 0.00 },
+            { nome: "MATERIAIS", valor: 0.00, qtd: 0, p: 0.00 },
+            { nome: "OUTROS", valor: 0.0, qtd: 0, p: 0.0 }
+        ],
+        "CASSI": [
+           { nome: "PACOTES ESPECIAIS", valor: 0.00, qtd: 0, p: 0.00 },
+            { nome: "HONORARIOS MEDICOS", valor: 0.00, qtd: 0, p: 0.0 },
+            { nome: "DIARIAS", valor: 0.00, qtd: 0, p: 0.00 },
+            { nome: "MATERIAIS", valor: 0.00, qtd: 0, p: 0.00 },
+            { nome: "OUTROS", valor: 0.0, qtd: 0, p: 0.0 }
+        ],
+        "OUTROS": [
+            { nome: "PACOTES ESPECIAIS", valor: 0.00, qtd: 0, p: 0.00 },
+            { nome: "HONORARIOS MEDICOS", valor: 0.00, qtd: 0, p: 0.0 },
+            { nome: "DIARIAS", valor: 0.00, qtd: 0, p: 0.00 },
+            { nome: "MATERIAIS", valor: 0.00, qtd: 0, p: 0.00 },
+            { nome: "OUTROS", valor: 0.0, qtd: 0, p: 0.0 }
+        ]
+    },
+    "2025": {
+        "UNIMED": [
+            { nome: "PACOTES ESPECIAIS", valor: 0.00, qtd: 0, p: 0.00 },
+            { nome: "HONORARIOS MEDICOS", valor: 0.00, qtd: 0, p: 0.0 },
+            { nome: "DIARIAS", valor: 0.00, qtd: 0, p: 0.00 },
+            { nome: "MATERIAIS", valor: 0.00, qtd: 0, p: 0.00 },
+            { nome: "OUTROS", valor: 0.0, qtd: 0, p: 0.0 }
+        ],
+        "BRADESCO": [
+           { nome: "PACOTES ESPECIAIS", valor: 0.00, qtd: 0, p: 0.00 },
+            { nome: "HONORARIOS MEDICOS", valor: 0.00, qtd: 0, p: 0.0 },
+            { nome: "DIARIAS", valor: 0.00, qtd: 0, p: 0.00 },
+            { nome: "MATERIAIS", valor: 0.00, qtd: 0, p: 0.00 },
+            { nome: "OUTROS", valor: 0.0, qtd: 0, p: 0.0 }
+        ],
+        "SULAMERICA": [
+            { nome: "PACOTES ESPECIAIS", valor: 0.00, qtd: 0, p: 0.00 },
+            { nome: "HONORARIOS MEDICOS", valor: 0.00, qtd: 0, p: 0.0 },
+            { nome: "DIARIAS", valor: 0.00, qtd: 0, p: 0.00 },
+            { nome: "MATERIAIS", valor: 0.00, qtd: 0, p: 0.00 },
+            { nome: "OUTROS", valor: 0.0, qtd: 0, p: 0.0 }
+        ],
+        "CASSI": [
+            { nome: "PACOTES ESPECIAIS", valor: 0.00, qtd: 0, p: 0.00 },
+            { nome: "HONORARIOS MEDICOS", valor: 0.00, qtd: 0, p: 0.0 },
+            { nome: "DIARIAS", valor: 0.00, qtd: 0, p: 0.00 },
+            { nome: "MATERIAIS", valor: 0.00, qtd: 0, p: 0.00 },
+            { nome: "OUTROS", valor: 0.0, qtd: 0, p: 0.0 }
+        ],
+        "OUTROS": [
+            { nome: "PACOTES ESPECIAIS", valor: 0.00, qtd: 0, p: 0.00 },
+            { nome: "HONORARIOS MEDICOS", valor: 0.00, qtd: 0, p: 0.0 },
+            { nome: "DIARIAS", valor: 0.00, qtd: 0, p: 0.00 },
+            { nome: "MATERIAIS", valor: 0.00, qtd: 0, p: 0.00 },
+            { nome: "OUTROS", valor: 0.0, qtd: 0, p: 0.0 }
+        ]
+    }
+};
+ 
+const DADOS = MESES.map((mes, i) => [ 
+    mes, 
+    DADOS_2024[i].faturamento, DADOS_2024[i].glosa, 
+    DADOS_2025[i].faturamento, DADOS_2025[i].taxa, DADOS_2025[i].recuperado, DADOS_2025[i].glosa, 
+    DADOS_2026[i].faturamento, DADOS_2026[i].taxa, DADOS_2026[i].recuperado, DADOS_2026[i].glosa 
+]); 
+// ============================================================================ 
+// UTILS 
+// ============================================================================ 
+const fmt = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); 
+const num = (v) => v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); 
+ 
+// ============================================================================ 
+// CHARTS INSTANCES 
+// ============================================================================ 
+let mainChart = null; 
+let chartInstanceSetor = null; 
+let chartInstanceGrupos = null; 
+let chartInstanceConvenioParticipacao = null; 
+let chartInstanceConvenioBar = null;
+let chartInstanceConvenioEvolucao = null;
+let chartInstanceGruposConvenio = null;
+
+// ============================================================================ 
+// DASHBOARD INITIALIZATION 
+// ============================================================================ 
+document.addEventListener('DOMContentLoaded', () => { 
+    initBackToTop(); 
+    renderTable(); 
+    updateKPIs(); 
+    initPrioritySectors(); 
+    initMainCharts(); 
+    initSectorDetails(); 
+    initGroupEvolution(); 
+    initConvenioBreakdown(); 
+    initGroupsByConvenio();
+    setupToggles(); 
+}); 
+ 
+// ============================================================================ 
+// TAB SYSTEM
+// ============================================================================ 
+function switchTab(tabId) {
+    // Buttons
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.getAttribute('onclick').includes(tabId)) btn.classList.add('active');
+    });
+    // Content
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    document.getElementById(`tab-${tabId}`).classList.add('active');
+
+    // Re-render charts for the active tab to ensure correct sizing
+    if (tabId === 'geral') {
+        if (mainChart) mainChart.resize();
+    } else if (tabId === 'convenio') {
+        renderConvenioBreakdown(document.getElementById('filtro-ano-convenio').value);
+        renderGroupsByConvenio(document.getElementById('filtro-convenio-detalhe').value, document.getElementById('filtro-convenio-ano').value);
+    }
+}
+
+// ============================================================================ 
+// BACK TO TOP 
+// ============================================================================ 
+function initBackToTop() { 
+    const backToTopBtn = document.getElementById('backToTop'); 
+    window.addEventListener('scroll', () => { 
+        if (window.pageYOffset > 300) { 
+            backToTopBtn.classList.add('visible'); 
+        } else { 
+            backToTopBtn.classList.remove('visible'); 
+        } 
+    }); 
+    backToTopBtn.addEventListener('click', () => { 
+        window.scrollTo({ top: 0, behavior: 'smooth' }); 
+    }); 
+} 
+ 
+// ============================================================================ 
+// MAIN TABLE & KPIs 
+// ============================================================================ 
+let totals = { fat24: 0, glosa24: 0, fat25: 0, glosa25: 0, fat26: 0, glosa26: 0, ttaxa25: 0, ttaxa26: 0 }; 
+ 
+function renderTable() { 
+    const tbody = document.getElementById("tabela-body"); 
+    tbody.innerHTML = ""; 
+    totals = { fat24: 0, glosa24: 0, fat25: 0, glosa25: 0, fat26: 0, glosa26: 0, ttaxa25: 0, ttaxa26: 0 }; 
+ 
+    DADOS.forEach(d => { 
+        totals.fat24 += d[1]; totals.glosa24 += d[2]; 
+        totals.fat25 += d[3]; totals.ttaxa25 += d[4]; totals.glosa25 += d[6]; 
+        totals.fat26 += d[7]; totals.ttaxa26 += d[8]; totals.glosa26 += d[10]; 
+ 
+        const pg24 = d[1] > 0 ? (d[2] / d[1] * 100).toFixed(2) + "%" : "0.00%"; 
+        const pg25 = d[3] > 0 ? (d[6] / d[3] * 100).toFixed(2) + "%" : "0.00%"; 
+        const pg26 = d[7] > 0 ? (d[10] / d[7] * 100).toFixed(2) + "%" : "0.00%"; 
+ 
+        tbody.innerHTML += ` 
+        <tr> 
+            <td>${d[0].substring(0, 3)}</td> 
+            <td class="col-2024" style="color:var(--text-muted)">${fmt(d[1])}</td> 
+            <td class="col-2024" style="color:var(--red)">${fmt(d[2])}</td> 
+            <td class="border-r col-2024" style="color:var(--gold)">${pg24}</td> 
+            <td style="color:var(--text-muted)">${fmt(d[3])}</td> 
+            <td style="color:var(--red)">${fmt(d[6])}</td> 
+            <td class="border-r" style="color:var(--gold)">${pg25}</td> 
+            <td style="color:var(--blue)">${fmt(d[7])}</td> 
+            <td style="color:var(--red)">${fmt(d[10])}</td> 
+            <td style="color:var(--gold)">${pg26}</td> 
+        </tr>`; 
+    }); 
+ 
+    const tpg24 = totals.fat24 > 0 ? (totals.glosa24 / totals.fat24 * 100).toFixed(2) + "%" : "0.00%"; 
+    const tpg25 = totals.fat25 > 0 ? (totals.glosa25 / totals.fat25 * 100).toFixed(2) + "%" : "0.00%"; 
+    const tpg26 = totals.fat26 > 0 ? (totals.glosa26 / totals.fat26 * 100).toFixed(2) + "%" : "0.00%"; 
+ 
+    document.getElementById("tabela-footer").innerHTML = ` 
+        <td>TOTAL</td> 
+        <td class="col-2024">${fmt(totals.fat24)}</td> 
+        <td class="col-2024">${fmt(totals.glosa24)}</td> 
+        <td class="border-r col-2024" style="color:var(--gold)">${tpg24}</td> 
+        <td>${fmt(totals.fat25)}</td> 
+        <td>${fmt(totals.glosa25)}</td> 
+        <td class="border-r" style="color:var(--gold)">${tpg25}</td> 
+        <td>${fmt(totals.fat26)}</td> 
+        <td>${fmt(totals.glosa26)}</td> 
+        <td style="color:var(--gold)">${tpg26}</td> 
+    `; 
+} 
+ 
+function updateKPIs() { 
+    document.getElementById("kpi-fat26").innerText = fmt(totals.fat26); 
+    document.getElementById("kpi-fat25_base").innerText = fmt(totals.fat25); 
+    document.getElementById("kpi-glosa26").innerText = fmt(totals.glosa26); 
+    document.getElementById("kpi-taxa").innerText = num((totals.fat26 > 0 ? totals.ttaxa26 : totals.ttaxa25) / DADOS.length) + "%"; 
+ 
+    document.getElementById("hero-value").innerText = fmt(totals.fat26); 
+    const pg26_val = totals.fat26 > 0 ? ((totals.glosa26 / totals.fat26) * 100).toFixed(2) : "0.00"; 
+    document.getElementById("hero-subtitle").innerText = `Glosas Acumuladas: ${fmt(totals.glosa26)} (${pg26_val}%)`; 
+} 
+ 
+// ============================================================================ 
+// PRIORITY SECTORS 
+// ============================================================================ 
+function initPrioritySectors() { 
+    const PRIORIDADES = ["Cadastro de regras", "Auditoria", "Comercial ", "Faturamento"]; 
+    const container = document.getElementById("priority-container"); 
+    container.innerHTML = ""; 
+ 
+    PRIORIDADES.forEach(nome => { 
+        const s = DATA_SETOR.setores_geral.find(x => x.SETORES === nome); 
+        const total = s ? s.TOTAL : 0; 
+        const display = nome.trim().replace('Comercial', 'Comercial/Negócios'); 
+ 
+        container.innerHTML += ` 
+            <div class="priority-card"> 
+                <h4>${display}</h4> 
+                <div class="p-val">${fmt(total)}</div> 
+                <small>Glosa Acumulada (2025)</small> 
+            </div>`; 
+    }); 
+} 
+ 
+// ============================================================================ 
+// CHARTS 
+// ============================================================================ 
+function initMainCharts() { 
+    Chart.defaults.color = '#94a3b8'; 
+    Chart.defaults.borderColor = '#334155'; 
+    Chart.defaults.font.family = "'Inter', sans-serif"; 
+ 
+    const ctx = document.getElementById('chartEvolucao').getContext('2d'); 
+    mainChart = new Chart(ctx, { 
+        type: 'line', 
+        data: { 
+            labels: DADOS.map(d => d[0].substring(0, 3)), 
+            datasets: [ 
+                { 
+                    label: '2026 (Atual)', 
+                    data: DADOS.map(d => d[7]), 
+                    borderColor: '#38bdf8', 
+                    backgroundColor: 'rgba(56, 189, 248, 0.1)', 
+                    borderWidth: 3, 
+                    fill: true, 
+                    tension: 0.4 
+                }, 
+                { 
+                    label: '2025 (Base)', 
+                    data: DADOS.map(d => d[3]), 
+                    borderColor: '#94a3b8', 
+                    borderWidth: 2, 
+                    fill: false, 
+                    tension: 0.4 
+                }, 
+                { 
+                    label: '2024', 
+                    data: DADOS.map(d => d[1]), 
+                    borderColor: '#64748b', 
+                    borderWidth: 2, 
+                    borderDash: [5, 5], 
+                    fill: false, 
+                    tension: 0.4 
+                } 
+            ] 
+        }, 
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false, 
+            plugins: { 
+                title: { display: true, text: 'Faturamento Global', color: '#fff' } 
+            }, 
+            scales: { 
+                y: { beginAtZero: true, grid: { color: '#1e293b' } }, 
+                x: { grid: { display: false } } 
+            } 
+        } 
+    }); 
+} 
+ 
+// ============================================================================ 
+// SECTOR DETAILS 
+// ============================================================================ 
+function initSectorDetails() { 
+    const select = document.getElementById('filtro-setor'); 
+    DATA_SETOR.all_setores.sort().forEach(s => { 
+        select.innerHTML += `<option value="${s}">${s}</option>`; 
+    }); 
+ 
+    select.addEventListener('change', function () { 
+        const sector = this.value; 
+        const container = document.getElementById('setor-detalhe-container'); 
+        if (!sector) { 
+            container.classList.add('hidden'); 
+            return; 
+        } 
+        container.classList.remove('hidden'); 
+        renderSectorData(sector); 
+        container.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); 
+    }); 
+} 
+ 
+function renderSectorData(sector) { 
+    const values = DATA_SETOR.heatmap[sector] || []; 
+    const months = DATA_SETOR.months.map(m => m.split('.')[0]); 
+    const total = values.reduce((a, b) => a + b, 0); 
+ 
+    document.getElementById('setor-total-glosa').innerText = fmt(total); 
+ 
+    // Table 
+    let head = `<tr><th style="min-width: 150px; color: var(--gold)">${sector}</th>`; 
+    months.forEach(m => head += `<th>${m}</th>`); 
+    head += `</tr>`; 
+    document.getElementById('setor-thead-h').innerHTML = head; 
+ 
+    let body = `<tr><td>Glosa</td>`; 
+    values.forEach(v => body += `<td>${fmt(v)}</td>`); 
+    body += `</tr>`; 
+    document.getElementById('setor-tbody-h').innerHTML = body; 
+ 
+    // Chart 
+    const ctx = document.getElementById('chartSetor').getContext('2d'); 
+    if (chartInstanceSetor) chartInstanceSetor.destroy(); 
+    chartInstanceSetor = new Chart(ctx, { 
+        type: 'bar', 
+        data: { 
+            labels: months, 
+            datasets: [ 
+                { label: 'Glosa', data: values, backgroundColor: '#f87171' }, 
+                { type: 'line', label: 'Tendência', data: values, borderColor: '#fbbf24', borderWidth: 2, tension: 0.4, pointRadius: 0 } 
+            ] 
+        }, 
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false, 
+            plugins: { title: { display: true, text: `Evolução de Glosas: ${sector}`, color: '#fff' } } 
+        } 
+    }); 
+} 
+ 
+// ============================================================================ 
+// GROUP EVOLUTION 
+// ============================================================================ 
+function initGroupEvolution() { 
+    const fAno = document.getElementById('filtro-ano-grupos'); 
+    const fMet = document.getElementById('filtro-metrica-grupos'); 
+ 
+    const update = () => renderEvolutionGroups(fAno.value, fMet.value); 
+    fAno.addEventListener('change', update); 
+    fMet.addEventListener('change', update); 
+ 
+    update(); 
+} 
+ 
+function renderEvolutionGroups(ano, metrica) { 
+    const dataObj = ano === "2025" ? DATA_GRUPOS_2025 : DATA_GRUPOS_2026; 
+    const ctx = document.getElementById('chartEvolucaoGrupos').getContext('2d'); 
+    if (chartInstanceGrupos) chartInstanceGrupos.destroy(); 
+ 
+    chartInstanceGrupos = new Chart(ctx, { 
+        type: 'line', 
+        data: { 
+            labels: dataObj.labels, 
+            datasets: dataObj.grupos.map(g => ({ 
+                label: g.nome, 
+                data: g[metrica], 
+                borderColor: g.cor, 
+                borderWidth: 2, 
+                fill: false, 
+                tension: 0.3 
+            })) 
+        }, 
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false, 
+            plugins: { 
+                legend: { position: 'bottom', labels: { boxWidth: 12, padding: 10, font: { size: 10 } } } 
+            }, 
+            scales: { 
+                y: { 
+                    beginAtZero: true, 
+                    ticks: { callback: v => metrica === 'valores' ? fmt(v) : (metrica === 'porcentagens' ? v + '%' : v) } 
+                } 
+            } 
+        } 
+    }); 
+ 
+    // Tabela 
+    let head = '<th>Grupo</th>'; 
+    dataObj.labels.forEach(l => head += `<th>${l}</th>`); 
+    head += '<th>Total</th><th>% Ano</th>'; 
+    document.getElementById('grupos-thead').innerHTML = head; 
+ 
+    const totalGeral = dataObj.grupos.reduce((acc, g) => acc + g[metrica].reduce((a, b) => a + b, 0), 0); 
+    let bodyHtml = ""; 
+    dataObj.grupos.forEach(g => { 
+        const tGrupo = g[metrica].reduce((a, b) => a + b, 0); 
+        const pAno = totalGeral > 0 ? (tGrupo / totalGeral * 100).toFixed(2) + "%" : "0.00%"; 
+        let row = `<td>${g.nome}</td>`; 
+        g[metrica].forEach(v => { 
+            let d = v; 
+            if (metrica === 'valores') d = fmt(v); 
+            else if (metrica === 'porcentagens') d = v.toFixed(2) + "%"; 
+            row += `<td>${d}</td>`; 
+        }); 
+        row += `<td style="color:var(--gold); font-weight:bold">${metrica === 'valores' ? fmt(tGrupo) : tGrupo}</td>`; 
+        row += `<td style="color:var(--blue); font-weight:bold">${pAno}</td>`; 
+        bodyHtml += `<tr>${row}</tr>`; 
+    }); 
+    document.getElementById('grupos-tbody').innerHTML = bodyHtml; 
+} 
+ 
+// ============================================================================ 
+// CONVENIO BREAKDOWN 
+// ============================================================================ 
+function initConvenioBreakdown() { 
+    const fAno = document.getElementById('filtro-ano-convenio'); 
+    fAno.addEventListener('change', () => renderConvenioBreakdown(fAno.value)); 
+} 
+ 
+function renderConvenioBreakdown(ano) { 
+    const data = DATA_CONVENIO[ano]; 
+
+    // 1. Chart Participação (Doughnut)
+    const ctxPart = document.getElementById('chartConvenioParticipacao').getContext('2d'); 
+    if (chartInstanceConvenioParticipacao) chartInstanceConvenioParticipacao.destroy(); 
+    chartInstanceConvenioParticipacao = new Chart(ctxPart, { 
+        type: 'doughnut', 
+        data: { 
+            labels: data.map(d => d.convenio), 
+            datasets: [{ 
+                data: data.map(d => d.faturamento), 
+                backgroundColor: ['#38bdf8', '#34d399', '#8b5cf6', '#fbbf24', '#94a3b8'], 
+                borderWidth: 0 
+            }] 
+        }, 
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false, 
+            plugins: { 
+                title: { display: true, text: 'Participação no Faturamento', color: '#fff' },
+                legend: { position: 'right', labels: { padding: 15, color: '#94a3b8', font: { size: 11 } } } 
+            } 
+        } 
+    }); 
+
+    // 2. Chart Comparação (Bar)
+    const ctxBar = document.getElementById('chartConvenioBar').getContext('2d');
+    if (chartInstanceConvenioBar) chartInstanceConvenioBar.destroy();
+    chartInstanceConvenioBar = new Chart(ctxBar, {
+        type: 'bar',
+        data: {
+            labels: data.map(d => d.convenio),
+            datasets: [
+                {
+                    label: 'Faturamento',
+                    data: data.map(d => d.faturamento),
+                    backgroundColor: '#38bdf8'
+                },
+                {
+                    label: 'Glosa',
+                    data: data.map(d => d.glosa),
+                    backgroundColor: '#f87171'
+                }
+            ]
+        },
+        options: {
+            responsive: true, 
+            maintainAspectRatio: false,
+            plugins: {
+                title: { display: true, text: 'Faturamento vs Glosa por Convênio', color: '#fff' }
+            },
+            scales: {
+                y: { ticks: { callback: v => fmt(v) } }
+            }
+        }
+    });
+
+    // 3. Chart Evolução (Simulado com dados do ano)
+    const ctxEvo = document.getElementById('chartConvenioEvolucao').getContext('2d');
+    if (chartInstanceConvenioEvolucao) chartInstanceConvenioEvolucao.destroy();
+    chartInstanceConvenioEvolucao = new Chart(ctxEvo, {
+        type: 'line',
+        data: {
+            labels: ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'],
+            datasets: data.map((d, i) => ({
+                label: d.convenio,
+                data: Array(12).fill(0).map(() => d.glosa / 12 * (0.8 + Math.random() * 0.4)), // Mock evolution
+                borderColor: ['#38bdf8', '#34d399', '#8b5cf6', '#fbbf24', '#94a3b8'][i],
+                tension: 0.4,
+                borderWidth: 2
+            }))
+        },
+        options: {
+            responsive: true, 
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+ 
+    let html = ""; 
+    data.forEach(d => { 
+        const pGlosa = (d.glosa / d.faturamento * 100).toFixed(2); 
+        html += ` 
+        <tr> 
+            <td>${d.convenio}</td> 
+            <td>${fmt(d.faturamento)}</td> 
+            <td style="color:var(--red)">${fmt(d.glosa)}</td> 
+            <td style="color:var(--gold)">${pGlosa}%</td> 
+        </tr>`; 
+    }); 
+    document.getElementById('convenio-tbody').innerHTML = html; 
+} 
+
+// ============================================================================ 
+// GROUPS BY CONVENIO
+// ============================================================================ 
+function initGroupsByConvenio() {
+    const selectConv = document.getElementById('filtro-convenio-detalhe');
+    const selectAno = document.getElementById('filtro-convenio-ano');
+
+    const update = () => renderGroupsByConvenio(selectConv.value, selectAno.value);
     
-    <div class="controls" style="display: flex; gap: 10px; margin-bottom: 20px;">
-        <select id="filtro-convenio-detalhe" onchange="renderBreakdown()">
-            <option value="UNIMED">UNIMED</option>
-            <option value="BRADESCO">BRADESCO</option>
-            <option value="PARTICULAR">PARTICULAR</option>
-        </select>
+    selectConv.addEventListener('change', update);
+    selectAno.addEventListener('change', update);
 
-        <select id="filtro-mes-detalhe" onchange="renderBreakdown()">
-            <option value="anual">Acumulado Anual</option>
-            <option value="0">Janeiro</option>
-            <option value="1">Fevereiro</option>
-            <option value="2">Março</option>
-            <option value="11">Dezembro</option>
-        </select>
-    </div>
+    update();
+}
 
-    <div class="breakdown-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
-        <div class="chart-box">
-            <canvas id="chartGruposConvenio"></canvas>
-        </div>
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Grupo</th>
-                        <th>Valor (R$)</th>
-                        <th>Part. (%)</th>
-                    </tr>
-                </thead>
-                <tbody id="grupos-convenio-tbody">
-                    </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-    <!-- DATA SCRIPTS -->
-    <script src="data/dashboard_data.js"></script>
-    <script src="js/dashboard.js"></script>
+function renderGroupsByConvenio(convenio, ano = "2026") {
+    const data = (DATA_GRUPOS_POR_CONVENIO[ano] && DATA_GRUPOS_POR_CONVENIO[ano][convenio]) || [];
+    const ctx = document.getElementById('chartGruposConvenio').getContext('2d');
+    if (chartInstanceGruposConvenio) chartInstanceGruposConvenio.destroy();
+
+    chartInstanceGruposConvenio = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: data.map(d => d.nome),
+            datasets: [{
+                label: 'Valor (R$)',
+                data: data.map(d => d.valor),
+                backgroundColor: ['#38bdf8', '#34d399', '#8b5cf6', '#fbbf24', '#94a3b8'],
+                borderRadius: 5
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: { display: true, text: `Grupos: ${convenio}`, color: '#fff' },
+                legend: { display: false }
+            },
+            scales: {
+                x: { ticks: { callback: v => fmt(v) } }
+            }
+        }
+    });
+
+    let html = "";
+    data.forEach(d => {
+        html += `
+        <tr>
+            <td>${d.nome}</td>
+            <td>${fmt(d.valor)}</td>
+            <td>${d.qtd.toLocaleString('pt-BR')}</td>
+            <td style="color:var(--blue); font-weight:bold">${d.p.toFixed(2)}%</td>
+        </tr>`;
+    });
+    document.getElementById('grupos-convenio-tbody').innerHTML = html;
+}
+ 
+// ============================================================================ 
+// SETUP TOGGLES 
+// ============================================================================ 
+function setupToggles() { 
+    document.getElementById('toggle-2024').addEventListener('change', function () { 
+        if (this.checked) { 
+            document.body.classList.remove('hide-2024'); 
+            mainChart.setDatasetVisibility(2, true); 
+        } else { 
+            document.body.classList.add('hide-2024'); 
+            mainChart.setDatasetVisibility(2, false); 
+        } 
+        mainChart.update(); 
+    }); 
+}
+    </script>
 </body> 
-</html> 
+</html>
