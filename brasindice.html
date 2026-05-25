@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Brasíndice — Sistema de Gestão de Preços</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&family=Jost+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:          #09090b;
+    --bg2:         #0d0d10;
+    --surface:     #111116;
+    --surface2:    #16161c;
+    --surface3:    #1c1c24;
+    --border:      #252530;
+    --border2:     #2e2e3d;
+    --border-gold: rgba(196,160,90,.22);
+
+    --gold:        #c4a05a;
+    --gold-light:  #ddc07e;
+    --gold-dim:    #7a6038;
+    --gold-bg:     rgba(196,160,90,.07);
+    --gold-glow:   rgba(196,160,90,.15);
+
+    --text:        #d4c9b4;
+    --text-dim:    #6b6455;
+    --text-mute:   #3a3630;
+    --text-bright: #ede5d4;
+
+    --emerald:     #3db87a;
+    --emerald-bg:  rgba(61,184,122,.07);
+    --emerald-border: rgba(61,184,122,.2);
+
+    --rose:        #c0687a;
+    --rose-bg:     rgba(192,104,122,.07);
+    --rose-border: rgba(192,104,122,.2);
+
+    --sapphire:    #6b9fd4;
+    --sapphire-bg: rgba(107,159,212,.07);
+    --sapphire-border: rgba(107,159,212,.2);
+
+    --radius:    8px;
+    --radius-sm: 5px;
+    --font:      'Jost', sans-serif;
+    --mono:      'Jost Mono', monospace;
+    --serif:     'Cormorant Garamond', serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      radial-gradient(ellipse 80% 40% at 50% -10%, rgba(196,160,90,.04) 0%, transparent 70%);
+  }
+
+  /* ══ HEADER ══ */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border-gold);
+    padding: 0 36px;
+    display: flex;
+    align-items: stretch;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 40px rgba(0,0,0,.6), 0 1px 0 rgba(196,160,90,.08);
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(196,160,90,.35) 30%, rgba(220,192,126,.5) 50%, rgba(196,160,90,.35) 70%, transparent);
+    pointer-events: none;
+  }
+
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 15px 32px 15px 0;
+    border-right: 1px solid var(--border-gold);
+    flex-shrink: 0;
+  }
+  .brand-monogram {
+    width: 36px; height: 36px;
+    border: 1px solid var(--border-gold);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(145deg, #1a1a22, #111118);
+    position: relative;
+    overflow: hidden;
+  }
+  .brand-monogram::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(145deg, rgba(196,160,90,.12), transparent 60%);
+  }
+  .brand-monogram svg { width: 18px; height: 18px; }
+
+  .brand-text { }
+  .brand-name {
+    font-family: var(--serif);
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--gold-light);
+    letter-spacing: .5px;
+    line-height: 1.1;
+  }
+  .brand-sub {
+    font-size: .60rem;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 2px;
+    font-weight: 500;
+  }
+
+  /* ══ ABAS ══ */
+  .tabs {
+    display: flex;
+    align-items: stretch;
+    flex: 1;
+    padding-left: 4px;
+  }
+  .tab-btn {
+    padding: 0 22px;
+    border: none;
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-family: var(--font);
+    font-size: .74rem;
+    font-weight: 500;
+    letter-spacing: 1.1px;
+    text-transform: uppercase;
+    transition: color .2s;
+    white-space: nowrap;
+    border-bottom: 1px solid transparent;
+    margin-bottom: -1px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    position: relative;
+  }
+  .tab-btn .tab-icon { font-size: .85rem; opacity: .7; }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--gold-light); border-bottom-color: var(--gold); }
+  .tab-btn.active .tab-icon { opacity: 1; }
+
+  /* ══ CONTENT ══ */
+  .content { padding: 28px 36px; }
+  .panel { display: none; }
+  .panel.active { display: block; animation: fadeUp .25s ease; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  /* ══ SECTION HEADING ══ */
+  .sec-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .sec-head-line {
+    font-family: var(--serif);
+    font-size: .7rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--gold-dim);
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+  .sec-head::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border-gold), transparent);
+  }
+
+  /* ══ UPLOAD AREA ══ */
+  .drop-area {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .dropzone {
+    flex: 1;
+    min-width: 180px;
+    max-width: 270px;
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    cursor: pointer;
+    background: var(--surface2);
+    transition: border-color .25s, box-shadow .25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .dropzone::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(196,160,90,.15), transparent);
+    pointer-events: none;
+    transition: opacity .25s;
+    opacity: 0;
+  }
+  .dropzone:hover {
+    border-color: var(--border-gold);
+    box-shadow: 0 0 0 1px rgba(196,160,90,.08), 0 4px 20px rgba(0,0,0,.3);
+  }
+  .dropzone:hover::before { opacity: 1; }
+  .dropzone.ok { border-color: var(--emerald-border); box-shadow: 0 0 0 1px rgba(61,184,122,.06); }
+  .dropzone.ok .dz-label { color: var(--emerald); }
+  .dropzone input { display: none; }
+  .dz-title {
+    font-size: .58rem;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    letter-spacing: 1.8px;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .dz-label {
+    font-size: .82rem;
+    color: var(--text);
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .dz-sub {
+    font-size: .66rem;
+    color: var(--text-dim);
+    margin-top: 5px;
+    font-family: var(--mono);
+    letter-spacing: .3px;
+  }
+
+  /* ══ TOOLBAR ══ */
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 9px 14px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 16px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-family: var(--font);
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing: .9px;
+    text-transform: uppercase;
+    border: none;
+    transition: all .2s;
+    white-space: nowrap;
+  }
+  .btn:disabled {
+    background: var(--surface3) !important;
+    color: var(--text-mute) !important;
+    cursor: not-allowed;
+    box-shadow: none !important;
+    border-color: var(--border) !important;
+  }
+
+  /* Botão primário — dourado */
+  .btn-gold {
+    background: linear-gradient(135deg, #b8923e, #c9a456 40%, #b8923e);
+    color: #0d0b07;
+    border: 1px solid #a07e30;
+    box-shadow: 0 2px 10px rgba(180,140,60,.25), inset 0 1px 0 rgba(255,220,130,.2);
+  }
+  .btn-gold:not(:disabled):hover {
+    background: linear-gradient(135deg, #c9a456, #ddb86a 40%, #c9a456);
+    box-shadow: 0 4px 16px rgba(196,160,90,.35);
+  }
+
+  /* Botão secundário — borda dourada */
+  .btn-ghost {
+    background: transparent;
+    color: var(--gold);
+    border: 1px solid var(--border-gold);
+    box-shadow: none;
+  }
+  .btn-ghost:not(:disabled):hover {
+    background: var(--gold-bg);
+    border-color: rgba(196,160,90,.4);
+    color: var(--gold-light);
+  }
+
+  /* Aliases para compatibilidade com JS existente */
+  .btn-sky    { background: linear-gradient(135deg, #1d4ed8, #3b82f6); color: #fff; border: 1px solid #1e40af; box-shadow: 0 2px 10px rgba(59,130,246,.2); }
+  .btn-sky:not(:disabled):hover { box-shadow: 0 4px 16px rgba(59,130,246,.3); filter: brightness(1.1); }
+  .btn-green  { background: linear-gradient(135deg, #065f46, #059669); color: #ecfdf5; border: 1px solid #047857; box-shadow: 0 2px 10px rgba(5,150,105,.2); }
+  .btn-green:not(:disabled):hover { box-shadow: 0 4px 16px rgba(5,150,105,.3); filter: brightness(1.1); }
+  .btn-blue   { background: linear-gradient(135deg, #3730a3, #4f46e5); color: #fff; border: 1px solid #3730a3; box-shadow: 0 2px 10px rgba(79,70,229,.2); }
+  .btn-blue:not(:disabled):hover { filter: brightness(1.1); }
+  .btn-teal   { background: linear-gradient(135deg, #0f4c43, #0d9488); color: #f0fdfa; border: 1px solid #0f766e; box-shadow: 0 2px 10px rgba(15,118,110,.2); }
+  .btn-teal:not(:disabled):hover { filter: brightness(1.1); }
+  .btn-amber  { background: linear-gradient(135deg, #78350f, #b45309); color: #fffbeb; border: 1px solid #92400e; box-shadow: 0 2px 10px rgba(180,83,9,.2); }
+  .btn-amber:not(:disabled):hover { filter: brightness(1.1); }
+
+  .info-txt { font-size: .71rem; color: var(--text-dim); font-family: var(--mono); letter-spacing: .2px; }
+  .search-wrap { margin-left: auto; }
+  .busca-input {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    padding: 6px 12px 6px 30px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font);
+    font-size: .78rem;
+    width: 240px;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6455' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 10px center;
+  }
+  .busca-input:focus { border-color: var(--border-gold); box-shadow: 0 0 0 2px var(--gold-glow); }
+  .busca-input::placeholder { color: var(--text-mute); }
+
+  /* ══ TABELA ══ */
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-gold);
+    box-shadow: 0 8px 40px rgba(0,0,0,.5), inset 0 1px 0 rgba(196,160,90,.05);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .76rem;
+    min-width: 860px;
+  }
+  /* Ajuste para a primeira linha (Identificação, PFB, etc) */
+thead tr.group th {
+    text-align: center;
+    font-family: var(--serif);
+    font-size: .68rem;
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: .5px;
+    padding: 7px 12px;
+    border-bottom: 1px solid var(--border2);
+    /* ADICIONE ESTAS 3 LINHAS ABAIXO */
+    position: sticky;
+    top: 0;
+    z-index: 3;
+}
+
+/* Ajuste para a segunda linha (ID, Laboratório, Nome, etc) */
+thead tr.cols th {
+    background: var(--surface2);
+    color: var(--text-dim);
+    padding: 9px 13px;
+    text-align: left;
+    white-space: nowrap;
+    position: sticky;
+    top: 31px; /* Alterado de 67px para 31px (altura da linha anterior) */
+    z-index: 2;
+    border-bottom: 1px solid var(--border-gold);
+    font-weight: 500;
+    font-size: .68rem;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+}
+  .grp-id  { background: #111116; color: var(--text-dim); }
+  .grp-pfb { background: rgba(61,184,122,.04); color: var(--emerald); border-bottom-color: var(--emerald-border) !important; }
+  .grp-pmc { background: rgba(107,159,212,.04); color: var(--sapphire); border-bottom-color: var(--sapphire-border) !important; }
+  .grp-cod { background: #0d0d10; color: var(--text-mute); }
+  .grp-val { background: rgba(196,160,90,.03); color: var(--gold-dim); border-bottom-color: var(--border-gold) !important; }
+
+  tbody tr { transition: background .1s; }
+  tbody tr:nth-child(even) { background: var(--bg2); }
+  tbody tr:nth-child(odd)  { background: var(--surface); }
+  tbody tr:hover           { background: var(--surface3); }
+  td {
+  padding: 8px 13px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+  td.nome  { 
+  white-space: normal; 
+  min-width: 250px;
+  max-width: 350px; 
+  line-height: 1.45; 
+  color: var(--text-bright);
+  word-break: break-word;
+}
+td.apres { 
+  white-space: normal; 
+  min-width: 200px;
+  max-width: 300px; 
+  line-height: 1.45; 
+  color: var(--text-dim); 
+  font-size: .71rem;
+  word-break: break-word;
+}
+  td.pfb   { font-family: var(--mono); color: var(--emerald); text-align: right; letter-spacing: .3px; }
+  td.pmc   { font-family: var(--mono); color: var(--sapphire); text-align: right; letter-spacing: .3px; }
+  td.vuni  { font-family: var(--mono); color: var(--gold); text-align: right; letter-spacing: .3px; }
+  td.miss  { color: var(--text-mute); text-align: center; font-family: var(--mono); font-size: .8rem; }
+  .empty {
+    text-align: center;
+    color: var(--text-mute);
+    padding: 64px 0;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1rem;
+    font-weight: 300;
+    letter-spacing: .5px;
+  }
+
+  /* ══ BADGES ══ */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 3px;
+    padding: 2px 8px;
+    font-family: var(--mono);
+    font-size: .64rem;
+    font-weight: 500;
+    white-space: nowrap;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+  }
+  .badge-ok    { background: var(--emerald-bg); color: var(--emerald); border: 1px solid var(--emerald-border); }
+  .badge-alto  { background: var(--rose-bg); color: var(--rose); border: 1px solid var(--rose-border); }
+  .badge-baixo { background: rgba(107,159,212,.07); color: #7bafd4; border: 1px solid rgba(107,159,212,.2); }
+  .badge-sem   { background: var(--surface3); color: var(--text-dim); border: 1px solid var(--border2); }
+  .badge-pmc   { background: var(--sapphire-bg); color: var(--sapphire); border: 1px solid var(--sapphire-border); }
+  .diff-alto   { color: var(--rose); font-family: var(--mono); }
+  .diff-baixo  { color: var(--sapphire); font-family: var(--mono); }
+  .diff-ok     { color: var(--emerald); font-family: var(--mono); }
+
+  /* ══ CARDS RESUMO ══ */
+  .resumo-cards { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+  .card {
+    flex: 1; min-width: 150px;
+    background: var(--surface2);
+    border-radius: var(--radius);
+    padding: 20px 22px 16px;
+    border: 1px solid var(--border2);
+    position: relative;
+    overflow: hidden;
+    transition: border-color .2s;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--card-accent, var(--border2));
+    opacity: .6;
+  }
+  .card::after {
+    content: '';
+    position: absolute;
+    top: -20px; right: -20px;
+    width: 80px; height: 80px;
+    background: radial-gradient(circle, var(--card-glow, rgba(255,255,255,.02)), transparent 70%);
+    pointer-events: none;
+  }
+  .card-num {
+    font-family: var(--serif);
+    font-size: 2.5rem;
+    font-weight: 300;
+    line-height: 1;
+    color: var(--card-color, var(--text));
+    letter-spacing: -1px;
+  }
+  .card-lbl {
+    font-size: .60rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-top: 8px;
+    font-weight: 500;
+  }
+  .card.c-ok    { --card-color: var(--emerald); --card-accent: var(--emerald); --card-glow: rgba(61,184,122,.06); }
+  .card.c-alto  { --card-color: var(--rose);    --card-accent: var(--rose);    --card-glow: rgba(192,104,122,.06); }
+  .card.c-baixo { --card-color: var(--sapphire);--card-accent: var(--sapphire);--card-glow: rgba(107,159,212,.06); }
+  .card.c-sem   { --card-color: var(--text-dim);--card-accent: var(--border2); --card-glow: rgba(255,255,255,.02); }
+
+  td.val-sis  { text-align: right; color: var(--text); font-family: var(--mono); }
+  td.val-bra  { text-align: right; color: var(--text-dim); font-family: var(--mono); }
+  td.val-calc { text-align: right; font-family: var(--mono); color: var(--gold); }
+
+  /* ══ OVERLAY / SPINNER ══ */
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(9,9,11,.88);
+    backdrop-filter: blur(8px);
+    z-index: 999;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+  }
+  .overlay.show { display: flex; }
+  .spinner-ring {
+    width: 48px; height: 48px;
+    position: relative;
+  }
+  .spinner-ring::before, .spinner-ring::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1px solid transparent;
+  }
+  .spinner-ring::before {
+    border-top-color: var(--gold);
+    animation: spin .9s linear infinite;
+  }
+  .spinner-ring::after {
+    border-top-color: rgba(196,160,90,.25);
+    animation: spin 1.6s linear infinite reverse;
+    inset: 6px;
+  }
+  /* keep id=spinner for JS compatibility */
+  .spinner { display: none; }
+  .spinner-msg {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1rem;
+    font-weight: 300;
+    color: var(--gold-dim);
+    letter-spacing: 1px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ══ SCROLLBAR ══ */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
+
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-brand">
+    <div class="brand-monogram">
+      <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="7" y="2" width="4" height="14" rx="1" fill="#c4a05a" opacity=".9"/>
+        <rect x="2" y="7" width="14" height="4" rx="1" fill="#c4a05a" opacity=".9"/>
+      </svg>
+    </div>
+    <div class="brand-text">
+      <div class="brand-name">Brasíndice</div>
+      <div class="brand-sub">Gestão de Preços</div>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn t-med active" onclick="trocarAba('med',this)"><span class="tab-icon">⬡</span> Medicamentos</button>
+    <button class="tab-btn t-mat"        onclick="trocarAba('mat',this)"><span class="tab-icon">⬡</span> Material</button>
+    <button class="tab-btn t-sol"        onclick="trocarAba('sol',this)"><span class="tab-icon">⬡</span> Solução</button>
+    <button class="tab-btn t-die"        onclick="trocarAba('die',this)"><span class="tab-icon">⬡</span> Dietas</button>
+    <button class="tab-btn t-cmp"        onclick="trocarAba('cmp',this)"><span class="tab-icon">⬡</span> Comparação</button>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- ══════════════════════════════ ABA MEDICAMENTOS ══════════════════════════════ -->
+  <div class="panel active" id="panel-med">
+
+    <div class="drop-area">
+      <label class="dropzone" id="dzPF" for="filePF">
+        <input type="file" id="filePF" accept=".txt">
+        <div class="dz-title">Arquivo PF</div>
+        <div class="dz-label" id="lblPF">📂 Clique para selecionar</div>
+        <div class="dz-sub">Preço de Fábrica (PFB)</div>
+      </label>
+      <label class="dropzone" id="dzPM" for="filePM">
+        <input type="file" id="filePM" accept=".txt">
+        <div class="dz-title">Arquivo PM</div>
+        <div class="dz-label" id="lblPM">📂 Clique para selecionar</div>
+        <div class="dz-sub">Preço Máx. Consumidor (PMC)</div>
+      </label>
+    </div>
+
+    <div class="toolbar">
+      <button class="btn btn-sky"   id="btnProcMed"   disabled onclick="processarMed()">▶ Processar</button>
+      <span   class="info-txt"      id="infoMed">Selecione ao menos um arquivo acima.</span>
+      <button class="btn btn-green" id="btnExpMed"    disabled onclick="exportarMed()">📊 Exportar Excel</button>
+      <div class="search-wrap">
+        <input class="busca-input" id="buscaMed" placeholder="🔍 Nome, EAN, código...">
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr class="group">
+            <th class="grp-id"  colspan="4">Identificação</th>
+            <th class="grp-pfb" colspan="1">PFB</th>
+            <th class="grp-pmc" colspan="1">PMC</th>
+            <th class="grp-cod" colspan="3">Códigos</th>
+          </tr>
+          <tr class="cols">
+            <th>ID</th><th>Laboratório</th><th>Nome</th><th>Apresentação</th>
+            <th style="color:#4ade80">Valor PFB</th>
+            <th style="color:#e879f9">Valor PMC</th>
+            <th>Últ. Reajuste</th><th>TISS</th><th>TUSS</th>
+          </tr>
+        </thead>
+        <tbody id="tbMed">
+          <tr><td colspan="9" class="empty">Selecione os arquivos PF e/ou PM e clique em Processar.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════ ABA MATERIAL ══════════════════════════════ -->
+  <div class="panel" id="panel-mat">
+
+    <div class="drop-area">
+      <label class="dropzone" id="dzMat" for="fileMat">
+        <input type="file" id="fileMat" accept=".txt">
+        <div class="dz-title">Arquivo Material</div>
+        <div class="dz-label" id="lblMat">📂 Clique para selecionar</div>
+        <div class="dz-sub">Mat_xxxx.txt</div>
+      </label>
+    </div>
+
+    <div class="toolbar">
+      <button class="btn btn-blue"  id="btnProcMat"  disabled onclick="processarSimples('mat')">▶ Processar</button>
+      <span   class="info-txt"      id="infoMat">Selecione o arquivo acima.</span>
+      <button class="btn btn-green" id="btnExpMat"   disabled onclick="exportarSimples('mat','Material')">📊 Exportar Excel</button>
+      <div class="search-wrap">
+        <input class="busca-input" id="buscaMat" placeholder="🔍 Nome, EAN, código...">
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr class="group">
+            <th class="grp-id"  colspan="4">Identificação</th>
+            <th class="grp-pfb" colspan="1">PFB</th>
+            <th class="grp-pmc" colspan="1">PMC</th>
+            <th class="grp-cod" colspan="4">Códigos e Info</th> </tr>
+          <tr class="cols">
+            <th>ID</th><th>Laboratório</th><th>Nome</th><th>Apresentação</th>
+            <th style="color:#4ade80">Valor PFB</th>
+            <th style="color:#e879f9">Valor PMC</th>
+            <th>Edição</th> 
+            <th>Últ. Reajuste</th>
+            <th>TISS</th>
+            <th>TUSS</th>
+          </tr>
+        </thead>
+        <tbody id="tbMed">
+          <tr><td colspan="10" class="empty">Selecione os arquivos PF e/ou PM e clique em Processar.</td></tr> </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════ ABA SOLUÇÃO ══════════════════════════════ -->
+  <div class="panel" id="panel-sol">
+
+    <div class="drop-area">
+      <label class="dropzone" id="dzSol" for="fileSol">
+        <input type="file" id="fileSol" accept=".txt">
+        <div class="dz-title">Arquivo Solução</div>
+        <div class="dz-label" id="lblSol">📂 Clique para selecionar</div>
+        <div class="dz-sub">Sol_xxxx.txt</div>
+      </label>
+    </div>
+
+    <div class="toolbar">
+      <button class="btn btn-teal"  id="btnProcSol"  disabled onclick="processarSimples('sol')">▶ Processar</button>
+      <span   class="info-txt"      id="infoSol">Selecione o arquivo acima.</span>
+      <button class="btn btn-green" id="btnExpSol"   disabled onclick="exportarSimples('sol','Solução')">📊 Exportar Excel</button>
+      <div class="search-wrap">
+        <input class="busca-input" id="buscaSol" placeholder="🔍 Nome, EAN, código...">
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr class="group">
+            <th class="grp-id"  colspan="4">Identificação</th>
+            <th class="grp-val" colspan="1">Valor</th>
+            <th class="grp-cod" colspan="3">Códigos</th>
+          </tr>
+          <tr class="cols">
+            <th>ID</th><th>Laboratório</th><th>Nome</th><th>Apresentação</th>
+            <th style="color:#a78bfa">Valor PFB</th>
+            <th>EAN</th><th>TISS</th><th>TUSS</th>
+          </tr>
+        </thead>
+        <tbody id="tbSol">
+          <tr><td colspan="8" class="empty">Selecione o arquivo de Solução e clique em Processar.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════ ABA DIETAS ══════════════════════════════ -->
+  <div class="panel" id="panel-die">
+
+    <div class="drop-area">
+      <label class="dropzone" id="dzDie" for="fileDie">
+        <input type="file" id="fileDie" accept=".txt">
+        <div class="dz-title">Arquivo Dietas</div>
+        <div class="dz-label" id="lblDie">📂 Clique para selecionar</div>
+        <div class="dz-sub">Dietas_xxxx.txt</div>
+      </label>
+    </div>
+
+    <div class="toolbar">
+      <button class="btn btn-amber" id="btnProcDie"  disabled onclick="processarSimples('die')">▶ Processar</button>
+      <span   class="info-txt"      id="infoDie">Selecione o arquivo acima.</span>
+      <button class="btn btn-green" id="btnExpDie"   disabled onclick="exportarSimples('die','Dietas')">📊 Exportar Excel</button>
+      <div class="search-wrap">
+        <input class="busca-input" id="buscaDie" placeholder="🔍 Nome, código, TISS...">
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr class="group">
+            <th class="grp-id"  colspan="4">Identificação</th>
+            <th class="grp-val" colspan="1">Valor</th>
+            <th class="grp-cod" colspan="1">Código</th>
+          </tr>
+          <tr class="cols">
+            <th>ID</th><th>Laboratório</th><th>Nome</th><th>Apresentação</th>
+            <th style="color:#a78bfa">Valor PFB</th>
+            <th>TISS</th>
+          </tr>
+        </thead>
+        <tbody id="tbDie">
+          <tr><td colspan="6" class="empty">Selecione o arquivo de Dietas e clique em Processar.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════ ABA COMPARAÇÃO ══════════════════════════════ -->
+  <div class="panel" id="panel-cmp">
+
+    <div class="drop-area">
+      <label class="dropzone" id="dzCmpSis" for="fileCmpSis">
+        <input type="file" id="fileCmpSis" accept=".xls,.xlsx,.csv">
+        <div class="dz-title">Tabela do Sistema (TI)</div>
+        <div class="dz-label" id="lblCmpSis">📂 Clique para selecionar</div>
+        <div class="dz-sub">M_BRASINDI.xls — exportado pelo TI</div>
+      </label>
+    </div>
+
+    <div class="toolbar">
+      <button class="btn btn-gold" id="btnProcCmp" disabled onclick="processarComparacao()">Comparar</button>
+      <span class="info-txt" id="infoCmp">Carregue a tabela do sistema e processe os medicamentos (aba 💊) primeiro.</span>
+      <button class="btn btn-green" id="btnExpCmp" disabled onclick="exportarComparacao()">📊 Exportar Excel</button>
+      <div class="search-wrap">
+        <input class="busca-input" id="buscaCmp" placeholder="🔍 Nome, TISS, código...">
+      </div>
+    </div>
+
+    <div class="resumo-cards" id="resumoCards" style="display:none">
+      <div class="card c-ok">  <div class="card-num" id="cOk">0</div>  <div class="card-lbl">✅ Com preço igual</div></div>
+      <div class="card c-alto"><div class="card-num" id="cAlto">0</div><div class="card-lbl">🔴 Brasindice maior</div></div>
+      <div class="card c-baixo"><div class="card-num" id="cBaixo">0</div><div class="card-lbl">🔵 Brasindice menor</div></div>
+      <div class="card c-sem"> <div class="card-num" id="cSem">0</div> <div class="card-lbl">⚫ Não encontrado</div></div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr class="group">
+            <th class="grp-id"  colspan="5">Identificação</th>
+            <th class="grp-pfb" colspan="2">Sistema (TI)</th>
+            <th class="grp-pfb" colspan="2">PF (Brasindice)</th>
+            <th class="grp-pmc" colspan="2">PMC (Brasindice)</th>
+            <th class="grp-cod" colspan="1">Status</th>
+          </tr>
+          <tr class="cols">
+            <th>TISS</th>
+            <th>TUSS</th>
+            <th>Laboratório</th>
+            <th>Nome / Cód. Sistema</th>
+            <th>Apresentação</th>
+            <th>Tipo</th>
+            <th>Fator</th>
+            <th style="color:#4ade80">Vlr. PF</th>
+            <th style="color:#4ade80">Vlr. Unit. PF</th>
+            <th style="color:#e879f9">Vlr. PMC</th>
+            <th style="color:#e879f9">Vlr. Unit. PMC</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="tbCmp">
+          <tr><td colspan="12" class="empty">Carregue a tabela do sistema e clique em Comparar.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /content -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+
+// ══════════════════════════════════════════════════
+//  UTILITÁRIOS
+// ══════════════════════════════════════════════════
+
+function showLoading(msg) {
+  document.getElementById('overlayMsg').textContent = msg || 'Processando...';
+  document.getElementById('overlay').classList.add('show');
+}
+function hideLoading() {
+  document.getElementById('overlay').classList.remove('show');
+}
+
+function lerTexto(file) {
+  return new Promise(r => {
+    const rd = new FileReader();
+    rd.onload = e => r(e.target.result);
+    rd.readAsText(file, 'latin1');
+  });
+}
+
+
+function montarId(bra, cod, apres) {
+  return parseInt(bra, 10) + '.' + cod + '.' + apres;
+}
+function hoje() {
+  const d = new Date();
+  return `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function trocarAba(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function criarWs(cab, rows, colWidths, valorCols) {
+  const ws = XLSX.utils.aoa_to_sheet([cab, ...rows]);
+  ws['!cols'] = colWidths.map(w => ({ wch: w }));
+  valorCols.forEach(col => {
+    for (let R = 1; R <= rows.length; R++) {
+      const ref = col + (R + 1);
+      if (ws[ref] && typeof ws[ref].v === 'number') ws[ref].z = '#,##0.00';
+    }
+  });
+  return ws;
+}
+
+// ══════════════════════════════════════════════════
+//  ABA MEDICAMENTOS — parser PF/PM cruzado por EAN
+// ══════════════════════════════════════════════════
+
+let tMed = [];
+
+function parseLinhasMed(texto) {
+  const map = {};
+  texto.split('\n').forEach(raw => {
+    const l = raw.replace(/\r/g, '');
+    if (l.trim() === '' || l.length < 200) return;
+    const mBra = l.match(/^(\d+)/);
+    const brasindice  = mBra ? mBra[1] : l.substring(0,4).trim();
+    const laboratorio = l.substring(4, 44).trim();
+    const codigo      = l.substring(44, 49).trim();
+    const nome        = l.substring(49, 121).trim();
+    const codApres    = l.substring(129, 133).trim();
+    const apres       = l.substring(133, 280).trim();
+    
+    // Regex Atualizada: captura a Edição de 4 dígitos antes da flag S/N/P/T
+    const m = l.match(/(\d+\.\d{2})\s*(\d+)(PFB|PMC)\s+[\d\s.]+\(?(\d{4})\)?\s+[\d\s.]+[SNPT]([\d ]{13})(\d{10})[SN](\d*)/);
+    if (!m) return;
+    
+    const edicao = m[4].trim(); // Grupo 4 é a edição
+    const ean  = m[5].trim();
+    const tiss = m[6].trim();
+    const tuss = m[7].trim();
+    const key  = ean || tiss;
+    if (!key) return;
+    
+    map[key] = { brasindice, laboratorio, codigo, nome, codApres, apres,
+                 valor: m[1], edicao, ean, tiss, tuss }; // Adicionado edicao aqui
+  });
+  return map;
+}
+
+document.getElementById('filePF').addEventListener('change', function() {
+  if (this.files[0]) { document.getElementById('lblPF').textContent = '✅ ' + this.files[0].name; document.getElementById('dzPF').classList.add('ok'); checkMed(); }
+});
+document.getElementById('filePM').addEventListener('change', function() {
+  if (this.files[0]) { document.getElementById('lblPM').textContent = '✅ ' + this.files[0].name; document.getElementById('dzPM').classList.add('ok'); checkMed(); }
+});
+function checkMed() {
+  document.getElementById('btnProcMed').disabled =
+    !(document.getElementById('filePF').files[0] || document.getElementById('filePM').files[0]);
+}
+
+async function processarMed() {
+  showLoading('Carregando medicamentos...');
+  document.getElementById('infoMed').textContent = 'Processando...';
+  const pf = document.getElementById('filePF').files[0];
+  const pm = document.getElementById('filePM').files[0];
+  const dPF = pf ? parseLinhasMed(await lerTexto(pf)) : {};
+  const dPM = pm ? parseLinhasMed(await lerTexto(pm)) : {};
+  const eans = new Set([...Object.keys(dPF), ...Object.keys(dPM)]);
+  tMed = [];
+  eans.forEach(ean => {
+    const f = dPF[ean], m2 = dPM[ean], base = f || m2;
+    tMed.push({ ...base, valorPFB: f ? f.valor : null, valorPMC: m2 ? m2.valor : null });
+  });
+  tMed.sort((a, b) => a.nome.localeCompare(b.nome));
+  document.getElementById('infoMed').textContent =
+    `PF: ${Object.keys(dPF).length}  |  PM: ${Object.keys(dPM).length}  |  Total: ${tMed.length}`;
+  document.getElementById('btnExpMed').disabled = false;
+  renderMed(tMed);
+  hideLoading();
+}
+
+function renderMed(dados) {
+  const tb = document.getElementById('tbMed');
+  if (!dados.length) { tb.innerHTML = '<tr><td colspan="10" class="empty">Nenhum registro.</td></tr>'; return; }
+  tb.innerHTML = dados.map(d => `<tr>
+    <td style="font-family:monospace;font-size:.77rem">${montarId(d.brasindice, d.codigo, d.codApres)}</td>
+    <td>${d.laboratorio}</td><td class="nome">${d.nome}</td><td class="apres">${d.apres}</td>
+    ${d.valorPFB ? `<td class="pfb">R$ ${d.valorPFB}</td>` : `<td class="miss">—</td>`}
+    ${d.valorPMC ? `<td class="pmc">R$ ${d.valorPMC}</td>` : `<td class="miss">—</td>`}
+    <td style="font-family:monospace;color:var(--text-dim);text-align:center">${d.edicao || '—'}</td> <td style="font-family:monospace">${d.ean}</td>
+    <td style="font-family:monospace">${d.tiss}</td>
+    <td style="font-family:monospace">${d.tuss}</td>
+  </tr>`).join('');
+}
+
+document.getElementById('buscaMed').addEventListener('input', function() {
+  const q = this.value.toLowerCase();
+  renderMed(q ? tMed.filter(d =>
+    [d.nome,d.laboratorio,d.codigo,d.ean,d.tiss,d.tuss,d.apres].some(v => v.toLowerCase().includes(q))
+  ) : tMed);
+});
+
+function exportarMed() {
+  if (!tMed.length) return;
+  // Adicionado 'Edição' ao cabeçalho
+  const cab = ['ID','Laboratório','Nome','Apresentação','Valor PFB (R$)','Valor PMC (R$)','Edição','EAN','TISS','TUSS'];
+  const rows = tMed.map(d => [
+    montarId(d.brasindice, d.codigo, d.codApres), d.laboratorio, d.nome, d.apres,
+    d.valorPFB ? parseFloat(d.valorPFB) : '',
+    d.valorPMC ? parseFloat(d.valorPMC) : '',
+    d.edicao || '', // Adicionado aos dados
+    d.ean, d.tiss, d.tuss
+  ]);
+  const wb = XLSX.utils.book_new();
+  // Ajustado larguras das colunas: inserido o '10' para a Edição
+  XLSX.utils.book_append_sheet(wb, criarWs(cab, rows, [22,28,22,50,14,14,10,16,13,12], ['E','F']), 'Medicamentos');
+  XLSX.writeFile(wb, `brasindice_med_${hoje()}.xlsx`);
+}
+
+// ══════════════════════════════════════════════════
+//  ABAS SIMPLES — Material / Solução / Dietas
+//  Parser flexível: EAN/TISS/TUSS opcionais
+// ══════════════════════════════════════════════════
+
+const dadosSimples = { mat: [], sol: [], die: [] };
+
+const CFG = {
+  mat: { file: 'fileMat', lbl: 'lblMat', dz: 'dzMat', proc: 'btnProcMat', exp: 'btnExpMat', info: 'infoMat', tb: 'tbMat', busca: 'buscaMat' },
+  sol: { file: 'fileSol', lbl: 'lblSol', dz: 'dzSol', proc: 'btnProcSol', exp: 'btnExpSol', info: 'infoSol', tb: 'tbSol', busca: 'buscaSol' },
+  die: { file: 'fileDie', lbl: 'lblDie', dz: 'dzDie', proc: 'btnProcDie', exp: 'btnExpDie', info: 'infoDie', tb: 'tbDie', busca: 'buscaDie' },
+};
+
+Object.entries(CFG).forEach(([key, c]) => {
+  document.getElementById(c.file).addEventListener('change', function() {
+    if (this.files[0]) {
+      document.getElementById(c.lbl).textContent = '✅ ' + this.files[0].name;
+      document.getElementById(c.dz).classList.add('ok');
+      document.getElementById(c.proc).disabled = false;
+    }
+  });
+  document.getElementById(c.busca).addEventListener('input', function() {
+    const q = this.value.toLowerCase();
+    renderSimples(key, q ? dadosSimples[key].filter(d =>
+      [d.nome,d.laboratorio,d.codigo,d.ean,d.tiss,d.tuss,d.apres].some(v => v.toLowerCase().includes(q))
+    ) : dadosSimples[key]);
+  });
+});
+
+function parseLinhasSimples(texto, isDieta) {
+  const lista = [];
+  texto.split('\n').forEach(raw => {
+    const l = raw.replace(/\r/g, '');
+    if (l.trim() === '' || l.length < 200) return;
+    const mBra2 = l.match(/^(\d+)/);
+    const brasindice  = mBra2 ? mBra2[1] : l.substring(0,4).trim();
+    const laboratorio = l.substring(4, 44).trim();
+    const codigo      = l.substring(44, 49).trim();
+    const nome        = l.substring(49, 121).trim();
+    const codApres    = l.substring(129, 133).trim();
+    const apres       = l.substring(133, 280).trim();
+    if (isDieta) {
+      // Dietas: flag [SNPT] + espaços variáveis + TISS (10 dígitos) no fim da linha
+      const m = l.match(/(\d+\.\d{2})\s*(\d+)(PFB|PMC)\s+[\d\s.]+[SNPT]\s+(\d{10})\s*$/);
+      if (!m) return;
+      lista.push({ brasindice, laboratorio, codigo, nome, codApres, apres,
+        valor: m[1], ean: '', tiss: m[4] || '', tuss: '' });
+    } else {
+      // Material / Solução: flag [SNPT] + EAN(13) + TISS(10) + TUSS opcional
+      const m = l.match(/(\d+\.\d{2})\s*(\d+)(PFB|PMC)\s+[\d\s.]+[SNPT](\d{13})(\d{10})\s*(\d*)/);
+      if (!m) return;
+      lista.push({ brasindice, laboratorio, codigo, nome, codApres, apres,
+        valor: m[1], ean: m[4].trim(), tiss: m[5].trim(), tuss: m[6].trim() });
+    }
+  });
+  return lista;
+}
+
+async function processarSimples(key) {
+  const c = CFG[key];
+  const nomes = { mat: 'Material', sol: 'Solução', die: 'Dietas' };
+  showLoading(`Carregando ${nomes[key] || key}...`);
+  document.getElementById(c.info).textContent = 'Processando...';
+  const file = document.getElementById(c.file).files[0];
+  const lista = parseLinhasSimples(await lerTexto(file), key === 'die');
+  lista.sort((a, b) => a.nome.localeCompare(b.nome));
+  dadosSimples[key] = lista;
+  document.getElementById(c.info).textContent = `${lista.length} itens carregados`;
+  document.getElementById(c.exp).disabled = false;
+  renderSimples(key, lista);
+  hideLoading();
+}
+
+function renderSimples(key, dados) {
+  const tb = document.getElementById(CFG[key].tb);
+  const isDieta = key === 'die';
+  const cols = isDieta ? 6 : 8;
+  if (!dados.length) { tb.innerHTML = `<tr><td colspan="${cols}" class="empty">Nenhum registro.</td></tr>`; return; }
+  tb.innerHTML = dados.map(d => {
+    const base = `
+    <td style="font-family:monospace;font-size:.77rem">${montarId(d.brasindice, d.codigo, d.codApres)}</td>
+    <td>${d.laboratorio}</td><td class="nome">${d.nome}</td><td class="apres">${d.apres}</td>
+    <td class="vuni">R$ ${d.valor}</td>`;
+    const codigos = isDieta
+      ? `<td style="font-family:monospace">${d.tiss || '—'}</td>`
+      : `<td style="font-family:monospace">${d.ean  || '—'}</td>
+    <td style="font-family:monospace">${d.tiss || '—'}</td>
+    <td style="font-family:monospace">${d.tuss || '—'}</td>`;
+    return `<tr>${base}${codigos}</tr>`;
+  }).join('');
+}
+
+function exportarSimples(key, nomeAba) {
+  const dados = dadosSimples[key];
+  if (!dados.length) return;
+  const isDieta = key === 'die';
+  const cab = isDieta
+    ? ['ID','Laboratório','Nome','Apresentação','Valor PFB (R$)','TISS']
+    : ['ID','Laboratório','Nome','Apresentação','Valor PFB (R$)','EAN','TISS','TUSS'];
+  const rows = dados.map(d => isDieta
+    ? [montarId(d.brasindice, d.codigo, d.codApres), d.laboratorio, d.nome, d.apres, parseFloat(d.valor), d.tiss || '']
+    : [montarId(d.brasindice, d.codigo, d.codApres), d.laboratorio, d.nome, d.apres, parseFloat(d.valor), d.ean || '', d.tiss || '', d.tuss || '']
+  );
+  const widths = isDieta ? [22,28,22,50,14,13] : [22,28,22,50,14,16,13,12];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, criarWs(cab, rows, widths, ['E']), nomeAba);
+  XLSX.writeFile(wb, `brasindice_${key}_${hoje()}.xlsx`);
+}
+
+
+// ══════════════════════════════════════════════════
+//  ABA COMPARAÇÃO — cruza sistema (XLS) com Brasindice
+//  Chave: CD_TISS (sistema sem zeros) = TISS Brasindice (10 dígitos)
+//  TP_PRECO F → PFB  |  C → PMC
+//  Preço unitário = valor_tabela / VL_FATOR_DIVISAO
+// ══════════════════════════════════════════════════
+
+let tabelaSistema = [];
+let tabelaCmp     = [];
+
+document.getElementById('fileCmpSis').addEventListener('change', function() {
+  if (this.files[0]) {
+    document.getElementById('lblCmpSis').textContent = '\u2705 ' + this.files[0].name;
+    document.getElementById('dzCmpSis').classList.add('ok');
+    document.getElementById('btnProcCmp').disabled = false;
+  }
+});
+
+function lerSistema(file) {
+  return new Promise(resolve => {
+    const r = new FileReader();
+    r.onload = e => {
+      const wb   = XLSX.read(e.target.result, { type: 'binary' });
+      const ws   = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, { defval: '' });
+      resolve(rows);
+    };
+    r.readAsBinaryString(file);
+  });
+}
+
+async function processarComparacao() {
+  if (!tMed.length) {
+    alert('\u26a0\ufe0f Processe os medicamentos na aba \ud83d\udc8a primeiro!');
+    return;
+  }
+  showLoading('Cruzando dados...');
+  const file = document.getElementById('fileCmpSis').files[0];
+  tabelaSistema = await lerSistema(file);
+
+  // Índices separados: PFB e PMC, chaveados por TISS 10 dígitos
+  const idxPF = {}, idxPM = {};
+  tMed.forEach(d => {
+    if (!d.tiss) return;
+    if (d.valorPFB) idxPF[d.tiss] = d;
+    if (d.valorPMC) idxPM[d.tiss] = d;
+  });
+
+  tabelaCmp = [];
+  tabelaSistema.forEach(row => {
+    const tissRaw = String(row['CD_TISS'] || '').trim().replace('.0', '');
+    const tissKey = tissRaw.padStart(10, '0');
+    const fator   = parseFloat(row['VL_FATOR_DIVISAO']) || 1;
+    const tp      = String(row['TP_PRECO'] || '').trim().toUpperCase();
+    const tuss    = String(row['CD_TUSS']  || '').replace('.0', '').trim();
+    const apSis   = String(row['CD_APRESENTACAO'] || '').trim();
+
+    // Busca SEMPRE os dois (PF e PMC) pelo TISS
+    const braPF = idxPF[tissKey];
+    const braPM = idxPM[tissKey];
+    const bra   = braPF || braPM; // referência principal para nome/lab/apres
+
+    const valPF   = braPF && braPF.valorPFB ? parseFloat(braPF.valorPFB) : null;
+    const valPM   = braPM && braPM.valorPMC ? parseFloat(braPM.valorPMC) : null;
+    const valUnitPF = valPF !== null ? +(valPF / fator).toFixed(4) : null;
+    const valUnitPM = valPM !== null ? +(valPM / fator).toFixed(4) : null;
+
+    // Campos do sistema sempre salvos (usados quando não encontrado no Brasindice)
+    const cdLab  = String(row['CD_LABORATORIO']  || '').trim();
+    const cdMed  = String(row['CD_MEDICAMENTO']  || '').trim();
+    const cdImp  = String(row['CD_IMP_BRA']      || '').trim();
+    const cdPro  = String(row['CD_PRO_FAT']      || '').replace('.0','').trim();
+    const cdTab  = String(row['CD_TAB_FAT']      || '').trim();
+
+    tabelaCmp.push({
+      tissKey, tuss, apSis, tp, fator,
+      // Se encontrado no Brasindice usa dados do Brasindice, senão usa dados do sistema
+      nome:  bra ? bra.nome        : `Cód.Med: ${cdMed}`,
+      lab:   bra ? bra.laboratorio : `Cód.Lab: ${cdLab}`,
+      apres: bra ? bra.apres       : apSis,
+      braId: bra ? montarId(bra.brasindice, bra.codigo, bra.codApres) : '—',
+      // Campos do sistema para referência
+      cdLab, cdMed, cdImp, cdPro, cdTab,
+      valPF, valPM, valUnitPF, valUnitPM,
+      // Compatibilidade legada (usa o tipo do sistema)
+      valBra:  tp === 'F' ? valPF  : valPM,
+      valUnit: tp === 'F' ? valUnitPF : valUnitPM,
+      status: bra ? 'OK' : 'SEM',
+    });
+  });
+
+  const ok  = tabelaCmp.filter(d => d.status === 'OK').length;
+  const sem = tabelaCmp.filter(d => d.status === 'SEM').length;
+
+  document.getElementById('cOk').textContent    = ok;
+  document.getElementById('cAlto').textContent  = '—';
+  document.getElementById('cBaixo').textContent = '—';
+  document.getElementById('cSem').textContent   = sem;
+  document.getElementById('resumoCards').style.display = '';
+  document.getElementById('infoCmp').textContent =
+    'Sistema: ' + tabelaSistema.length + ' itens  |  Encontrados: ' + ok +
+    ' (' + Math.round(100 * ok / tabelaSistema.length) + '%)  |  Nao encontrados: ' + sem;
+  document.getElementById('btnExpCmp').disabled = false;
+  renderCmp(tabelaCmp);
+  hideLoading();
+}
+
+function renderCmp(dados) {
+  const tb = document.getElementById('tbCmp');
+  if (!dados.length) {
+    tb.innerHTML = '<tr><td colspan="12" class="empty">Nenhum registro.</td></tr>';
+    return;
+  }
+  const f2 = v => v !== null ? 'R$ ' + v.toFixed(2) : '—';
+  const f4 = v => v !== null ? 'R$ ' + v.toFixed(4) : '—';
+
+  tb.innerHTML = dados.map(d => {
+    const sem = d.status === 'SEM';
+    const tipoBadge = d.tp === 'F'
+      ? '<span class="badge badge-ok">PFB</span>'
+      : '<span class="badge badge-pmc">PMC</span>';
+    const statusBadge = sem
+      ? '<span class="badge badge-sem">&#9899; N\u00e3o encontrado</span>'
+      : '<span class="badge badge-ok">\u2705 Encontrado</span>';
+
+    // Linha destacada em vermelho escuro para não encontrados
+    const rowStyle = sem ? ' style="background:#1a0808"' : '';
+
+    // Para não encontrados: mostrar todos os dados do sistema disponíveis
+    const nomeTd  = sem
+      ? '<td class="nome" style="color:#94a3b8">' +
+          '<span style="font-size:.7rem;color:#475569">Cód.Med: </span>' + d.cdMed +
+          ' <span style="font-size:.7rem;color:#475569">| Imp: </span>' + d.cdImp +
+        '</td>'
+      : '<td class="nome">' + d.nome + '</td>';
+
+    const labTd = sem
+      ? '<td style="color:#64748b"><span style="font-size:.7rem;color:#475569">Cód.Lab: </span>' + d.cdLab + '</td>'
+      : '<td>' + d.lab + '</td>';
+
+    const apTd = '<td class="apres">' + (sem ? (d.apSis || '—') : d.apres) + '</td>';
+
+    const tussTd = '<td style="font-family:monospace;font-size:.78rem;color:#94a3b8">' +
+      (d.tuss && d.tuss !== '' ? d.tuss : '—') + '</td>';
+
+    // Colunas PF
+    const pfTd    = sem ? '<td class="miss">—</td>' : '<td class="pfb">' + f2(d.valPF) + '</td>';
+    const pfUnitTd = sem ? '<td class="miss">—</td>' : '<td class="pfb" style="font-size:.78rem">' + f4(d.valUnitPF) + '</td>';
+
+    // Colunas PMC
+    const pmcTd    = sem ? '<td class="miss">—</td>' : '<td class="pmc">' + f2(d.valPM) + '</td>';
+    const pmcUnitTd = sem ? '<td class="miss">—</td>' : '<td class="pmc" style="font-size:.78rem">' + f4(d.valUnitPM) + '</td>';
+
+    return '<tr' + rowStyle + '>' +
+      '<td style="font-family:monospace;font-size:.78rem">' + d.tissKey + '</td>' +
+      tussTd +
+      labTd +
+      nomeTd +
+      apTd +
+      '<td>' + tipoBadge + '</td>' +
+      '<td style="text-align:center;color:#64748b">' + d.fator + 'x</td>' +
+      pfTd + pfUnitTd +
+      pmcTd + pmcUnitTd +
+      '<td>' + statusBadge + '</td>' +
+      '</tr>';
+  }).join('');
+}
+
+document.getElementById('buscaCmp').addEventListener('input', function() {
+  const q = this.value.toLowerCase();
+  renderCmp(q ? tabelaCmp.filter(d =>
+    [d.nome, d.lab, d.tissKey, d.tuss, d.apres, d.braId].some(v => String(v).toLowerCase().includes(q))
+  ) : tabelaCmp);
+});
+
+function exportarComparacao() {
+  if (!tabelaCmp.length) return;
+  const cab = [
+    'TISS','TUSS',
+    'Laboratorio Brasindice','Nome Brasindice','Apresentacao Brasindice',
+    'Cód.Lab (Sistema)','Cód.Med (Sistema)','Cód.Imp (Sistema)','Apresent. (Sistema)',
+    'Tipo Preco','Fator Divisao',
+    'Vlr PF (R$)','Vlr Unit. PF (R$)',
+    'Vlr PMC (R$)','Vlr Unit. PMC (R$)',
+    'Status'
+  ];
+  const rows = tabelaCmp.map(d => {
+    const sem = d.status === 'SEM';
+    return [
+      d.tissKey,
+      d.tuss || '',
+      sem ? '' : d.lab,
+      sem ? '' : d.nome,
+      sem ? '' : d.apres,
+      d.cdLab  || '',
+      d.cdMed  || '',
+      d.cdImp  || '',
+      d.apSis  || '',
+      d.tp === 'F' ? 'PFB' : 'PMC',
+      d.fator,
+      d.valPF    !== null ? d.valPF    : '',
+      d.valUnitPF !== null ? d.valUnitPF : '',
+      d.valPM    !== null ? d.valPM    : '',
+      d.valUnitPM !== null ? d.valUnitPM : '',
+      sem ? 'Nao encontrado' : 'Encontrado'
+    ];
+  });
+  const wb = XLSX.utils.book_new();
+  // Aba com todos
+  XLSX.utils.book_append_sheet(wb,
+    criarWs(cab, rows, [13,14,28,28,40,12,12,12,16,8,8,16,16,16,16,16], ['L','M','N','O']),
+    'Comparacao');
+  // Aba só não encontrados
+  const rowsNao = rows.filter((_, i) => tabelaCmp[i].status === 'SEM');
+  if (rowsNao.length)
+    XLSX.utils.book_append_sheet(wb,
+      criarWs(cab, rowsNao, [13,14,28,28,40,12,12,12,16,8,8,16,16,16,16,16], ['L','M','N','O']),
+      'Nao Encontrados');
+  XLSX.writeFile(wb, 'brasindice_comparacao_' + hoje() + '.xlsx');
+}
+
+
+</script>
+
+<!-- OVERLAY LOADING -->
+<div class="overlay" id="overlay">
+  <div class="spinner-ring"></div>
+  <div class="spinner" id="spinner"></div>
+  <div class="spinner-msg" id="overlayMsg">Processando...</div>
+</div>
+</body>
+</html>
