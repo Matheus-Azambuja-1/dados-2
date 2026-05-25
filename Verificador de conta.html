@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>AXON | Auditoria Anti-Glosa</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js">
+    /* ── MODAL GUIA ── */
+    function abrirGuia() { document.getElementById('modalGuia').classList.add('open'); document.body.style.overflow = 'hidden'; }
+    function fecharGuia() { document.getElementById('modalGuia').classList.remove('open'); document.body.style.overflow = ''; }
+    function fecharGuiaOverlay(e) { if (e.target === document.getElementById('modalGuia')) fecharGuia(); }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') fecharGuia(); });
+
+</script>
+    <style>
+        :root {
+            --az-dark: #0a1322; --az-gold: #b08d32; --az-text-gray: #717d8a;
+            --success: #10b981; --danger: #ef4444; --warning: #f59e0b;
+            --bg-body: #f4f7fa; --bg-card: #ffffff;
+            --border: #edf2f7; --text-main: #0a1322;
+            --row-alt: #f8fafb;
+        }
+        body.dark {
+            --bg-body: #060b13; --bg-card: #0e1726; --border: #1b2e4b;
+            --text-main: #e0e6ed; --row-alt: #0b1520;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif; background-color: var(--bg-body);
+            color: var(--text-main); transition: background 0.3s, color 0.3s;
+            margin: 0; min-height: 100vh; display: flex; flex-direction: column;
+        }
+
+        /* ── TOGGLE ── */
+        .theme-toggle {
+            position: fixed; top: 16px; right: 20px; z-index: 999;
+            background: var(--bg-card); border: 1px solid rgba(176,141,50,0.35);
+            border-radius: 3px; padding: 6px 14px; cursor: pointer;
+            display: flex; align-items: center; gap: 9px;
+            font-size: 0.6rem; font-weight: 700; color: var(--az-text-gray);
+            letter-spacing: 2px; text-transform: uppercase;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.07);
+            transition: all 0.25s; user-select: none;
+        }
+        .theme-toggle:hover { border-color: var(--az-gold); color: var(--az-gold); }
+        .theme-toggle svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.3s; }
+        .theme-toggle:hover svg { transform: rotate(12deg); }
+
+        /* ── LAYOUT ── */
+        .main-content { padding: 20px; max-width: 1600px; margin: 0 auto; width: 95%; flex: 1; }
+        header { text-align: center; margin-bottom: 25px; }
+        header h2 { font-size: 1.6rem; letter-spacing: 8px; font-weight: 800; text-transform: uppercase; margin: 0; }
+        .subtitle { color: var(--az-gold); font-weight: 600; font-size: 0.75rem; text-transform: uppercase; }
+
+        /* ── CARDS ── */
+        .summary-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px; }
+        .card { background: var(--bg-card); padding: 15px 18px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-bottom: 3px solid #ddd; }
+        .card h3 { margin: 0; font-size: 0.65rem; color: var(--az-text-gray); text-transform: uppercase; letter-spacing: 1.5px; }
+        .card p.valor { margin: 6px 0 2px; font-size: 1.25rem; font-weight: 700; }
+        .card p.contagem { margin: 0; font-size: 0.7rem; color: var(--az-text-gray); font-weight: 500; }
+
+        /* ── UPLOAD ── */
+        .upload-section {
+            display: flex; gap: 0; background: var(--bg-card);
+            border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        .upload-slot {
+            flex: 1; padding: 18px 22px; display: flex; flex-direction: column; gap: 6px;
+            border-right: 1px solid var(--border);
+        }
+        .upload-slot:last-child { border-right: none; }
+        .upload-slot label { font-size: 0.62rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--az-text-gray); }
+        .upload-slot input[type=file] { font-size: 0.78rem; color: var(--text-main); }
+
+        /* Badge de status da base */
+        #baseStatus {
+            display: none; align-items: center; gap: 8px;
+            font-size: 0.65rem; font-weight: 700; letter-spacing: 1px;
+            color: var(--success); margin-top: 4px;
+        }
+        #baseStatus svg { width: 12px; height: 12px; stroke: var(--success); fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+        /* ── BTN ── */
+        .btn-executar { width: 100%; padding: 14px; background: var(--az-dark); color: #fff; border: 1px solid var(--az-gold); border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 0.8rem; letter-spacing: 3px; transition: 0.2s; margin-bottom: 15px; }
+        .btn-executar:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        /* ── LOADER ── */
+        #loader { display: none; text-align: center; padding: 18px; font-size: 0.7rem; font-weight: 700; letter-spacing: 3px; color: var(--az-gold); }
+        .loader-bar { width: 200px; height: 2px; background: var(--border); border-radius: 2px; margin: 8px auto 0; overflow: hidden; }
+        .loader-bar::after { content: ''; display: block; height: 100%; width: 40%; background: var(--az-gold); animation: slide 1.2s ease-in-out infinite; border-radius: 2px; }
+        @keyframes slide { 0% { transform: translateX(-100%); } 100% { transform: translateX(350%); } }
+
+        /* ── ACTION BAR ── */
+        .action-bar { display: none; justify-content: space-between; align-items: center; margin-bottom: 10px; background: var(--bg-card); padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); gap: 12px; flex-wrap: wrap; }
+        .filter-area { display: flex; gap: 8px; flex-grow: 1; flex-wrap: wrap; align-items: center; }
+        .filter-area input, .filter-area select {
+            padding: 8px 12px; border: 1px solid var(--border); border-radius: 4px;
+            background: var(--bg-body); color: var(--text-main); font-size: 0.78rem;
+            transition: border-color 0.2s;
+        }
+        .filter-area input:focus, .filter-area select:focus { outline: none; border-color: var(--az-gold); }
+        .filter-area input { flex: 1; min-width: 180px; }
+
+        /* Contador de registros */
+        #contadorRegistros {
+            font-size: 0.62rem; color: var(--az-text-gray); font-weight: 600;
+            letter-spacing: 1px; white-space: nowrap;
+        }
+        #contadorRegistros span { color: var(--az-gold); font-weight: 700; }
+
+        /* Botões da action bar */
+        .bar-btns { display: flex; gap: 8px; align-items: center; }
+        .btn-limpar {
+            background: transparent; color: var(--az-text-gray); border: 1px solid var(--border);
+            padding: 8px 14px; border-radius: 4px; cursor: pointer; font-size: 0.68rem;
+            font-weight: 700; letter-spacing: 1px; text-transform: uppercase; transition: 0.2s;
+        }
+        .btn-limpar:hover { border-color: var(--az-gold); color: var(--az-gold); }
+        .btn-excel {
+            background: #1e6b3a; color: white; border: none;
+            padding: 8px 18px; border-radius: 4px; cursor: pointer;
+            font-size: 0.68rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+            transition: 0.2s;
+        }
+        .btn-excel:hover { background: #217346; }
+
+        /* ── TABLE ── */
+        .table-wrapper { background: var(--bg-card); border-radius: 8px; border: 1px solid var(--border); overflow: auto; max-height: 680px; }
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        th {
+            position: sticky; top: 0; background: var(--bg-card); color: var(--az-gold);
+            padding: 11px 12px; font-size: 10px; text-align: left;
+            border-bottom: 2px solid var(--border); z-index: 10;
+            letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700;
+        }
+        td { padding: 9px 12px; border-bottom: 1px solid var(--border); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        /* Zebra */
+        tbody tr:nth-child(even) { background-color: var(--row-alt); }
+        tbody tr:hover { background-color: rgba(176,141,50,0.06); }
+
+        /* Coluna delta */
+        .delta-pos { color: var(--danger); font-weight: 700; font-size: 11px; }
+        .delta-neg { color: var(--success); font-weight: 700; font-size: 11px; }
+        .delta-zero { color: var(--az-text-gray); font-size: 11px; }
+
+        /* ── BADGES ── */
+        .badge { padding: 3px 8px; border-radius: 3px; font-size: 9.5px; font-weight: 800; color: #fff; display: inline-block; width: 115px; text-align: center; letter-spacing: 0.5px; }
+        .b-ok   { background: var(--success); }
+        .b-div  { background: var(--danger); }
+        .b-null { background: var(--warning); }
+        .b-ext  { background: var(--az-gold); }
+
+        /* ── EMPTY STATE ── */
+        .empty-state { text-align: center; padding: 50px 20px; color: var(--az-text-gray); }
+        .empty-state svg { width: 36px; height: 36px; stroke: var(--border); fill: none; stroke-width: 1.5; margin-bottom: 12px; }
+        .empty-state p { font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; margin: 0; }
+
+        /* ── FOOTER ── */
+        .az-footer {
+            background: #0a1322; color: #fff; text-align: center;
+            padding: 50px 30px 35px; margin-top: 40px;
+            border-top: 1px solid rgba(176,141,50,0.25);
+        }
+        .az-footer::before { content: ''; display: block; width: 60px; height: 2px; background: var(--az-gold); margin: 0 auto 30px; }
+        .az-footer .footer-brand { font-size: 1.1rem; font-weight: 800; letter-spacing: 10px; color: #fff; text-transform: uppercase; margin-bottom: 8px; }
+        .az-footer .footer-sub   { color: var(--az-gold); font-size: 0.65rem; font-weight: 600; letter-spacing: 5px; text-transform: uppercase; margin-bottom: 28px; }
+        .az-footer .footer-copy  { font-size: 0.55rem; opacity: 0.45; letter-spacing: 2px; text-transform: uppercase; line-height: 1.8; }
+
+        /* ── MODAL GUIA ── */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0; z-index: 1000;
+            background: rgba(6,11,19,0.65); backdrop-filter: blur(3px);
+            align-items: center; justify-content: center;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal-box {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 10px; width: 92%; max-width: 780px;
+            max-height: 88vh; display: flex; flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+            animation: modalIn 0.2s ease;
+        }
+        @keyframes modalIn { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform: translateY(0); } }
+        .modal-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 16px 22px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+        }
+        .modal-header-left { display: flex; align-items: center; gap: 10px; }
+        .modal-header-left svg { width: 15px; height: 15px; stroke: var(--az-gold); fill: none; stroke-width: 1.8; stroke-linecap: round; }
+        .modal-title { font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text-main); margin: 0; }
+        .modal-close {
+            background: none; border: 1px solid var(--border); border-radius: 4px;
+            width: 28px; height: 28px; cursor: pointer; display: flex; align-items: center;
+            justify-content: center; color: var(--az-text-gray); transition: 0.2s;
+        }
+        .modal-close:hover { border-color: var(--danger); color: var(--danger); }
+        .modal-close svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
+        .modal-body { overflow-y: auto; padding: 24px 26px; }
+
+        /* Guia interno */
+        .g-secao { margin-bottom: 24px; }
+        .g-secao-titulo {
+            font-size: 0.6rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+            color: var(--az-text-gray); margin: 0 0 10px;
+            border-bottom: 1px solid var(--border); padding-bottom: 6px;
+        }
+        .g-abas { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+        .g-aba {
+            font-size: 0.65rem; font-weight: 700; padding: 4px 12px; border-radius: 3px;
+            background: rgba(16,185,129,0.12); color: var(--success);
+            border: 1px solid rgba(16,185,129,0.3); letter-spacing: 0.5px;
+        }
+        .g-note { font-size: 0.72rem; color: var(--az-text-gray); line-height: 1.6; margin: 4px 0 0; }
+
+        /* Tabela Excel simulada */
+        .g-table-wrap { overflow-x: auto; border-radius: 6px; border: 1px solid var(--border); margin-bottom: 10px; }
+        .g-table { border-collapse: collapse; width: 100%; font-size: 11.5px; }
+        .g-table th {
+            background: var(--bg-body); color: var(--az-text-gray); font-weight: 700;
+            padding: 7px 10px; text-align: left; border-bottom: 1px solid var(--border);
+            border-right: 1px solid var(--border); white-space: nowrap; font-size: 10px;
+            letter-spacing: 0.5px; text-transform: uppercase;
+        }
+        .g-table td {
+            padding: 6px 10px; border-bottom: 1px solid var(--border);
+            border-right: 1px solid var(--border); color: var(--text-main); white-space: nowrap;
+        }
+        .g-table tr:last-child td { border-bottom: none; }
+        .g-table td:last-child, .g-table th:last-child { border-right: none; }
+        .g-col-num { background: var(--bg-body); color: var(--az-text-gray); font-size: 10px; text-align: center; width: 26px; }
+        .g-col-b   { background: rgba(176,141,50,0.08); }
+        .g-col-fg  { background: rgba(56,139,224,0.07); }
+
+        /* Badges coluna */
+        .g-badge { display: inline-block; font-size: 9px; font-weight: 800; padding: 1px 6px; border-radius: 3px; margin-left: 4px; vertical-align: middle; letter-spacing: 0.5px; }
+        .g-badge-obrig { background: rgba(239,68,68,0.15); color: var(--danger); }
+        .g-badge-cond  { background: rgba(245,158,11,0.15); color: var(--warning); }
+        .g-badge-info  { background: rgba(56,139,224,0.12); color: #4b9de0; }
+
+        /* Legenda */
+        .g-legenda { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 8px; }
+        .g-leg-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--az-text-gray); }
+        .g-leg-dot  { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+
+        /* Regras */
+        .g-regras { display: flex; flex-direction: column; gap: 10px; }
+        .g-regra  { display: flex; gap: 12px; align-items: flex-start; font-size: 0.75rem; color: var(--text-main); line-height: 1.6; }
+        .g-regra-num {
+            flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
+            background: var(--bg-body); border: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px; font-weight: 700; color: var(--az-gold); margin-top: 1px;
+        }
+
+        /* Alerta */
+        .g-alerta {
+            display: flex; gap: 10px; align-items: flex-start; padding: 10px 14px;
+            border-radius: 6px; border: 1px solid rgba(239,68,68,0.25);
+            background: rgba(239,68,68,0.06); font-size: 0.72rem;
+            color: var(--danger); line-height: 1.6;
+        }
+        .g-alerta svg { flex-shrink: 0; width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; margin-top: 1px; }
+
+        /* Botão de ajuda no header */
+        .btn-ajuda {
+            position: fixed; top: 16px; right: 200px; z-index: 999;
+            background: var(--bg-card); border: 1px solid rgba(176,141,50,0.35);
+            border-radius: 3px; padding: 6px 14px; cursor: pointer;
+            display: flex; align-items: center; gap: 8px;
+            font-size: 0.6rem; font-weight: 700; color: var(--az-text-gray);
+            letter-spacing: 2px; text-transform: uppercase;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.07); transition: 0.25s; user-select: none;
+        }
+        .btn-ajuda:hover { border-color: var(--az-gold); color: var(--az-gold); }
+        .btn-ajuda svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; }
+    </style>
+</head>
+<body>
+
+<button class="theme-toggle" onclick="toggleTema()" id="themeBtn">
+    <span id="themeIcon">
+        <svg id="iconMoon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg id="iconSun" viewBox="0 0 24 24" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </span>
+    <span id="themeLabel">ESCURO</span>
+</button>
+
+<div class="main-content">
+    <header>
+        <h2>A X O N</h2>
+        <div class="subtitle">Excelência na Gestão de Saúde</div>
+    </header>
+
+    <!-- CARDS -->
+    <div id="summary" class="summary-container" style="display: none;">
+        <div class="card" style="border-bottom-color: var(--success);">
+            <h3>Conformidade</h3>
+            <p class="valor" id="total-ok" style="color: var(--success);">R$ 0,00</p>
+            <p class="contagem" id="count-ok">— itens</p>
+        </div>
+        <div class="card" style="border-bottom-color: var(--danger);">
+            <h3>Divergentes</h3>
+            <p class="valor" id="total-div" style="color: var(--danger);">R$ 0,00</p>
+            <p class="contagem" id="count-div">— itens</p>
+        </div>
+        <div class="card" style="border-bottom-color: var(--warning);">
+            <h3>Não Localizados</h3>
+            <p class="valor" id="total-null" style="color: var(--warning);">R$ 0,00</p>
+            <p class="contagem" id="count-null">— itens</p>
+        </div>
+        <div class="card" style="border-bottom-color: var(--az-gold);">
+            <h3>Diárias / Taxas</h3>
+            <p class="valor" id="total-ext" style="color: var(--az-gold);">R$ 0,00</p>
+            <p class="contagem" id="count-ext">— itens</p>
+        </div>
+    </div>
+
+    <!-- UPLOAD -->
+    <div class="upload-section">
+        <div class="upload-slot">
+            <label>Base Excel</label>
+            <input type="file" id="excelInput" accept=".xlsx, .xls">
+            <div id="baseStatus">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                <span id="baseStatusText"></span>
+            </div>
+        </div>
+        <div class="upload-slot">
+            <label>Arquivos XML</label>
+            <input type="file" id="xmlInput" accept=".xml" multiple>
+        </div>
+    </div>
+
+    <button id="btnProcessar" class="btn-executar" onclick="iniciarProcessamento()">PROCESSAR AUDITORIA</button>
+
+    <div id="loader">
+        PROCESSANDO DADOS...
+        <div class="loader-bar"></div>
+    </div>
+
+    <!-- ACTION BAR -->
+    <div class="action-bar" id="actionBar">
+        <div class="filter-area">
+            <input type="text" id="filterInput" placeholder="Buscar por código ou descrição..." oninput="debounceFiltro()">
+            <select id="filterStatus" onchange="aplicarFiltros()">
+                <option value="">Todos os Status</option>
+                <option value="CORRETO">CORRETO</option>
+                <option value="DIVERGENTE">DIVERGENTE</option>
+                <option value="NÃO ENCONTRADO">NÃO ENCONTRADO</option>
+                <option value="DIARIAS E TAXAS">DIARIAS E TAXAS</option>
+            </select>
+            <div id="contadorRegistros"></div>
+        </div>
+        <div class="bar-btns">
+            <button class="btn-limpar" onclick="limparFiltros()">Limpar Filtros</button>
+            <button class="btn-excel" onclick="exportarExcel()">↓ Exportar Excel</button>
+        </div>
+    </div>
+
+    <!-- TABELA -->
+    <div class="table-wrapper">
+        <table id="tabelaPrincipal">
+            <thead>
+                <tr>
+                    <th style="width: 130px;">Arquivo</th>
+                    <th style="width: 45px;">Tab</th>
+                    <th style="width: 105px;">Cód XML</th>
+                    <th style="width: 100px;">Data Exec.</th>
+                    <th style="width: 100px;">Profat</th>
+                    <th>Descrição</th>
+                    <th style="width: 105px;">V. Conta</th>
+                    <th style="width: 105px;">V. Base</th>
+                    <th style="width: 95px;">Δ Diferença</th>
+                    <th style="width: 125px;">Status</th>
+                </tr>
+            </thead>
+            <tbody id="tabelaCorpo">
+                <!-- empty state inicial -->
+                <tr id="emptyRow">
+                    <td colspan="10">
+                        <div class="empty-state">
+                            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                            <p>Carregue o Excel e os XMLs para iniciar a auditoria</p>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<footer class="az-footer">
+    <div class="footer-brand">A Z A M B U J A</div>
+    <div class="footer-sub">Excelência na Gestão de Saúde</div>
+    <div class="footer-copy">
+        © 2026 Grupo Azambuja. . .<br>
+        Altamente Confidencial · Acesso Exclusivo
+    </div>
+</footer>
+
+<script>
+    /* ── TEMA ── */
+    let modoEscuro = false;
+
+    function aplicarTema(escuro) {
+        document.body.classList.toggle('dark', escuro);
+        document.getElementById('iconMoon').style.display = escuro ? 'none' : '';
+        document.getElementById('iconSun').style.display  = escuro ? '' : 'none';
+        document.getElementById('themeLabel').textContent = escuro ? 'CLARO' : 'ESCURO';
+    }
+    function toggleTema() {
+        modoEscuro = !modoEscuro;
+        aplicarTema(modoEscuro);
+        localStorage.setItem('axon-tema', modoEscuro ? 'dark' : 'light');
+    }
+    (function() {
+        if (localStorage.getItem('axon-tema') === 'dark') { modoEscuro = true; aplicarTema(true); }
+    })();
+
+    /* ── DADOS ── */
+    let excelIndex = new Map();
+    let dadosProcessados = [];
+    let timeoutFiltro;
+
+    const DOM = {
+        corpo: document.getElementById('tabelaCorpo'),
+        loader: document.getElementById('loader'),
+        btn: document.getElementById('btnProcessar'),
+        summary: document.getElementById('summary'),
+        bar: document.getElementById('actionBar'),
+        contador: document.getElementById('contadorRegistros')
+    };
+
+    function formatarData(val) {
+        if (!val) return "—";
+        // Formatos possíveis: YYYYMMDD ou YYYY-MM-DD
+        const s = String(val).replace(/\D/g, '');
+        if (s.length === 8) {
+            return s.substring(6,8) + '/' + s.substring(4,6) + '/' + s.substring(0,4);
+        }
+        return val;
+    }
+    function limparTexto(val) { return val ? String(val).replace(/\D/g, '').replace(/^0+/, '').trim() : ""; }
+    function extrairValor(val) { return val ? parseFloat(String(val).replace(/[^0-9.,-]/g, '').replace(',', '.')) || 0 : 0; }
+    function formatarReal(val) { return val.toLocaleString('pt-br', {style: 'currency', currency: 'BRL'}); }
+
+    /* ── CARGA DO EXCEL ── */
+    document.getElementById('excelInput').addEventListener('change', function(e) {
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+            const wb = XLSX.read(new Uint8Array(evt.target.result), {type: 'array'});
+            excelIndex.clear();
+            wb.SheetNames.forEach(nome => {
+                const n = nome.trim().toLowerCase();
+                if(["00", "19", "20", "00 unimed", "19unimed", "20unimed"].includes(n)) {
+                    const sheet = XLSX.utils.sheet_to_json(wb.Sheets[nome], {header: 1});
+                    for(let i = 1; i < sheet.length; i++) {
+                        const row = sheet[i];
+                        let cod = limparTexto(row[1]);
+                        if (cod && (!row[4] || String(row[4]).trim() === "")) {
+                            excelIndex.set(cod, {
+                                profat: String(row[5] || "").replace(/\D/g, '').padStart(8, '0'),
+                                valor: extrairValor(row[6])
+                            });
+                        }
+                    }
+                }
+            });
+            // Feedback inline — sem alert()
+            const el = document.getElementById('baseStatus');
+            document.getElementById('baseStatusText').textContent =
+                `Base carregada · ${excelIndex.size.toLocaleString('pt-br')} procedimentos`;
+            el.style.display = 'flex';
+        };
+        reader.readAsArrayBuffer(e.target.files[0]);
+    });
+
+    /* ── PROCESSAMENTO ── */
+    async function iniciarProcessamento() {
+        const xmlFiles = document.getElementById('xmlInput').files;
+        if (!xmlFiles.length || excelIndex.size === 0)
+            return alert("Carregue o Excel e os XMLs primeiro.");
+        DOM.btn.style.display = 'none';
+        DOM.loader.style.display = 'block';
+        setTimeout(() => comparar(xmlFiles), 100);
+    }
+
+    async function comparar(files) {
+        dadosProcessados = [];
+        let sOk = 0, sDiv = 0, sNull = 0, sExt = 0;
+        let cOk = 0, cDiv = 0, cNull = 0, cExt = 0;
+        const parser = new DOMParser();
+
+        for (let file of files) {
+            const text = await file.text();
+            const xml = parser.parseFromString(text, "text/xml");
+            const servicos = xml.getElementsByTagNameNS("*", "servicosExecutados");
+
+            for (let serv of servicos) {
+                const codTab  = serv.getElementsByTagNameNS("*", "codigoTabela")[0]?.textContent || "";
+                const codProc = serv.getElementsByTagNameNS("*", "codigoProcedimento")[0]?.textContent || "";
+                const vXml    = extrairValor(serv.getElementsByTagNameNS("*", "valorUnitario")[0]?.textContent);
+                const desc    = serv.getElementsByTagNameNS("*", "descricaoProcedimento")[0]?.textContent || "---";
+                const dataRaw = serv.getElementsByTagNameNS("*", "dataExecucao")[0]?.textContent || "";
+
+                let status, bCls, vExNum = 0, codF = "---";
+
+                if (!["00", "19", "20"].includes(codTab)) {
+                    status = "DIARIAS E TAXAS"; bCls = "b-ext"; sExt += vXml; cExt++;
+                } else {
+                    const match = excelIndex.get(limparTexto(codProc));
+                    if (match) {
+                        vExNum = match.valor; codF = match.profat;
+                        if (Math.abs(vXml - vExNum) <= 0.021) {
+                            status = "CORRETO"; bCls = "b-ok"; sOk += vXml; cOk++;
+                        } else {
+                            status = "DIVERGENTE"; bCls = "b-div"; sDiv += vXml; cDiv++;
+                        }
+                    } else {
+                        status = "NÃO ENCONTRADO"; bCls = "b-null"; sNull += vXml; cNull++;
+                    }
+                }
+
+                dadosProcessados.push({
+                    Arquivo: file.name, Tab: codTab, CodXML: codProc, Data: formatarData(dataRaw), Profat: codF,
+                    Desc: desc, VConta: vXml, VTnumm: vExNum, Status: status, Cls: bCls
+                });
+            }
+        }
+
+        renderizarTabela(dadosProcessados);
+
+        // Cards — valor + contagem
+        document.getElementById('total-ok').innerText   = formatarReal(sOk);
+        document.getElementById('total-div').innerText  = formatarReal(sDiv);
+        document.getElementById('total-null').innerText = formatarReal(sNull);
+        document.getElementById('total-ext').innerText  = formatarReal(sExt);
+        document.getElementById('count-ok').innerText   = `${cOk.toLocaleString('pt-br')} ${cOk === 1 ? 'item' : 'itens'}`;
+        document.getElementById('count-div').innerText  = `${cDiv.toLocaleString('pt-br')} ${cDiv === 1 ? 'item' : 'itens'}`;
+        document.getElementById('count-null').innerText = `${cNull.toLocaleString('pt-br')} ${cNull === 1 ? 'item' : 'itens'}`;
+        document.getElementById('count-ext').innerText  = `${cExt.toLocaleString('pt-br')} ${cExt === 1 ? 'item' : 'itens'}`;
+
+        DOM.loader.style.display = 'none';
+        DOM.btn.style.display = 'block';
+        DOM.summary.style.display = 'grid';
+        DOM.bar.style.display = 'flex';
+        atualizarContador();
+    }
+
+    /* ── RENDER ── */
+    function renderizarTabela(lista) {
+        if (!lista.length) {
+            DOM.corpo.innerHTML = `
+                <tr><td colspan="9">
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <p>Nenhum registro encontrado para os filtros aplicados</p>
+                    </div>
+                </td></tr>`;
+            return;
+        }
+
+        const fragment = [];
+        for (let item of lista) {
+            // Delta — diferença entre valor da conta e valor da base
+            let deltaHTML = '<span class="delta-zero">—</span>';
+            if (item.Status === 'DIVERGENTE') {
+                const delta = item.VConta - item.VTnumm;
+                const cls   = delta > 0 ? 'delta-pos' : 'delta-neg';
+                const sinal = delta > 0 ? '+' : '';
+                deltaHTML   = `<span class="${cls}">${sinal}${formatarReal(delta)}</span>`;
+            } else if (item.Status === 'CORRETO') {
+                deltaHTML = '<span class="delta-zero">R$ 0,00</span>';
+            }
+
+            fragment.push(`
+                <tr data-cod="${item.CodXML.toLowerCase()}" data-desc="${item.Desc.toLowerCase()}" data-status="${item.Status}">
+                    <td title="${item.Arquivo}">${item.Arquivo.length > 18 ? item.Arquivo.substring(0,16) + '…' : item.Arquivo}</td>
+                    <td>${item.Tab}</td>
+                    <td>${item.CodXML}</td>
+                    <td style="color:var(--az-text-gray);font-size:11px;">${item.Data || "—"}</td>
+                    <td style="color:var(--az-gold);font-weight:700">${item.Profat}</td>
+                    <td title="${item.Desc}">${item.Desc}</td>
+                    <td>${formatarReal(item.VConta)}</td>
+                    <td>${item.VTnumm ? formatarReal(item.VTnumm) : '—'}</td>
+                    <td>${deltaHTML}</td>
+                    <td><span class="badge ${item.Cls}">${item.Status}</span></td>
+                </tr>
+            `);
+        }
+        DOM.corpo.innerHTML = fragment.join('');
+    }
+
+    /* ── FILTROS ── */
+    function debounceFiltro() {
+        clearTimeout(timeoutFiltro);
+        timeoutFiltro = setTimeout(aplicarFiltros, 250);
+    }
+
+    function aplicarFiltros() {
+        const busca       = document.getElementById('filterInput').value.toLowerCase().trim();
+        const statusFiltro = document.getElementById('filterStatus').value;
+        const linhas      = DOM.corpo.getElementsByTagName('tr');
+        let visiveis = 0;
+
+        for (let i = 0; i < linhas.length; i++) {
+            const tr = linhas[i];
+            if (!tr.dataset.status) { tr.style.display = 'none'; continue; } // empty-state row
+            const matchBusca  = !busca || tr.dataset.cod.includes(busca) || tr.dataset.desc.includes(busca);
+            const matchStatus = !statusFiltro || tr.dataset.status === statusFiltro;
+            const visivel     = matchBusca && matchStatus;
+            tr.style.display  = visivel ? "" : "none";
+            if (visivel) visiveis++;
+        }
+
+        // Empty state quando filtro não acha nada
+        const existeEmpty = document.getElementById('emptyFiltered');
+        if (visiveis === 0 && dadosProcessados.length > 0) {
+            if (!existeEmpty) {
+                const tr = document.createElement('tr');
+                tr.id = 'emptyFiltered';
+                tr.innerHTML = `<td colspan="10"><div class="empty-state">
+                    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <p>Nenhum registro encontrado para os filtros aplicados</p>
+                </div></td>`;
+                DOM.corpo.appendChild(tr);
+            }
+        } else {
+            existeEmpty?.remove();
+        }
+
+        atualizarContador(visiveis);
+    }
+
+    function limparFiltros() {
+        document.getElementById('filterInput').value = '';
+        document.getElementById('filterStatus').value = '';
+        aplicarFiltros();
+    }
+
+    function atualizarContador(visiveis) {
+        const total = dadosProcessados.length;
+        if (visiveis === undefined) visiveis = total;
+        DOM.contador.innerHTML = visiveis === total
+            ? `<span>${total.toLocaleString('pt-br')}</span> registros`
+            : `<span>${visiveis.toLocaleString('pt-br')}</span> de ${total.toLocaleString('pt-br')} registros`;
+    }
+
+    /* ── EXPORT ── */
+    function exportarExcel() {
+        const ws = XLSX.utils.json_to_sheet(dadosProcessados.map(d => ({
+            Arquivo:     d.Arquivo,
+            Tabela:      d.Tab,
+            Codigo_XML:  d.CodXML,
+            Data_Execucao: d.Data,
+            Profat:      d.Profat,
+            Descricao:   d.Desc,
+            Valor_Conta: d.VConta,
+            Valor_Base:  d.VTnumm,
+            Diferenca:   d.Status === 'DIVERGENTE' ? d.VConta - d.VTnumm : 0,
+            Status:      d.Status
+        })));
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Auditoria");
+        XLSX.writeFile(wb, "AXON_Auditoria_Final.xlsx");
+    }
+
+    /* ── MODAL GUIA ── */
+    function abrirGuia() { document.getElementById('modalGuia').classList.add('open'); document.body.style.overflow = 'hidden'; }
+    function fecharGuia() { document.getElementById('modalGuia').classList.remove('open'); document.body.style.overflow = ''; }
+    function fecharGuiaOverlay(e) { if (e.target === document.getElementById('modalGuia')) fecharGuia(); }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') fecharGuia(); });
+
+</script>
+
+<!-- Botão ajuda -->
+<button class="btn-ajuda" onclick="abrirGuia()">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    GUIA EXCEL
+</button>
+
+<!-- Modal Guia -->
+<div class="modal-overlay" id="modalGuia" onclick="fecharGuiaOverlay(event)">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        <p class="modal-title">Como preparar o Excel</p>
+      </div>
+      <button class="modal-close" onclick="fecharGuia()">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+
+      <div class="g-secao">
+        <p class="g-secao-titulo">Abas reconhecidas pelo sistema</p>
+        <div class="g-abas">
+          <span class="g-aba">00</span>
+          <span class="g-aba">19</span>
+          <span class="g-aba">20</span>
+          <span class="g-aba">00 Unimed</span>
+          <span class="g-aba">19Unimed</span>
+          <span class="g-aba">20Unimed</span>
+        </div>
+        <p class="g-note">O sistema lê somente as abas com esses nomes exatos (sem distinção de maiúsculas). Demais abas são completamente ignoradas.</p>
+      </div>
+
+      <div class="g-secao">
+        <p class="g-secao-titulo">Estrutura das colunas</p>
+        <div class="g-table-wrap">
+          <table class="g-table">
+            <thead>
+              <tr>
+                <th class="g-col-num"></th>
+                <th>A</th>
+                <th class="g-col-b">B <span class="g-badge g-badge-obrig">CHAVE</span></th>
+                <th>C</th>
+                <th>D</th>
+                <th>E <span class="g-badge g-badge-cond">EXCLUSÃO</span></th>
+                <th class="g-col-fg">F <span class="g-badge g-badge-info">PROFAT</span></th>
+                <th class="g-col-fg">G <span class="g-badge g-badge-info">VALOR</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="g-col-num" style="color:var(--az-text-gray);font-size:10px;">cab.</td>
+                <td style="color:var(--az-text-gray);">(qualquer)</td>
+                <td class="g-col-b" style="font-weight:700;">Código do procedimento</td>
+                <td style="color:var(--az-text-gray);">(qualquer)</td>
+                <td style="color:var(--az-text-gray);">(qualquer)</td>
+                <td style="font-weight:700;">Condição de exclusão</td>
+                <td class="g-col-fg" style="font-weight:700;">Código Profat</td>
+                <td class="g-col-fg" style="font-weight:700;">Valor unitário (R$)</td>
+              </tr>
+              <tr>
+                <td class="g-col-num" style="color:var(--az-text-gray);font-size:10px;">1</td>
+                <td style="color:var(--az-text-gray);">…</td>
+                <td class="g-col-b">10101012</td>
+                <td style="color:var(--az-text-gray);">…</td>
+                <td style="color:var(--az-text-gray);">…</td>
+                <td></td>
+                <td class="g-col-fg">00012345</td>
+                <td class="g-col-fg">42,50</td>
+              </tr>
+              <tr>
+                <td class="g-col-num" style="color:var(--az-text-gray);font-size:10px;">2</td>
+                <td style="color:var(--az-text-gray);">…</td>
+                <td class="g-col-b">20202025</td>
+                <td style="color:var(--az-text-gray);">…</td>
+                <td style="color:var(--az-text-gray);">…</td>
+                <td></td>
+                <td class="g-col-fg">00054321</td>
+                <td class="g-col-fg">187,00</td>
+              </tr>
+              <tr>
+                <td class="g-col-num" style="color:var(--az-text-gray);font-size:10px;">3</td>
+                <td style="color:var(--az-text-gray);">…</td>
+                <td class="g-col-b">30303038</td>
+                <td style="color:var(--az-text-gray);">…</td>
+                <td style="color:var(--az-text-gray);">…</td>
+                <td style="color:var(--danger);font-style:italic;font-size:11px;">EXCLUÍDO</td>
+                <td class="g-col-fg" style="color:var(--az-text-gray);">—</td>
+                <td class="g-col-fg" style="color:var(--az-text-gray);">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="g-legenda">
+          <div class="g-leg-item"><div class="g-leg-dot" style="background:rgba(176,141,50,0.5);"></div> Coluna B — chave de busca usada na comparação com o XML</div>
+          <div class="g-leg-item"><div class="g-leg-dot" style="background:rgba(56,139,224,0.5);"></div> Colunas F e G — valores lidos para o resultado</div>
+          <div class="g-leg-item"><div class="g-leg-dot" style="background:var(--border);"></div> Demais colunas — ignoradas</div>
+        </div>
+      </div>
+
+      <div class="g-secao">
+        <p class="g-secao-titulo">Regras de leitura</p>
+        <div class="g-regras">
+          <div class="g-regra"><div class="g-regra-num">1</div><span>A primeira linha de cada aba é tratada como <strong>cabeçalho</strong> e ignorada. Os dados começam na linha 2.</span></div>
+          <div class="g-regra"><div class="g-regra-num">2</div><span>O código na coluna B é limpo automaticamente — zeros à esquerda, pontos e traços são removidos antes da comparação com o XML.</span></div>
+          <div class="g-regra"><div class="g-regra-num">3</div><span>Linhas em que a coluna E tenha <strong>qualquer conteúdo</strong> são ignoradas. Use essa coluna para marcar procedimentos excluídos ou inativados.</span></div>
+          <div class="g-regra"><div class="g-regra-num">4</div><span>O valor monetário na coluna G aceita vírgula ou ponto como separador decimal. Formatação de moeda (R$, espaços) é ignorada.</span></div>
+          <div class="g-regra"><div class="g-regra-num">5</div><span>O Profat (coluna F) é normalizado com 8 dígitos, preenchendo zeros à esquerda quando necessário.</span></div>
+          <div class="g-regra"><div class="g-regra-num">6</div><span>Tolerância de <strong>R$ 0,02</strong> na comparação — diferenças abaixo disso são classificadas como CORRETO para absorver arredondamentos de centavos.</span></div>
+        </div>
+      </div>
+
+      <div class="g-secao">
+        <div class="g-alerta">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>Abas com nomes diferentes dos listados acima são completamente ignoradas, mesmo que contenham dados válidos. Verifique a nomenclatura antes de carregar o arquivo.</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
