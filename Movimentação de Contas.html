@@ -268,7 +268,25 @@ tr:hover td { background: var(--table-row-hover); }
 .text-warning { color: var(--warning); }  
 .row-alert td { background: rgba(239, 68, 68, 0.05); } 
 .row-alert:hover td { background: rgba(239, 68, 68, 0.1); }
-  
+
+/* --- SUBLINHA: conta adicional do mesmo atendimento --- */
+.row-sub td {
+    background: rgba(99, 102, 241, 0.06);
+    border-bottom: 1px dashed var(--glass-border);
+    padding-top: 9px; padding-bottom: 9px;
+    font-size: 12px;
+}
+.row-sub:hover td { background: rgba(99, 102, 241, 0.12); }
+.row-sub td:first-child { border-left: 3px solid var(--info); padding-left: 13px; }
+.sub-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: rgba(99, 102, 241, 0.15); color: var(--info);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    padding: 1px 7px; border-radius: 10px; font-size: 10px; font-weight: 600;
+    white-space: nowrap;
+}
+.sub-indent { padding-left: 28px !important; }
+
 /* Seção de Pendências (Inverso) */
 .inverse-section { 
     border: 1px solid rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.02); 
@@ -463,7 +481,7 @@ tr:hover td { background: var(--table-row-hover); }
     <header class="header">  
         <div class="header-top">  
             <div>
-                <h1>COntrole de Contas HNSA</h1>
+                <h1>Controle de Contas HNSA</h1>
                 <h2><i class="fa-solid fa-layer-group"></i> Comparativo Setorial (PDF A) vs Faturamento (PDF B)</h2>
             </div>  
             <div><button id="toggleDebug" class="btn-ghost" title="Ver Logs Técnicos"><i class="fa-solid fa-bug"></i></button></div>  
@@ -502,12 +520,9 @@ tr:hover td { background: var(--table-row-hover); }
         <div class="toolbar">  
             <div class="search-box">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="searchInput" placeholder="Pesquisar por Paciente, Atendimento ou Setor...">
+                <input type="text" id="searchInput" placeholder="Pesquisar por Paciente, Atendimento, Conta ou Setor...">
             </div>  
             <div style="flex:1"></div>  
-            
-            <!-- BOTÃO DA IA AQUI -->
-            
 
             <button id="exportNormalExcel" class="btn btn-secondary" style="color: var(--success); border-color: rgba(16,185,129,0.3);">
                 <i class="fa-solid fa-file-excel" style="margin-right:8px;"></i> Exportar Relatório
@@ -572,7 +587,7 @@ tr:hover td { background: var(--table-row-hover); }
             <div class="inverse-header" id="toggleInverseBtn">  
                 <div class="inverse-title">
                     <i class="fa-solid fa-triangle-exclamation"></i> 
-                    Pacientes Não Movimentados 
+                    Pacientes Não Movimentados ou contas extras (Ausente de movimentação)
                     <span class="badge-count" id="inverseCountBadge">0</span>
                 </div>  
                 <div style="display:flex; gap:10px; align-items: center;">  
@@ -588,6 +603,7 @@ tr:hover td { background: var(--table-row-hover); }
                         <thead>  
                             <tr>
                                 <th>Atendimento</th>
+                                <th>Conta</th>
                                 <th>Paciente</th>
                                 <th class="text-right">Valor B</th>
                             </tr>  
@@ -604,15 +620,17 @@ tr:hover td { background: var(--table-row-hover); }
                 Relatório Consolidado
             </h3>
             <div style="font-size:11px; color:var(--text-muted);">Total de registros: <span id="totalRecords" style="color: var(--text-main); font-weight: 700;">0</span></div>  
-        </div>  
-          
+        </div>
+
         <div class="table-container animate-up">  
             <div class="table-scroll">  
                 <table id="table">  
                     <thead>  
                         <tr> 
                             <th style="width:60px;" class="text-center">Ações</th> 
-                            <th>Atend.</th>  
+                            <th>Atend.</th>
+                            <!-- ► NOVO: coluna Conta -->
+                            <th>Conta</th>
                             <th>Setor </th>
                             <th>Convênio</th>  
                             <th class="text-right">Valor (PDF B)</th>  
@@ -635,7 +653,8 @@ tr:hover td { background: var(--table-row-hover); }
         </div>  
   
         <footer style="text-align:center; padding:30px 0 120px 0; color:var(--text-muted); font-size:11px; opacity:0.6;">  
-            <p>Sistema de Controle HNSA &copy; 2026 - Versão 2.1 </p>
+            <p> A Z A M B U J A &copy; CENTRAL DE FERRAMENTAS — FATURAMENTO / AUDITORIA & CADASTRO
+USO INTERNO RESTRITO · TODOS OS DIREITOS RESERVADOS </p>
         </footer>  
   
     </div>  
@@ -666,7 +685,6 @@ async function generateAIReport() {
     const modal = document.getElementById('aiModal');
     const modalBody = document.getElementById('aiModalBody');
     
-    // UI Loading State
     modal.classList.add('active');
     modalBody.innerHTML = `
         <div class="ai-loading-container">
@@ -677,10 +695,8 @@ async function generateAIReport() {
     `;
 
     try {
-        // 1. Prepare Data Summary (Prevent token overflow by summarizing)
         const summaryStats = getSummaryStats();
         
-        // 2. Construct Prompt
         const prompt = `
         Atue como um Auditor Hospitalar Sênior Especialista. Analise os seguintes dados resumidos de uma auditoria de contas (Cruzamento entre Sistema de Prontuário A e Sistema de Faturamento B).
         
@@ -706,7 +722,6 @@ async function generateAIReport() {
         Tom: Profissional, Analítico e Objetivo. Português do Brasil.
         `;
 
-        // 3. Call Gemini API
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -720,7 +735,6 @@ async function generateAIReport() {
         const data = await response.json();
         const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Não foi possível gerar o relatório.";
         
-        // 4. Render Markdown
         modalBody.innerHTML = `<div class="ai-report-content">${marked.parse(rawText)}</div>`;
 
     } catch (error) {
@@ -737,7 +751,6 @@ async function generateAIReport() {
 }
 
 function getSummaryStats() {
-    // Helper to group by key and sum value
     const groupBy = (arr, keyFn, valFn) => {
         const map = new Map();
         arr.forEach(item => {
@@ -748,26 +761,23 @@ function getSummaryStats() {
             entry.count++;
             entry.total += val;
         });
-        // Convert to sorted array (top 5 desc by total)
         return Array.from(map.entries())
             .map(([k, v]) => ({ name: k, count: v.count, value: v.total }))
             .sort((a, b) => b.value - a.value)
             .slice(0, 5);
     };
 
-    // Prepare lists
-    const totalReconciled = movimentados.reduce((acc, r) => acc + (r.valorB || 0), 0);
+    const totalReconciledVal = movimentados.reduce((acc, r) => acc + (r.valorB || 0), 0);
     const totalPending = pendentesB.reduce((acc, r) => acc + (r.valorB || 0), 0);
     
-    // Groupings
     const topSectors = groupBy(movimentados, r => r.finalSetor, r => r.valorB || 0);
     const topInsurers = groupBy(movimentados, r => r.finalConvenio, r => r.valorB || 0);
-    const pendingDetails = pendentesB.slice(0, 5).map(r => ({ atend: r.atendimento, val: r.valorB })); // Sample of pending
+    const pendingDetails = pendentesB.slice(0, 5).map(r => ({ atend: r.atendimento, conta: r.conta, val: r.valorB }));
 
     return {
         financials: {
             total_audited: totalPdfB,
-            reconciled_value: totalReconciled,
+            reconciled_value: totalReconciledVal,
             pending_value: totalPending,
             reconciled_count: movimentados.length,
             pending_count: pendentesB.length
@@ -874,9 +884,7 @@ let currentSortTime = "default";
 toggleDebug.addEventListener('click', () => { debugLog.style.display = debugLog.style.display === 'none' ? 'block' : 'none'; });  
 
 toggleInverseBtn.addEventListener('click', (e) => {  
-    // Evita disparar se clicar no botão de download
     if(e.target.closest('#exportInverseExcelB')) return;
-    
     const section = document.getElementById('inverseSection');  
     section.classList.toggle('hidden');  
     if(section.classList.contains('hidden')){
@@ -913,19 +921,21 @@ function calcDias(inicio, fim) {
     return diff === 0 ? 1 : diff;
 }
 
-// --- LÓGICA CORE (INTOCADA) ---
+// --- LÓGICA CORE ---
 
 /* --- HISTÓRICO --- */
-function openHistory(atend) {
+function openHistory(atend, conta) {
     const modal = document.getElementById('historyModal');
     const modalTimeline = document.getElementById('modalTimeline');
     const modalPatientName = document.getElementById('modalPatientName');
 
-    let history = movementHistory.get(atend) || [];
-    const mainRec = movimentados.find(r => r.atendimento === atend) || pendentesB.find(r => r.atendimento === atend);
+    // ► Chave composta atendimento+conta para buscar histórico correto
+    const histKey = atend + '_' + conta;
+    let history = movementHistory.get(histKey) || movementHistory.get(atend) || [];
+    const mainRec = movimentados.find(r => r.atendimento === atend && r.conta === conta)
+                 || pendentesB.find(r => r.atendimento === atend && r.conta === conta);
     const nomePaciente = mainRec ? mainRec.paciente : "Paciente não identificado";
     
-    // Se não há histórico em A, mostra apenas a informação atual
     if(history.length === 0) {
         modalTimeline.innerHTML = `
         <div class="timeline-item">
@@ -937,12 +947,10 @@ function openHistory(atend) {
             </div>
         </div>`;
         modal.classList.add('active');
-        // Preenche nome
-        modalPatientName.innerHTML = `<span style="color:var(--primary); font-weight:600;">${atend}</span> - ${nomePaciente}`;
+        modalPatientName.innerHTML = `<span style="color:var(--primary); font-weight:600;">${atend}</span> · Conta <span style="color:var(--warning); font-weight:600;">${conta || '-'}</span> - ${nomePaciente}`;
         return;
     }
 
-    // Filtrar duplicatas consecutivas
     const uniqueHistory = [];
     let lastSetor = null;
     for (const item of history) {
@@ -952,7 +960,6 @@ function openHistory(atend) {
         }
     }
 
-    // ORDENAÇÃO: mais baixo no PDF = mais novo
     uniqueHistory.sort((a,b) => (a.dataEnvio || 0) - (b.dataEnvio || 0));
 
     let html = '';
@@ -960,27 +967,22 @@ function openHistory(atend) {
 
     for(let i = 0; i < uniqueHistory.length; i++) {
         const currentItem = uniqueHistory[i];
-        const previousItem = uniqueHistory[i - 1];
         const nextItem = uniqueHistory[i + 1];
-
         const dataEnvioFormat = currentItem.dataEnvio ? currentItem.dataEnvio.toLocaleDateString('pt-BR') : 'Data N/D';
-
         let periodoTexto = "";
         let diasNoSetor = 0;
-        let finalTitle = currentItem.setor; 
-        
         let dataInicioPeriodo, dataFimPeriodo;
 
-        if (i === uniqueHistory.length - 1) { // Item mais novo
+        if (i === uniqueHistory.length - 1) {
             dataInicioPeriodo = currentItem.dataEnvio;
             dataFimPeriodo = mainRec && mainRec.dataFim ? mainRec.dataFim : new Date();
             const textoFinal = mainRec && mainRec.dataFim ? `(ALTA)` : '(ATUAL)';
-            periodoTexto = `Desde ${dataInicioPeriodo.toLocaleDateString('pt-BR')} ${textoFinal}`;
-        } else { // Setores anteriores
+            periodoTexto = `Desde ${dataInicioPeriodo ? dataInicioPeriodo.toLocaleDateString('pt-BR') : 'N/D'} ${textoFinal}`;
+        } else {
             dataInicioPeriodo = currentItem.dataEnvio;
             dataFimPeriodo = nextItem ? nextItem.dataEnvio : null;
             periodoTexto = dataFimPeriodo 
-                ? `De ${dataInicioPeriodo.toLocaleDateString('pt-BR')} até ${dataFimPeriodo.toLocaleDateString('pt-BR')}`
+                ? `De ${dataInicioPeriodo ? dataInicioPeriodo.toLocaleDateString('pt-BR') : 'N/D'} até ${dataFimPeriodo.toLocaleDateString('pt-BR')}`
                 : `Desde ${dataEnvioFormat}`;
         }
         
@@ -997,7 +999,7 @@ function openHistory(atend) {
             <div class="timeline-content">
                 <span class="timeline-date">${periodoTexto}</span>
                 <h4 class="timeline-title">
-                    ${finalTitle}
+                    ${currentItem.setor}
                     <span class="duration-tag">${diasNoSetor} dias</span>
                 </h4>
                 ${isCurrent && mainRec && mainRec.dataFim ? '<div style="font-size:11px; color:var(--success); margin-top:5px; font-weight:600;"><i class="fa-solid fa-flag-checkered"></i> Alta Hospitalar</div>' : ''}
@@ -1005,7 +1007,7 @@ function openHistory(atend) {
         </div>`;
     }
 
-    modalPatientName.innerHTML = `<span style="color:var(--primary); font-weight:600;">${atend}</span> - ${nomePaciente} <span class="duration-tag" style="margin-left:10px; background:var(--primary-glow); color:var(--primary); border:1px solid rgba(56, 189, 248, 0.3);">Total: ${totalDiasPermanencia} dias</span>`;
+    modalPatientName.innerHTML = `<span style="color:var(--primary); font-weight:600;">${atend}</span> · Conta <span style="color:var(--warning); font-weight:600;">${conta || '-'}</span> - ${nomePaciente} <span class="duration-tag" style="margin-left:10px; background:var(--primary-glow); color:var(--primary); border:1px solid rgba(56, 189, 248, 0.3);">Total: ${totalDiasPermanencia} dias</span>`;
     modalTimeline.innerHTML = html;
     modal.classList.add('active');
 } 
@@ -1071,7 +1073,6 @@ function updateCurrentFilters() {
     if (searchTerm) {
         filterTags.push(`<div class="filter-tag">Busca: "${searchTerm}" <i class="fa-solid fa-times" onclick="searchInput.value=''; searchTerm=''; render();"></i></div>`);
     }
-    // Ordenação
     if (currentSortValue !== "default" && currentSortValue !== "valor_desc") {
         const sortText = currentSortValue === "valor_asc" ? "Menor valor" : "Maior valor";
         filterTags.push(`<div class="filter-tag">Ord: ${sortText} <i class="fa-solid fa-times" onclick="sortValue.value='default'; currentSortValue='default'; render();"></i></div>`);
@@ -1094,14 +1095,12 @@ function updateCurrentFilters() {
 function sortData(data) {
     let sortedData = [...data];
     
-    // Valor
     switch(currentSortValue) {
         case "valor_desc": sortedData.sort((a, b) => (b.valorB || 0) - (a.valorB || 0)); break;
         case "valor_asc": sortedData.sort((a, b) => (a.valorB || 0) - (b.valorB || 0)); break;
         case "default": default: sortedData.sort((a, b) => (b.valorB || 0) - (a.valorB || 0)); break;
     }
     
-    // Data
     switch(currentSortDate) {
         case "data_inicio_desc": sortedData.sort((a, b) => (b.dataInicio || 0) - (a.dataInicio || 0)); break;
         case "data_inicio_asc": sortedData.sort((a, b) => (a.dataInicio || 0) - (b.dataInicio || 0)); break;
@@ -1111,7 +1110,6 @@ function sortData(data) {
         case "data_fim_asc": sortedData.sort((a, b) => (a.dataFim || 0) - (b.dataFim || 0)); break;
     }
     
-    // Tempo
     switch(currentSortTime) {
         case "permanencia_desc": sortedData.sort((a, b) => (b.Permanência || 0) - (a.Permanência || 0)); break;
         case "permanencia_asc": sortedData.sort((a, b) => (a.Permanência || 0) - (b.Permanência || 0)); break;
@@ -1148,6 +1146,11 @@ async function extractLines(pdfFile){
   return pagesText;  
 }  
   
+// ============================================================
+// ► MODIFICAÇÃO: processPDFB — extrai número de conta (2º número)
+// Padrão da linha: [atendimento] [conta] [outroNum?] [paciente] [datas] [valor]
+// Exemplo: "233323 18274 18610 RN DE EDUARDA ... 52.654,23"
+// ============================================================
 async function processPDFB(){ 
   const file = pdfInputB.files[0]; 
   recordsB = new Map(); 
@@ -1175,7 +1178,13 @@ async function processPDFB(){
     const startsWithNumber = line.match(/^(\d{3,})\b/); 
     if(startsWithNumber){ 
         const atendimento = startsWithNumber[1]; 
-        currentRecord = { atendimento, rawLines: [] }; 
+
+        // ► NOVO: captura o 2º número logo após o atendimento como número de conta
+        // Ex: "233323 18274 18610 ..." → conta = "18274"
+        const contaMatch = line.match(/^\d{3,}\s+(\d{3,})\b/);
+        const conta = contaMatch ? contaMatch[1] : "";
+
+        currentRecord = { atendimento, conta, rawLines: [] }; 
  
         let rawContent = line.substring(atendimento.length).trim(); 
         const datas = line.match(/(\d{2}\/\d{2}\/\d{4})/g) || []; 
@@ -1217,8 +1226,10 @@ async function processPDFB(){
  
         currentRecord.paciente = pacienteNome || "Nome não id."; 
         currentRecord.setorB = setorNome; 
- 
-        recordsB.set(currentRecord.atendimento, currentRecord); 
+
+        // ► Chave do mapa: atendimento + "_" + conta (garante unicidade por conta)
+        const mapKey = currentRecord.atendimento + '_' + currentRecord.conta;
+        recordsB.set(mapKey, currentRecord); 
         currentRecord = null; 
     } 
   } 
@@ -1230,6 +1241,11 @@ async function processPDFB(){
   }
 } 
   
+// ============================================================
+// ► MODIFICAÇÃO: processPDFA — extrai número de conta (2º número)
+// Padrão da linha: [atendimento] [conta] [paciente] [dataEnvio] [dataInicio] [dataFim] [valor]
+// Exemplo: "233323 19173 04/04/2026 21/04/2026 INTERNAÇÃO 70868 ..."
+// ============================================================
 async function processPDFA(){  
   const fileA = pdfInputA.files[0];  
   recordsA = new Map(); 
@@ -1238,7 +1254,10 @@ async function processPDFA(){
   if(!fileA) return;  
   const lines = await extractLines(fileA);  
    
-  const regexA = /^(\d{3,})\s+([A-ZÀ-Ú0-9\-\.\s']+?)\s+(\d{2}\/\d{2}\/\d{4})\s+(\d{2}\/\d{2}\/\d{4})\s+(\d{2}\/\d{2}\/\d{4}).*?(\d{1,3}(?:\.\d{3})*,\d{2})/i;  
+  // Regex exige obrigatoriamente 3 datas (dataEnvio, dataInicio, dataFim) na mesma linha
+  // Isso evita capturar linhas de setor que começam com números mas não têm datas
+  // Grupo 1: atendimento, Grupo 2: conta, Grupo 3: paciente, Grupo 4: dataEnvio, Grupo 5: dataInicio, Grupo 6: dataFim, Grupo 7: valor
+  const regexA = /^(\d{3,})\s+(\d{3,})\s+([A-ZÀ-Ú0-9\-\.\s']+?)\s+(\d{2}\/\d{2}\/\d{4})\s+(\d{2}\/\d{2}\/\d{4})\s+(\d{2}\/\d{2}\/\d{4}).*?(\d{1,3}(?:\.\d{3})*,\d{2})/i;  
    
   let setorAtual = "SEM SETOR DEFINIDO";  
   let convenioAtual = "Sem convênio definido";  
@@ -1264,31 +1283,42 @@ async function processPDFA(){
       if(matches && matches[1]) convenioAtual = matches[1].split(/Usuário:/i)[0].trim();  
     }  
      
-    const m = line.match(regexA);  
-    if(!m) continue;  
+    const m = line.match(regexA);
+    // Validação extra: linha de paciente válida deve ter exatamente 3 datas
+    const qtdDatas = (line.match(/\d{2}\/\d{2}\/\d{4}/g) || []).length;
+    if(!m || qtdDatas < 3) continue;  
      
-    const atendimento = m[1];  
-    const paciente = m[2].trim(); 
-    const dataEnvio = parseDate(m[3]); 
-    const dataInicio = parseDate(m[4]); 
-    const dataFim = parseDate(m[5]); 
-    const valor = parseFloat(m[6].replace(/\./g,'').replace(',','.')); 
+    const atendimento = m[1];
+    const conta       = m[2]; // ► NOVO: número de conta capturado
+    const paciente    = m[3].trim(); 
+    const dataEnvio   = parseDate(m[4]); 
+    const dataInicio  = parseDate(m[5]); 
+    const dataFim     = parseDate(m[6]); 
+    const valor       = parseFloat(m[7].replace(/\./g,'').replace(',','.')); 
+
+    // ► Histórico indexado por chave composta atendimento+conta
+    const histKey = atendimento + '_' + conta;
+    if(!movementHistory.has(histKey)) movementHistory.set(histKey, []); 
      
-    if(!movementHistory.has(atendimento)) movementHistory.set(atendimento, []); 
-     
-    movementHistory.get(atendimento).push({ 
+    movementHistory.get(histKey).push({ 
         setor: setorAtual, 
         dataEnvio: dataEnvio, 
         dataInicio: dataInicio, 
         dataFim: dataFim, 
         convenio: convenioAtual 
     }); 
- 
-    // Último status
-    const currentRec = recordsA.get(atendimento); 
-    if(!currentRec || (dataEnvio && currentRec.dataEnvio && dataEnvio > currentRec.dataEnvio)){ 
-         recordsA.set(atendimento, {  
+
+    // ► Chave composta também no mapa principal
+    const mapKey = atendimento + '_' + conta;
+    const currentRec = recordsA.get(mapKey); 
+    // Critério: maior dataEnvio vence. Em empate de data, o mais recente
+    // no PDF (posição mais ao final = lido por último) vence com ">="
+    // Isso resolve casos como VALDECIR PEREIRA que aparece em vários
+    // protocolos com a mesma data — o último setor lido é o mais atual.
+    if(!currentRec || (dataEnvio && currentRec.dataEnvio && dataEnvio >= currentRec.dataEnvio)){ 
+         recordsA.set(mapKey, {  
              atendimento,  
+             conta,
              paciente,  
              dataEnvio,  
              dataInicio,  
@@ -1297,33 +1327,38 @@ async function processPDFA(){
              setor: setorAtual, 
              convenio: convenioAtual  
          });  
-    } 
+    }
   }  
 }  
   
+// ============================================================
+// separateRecords — cruzamento por chave atendimento+conta
+// Pendentes do mesmo atendimento (conta diferente) ficam como subRows do pai
+// ============================================================
 function separateRecords(){ 
   movimentados = []; 
   pendentesB = [];
-  const atendASet = new Set(recordsA.keys()); 
-  const hoje = new Date(); 
- 
-  recordsB.forEach(recB => {
-    if(atendASet.has(recB.atendimento)){
-      const recA = recordsA.get(recB.atendimento);
+
+  // Primeiro passo: separar reconciliados de pendentes normalmente
+  recordsB.forEach((recB, mapKey) => {
+    if(recordsA.has(mapKey)){
+      const recA = recordsA.get(mapKey);
       let merged = { ...recA };
       merged.valorB = recB.valor;
       merged.dataInicioB = recB.dataInicioB;
       merged.dataFimB = recB.dataFimB;
       merged.Permanência = calcPermanência(recA.dataInicio, recA.dataFim);
-      merged.diasDesdeEnvio = calcDias(recA.dataEnvio, hoje);
+      merged.diasDesdeEnvio = calcDias(recA.dataEnvio, new Date());
       merged.foundInA = true;
       merged.finalSetor = recA.setor;
       merged.finalConvenio = recA.convenio;
       merged.setorB_comparison = recB.setorB;
+      merged.subRows = []; // ► receptor de contas extras do mesmo atendimento
       movimentados.push(merged);
     } else {
       let pending = { 
-        atendimento: recB.atendimento, 
+        atendimento: recB.atendimento,
+        conta: recB.conta,
         paciente: recB.paciente, 
         finalSetor: "NÃO ENCONTRADO EM A", 
         finalConvenio: "NÃO IDENTIFICADO (SÓ EM B)", 
@@ -1342,6 +1377,22 @@ function separateRecords(){
   });
 
   movimentados.sort((a,b)=> (b.valorB || 0) - (a.valorB || 0)); 
+
+  // Segundo passo: pendentes cujo ATENDIMENTO já existe em movimentados
+  // → viram subRow do pai em vez de ficarem na seção de pendências
+  const atendimentosMovimentados = new Map();
+  movimentados.forEach(r => atendimentosMovimentados.set(r.atendimento, r));
+
+  const pendentesOrfaos = []; // sem nenhum atendimento correspondente em A
+  pendentesB.forEach(p => {
+    if(atendimentosMovimentados.has(p.atendimento)){
+      // mesmo atendimento, conta diferente → sublinha do pai
+      atendimentosMovimentados.get(p.atendimento).subRows.push(p);
+    } else {
+      pendentesOrfaos.push(p);
+    }
+  });
+  pendentesB = pendentesOrfaos;
   pendentesB.sort((a,b)=> (b.valorB || 0) - (a.valorB || 0)); 
   
   originalMovimentados = [...movimentados];
@@ -1365,9 +1416,16 @@ function render(){
       const matchSec = activeSetores.size === 0 || activeSetores.has(r.finalSetor);  
       const matchSearch = !searchTerm || 
           r.atendimento.toLowerCase().includes(searchTerm) || 
+          (r.conta || '').toLowerCase().includes(searchTerm) ||
           r.paciente.toLowerCase().includes(searchTerm) ||
           r.finalConvenio.toLowerCase().includes(searchTerm) ||
-          r.finalSetor.toLowerCase().includes(searchTerm);  
+          r.finalSetor.toLowerCase().includes(searchTerm) ||
+          // Correção: busca também dentro das subRows (contas adicionais)
+          (r.subRows || []).some(sub =>
+              sub.atendimento.toLowerCase().includes(searchTerm) ||
+              (sub.conta || '').toLowerCase().includes(searchTerm) ||
+              sub.paciente.toLowerCase().includes(searchTerm)
+          );  
       return matchConv && matchSec && matchSearch;  
   });  
   
@@ -1384,14 +1442,17 @@ function render(){
     const valAColor = !r.foundInA ? 'text-muted' : (diff ? 'text-warning' : 'text-success');  
     const convBadgeStyle = !r.foundInA ? 'background:rgba(239, 68, 68, 0.2);color:#fca5a5' : 'background:rgba(125,125,125,0.1)'; 
     const diasDisplay = r.diasDesdeEnvio !== null ? r.diasDesdeEnvio : '-'; 
- 
-    return `<tr class="${alertRow}"> 
+
+    // --- LINHA PRINCIPAL ---
+    const rowClass = alertRow;
+    let html = `<tr class="${rowClass}"> 
         <td class="text-center"> 
-            <button class="btn-icon" onclick="openHistory('${r.atendimento}')" title="Ver Histórico Completo"> 
+            <button class="btn-icon" onclick="openHistory('${r.atendimento}','${r.conta || ''}')" title="Ver Histórico Completo"> 
                 <i class="fa-solid fa-eye"></i> 
             </button> 
         </td> 
-        <td class="font-mono" style="font-weight:600;color:var(--text-main)">${r.atendimento}</td> 
+        <td class="font-mono" style="font-weight:600;color:var(--text-main)">${r.atendimento}</td>
+        <td class="font-mono" style="color:var(--warning)">${r.conta || '-'}</td>
         <td>${r.finalSetor}</td> 
         <td><span style="${convBadgeStyle};padding:2px 8px;border-radius:6px;font-size:11px;font-weight:500;">${r.finalConvenio}</span></td> 
         <td class="text-right font-mono" style="font-weight:700">R$ ${formatBR(r.valorB || 0)}</td> 
@@ -1402,7 +1463,36 @@ function render(){
         <td style="font-family:'JetBrains Mono'">${r.dataEnvio ? r.dataEnvio.toLocaleDateString('pt-BR') : '-'}</td> 
         <td class="text-center font-mono">${diasDisplay}</td> 
         <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text-muted);" title="${r.paciente}">${r.paciente}</td> 
-    </tr>`;  
+    </tr>`;
+
+    // --- SUBLINHAS: contas adicionais do mesmo atendimento (só em B) ---
+    if (r.subRows && r.subRows.length > 0) {
+        r.subRows.forEach(sub => {
+            html += `<tr class="row-sub">
+                <td class="text-center sub-indent">
+                    <span class="sub-badge" title="Conta adicional do mesmo atendimento, presente apenas no PDF B">
+                        <i class="fa-solid fa-code-branch"></i> B
+                    </span>
+                </td>
+                <td class="font-mono" style="color:var(--text-muted); padding-left:28px;">
+                    <i class="fa-solid fa-turn-down-right" style="font-size:10px; opacity:0.5; margin-right:5px;"></i>${sub.atendimento}
+                </td>
+                <td class="font-mono" style="color:var(--warning); font-weight:600;">${sub.conta || '-'}</td>
+                <td style="color:var(--text-muted); font-style:italic; font-size:12px;">Conta adicional — não localizada em A</td>
+                <td><span style="background:rgba(239,68,68,0.15);color:#fca5a5;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:500;">Só em B</span></td>
+                <td class="text-right font-mono" style="font-weight:700; color:var(--warning);">R$ ${formatBR(sub.valorB || 0)}</td>
+                <td class="text-right font-mono text-muted">—</td>
+                <td class="font-mono" style="color:var(--text-muted);">${sub.dataInicio ? sub.dataInicio.toLocaleDateString('pt-BR') : '-'}</td>
+                <td class="font-mono" style="color:var(--text-muted);">${sub.dataFim ? sub.dataFim.toLocaleDateString('pt-BR') : '-'}</td>
+                <td class="text-center font-mono" style="color:var(--text-muted);">${sub.Permanência || '-'}</td>
+                <td class="font-mono" style="color:var(--text-muted);">—</td>
+                <td class="text-center font-mono" style="color:var(--text-muted);">—</td>
+                <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text-muted);" title="${sub.paciente}">${sub.paciente}</td>
+            </tr>`;
+        });
+    }
+
+    return html;
   }).join('');  
   totalFiltroB.textContent = `Total Listado: R$ ${formatBR(filteredTotalBVal)}`;  
   filteredRecords.textContent = `Mostrando ${filtered.length} de ${originalMovimentados.length} registros`;
@@ -1415,7 +1505,14 @@ function renderInverseTable(){
   inverseCountBadge.textContent = pendentesB.length; 
   if(pendentesB.length > 0){ 
     document.getElementById("inverseSectionWrapper").classList.remove('hidden'); 
-    inverseTableBody.innerHTML = pendentesB.map(r=>`<tr><td class="font-mono" style="color:var(--danger)">${r.atendimento}</td><td>${r.paciente}</td><td class="text-right text-warning font-mono">R$ ${formatBR(r.valorB || 0)}</td></tr>`).join(''); 
+    // ► Tabela de pendências agora mostra a conta também
+    inverseTableBody.innerHTML = pendentesB.map(r=>`
+      <tr>
+        <td class="font-mono" style="color:var(--danger)">${r.atendimento}</td>
+        <td class="font-mono" style="color:var(--warning)">${r.conta || '-'}</td>
+        <td>${r.paciente}</td>
+        <td class="text-right text-warning font-mono">R$ ${formatBR(r.valorB || 0)}</td>
+      </tr>`).join(''); 
   } else { 
     document.getElementById("inverseSectionWrapper").classList.add('hidden'); 
   } 
@@ -1454,11 +1551,15 @@ function renderSectorCards(data){
 }  
   
 function updateTotals() {
-  const totalMovimentados = originalMovimentados.reduce((acc, r) => acc + (r.valorB || 0), 0);
+  // Soma contas principais + subRows (contas adicionais do mesmo atendimento)
+  const totalMovimentados = originalMovimentados.reduce((acc, r) => {
+    const valorPai = r.valorB || 0;
+    const valorSubs = (r.subRows || []).reduce((s, sub) => s + (sub.valorB || 0), 0);
+    return acc + valorPai + valorSubs;
+  }, 0);
+  // Pendentes são apenas os órfãos (sem atendimento correspondente em A)
   const totalPendentes = pendentesB.reduce((acc, r) => acc + (r.valorB || 0), 0);
-  
   const totalFinal = totalPdfB;
-  
   totalGeral.textContent = `R$ ${formatBR(totalFinal)}`;
   totalReconciled.textContent = `R$ ${formatBR(totalMovimentados)}`;
   totalOnlyB.textContent = `R$ ${formatBR(totalPendentes)}`;
@@ -1466,7 +1567,8 @@ function updateTotals() {
   
 exportNormalExcel.addEventListener('click', ()=>{  
   const exportData = movimentados.map(r => ({ 
-    "Atendimento": r.atendimento, 
+    "Atendimento": r.atendimento,
+    "Conta": r.conta || '',       // ► NOVO
     "Setor (PDF A)": r.finalSetor, 
     "Convênio": r.finalConvenio, 
     "Valor (PDF B)": r.valorB, 
@@ -1483,7 +1585,12 @@ exportNormalExcel.addEventListener('click', ()=>{
 });  
   
 exportInverseExcelB.addEventListener('click', ()=>{  
-  const ws = XLSX.utils.json_to_sheet(pendentesB.map(r=>({ "Atendimento": r.atendimento, "Valor": r.valorB, "Paciente": r.paciente })));  
+  const ws = XLSX.utils.json_to_sheet(pendentesB.map(r=>({ 
+    "Atendimento": r.atendimento, 
+    "Conta": r.conta || '',       // ► NOVO
+    "Valor": r.valorB, 
+    "Paciente": r.paciente 
+  })));  
   const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Não movimentado"); XLSX.writeFile(wb, `Não movimentado_${new Date().toISOString().slice(0,10)}.xlsx`);
   showToast("Download de pendências iniciado!", "warning");
 });  
