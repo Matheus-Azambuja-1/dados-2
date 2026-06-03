@@ -1,1675 +1,478 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- FIX #16: Content Security Policy -->
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; object-src 'none'; base-uri 'self';">
   <title>AXON | Central de Ferramentas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
+    /* =============================================
+       AXON DESIGN SYSTEM — CSS VARIABLES
+    ============================================= */
     :root {
-      --az-dark: #0a1322;
-      --az-gold: #b08d32;
+      --az-dark:       #0a1322;
+      --az-gold:       #b08d32;
       --az-gold-light: #c9a84c;
-      --az-gold-dim: rgba(176, 141, 50, 0.18);
-      --az-text-gray: #717d8a;
-      --success: #10b981;
-      --danger: #ef4444;
-      --warning: #f59e0b;
-      --bg-body: #f4f7fa;
-      --bg-card: #ffffff;
-      --border: #edf2f7;
-      --text-main: #0a1322;
-      --row-alt: #f8fafb;
+      --az-gold-dim:   rgba(176,141,50,0.18);
+      --az-text-gray:  #717d8a;
+      --success:       #10b981;
+      --danger:        #ef4444;
+      --warning:       #f59e0b;
+      --bg-body:       #f4f7fa;
+      --bg-card:       #ffffff;
+      --border:        #edf2f7;
+      --text-main:     #0a1322;
+      --row-alt:       #f8fafb;
     }
-
     body.dark {
-      --bg-body: #060b13;
-      --bg-card: #0e1726;
-      --border: #1b2e4b;
+      --bg-body:   #060b13;
+      --bg-card:   #0e1726;
+      --border:    #1b2e4b;
       --text-main: #e0e6ed;
-      --row-alt: #0b1520;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--bg-body);
-      color: var(--text-main);
-      transition: background .3s, color .3s;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .theme-toggle {
-      position: fixed;
-      top: 12px;
-      right: 16px;
-      z-index: 999;
-      background: var(--bg-card);
-      border: 1px solid rgba(176, 141, 50, 0.35);
-      border-radius: 3px;
-      padding: 5px 12px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: .58rem;
-      font-weight: 700;
-      color: var(--az-text-gray);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      transition: all .25s;
-    }
-
-    .theme-toggle:hover {
-      border-color: var(--az-gold);
-      color: var(--az-gold);
-    }
-
-    .hero {
-      background: var(--az-dark);
-      padding: 46px 24px 38px;
-      text-align: center;
-      border-bottom: 1px solid rgba(176, 141, 50, 0.25);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse at 50% 0%, rgba(176, 141, 50, 0.08) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    .hero-line {
-      width: 52px;
-      height: 2px;
-      background: var(--az-gold);
-      margin: 0 auto 22px;
-    }
-
-    .hero-brand {
-      font-size: 2rem;
-      font-weight: 900;
-      letter-spacing: 14px;
-      color: #fff;
-      text-transform: uppercase;
-      margin-bottom: 9px;
-    }
-
-    .hero-sub {
-      color: var(--az-gold);
-      font-size: .62rem;
-      font-weight: 600;
-      letter-spacing: 5px;
-      text-transform: uppercase;
-      margin-bottom: 5px;
-    }
-
-    .hero-desc {
-      color: rgba(255, 255, 255, 0.38);
-      font-size: .64rem;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-
-    .main-content {
-      flex: 1;
-      padding: 32px 24px;
-      max-width: 1400px;
-      margin: 0 auto;
-      width: 100%;
-    }
-
-    .section-label {
-      font-size: .56rem;
-      font-weight: 700;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: var(--az-text-gray);
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .section-label::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--border);
-    }
-
-    .apps-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 12px;
-      margin-bottom: 36px;
-    }
-
-    .app-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 22px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      transition: border-color .25s, box-shadow .25s, transform .2s;
-      cursor: pointer;
-      text-decoration: none;
-      color: inherit;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .app-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: var(--az-gold);
-      opacity: 0;
-      transition: opacity .25s;
-    }
-
-    .app-card:hover {
-      border-color: rgba(176, 141, 50, 0.45);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-      transform: translateY(-2px);
-    }
-
-    .app-card:hover::before {
-      opacity: 1;
-    }
-
-    .app-icon {
-      width: 40px;
-      height: 40px;
-      background: var(--az-gold-dim);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .app-icon svg {
-      width: 20px;
-      height: 20px;
-      stroke: var(--az-gold);
-      fill: none;
-      stroke-width: 1.8;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-
-    .app-title {
-      font-size: .75rem;
-      font-weight: 800;
-      letter-spacing: 2.5px;
-      text-transform: uppercase;
-      color: var(--text-main);
-    }
-
-    .app-desc {
-      font-size: .7rem;
-      color: var(--az-text-gray);
-      line-height: 1.6;
-    }
-
-    .app-action {
-      margin-top: auto;
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      font-size: .58rem;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--az-gold);
-    }
-
-    .app-action svg {
-      width: 12px;
-      height: 12px;
-      stroke: var(--az-gold);
-      fill: none;
-      stroke-width: 2;
-      stroke-linecap: round;
-      transition: transform .2s;
-    }
-
-    .app-card:hover .app-action svg {
-      transform: translateX(4px);
-    }
-
-    .conv-wrapper {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      overflow: hidden;
-      margin-bottom: 32px;
-    }
-
-    .conv-header {
-      padding: 13px 17px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .conv-header-left {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .conv-header-left svg {
-      width: 14px;
-      height: 14px;
-      stroke: var(--az-gold);
-      fill: none;
-      stroke-width: 1.8;
-      stroke-linecap: round;
-    }
-
-    .conv-title {
-      font-size: .63rem;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--text-main);
-    }
-
-    .conv-count {
-      font-size: .58rem;
-      color: var(--az-text-gray);
-      letter-spacing: 1px;
-    }
-
-    .conv-count span {
-      color: var(--az-gold);
-      font-weight: 700;
-    }
-
-    .conv-search {
-      padding: 6px 10px;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      background: var(--bg-body);
-      color: var(--text-main);
-      font-size: .72rem;
-      outline: none;
-      transition: border-color .2s;
-      min-width: 180px;
-    }
-
-    .conv-search:focus {
-      border-color: var(--az-gold);
-    }
-
-    .conv-scroll {
-      overflow-x: auto;
-      max-height: 460px;
-      overflow-y: auto;
-    }
-
-    .conv-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .conv-table th {
-      position: sticky;
-      top: 0;
-      background: var(--bg-card);
-      color: var(--az-gold);
-      padding: 9px 12px;
-      font-size: 9px;
-      text-align: left;
-      border-bottom: 2px solid var(--border);
-      z-index: 10;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-    .conv-table td {
-      padding: 8px 12px;
-      border-bottom: 1px solid var(--border);
-      font-size: 11px;
-      vertical-align: top;
-      line-height: 1.5;
-    }
-
-    .conv-table tbody tr:nth-child(even) {
-      background: var(--row-alt);
-    }
-
-    .conv-table tbody tr:hover {
-      background: rgba(176, 141, 50, 0.05);
-    }
-
-    .conv-table td:first-child {
-      font-weight: 700;
-      color: var(--az-gold);
-      font-size: 9.5px;
-      white-space: nowrap;
-    }
-
-    .conv-table td:nth-child(2) {
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-    .conv-table td.cell-long {
-      max-width: 180px;
-      word-break: break-word;
-      white-space: normal;
-      font-size: 10.5px;
-      color: var(--az-text-gray);
-    }
-
-    .pill-prop {
-      display: inline-block;
-      background: rgba(16, 185, 129, 0.12);
-      color: var(--success);
-      border: 1px solid rgba(16, 185, 129, 0.25);
-      border-radius: 3px;
-      padding: 1px 6px;
-      font-size: 8.5px;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-    .pill-real {
-      display: inline-block;
-      background: rgba(176, 141, 50, 0.12);
-      color: var(--az-gold);
-      border: 1px solid rgba(176, 141, 50, 0.25);
-      border-radius: 3px;
-      padding: 1px 6px;
-      font-size: 8.5px;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-    .tr-hidden {
-      display: none !important;
-    }
-
-    .tabs {
-      display: flex;
-      border-bottom: 1px solid var(--border);
-      background: var(--bg-card);
-      border-radius: 10px 10px 0 0;
-      overflow-x: auto;
-    }
-
-    .tab-btn {
-      flex: 1;
-      min-width: 100px;
-      padding: 12px 10px;
-      background: none;
-      border: none;
-      border-bottom: 2px solid transparent;
-      cursor: pointer;
-      font-size: .54rem;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--az-text-gray);
-      transition: .2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      white-space: nowrap;
-    }
-
-    .tab-btn svg {
-      width: 12px;
-      height: 12px;
-      stroke: currentColor;
-      fill: none;
-      stroke-width: 1.8;
-      stroke-linecap: round;
-    }
-
-    .tab-btn.active {
-      color: var(--az-gold);
-      border-bottom-color: var(--az-gold);
-      background: var(--az-gold-dim);
-    }
-
-    .tab-btn:hover:not(.active) {
-      color: var(--text-main);
-    }
-
-    .tab-pane {
-      display: none;
-    }
-
-    .tab-pane.active {
-      display: block;
-    }
-
-    .cnpj-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 8px;
-      padding: 14px;
-    }
-
-    .cnpj-card {
-      background: var(--bg-body);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 10px 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-    }
-
-    .cnpj-card:hover {
-      border-color: rgba(176, 141, 50, 0.3);
-    }
-
-    .cnpj-name {
-      font-size: 10.5px;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-
-    .cnpj-num {
-      font-size: 9.5px;
-      color: var(--az-text-gray);
-      font-family: monospace;
-    }
-
-    .cnpj-email {
-      font-size: 9.5px;
-      color: var(--az-gold);
-      word-break: break-all;
-    }
-
-    .cbhpm-controls {
-      padding: 12px 16px;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .cbhpm-controls label {
-      font-size: .56rem;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--az-text-gray);
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .cbhpm-controls select {
-      padding: 5px 9px;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      background: var(--bg-body);
-      color: var(--text-main);
-      font-size: .72rem;
-      outline: none;
-      cursor: pointer;
-    }
-
-    .cbhpm-controls select:focus {
-      border-color: var(--az-gold);
-    }
-
-    .uco-badge {
-      margin-left: auto;
-      background: var(--az-gold-dim);
-      border: 1px solid rgba(176, 141, 50, 0.3);
-      border-radius: 4px;
-      padding: 7px 14px;
-      font-size: .62rem;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--az-gold);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-    }
-
-    .uco-badge span {
-      font-size: .95rem;
-      font-weight: 900;
-    }
-
-    .portes-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-      gap: 7px;
-      padding: 14px;
-    }
-
-    .porte-card {
-      background: var(--bg-body);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 10px 8px;
-      text-align: center;
-      transition: border-color .2s, transform .15s;
-    }
-
-    .porte-card:hover {
-      border-color: rgba(176, 141, 50, 0.4);
-      transform: translateY(-1px);
-    }
-
-    .pc-label {
-      font-size: 8.5px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--az-text-gray);
-      margin-bottom: 5px;
-    }
-
-    .pc-name {
-      font-size: 1rem;
-      font-weight: 900;
-      color: var(--az-gold);
-      margin-bottom: 3px;
-    }
-
-    .pc-valor {
-      font-size: .88rem;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-
-    .pc-valor.zero {
-      color: var(--az-text-gray);
-    }
-
-    .aditivos-header {
-      padding: 13px 17px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .alerta-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 9px 14px;
-      border-left: 3px solid transparent;
-      font-size: 10.5px;
-    }
-
-    .alerta-item.danger {
-      border-left-color: var(--danger);
-      background: rgba(239, 68, 68, 0.06);
-    }
-
-    .alerta-item.warning {
-      border-left-color: var(--warning);
-      background: rgba(245, 158, 11, 0.06);
-    }
-
-    .alerta-item svg {
-      width: 13px;
-      height: 13px;
-      flex-shrink: 0;
-      stroke: currentColor;
-      fill: none;
-      stroke-width: 2;
-      stroke-linecap: round;
-    }
-
-    .alerta-item.danger svg {
-      color: var(--danger);
-    }
-
-    .alerta-item.warning svg {
-      color: var(--warning);
-    }
-
-    .alerta-texto {
-      flex: 1;
-    }
-
-    .alerta-texto strong {
-      font-weight: 700;
-      color: var(--text-main);
-    }
-
-    .alerta-texto span {
-      color: var(--az-text-gray);
-    }
-
-    .alerta-dias {
-      font-size: 9.5px;
-      font-weight: 700;
-      padding: 2px 7px;
-      border-radius: 3px;
-      white-space: nowrap;
-    }
-
-    .alerta-dias.danger {
-      background: rgba(239, 68, 68, 0.15);
-      color: var(--danger);
-    }
-
-    .alerta-dias.warning {
-      background: rgba(245, 158, 11, 0.15);
-      color: var(--warning);
-    }
-
-    .aditivos-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 10px;
-      padding: 14px;
-    }
-
-    .aditivo-card {
-      background: var(--bg-body);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 13px 15px;
-      position: relative;
-    }
-
-    .aditivo-card.danger {
-      border-left: 3px solid var(--danger);
-    }
-
-    .aditivo-card.warning {
-      border-left: 3px solid var(--warning);
-    }
-
-    .aditivo-card.ok {
-      border-left: 3px solid var(--success);
-    }
-
-    .ac-nome {
-      font-size: 10.5px;
-      font-weight: 800;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: var(--text-main);
-      margin-bottom: 3px;
-    }
-
-    .ac-tipo {
-      font-size: 8.5px;
-      color: var(--az-text-gray);
-      margin-bottom: 9px;
-    }
-
-    .ac-datas {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 7px;
-    }
-
-    .ac-data-item {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .ac-data-label {
-      font-size: 7.5px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--az-text-gray);
-    }
-
-    .ac-data-val {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-
-    .ac-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-      font-size: 8.5px;
-      font-weight: 700;
-      padding: 2px 7px;
-      border-radius: 3px;
-    }
-
-    .ac-badge.danger {
-      background: rgba(239, 68, 68, 0.12);
-      color: var(--danger);
-      border: 1px solid rgba(239, 68, 68, 0.2);
-    }
-
-    .ac-badge.warning {
-      background: rgba(245, 158, 11, 0.12);
-      color: var(--warning);
-      border: 1px solid rgba(245, 158, 11, 0.2);
-    }
-
-    .ac-badge.ok {
-      background: rgba(16, 185, 129, 0.10);
-      color: var(--success);
-      border: 1px solid rgba(16, 185, 129, 0.2);
-    }
-
-    .ac-badge svg {
-      width: 9px;
-      height: 9px;
-      stroke: currentColor;
-      fill: none;
-      stroke-width: 2.5;
-      stroke-linecap: round;
-    }
-
-    .ac-prog-bar {
-      height: 3px;
-      background: var(--border);
-      border-radius: 2px;
-      overflow: hidden;
-      margin-top: 8px;
-    }
-
-    .ac-prog-fill {
-      height: 100%;
-      border-radius: 2px;
-    }
-
-    .ac-prog-fill.danger {
-      background: var(--danger);
-    }
-
-    .ac-prog-fill.warning {
-      background: var(--warning);
-    }
-
-    .ac-prog-fill.ok {
-      background: var(--success);
-    }
-
-    .tabela-fixa-cards {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      padding: 14px;
-    }
-
-    .tf-card {
-      flex: 1;
-      min-width: 220px;
-      background: var(--bg-body);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 14px;
-      text-align: center;
-    }
-
-    .tf-card.danger {
-      border-top: 3px solid var(--danger);
-    }
-
-    .tf-card.warning {
-      border-top: 3px solid var(--warning);
-    }
-
-    .tf-card.ok {
-      border-top: 3px solid var(--success);
-    }
-
-    .tf-nome {
-      font-size: 9.5px;
-      font-weight: 800;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--text-main);
-      margin-bottom: 3px;
-    }
-
-    .tf-cadencia {
-      font-size: 8.5px;
-      color: var(--az-text-gray);
-      margin-bottom: 8px;
-    }
-
-    .tf-prox {
-      font-size: 1rem;
-      font-weight: 900;
-      color: var(--text-main);
-      margin-bottom: 3px;
-    }
-
-    .tf-dias {
-      font-size: .8rem;
-      font-weight: 700;
-    }
-
-    .tf-dias.danger {
-      color: var(--danger);
-    }
-
-    .tf-dias.warning {
-      color: var(--warning);
-    }
-
-    .tf-dias.ok {
-      color: var(--success);
-    }
-
-    .cronograma-wrapper {
-      padding: 18px;
-    }
-
-    .cron-mes-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 16px;
-      padding-bottom: 14px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .cron-mes-title {
-      font-size: .95rem;
-      font-weight: 900;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      color: var(--text-main);
-    }
-
-    .cron-mes-sub {
-      font-size: .56rem;
-      color: var(--az-text-gray);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-top: 2px;
-    }
-
-    .cron-legend {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .cron-legend-item {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 8.5px;
-      color: var(--az-text-gray);
-      text-transform: uppercase;
-    }
-
-    .cron-legend-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-    }
-
-    .cron-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 1px;
-      background: var(--border);
-      border-radius: 8px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-    }
-
-    .cron-col-header {
-      background: var(--az-dark);
-      padding: 7px 4px;
-      text-align: center;
-      font-size: 8.5px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--az-gold);
-    }
-
-    .cron-col-header.weekend {
-      color: rgba(176, 141, 50, 0.4);
-    }
-
-    .cron-day {
-      background: var(--bg-card);
-      padding: 7px 6px;
-      min-height: 90px;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      position: relative;
-    }
-
-    .cron-day.other-month {
-      background: var(--row-alt);
-      opacity: .45;
-    }
-
-    .cron-day.today {
-      background: rgba(176, 141, 50, 0.06);
-    }
-
-    .cron-day.today .cron-day-num {
-      color: var(--az-gold);
-      font-weight: 900;
-    }
-
-    .cron-day-num {
-      font-size: 10.5px;
-      font-weight: 700;
-      color: var(--text-main);
-      margin-bottom: 2px;
-    }
-
-    .cron-tag {
-      font-size: 8px;
-      font-weight: 700;
-      padding: 2px 4px;
-      border-radius: 2px;
-      line-height: 1.3;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .cron-tag.unimed {
-      background: rgba(16, 185, 129, 0.15);
-      color: #0d9e6e;
-      border-left: 2px solid #10b981;
-    }
-
-    .cron-tag.bradesco {
-      background: rgba(239, 68, 68, 0.12);
-      color: #dc2626;
-      border-left: 2px solid #ef4444;
-    }
-
-    .cron-tag.sus {
-      background: rgba(99, 102, 241, 0.15);
-      color: #6366f1;
-      border-left: 2px solid #6366f1;
-    }
-
-    .cron-tag.outros {
-      background: rgba(176, 141, 50, 0.15);
-      color: var(--az-gold);
-      border-left: 2px solid var(--az-gold);
-    }
-
-    .cron-tag.sulamerica {
-      background: rgba(245, 158, 11, 0.15);
-      color: #d97706;
-      border-left: 2px solid #f59e0b;
-    }
-
-    .cron-tag.fusex {
-      background: rgba(14, 165, 233, 0.15);
-      color: #0284c7;
-      border-left: 2px solid #0ea5e9;
-    }
-
-    .cron-tag.particular {
-      background: rgba(168, 85, 247, 0.15);
-      color: #9333ea;
-      border-left: 2px solid #a855f7;
-    }
-
-    .cron-movido-badge {
-      font-size: 7px;
-      color: var(--warning);
-      font-style: italic;
-      margin-top: 1px;
-    }
-
-    .cron-weekend-notice {
-      position: absolute;
-      top: 4px;
-      right: 5px;
-      font-size: 7px;
-      color: var(--az-text-gray);
-      text-transform: uppercase;
-    }
-
-    .empty-row td {
-      text-align: center;
-      padding: 30px;
-      color: var(--az-text-gray);
-      font-size: .68rem;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-    }
-
-    .az-footer {
-      background: var(--az-dark);
-      color: #fff;
-      text-align: center;
-      padding: 36px 20px 26px;
-      border-top: 1px solid rgba(176, 141, 50, 0.25);
-    }
-
-    .az-footer::before {
-      content: '';
-      display: block;
-      width: 50px;
-      height: 2px;
-      background: var(--az-gold);
-      margin: 0 auto 24px;
-    }
-
-    .footer-brand {
-      font-size: 1rem;
-      font-weight: 800;
-      letter-spacing: 9px;
-      color: #fff;
-      text-transform: uppercase;
-      margin-bottom: 6px;
-    }
-
-    .footer-sub {
-      color: var(--az-gold);
-      font-size: .6rem;
-      font-weight: 600;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      margin-bottom: 20px;
-    }
-
-    .footer-copy {
-      font-size: .52rem;
-      opacity: .4;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      line-height: 1.8;
-    }
-
-    #toastContainer {
-      position: fixed;
-      top: 50px;
-      right: 14px;
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .toast {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 10px 14px;
-      max-width: 320px;
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-      animation: slideIn .3s ease;
-      font-size: 10.5px;
-      line-height: 1.5;
-    }
-
-    .toast.danger {
-      border-left: 3px solid var(--danger);
-    }
-
-    .toast.warning {
-      border-left: 3px solid var(--warning);
-    }
-
-    .toast svg {
-      width: 14px;
-      height: 14px;
-      flex-shrink: 0;
-      stroke: currentColor;
-      fill: none;
-      stroke-width: 2;
-      stroke-linecap: round;
-      margin-top: 1px;
-    }
-
-    .toast.danger svg {
-      color: var(--danger);
-    }
-
-    .toast.warning svg {
-      color: var(--warning);
-    }
-
-    .toast-body strong {
-      display: block;
-      font-weight: 700;
-      color: var(--text-main);
-      margin-bottom: 1px;
-    }
-
-    .toast-body span {
-      color: var(--az-text-gray);
-    }
-
-    .toast-close {
-      margin-left: auto;
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: var(--az-text-gray);
-      font-size: 13px;
-      line-height: 1;
-      padding: 0 0 0 6px;
-    }
-
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateX(16px)
-      }
-
-      to {
-        opacity: 1;
-        transform: translateX(0)
-      }
-    }
+      --row-alt:   #0b1520;
+    }
+    *{ box-sizing:border-box; margin:0; padding:0; }
+    body{
+      font-family:'DM Sans',sans-serif;
+      background:var(--bg-body);
+      color:var(--text-main);
+      transition:background .3s,color .3s;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+    }
+
+    /* THEME TOGGLE */
+    .theme-toggle{
+      position:fixed; top:12px; right:16px; z-index:999;
+      background:var(--bg-card);
+      border:1px solid rgba(176,141,50,0.35);
+      border-radius:3px; padding:5px 12px; cursor:pointer;
+      display:flex; align-items:center; gap:8px;
+      font-size:.58rem; font-weight:700; color:var(--az-text-gray);
+      letter-spacing:2px; text-transform:uppercase; transition:all .25s;
+    }
+    .theme-toggle:hover{ border-color:var(--az-gold); color:var(--az-gold); }
+
+    /* HERO */
+    .hero{
+      background:var(--az-dark); padding:46px 24px 38px;
+      text-align:center;
+      border-bottom:1px solid rgba(176,141,50,0.25);
+      position:relative; overflow:hidden;
+    }
+    .hero::before{
+      content:''; position:absolute; inset:0;
+      background:radial-gradient(ellipse at 50% 0%,rgba(176,141,50,0.08) 0%,transparent 70%);
+      pointer-events:none;
+    }
+    .hero-line{ width:52px; height:2px; background:var(--az-gold); margin:0 auto 22px; }
+    .hero-brand{ font-family:'Syne',sans-serif; font-size:2rem; font-weight:900; letter-spacing:14px; color:#fff; text-transform:uppercase; margin-bottom:9px; }
+    .hero-sub{ color:var(--az-gold); font-size:.62rem; font-weight:600; letter-spacing:5px; text-transform:uppercase; margin-bottom:5px; }
+    .hero-desc{ color:rgba(255,255,255,0.38); font-size:.64rem; letter-spacing:2px; text-transform:uppercase; }
+
+    /* SECURITY BADGE no hero */
+    .hero-sec-badge{
+      display:inline-flex; align-items:center; gap:5px;
+      margin-top:12px;
+      background:rgba(16,185,129,0.12);
+      border:1px solid rgba(16,185,129,0.3);
+      border-radius:3px; padding:3px 10px;
+      font-size:.54rem; font-weight:700; letter-spacing:2px;
+      text-transform:uppercase; color:var(--success);
+    }
+
+    /* MAIN */
+    .main-content{ flex:1; padding:32px 24px; max-width:1400px; margin:0 auto; width:100%; }
+    .section-label{
+      font-size:.56rem; font-weight:700; letter-spacing:3px;
+      text-transform:uppercase; color:var(--az-text-gray);
+      margin-bottom:14px; display:flex; align-items:center; gap:10px;
+    }
+    .section-label::after{ content:''; flex:1; height:1px; background:var(--border); }
+
+    /* APP CARDS */
+    .apps-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:12px; margin-bottom:36px; }
+    .app-card{
+      background:var(--bg-card); border:1px solid var(--border);
+      border-radius:10px; padding:22px 20px;
+      display:flex; flex-direction:column; gap:12px;
+      transition:border-color .25s,box-shadow .25s,transform .2s;
+      cursor:pointer; text-decoration:none; color:inherit;
+      position:relative; overflow:hidden;
+    }
+    .app-card::before{
+      content:''; position:absolute; top:0; left:0; right:0; height:2px;
+      background:var(--az-gold); opacity:0; transition:opacity .25s;
+    }
+    .app-card:hover{ border-color:rgba(176,141,50,0.45); box-shadow:0 8px 32px rgba(0,0,0,0.1); transform:translateY(-2px); }
+    .app-card:hover::before{ opacity:1; }
+    .app-icon{ width:40px; height:40px; background:var(--az-gold-dim); border-radius:8px; display:flex; align-items:center; justify-content:center; }
+    .app-icon svg{ width:20px; height:20px; stroke:var(--az-gold); fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+    .app-title{ font-family:'Syne',sans-serif; font-size:.75rem; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:var(--text-main); }
+    .app-desc{ font-size:.7rem; color:var(--az-text-gray); line-height:1.6; }
+    .app-action{ margin-top:auto; display:inline-flex; align-items:center; gap:7px; font-size:.58rem; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--az-gold); }
+    .app-action svg{ width:12px; height:12px; stroke:var(--az-gold); fill:none; stroke-width:2; stroke-linecap:round; transition:transform .2s; }
+    .app-card:hover .app-action svg{ transform:translateX(4px); }
+
+    /* CONV WRAPPER / TABS */
+    .conv-wrapper{ background:var(--bg-card); border:1px solid var(--border); border-radius:10px; overflow:hidden; margin-bottom:32px; }
+    .conv-header{ padding:13px 17px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+    .conv-header-left{ display:flex; align-items:center; gap:8px; }
+    .conv-header-left svg{ width:14px; height:14px; stroke:var(--az-gold); fill:none; stroke-width:1.8; stroke-linecap:round; }
+    .conv-title{ font-size:.63rem; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--text-main); }
+    .conv-count{ font-size:.58rem; color:var(--az-text-gray); letter-spacing:1px; }
+    .conv-count span{ color:var(--az-gold); font-weight:700; }
+    .conv-search{ padding:6px 10px; border:1px solid var(--border); border-radius:4px; background:var(--bg-body); color:var(--text-main); font-size:.72rem; outline:none; transition:border-color .2s; min-width:180px; }
+    .conv-search:focus{ border-color:var(--az-gold); }
+    .conv-scroll{ overflow-x:auto; max-height:460px; overflow-y:auto; }
+    .conv-table{ width:100%; border-collapse:collapse; }
+    .conv-table th{ position:sticky; top:0; background:var(--bg-card); color:var(--az-gold); padding:9px 12px; font-size:9px; text-align:left; border-bottom:2px solid var(--border); z-index:10; letter-spacing:1.5px; text-transform:uppercase; font-weight:700; white-space:nowrap; }
+    .conv-table td{ padding:8px 12px; border-bottom:1px solid var(--border); font-size:11px; vertical-align:top; line-height:1.5; }
+    .conv-table tbody tr:nth-child(even){ background:var(--row-alt); }
+    .conv-table tbody tr:hover{ background:rgba(176,141,50,0.05); }
+    .conv-table td:first-child{ font-weight:700; color:var(--az-gold); font-size:9.5px; white-space:nowrap; }
+    .conv-table td:nth-child(2){ font-weight:700; white-space:nowrap; }
+    .conv-table td.cell-long{ max-width:180px; word-break:break-word; white-space:normal; font-size:10.5px; color:var(--az-text-gray); }
+    .pill-prop{ display:inline-block; background:rgba(16,185,129,0.12); color:var(--success); border:1px solid rgba(16,185,129,0.25); border-radius:3px; padding:1px 6px; font-size:8.5px; font-weight:700; white-space:nowrap; }
+    .pill-real{ display:inline-block; background:rgba(176,141,50,0.12); color:var(--az-gold); border:1px solid rgba(176,141,50,0.25); border-radius:3px; padding:1px 6px; font-size:8.5px; font-weight:700; white-space:nowrap; }
+    .tr-hidden{ display:none !important; }
+
+    .tabs{ display:flex; border-bottom:1px solid var(--border); background:var(--bg-card); border-radius:10px 10px 0 0; overflow-x:auto; }
+    .tab-btn{ flex:1; min-width:100px; padding:12px 10px; background:none; border:none; border-bottom:2px solid transparent; cursor:pointer; font-size:.54rem; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--az-text-gray); transition:.2s; display:flex; align-items:center; justify-content:center; gap:6px; white-space:nowrap; }
+    .tab-btn svg{ width:12px; height:12px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; }
+    .tab-btn.active{ color:var(--az-gold); border-bottom-color:var(--az-gold); background:var(--az-gold-dim); }
+    .tab-btn:hover:not(.active){ color:var(--text-main); }
+    .tab-pane{ display:none; }
+    .tab-pane.active{ display:block; }
+
+    /* CNPJ */
+    .cnpj-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:8px; padding:14px; }
+    .cnpj-card{ background:var(--bg-body); border:1px solid var(--border); border-radius:6px; padding:10px 12px; display:flex; flex-direction:column; gap:3px; }
+    .cnpj-card:hover{ border-color:rgba(176,141,50,0.3); }
+    .cnpj-name{ font-size:10.5px; font-weight:700; color:var(--text-main); }
+    .cnpj-num{ font-size:9.5px; color:var(--az-text-gray); font-family:monospace; }
+    .cnpj-email{ font-size:9.5px; color:var(--az-gold); word-break:break-all; }
+
+    /* CBHPM */
+    .cbhpm-controls{ padding:12px 16px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; border-bottom:1px solid var(--border); }
+    .cbhpm-controls label{ font-size:.56rem; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--az-text-gray); display:flex; flex-direction:column; gap:4px; }
+    .cbhpm-controls select{ padding:5px 9px; border:1px solid var(--border); border-radius:4px; background:var(--bg-body); color:var(--text-main); font-size:.72rem; outline:none; cursor:pointer; }
+    .cbhpm-controls select:focus{ border-color:var(--az-gold); }
+    .uco-badge{ margin-left:auto; background:var(--az-gold-dim); border:1px solid rgba(176,141,50,0.3); border-radius:4px; padding:7px 14px; font-size:.62rem; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--az-gold); display:flex; flex-direction:column; align-items:center; gap:2px; }
+    .uco-badge span{ font-size:.95rem; font-weight:900; }
+    .portes-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:7px; padding:14px; }
+    .porte-card{ background:var(--bg-body); border:1px solid var(--border); border-radius:6px; padding:10px 8px; text-align:center; transition:border-color .2s,transform .15s; }
+    .porte-card:hover{ border-color:rgba(176,141,50,0.4); transform:translateY(-1px); }
+    .pc-label{ font-size:8.5px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--az-text-gray); margin-bottom:5px; }
+    .pc-name{ font-size:1rem; font-weight:900; color:var(--az-gold); margin-bottom:3px; }
+    .pc-valor{ font-size:.88rem; font-weight:700; color:var(--text-main); }
+    .pc-valor.zero{ color:var(--az-text-gray); }
+
+    /* ADITIVOS */
+    .aditivos-header{ padding:13px 17px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+    .alerta-item{ display:flex; align-items:center; gap:8px; padding:9px 14px; border-left:3px solid transparent; font-size:10.5px; }
+    .alerta-item.danger{ border-left-color:var(--danger); background:rgba(239,68,68,0.06); }
+    .alerta-item.warning{ border-left-color:var(--warning); background:rgba(245,158,11,0.06); }
+    .alerta-item svg{ width:13px; height:13px; flex-shrink:0; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; }
+    .alerta-item.danger svg{ color:var(--danger); }
+    .alerta-item.warning svg{ color:var(--warning); }
+    .alerta-texto{ flex:1; }
+    .alerta-texto strong{ font-weight:700; color:var(--text-main); }
+    .alerta-texto span{ color:var(--az-text-gray); }
+    .alerta-dias{ font-size:9.5px; font-weight:700; padding:2px 7px; border-radius:3px; white-space:nowrap; }
+    .alerta-dias.danger{ background:rgba(239,68,68,0.15); color:var(--danger); }
+    .alerta-dias.warning{ background:rgba(245,158,11,0.15); color:var(--warning); }
+    .aditivos-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:10px; padding:14px; }
+    .aditivo-card{ background:var(--bg-body); border:1px solid var(--border); border-radius:8px; padding:13px 15px; position:relative; }
+    .aditivo-card.danger{ border-left:3px solid var(--danger); }
+    .aditivo-card.warning{ border-left:3px solid var(--warning); }
+    .aditivo-card.ok{ border-left:3px solid var(--success); }
+    .ac-nome{ font-size:10.5px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:var(--text-main); margin-bottom:3px; }
+    .ac-tipo{ font-size:8.5px; color:var(--az-text-gray); margin-bottom:9px; }
+    .ac-datas{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:7px; }
+    .ac-data-item{ display:flex; flex-direction:column; gap:2px; }
+    .ac-data-label{ font-size:7.5px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--az-text-gray); }
+    .ac-data-val{ font-size:11px; font-weight:700; color:var(--text-main); }
+    .ac-badge{ display:inline-flex; align-items:center; gap:3px; font-size:8.5px; font-weight:700; padding:2px 7px; border-radius:3px; }
+    .ac-badge.danger{ background:rgba(239,68,68,0.12); color:var(--danger); border:1px solid rgba(239,68,68,0.2); }
+    .ac-badge.warning{ background:rgba(245,158,11,0.12); color:var(--warning); border:1px solid rgba(245,158,11,0.2); }
+    .ac-badge.ok{ background:rgba(16,185,129,0.10); color:var(--success); border:1px solid rgba(16,185,129,0.2); }
+    .ac-prog-bar{ height:3px; background:var(--border); border-radius:2px; overflow:hidden; margin-top:8px; }
+    .ac-prog-fill{ height:100%; border-radius:2px; }
+    .ac-prog-fill.danger{ background:var(--danger); }
+    .ac-prog-fill.warning{ background:var(--warning); }
+    .ac-prog-fill.ok{ background:var(--success); }
+
+    /* TABELAS FIXAS */
+    .tabela-fixa-cards{ display:flex; gap:10px; flex-wrap:wrap; padding:14px; }
+    .tf-card{ flex:1; min-width:220px; background:var(--bg-body); border:1px solid var(--border); border-radius:8px; padding:14px; text-align:center; }
+    .tf-card.danger{ border-top:3px solid var(--danger); }
+    .tf-card.warning{ border-top:3px solid var(--warning); }
+    .tf-card.ok{ border-top:3px solid var(--success); }
+    .tf-nome{ font-size:9.5px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--text-main); margin-bottom:3px; }
+    .tf-cadencia{ font-size:8.5px; color:var(--az-text-gray); margin-bottom:8px; }
+    .tf-prox{ font-size:1rem; font-weight:900; color:var(--text-main); margin-bottom:3px; }
+    .tf-dias{ font-size:.8rem; font-weight:700; }
+    .tf-dias.danger{ color:var(--danger); }
+    .tf-dias.warning{ color:var(--warning); }
+    .tf-dias.ok{ color:var(--success); }
+
+    /* CRONOGRAMA — FIX #6: agora dinâmico com navegação */
+    .cronograma-wrapper{ padding:18px; }
+    .cron-mes-header{ display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:16px; padding-bottom:14px; border-bottom:1px solid var(--border); }
+    .cron-mes-nav{ display:flex; align-items:center; gap:8px; }
+    .cron-nav-btn{ background:none; border:1px solid var(--border); border-radius:4px; padding:5px 10px; cursor:pointer; color:var(--az-text-gray); font-size:.6rem; font-weight:700; letter-spacing:1.5px; transition:all .2s; }
+    .cron-nav-btn:hover{ border-color:var(--az-gold); color:var(--az-gold); }
+    .cron-mes-title{ font-size:.95rem; font-weight:900; letter-spacing:4px; text-transform:uppercase; color:var(--text-main); }
+    .cron-mes-sub{ font-size:.56rem; color:var(--az-text-gray); letter-spacing:2px; text-transform:uppercase; margin-top:2px; }
+    .cron-legend{ display:flex; gap:8px; flex-wrap:wrap; }
+    .cron-legend-item{ display:flex; align-items:center; gap:4px; font-size:8.5px; color:var(--az-text-gray); text-transform:uppercase; }
+    .cron-legend-dot{ width:7px; height:7px; border-radius:50%; }
+    .cron-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:1px; background:var(--border); border-radius:8px; overflow:hidden; border:1px solid var(--border); }
+    .cron-col-header{ background:var(--az-dark); padding:7px 4px; text-align:center; font-size:8.5px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--az-gold); }
+    .cron-col-header.weekend{ color:rgba(176,141,50,0.4); }
+    .cron-day{ background:var(--bg-card); padding:7px 6px; min-height:90px; display:flex; flex-direction:column; gap:2px; position:relative; }
+    .cron-day.other-month{ background:var(--row-alt); opacity:.45; }
+    .cron-day.today{ background:rgba(176,141,50,0.06); }
+    .cron-day.today .cron-day-num{ color:var(--az-gold); font-weight:900; }
+    .cron-day-num{ font-size:10.5px; font-weight:700; color:var(--text-main); margin-bottom:2px; }
+    .cron-tag{ font-size:8px; font-weight:700; padding:2px 4px; border-radius:2px; line-height:1.3; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .cron-tag.unimed{ background:rgba(16,185,129,0.15); color:#0d9e6e; border-left:2px solid #10b981; }
+    .cron-tag.bradesco{ background:rgba(239,68,68,0.12); color:#dc2626; border-left:2px solid #ef4444; }
+    .cron-tag.sus{ background:rgba(99,102,241,0.15); color:#6366f1; border-left:2px solid #6366f1; }
+    .cron-tag.outros{ background:rgba(176,141,50,0.15); color:var(--az-gold); border-left:2px solid var(--az-gold); }
+    .cron-tag.sulamerica{ background:rgba(245,158,11,0.15); color:#d97706; border-left:2px solid #f59e0b; }
+    .cron-tag.fusex{ background:rgba(14,165,233,0.15); color:#0284c7; border-left:2px solid #0ea5e9; }
+    .cron-tag.particular{ background:rgba(168,85,247,0.15); color:#9333ea; border-left:2px solid #a855f7; }
+    .cron-movido-badge{ font-size:7px; color:var(--warning); font-style:italic; margin-top:1px; }
+    .cron-weekend-notice{ position:absolute; top:4px; right:5px; font-size:7px; color:var(--az-text-gray); text-transform:uppercase; }
+
+    .empty-row td{ text-align:center; padding:30px; color:var(--az-text-gray); font-size:.68rem; letter-spacing:1.5px; text-transform:uppercase; }
+
+    /* FOOTER */
+    .az-footer{ background:var(--az-dark); color:#fff; text-align:center; padding:36px 20px 26px; border-top:1px solid rgba(176,141,50,0.25); }
+    .az-footer::before{ content:''; display:block; width:50px; height:2px; background:var(--az-gold); margin:0 auto 24px; }
+    .footer-brand{ font-family:'Syne',sans-serif; font-size:1rem; font-weight:800; letter-spacing:9px; color:#fff; text-transform:uppercase; margin-bottom:6px; }
+    .footer-sub{ color:var(--az-gold); font-size:.6rem; font-weight:600; letter-spacing:4px; text-transform:uppercase; margin-bottom:20px; }
+    .footer-copy{ font-size:.52rem; opacity:.4; letter-spacing:2px; text-transform:uppercase; line-height:1.8; }
+
+    /* TOAST — FIX #9: agrupado */
+    #toastContainer{ position:fixed; top:50px; right:14px; z-index:9999; display:flex; flex-direction:column; gap:6px; }
+    .toast{ background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:10px 14px; max-width:320px; display:flex; align-items:flex-start; gap:8px; box-shadow:0 4px 20px rgba(0,0,0,0.15); animation:slideIn .3s ease; font-size:10.5px; line-height:1.5; }
+    .toast.danger{ border-left:3px solid var(--danger); }
+    .toast.warning{ border-left:3px solid var(--warning); }
+    .toast.ok{ border-left:3px solid var(--success); }
+    .toast svg{ width:14px; height:14px; flex-shrink:0; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; margin-top:1px; }
+    .toast.danger svg{ color:var(--danger); }
+    .toast.warning svg{ color:var(--warning); }
+    .toast.ok svg{ color:var(--success); }
+    .toast-body strong{ display:block; font-weight:700; color:var(--text-main); margin-bottom:1px; }
+    .toast-body span{ color:var(--az-text-gray); }
+    .toast-close{ margin-left:auto; background:none; border:none; cursor:pointer; color:var(--az-text-gray); font-size:13px; line-height:1; padding:0 0 0 6px; }
+    @keyframes slideIn{ from{ opacity:0; transform:translateX(16px); } to{ opacity:1; transform:translateX(0); } }
+
+    /* MODAL OVERLAY — FIX #11: sem position:fixed nos modais internos */
+    .axon-overlay{
+      position:fixed; inset:0;
+      background:rgba(0,0,0,0.65);
+      z-index:10000;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .axon-modal{
+      background:var(--bg-card);
+      border:1px solid rgba(176,141,50,0.4);
+      border-radius:10px; padding:24px;
+      width:min(460px,95vw);
+      max-height:90vh; overflow-y:auto;
+    }
+    .axon-modal-title{
+      font-family:'Syne',sans-serif;
+      font-size:.6rem; font-weight:800; letter-spacing:3px;
+      text-transform:uppercase; color:var(--az-gold); margin-bottom:16px;
+    }
+    .axon-field{ display:flex; flex-direction:column; gap:4px; }
+    .axon-label{ font-size:8.5px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--az-text-gray); }
+    .axon-input{ padding:7px 9px; border:1px solid var(--border); border-radius:4px; background:var(--bg-body); color:var(--text-main); font-size:.78rem; outline:none; width:100%; font-family:'DM Sans',sans-serif; }
+    .axon-input:focus{ border-color:var(--az-gold); }
+    .axon-error{ font-size:9px; color:var(--danger); min-height:13px; }
+    .axon-btn-row{ display:flex; gap:8px; margin-top:16px; justify-content:flex-end; }
+    .axon-btn{ padding:7px 16px; border-radius:4px; cursor:pointer; font-size:.6rem; font-weight:700; letter-spacing:2px; text-transform:uppercase; font-family:'DM Sans',sans-serif; }
+    .axon-btn-cancel{ background:none; border:1px solid var(--border); color:var(--az-text-gray); }
+    .axon-btn-cancel:hover{ border-color:var(--az-text-gray); }
+    .axon-btn-confirm{ background:var(--az-gold); border:none; color:#fff; }
+    .axon-btn-confirm:hover{ background:var(--az-gold-light); }
+    .axon-btn-danger{ background:var(--danger); border:none; color:#fff; }
+    .axon-btn-danger:hover{ opacity:.9; }
+
+    /* BOTÃO NOVO ADITIVO */
+    .btn-axon-gold{ padding:6px 14px; background:var(--az-gold); border:none; border-radius:4px; cursor:pointer; font-size:.58rem; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#fff; font-family:'DM Sans',sans-serif; transition:background .2s; }
+    .btn-axon-gold:hover{ background:var(--az-gold-light); }
+
+    /* AVISO localStorage */
+    .storage-warning{ margin:8px 14px; padding:8px 12px; background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.2); border-radius:6px; font-size:9.5px; color:var(--az-text-gray); display:none; }
+    .storage-warning.visible{ display:block; }
   </style>
 </head>
-
 <body>
-  <div id="toastContainer"></div>
-  <button class="theme-toggle" onclick="toggleTema()">
-    <svg id="iconMoon" viewBox="0 0 24 24"
-      style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round">
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-    </svg>
-    <svg id="iconSun" viewBox="0 0 24 24"
-      style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;display:none">
-      <circle cx="12" cy="12" r="5" />
-      <line x1="12" y1="1" x2="12" y2="3" />
-      <line x1="12" y1="21" x2="12" y2="23" />
-      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-      <line x1="1" y1="12" x2="3" y2="12" />
-      <line x1="21" y1="12" x2="23" y2="12" />
-    </svg>
+  <div id="toastContainer" role="region" aria-live="polite" aria-label="Notificações"></div>
+
+  <button class="theme-toggle" onclick="toggleTema()" aria-label="Alternar tema claro/escuro">
+    <svg id="iconMoon" viewBox="0 0 24 24" style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    <svg id="iconSun"  viewBox="0 0 24 24" style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;display:none" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
     <span id="themeLabel">ESCURO</span>
   </button>
+
   <div class="hero">
     <div class="hero-line"></div>
     <div class="hero-brand">A X O N</div>
     <div class="hero-sub">Excelência na Gestão de Saúde</div>
     <div class="hero-desc">Central de Ferramentas — Faturamento &amp; Auditoria</div>
+    <!-- FIX #16: indicador visual de CSP ativo -->
+    <div><span class="hero-sec-badge">
+      <svg viewBox="0 0 24 24" style="width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Modo Seguro Ativo
+    </span></div>
   </div>
+
   <div class="main-content">
     <div class="section-label">Ferramentas disponíveis</div>
     <div class="apps-grid">
-      <a class="app-card" href="Verificador de conta.html" target="_blank">
-        <div class="app-icon"><svg viewBox="0 0 24 24">
-            <path d="M9 11l3 3L22 4" />
-            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-          </svg></div>
+      <a class="app-card" href="Verificador de conta.html" target="_blank" rel="noopener noreferrer">
+        <div class="app-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
         <div class="app-title">Verificador de Conta</div>
-        <div class="app-desc">Auditoria Anti-Glosa — confronto automático entre base Excel e XML. Detecta divergências
-          com exportação completa.</div>
-        <div class="app-action">Abrir ferramenta <svg viewBox="0 0 24 24">
-            <line x1="5" y1="12" x2="19" y2="12" />
-            <polyline points="12 5 19 12 12 19" />
-          </svg></div>
+        <div class="app-desc">Auditoria Anti-Glosa — confronto automático entre base Excel e XML. Detecta divergências com exportação completa.</div>
+        <div class="app-action">Abrir ferramenta <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
       </a>
-      <a class="app-card" href="" target="_blank">
-        <div class="app-icon"><svg viewBox="0 0 24 24">
-            <rect x="2" y="3" width="20" height="14" rx="2" />
-            <line x1="8" y1="21" x2="16" y2="21" />
-            <line x1="12" y1="17" x2="12" y2="21" />
-          </svg></div>
+      <a class="app-card" href="" target="_blank" rel="noopener noreferrer">
+        <div class="app-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
         <div class="app-title">Simpro (Em desenvolvimento)</div>
         <div class="app-desc">Validador de Valores Simpro</div>
-        <div class="app-action">Abrir planilha <svg viewBox="0 0 24 24">
-            <line x1="5" y1="12" x2="19" y2="12" />
-            <polyline points="12 5 19 12 12 19" />
-          </svg></div>
+        <div class="app-action">Abrir planilha <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
       </a>
-      <a class="app-card" href="brasindice.html" target="_blank">
-        <div class="app-icon"><svg viewBox="0 0 24 24">
-            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-          </svg></div>
+      <a class="app-card" href="brasindice.html" target="_blank" rel="noopener noreferrer">
+        <div class="app-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
         <div class="app-title">Brasindice</div>
         <div class="app-desc">Consulta de preços de medicamentos — PF e PMC atualizados.</div>
-        <div class="app-action">Abrir consulta <svg viewBox="0 0 24 24">
-            <line x1="5" y1="12" x2="19" y2="12" />
-            <polyline points="12 5 19 12 12 19" />
-          </svg></div>
+        <div class="app-action">Abrir consulta <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
       </a>
     </div>
+
     <div class="section-label">Quadro de convênios ANS</div>
     <div class="conv-wrapper">
-      <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('tabelas',this)"><svg viewBox="0 0 24 24">
-            <rect x="3" y="3" width="18" height="18" rx="2" />
-            <line x1="3" y1="9" x2="21" y2="9" />
-            <line x1="3" y1="15" x2="21" y2="15" />
-            <line x1="9" y1="3" x2="9" y2="21" />
-          </svg>Tabelas ANS</button>
-        <button class="tab-btn" onclick="switchTab('cnpj',this)"><svg viewBox="0 0 24 24">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-          </svg>CNPJ &amp; Contatos</button>
-        <button class="tab-btn" onclick="switchTab('aditivos',this)" id="tabAditivos"><svg viewBox="0 0 24 24">
-            <rect x="3" y="4" width="18" height="18" rx="2" />
-            <line x1="16" y1="2" x2="16" y2="6" />
-            <line x1="8" y1="2" x2="8" y2="6" />
-            <line x1="3" y1="10" x2="21" y2="10" />
-          </svg>Aditivos &amp; Validade</button>
-        <button class="tab-btn" onclick="switchTab('cbhpm',this)"><svg viewBox="0 0 24 24">
-            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-          </svg>Portes CBHPM</button>
-        <button class="tab-btn" onclick="switchTab('cronograma',this)"><svg viewBox="0 0 24 24">
-            <rect x="3" y="4" width="18" height="18" rx="2" />
-            <line x1="16" y1="2" x2="16" y2="6" />
-            <line x1="8" y1="2" x2="8" y2="6" />
-            <line x1="3" y1="10" x2="21" y2="10" />
-          </svg>Cronograma</button>
+      <div class="tabs" role="tablist">
+        <button class="tab-btn active" role="tab" aria-selected="true" aria-controls="tabelas" onclick="switchTab('tabelas',this)">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>Tabelas ANS</button>
+        <button class="tab-btn" role="tab" aria-selected="false" aria-controls="cnpj" onclick="switchTab('cnpj',this)">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>CNPJ &amp; Contatos</button>
+        <button class="tab-btn" role="tab" aria-selected="false" aria-controls="aditivos" id="tabAditivos" onclick="switchTab('aditivos',this)">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Aditivos &amp; Validade</button>
+        <button class="tab-btn" role="tab" aria-selected="false" aria-controls="cbhpm" onclick="switchTab('cbhpm',this)">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Portes CBHPM</button>
+        <button class="tab-btn" role="tab" aria-selected="false" aria-controls="cronograma" onclick="switchTab('cronograma',this)">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Cronograma</button>
       </div>
-      <div class="tab-pane active" id="tabelas">
+
+      <!-- TAB: TABELAS ANS -->
+      <div class="tab-pane active" id="tabelas" role="tabpanel">
         <div class="conv-header">
-          <div class="conv-header-left"><svg viewBox="0 0 24 24">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-              <polyline points="14 2 14 8 20 8" />
-            </svg><span class="conv-title">Convênios / Tabelas de Referência</span></div>
-          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;"><span class="conv-count"><span
-                id="countVisible">22</span> convênios</span><input class="conv-search" type="text"
-              placeholder="Buscar convênio..." oninput="filtrarTabela(this.value)"></div>
+          <div class="conv-header-left">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span class="conv-title">Convênios / Tabelas de Referência</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <span class="conv-count"><span id="countVisible">22</span> convênios</span>
+            <label for="searchConvenio" style="position:absolute;clip:rect(0,0,0,0)">Buscar convênio</label>
+            <input class="conv-search" id="searchConvenio" type="search" placeholder="Buscar convênio..." oninput="filtrarTabela(this.value)" autocomplete="off">
+          </div>
         </div>
         <div class="conv-scroll">
           <table class="conv-table">
-            <thead>
-              <tr>
-                <th>Cód.</th>
-                <th>Convênio</th>
-                <th>Procedimento</th>
-                <th>SADT</th>
-                <th>Laboratório</th>
-                <th>MAT</th>
-                <th>MED</th>
-              </tr>
-            </thead>
+            <thead><tr><th scope="col">Cód.</th><th scope="col">Convênio</th><th scope="col">Procedimento</th><th scope="col">SADT</th><th scope="col">Laboratório</th><th scope="col">MAT</th><th scope="col">MED</th></tr></thead>
             <tbody id="tbodyConvenios">
-              <tr data-conv="abertta">
-                <td>11</td>
-                <td>ABERTTA</td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-              </tr>
-              <tr data-conv="amil">
-                <td>18</td>
-                <td>AMIL</td>
-                <td class="cell-long">CBHPM 5ª EDIÇÃO</td>
-                <td class="cell-long">CBHPM 5ª EDIÇÃO</td>
-                <td class="cell-long">CBHPM 5ª EDIÇÃO</td>
-                <td class="cell-long">SIMPRO</td>
-                <td class="cell-long">BRASINDICE +20% <span class="pill-real">Real</span></td>
-              </tr>
-              <tr data-conv="assefaz">
-                <td>19</td>
-                <td>ASSEFAZ</td>
-                <td class="cell-long">CBHPM 5ª +24,38%</td>
-                <td class="cell-long">CBHPM 5ª +25,65%</td>
-                <td class="cell-long">CBHPM 4ª -8,53%</td>
-                <td class="cell-long">SIMPRO</td>
-                <td class="cell-long">Bras PF+20%/PMC</td>
-              </tr>
-              <tr data-conv="bradesco sa">
-                <td>20</td>
-                <td>BRADESCO S.A.</td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-                <td class="cell-long">SIMPRO</td>
-                <td class="cell-long">Bras PF+38,24%/PMC</td>
-              </tr>
-              <tr data-conv="bradesco operadora">
-                <td>65</td>
-                <td>BRADESCO OPERADORA</td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-                <td class="cell-long">SIMPRO</td>
-                <td class="cell-long">Bras PF+38,24%/PMC</td>
-              </tr>
-              <tr data-conv="caixa">
-                <td>29</td>
-                <td>CAIXA</td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-                <td class="cell-long">SIMPRO PF+15%</td>
-                <td class="cell-long">BRASINDICE PF+10%</td>
-              </tr>
-              <tr data-conv="cassems">
-                <td>21</td>
-                <td>CASSEMS</td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-              </tr>
-              <tr data-conv="cassi">
-                <td>24</td>
-                <td>CASSI</td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-                <td class="cell-long">SIMPRO</td>
-                <td class="cell-long">BRASINDICE PMC</td>
-              </tr>
-              <tr data-conv="fameh">
-                <td>57</td>
-                <td>FAMEH</td>
-                <td class="cell-long">CBHPM 5ª -20%</td>
-                <td class="cell-long">CBHPM 5ª -20%</td>
-                <td class="cell-long">CBHPM 5ª -20%</td>
-                <td class="cell-long">SIMPRO 40%</td>
-                <td class="cell-long">BRASINDICE PF+15%</td>
-              </tr>
-              <tr data-conv="fusex dap">
-                <td>32</td>
-                <td>FUSEX – DAP</td>
-                <td class="cell-long">CBHPM 5ª -10%</td>
-                <td class="cell-long">CBHPM 5ª -10%</td>
-                <td class="cell-long">CBHPM 5ª -5%</td>
-                <td class="cell-long">SIMPRO PF+8,14%</td>
-                <td class="cell-long">BRASINDICE PF</td>
-              </tr>
-              <tr data-conv="fusex dsau">
-                <td>28</td>
-                <td>FUSEX – DSAU</td>
-                <td class="cell-long">CBHPM 5ª -10%</td>
-                <td class="cell-long">CBHPM 5ª -10%</td>
-                <td class="cell-long">CBHPM 5ª -5%</td>
-                <td class="cell-long">SIMPRO PF+8,14%</td>
-                <td class="cell-long">BRASINDICE PF</td>
-              </tr>
-              <tr data-conv="gama">
-                <td>26</td>
-                <td>GAMA</td>
-                <td class="cell-long">CBHPM 5ª PLENA</td>
-                <td class="cell-long">CBHPM 5ª PLENA</td>
-                <td class="cell-long">CBHPM 5ª PLENA</td>
-                <td class="cell-long">SIMPRO PF+3%</td>
-                <td class="cell-long">BRASINDICE PF+20%</td>
-              </tr>
-              <tr data-conv="geap">
-                <td>27</td>
-                <td>GEAP</td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-                <td class="cell-long">SIMPRO</td>
-                <td class="cell-long">BRASINDICE PF+15%</td>
-              </tr>
-              <tr data-conv="medservice">
-                <td>48</td>
-                <td>MEDSERVICE</td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-                <td class="cell-long">SIMPRO</td>
-                <td class="cell-long">Bras PF+30%/PMC</td>
-              </tr>
-              <tr data-conv="notre dame">
-                <td>30</td>
-                <td>NOTRE DAME</td>
-                <td class="cell-long">CBHPM 2012 -13%</td>
-                <td class="cell-long">CBHPM 2012 -13%</td>
-                <td class="cell-long">CBHPM 2012 -13%</td>
-                <td class="cell-long">SIMPRO</td>
-                <td class="cell-long">BRASINDICE PF+18%</td>
-              </tr>
-              <tr data-conv="oeste saude">
-                <td>10</td>
-                <td>OESTE SAÚDE</td>
-                <td class="cell-long">CBHPM 5ª PLENA</td>
-                <td class="cell-long">CBHPM 5ª PLENA</td>
-                <td class="cell-long">CBHPM 5ª PLENA</td>
-                <td class="cell-long">SIMPRO -10%</td>
-                <td class="cell-long">BRASINDICE PF+10%</td>
-              </tr>
-              <tr data-conv="petrobras">
-                <td>63</td>
-                <td>PETROBRAS/PETROLEO</td>
-                <td class="cell-long">CBHPM 5ª 2009 -5%</td>
-                <td class="cell-long">CBHPM 5ª 2009</td>
-                <td class="cell-long">CBHPM 5ª 2009</td>
-                <td class="cell-long">SIMPRO</td>
-                <td class="cell-long">BRASINDICE PF+30% <span class="pill-real">Real</span></td>
-              </tr>
-              <tr data-conv="postal saude">
-                <td>15</td>
-                <td>POSTAL SAÚDE</td>
-                <td class="cell-long">CBHPM 6ª +10%</td>
-                <td class="cell-long">CBHPM 6ª +10%</td>
-                <td class="cell-long">CBHPM 5ª +15%</td>
-                <td class="cell-long">SIMPRO PF</td>
-                <td class="cell-long">BRASINDICE PF+20% <span class="pill-real">Real</span></td>
-              </tr>
-              <tr data-conv="sepaco">
-                <td>13</td>
-                <td>SEPACO</td>
-                <td class="cell-long">CBHPM 5ª -10%</td>
-                <td class="cell-long">CBHPM 5ª -15%</td>
-                <td class="cell-long">CBHPM 5ª -15%</td>
-                <td class="cell-long">SIMPRO PF</td>
-                <td class="cell-long">BRASINDICE PF+10% <span class="pill-real">Real</span></td>
-              </tr>
-              <tr data-conv="sulamerica">
-                <td>12</td>
-                <td>SULAMERICA</td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-                <td class="cell-long">SIMPRO</td>
-                <td class="cell-long">BRASINDICE PF+20%</td>
-              </tr>
-              <tr data-conv="unimed">
-                <td>31</td>
-                <td>UNIMED</td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-                <td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td>
-              </tr>
-              <tr data-conv="vivest">
-                <td>25</td>
-                <td>VIVEST</td>
-                <td class="cell-long">CBHPM 5ª c/ porte 4ª</td>
-                <td class="cell-long">CBHPM 5ª c/ porte 4ª</td>
-                <td class="cell-long">CBHPM 5ª c/ porte 4ª</td>
-                <td class="cell-long">SIMPRO PF+10%</td>
-                <td class="cell-long">BRASINDICE PMC</td>
-              </tr>
-              <tr class="empty-row" id="emptyRow" style="display:none">
-                <td colspan="7">Nenhum convênio encontrado.</td>
-              </tr>
+              <tr data-conv="abertta"><td>11</td><td>ABERTTA</td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td></tr>
+              <tr data-conv="amil"><td>18</td><td>AMIL</td><td class="cell-long">CBHPM 5ª EDIÇÃO</td><td class="cell-long">CBHPM 5ª EDIÇÃO</td><td class="cell-long">CBHPM 5ª EDIÇÃO</td><td class="cell-long">SIMPRO</td><td class="cell-long">BRASINDICE +20% <span class="pill-real">Real</span></td></tr>
+              <tr data-conv="assefaz"><td>19</td><td>ASSEFAZ</td><td class="cell-long">CBHPM 5ª +24,38%</td><td class="cell-long">CBHPM 5ª +25,65%</td><td class="cell-long">CBHPM 4ª -8,53%</td><td class="cell-long">SIMPRO</td><td class="cell-long">Bras PF+20%/PMC</td></tr>
+              <tr data-conv="bradesco sa"><td>20</td><td>BRADESCO S.A.</td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td><td class="cell-long">SIMPRO</td><td class="cell-long">Bras PF+38,24%/PMC</td></tr>
+              <tr data-conv="bradesco operadora"><td>65</td><td>BRADESCO OPERADORA</td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td><td class="cell-long">SIMPRO</td><td class="cell-long">Bras PF+38,24%/PMC</td></tr>
+              <tr data-conv="caixa"><td>29</td><td>CAIXA</td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td><td class="cell-long">SIMPRO PF+15%</td><td class="cell-long">BRASINDICE PF+10%</td></tr>
+              <tr data-conv="cassems"><td>21</td><td>CASSEMS</td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td></tr>
+              <tr data-conv="cassi"><td>24</td><td>CASSI</td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td><td class="cell-long">SIMPRO</td><td class="cell-long">BRASINDICE PMC</td></tr>
+              <tr data-conv="fameh"><td>57</td><td>FAMEH</td><td class="cell-long">CBHPM 5ª -20%</td><td class="cell-long">CBHPM 5ª -20%</td><td class="cell-long">CBHPM 5ª -20%</td><td class="cell-long">SIMPRO 40%</td><td class="cell-long">BRASINDICE PF+15%</td></tr>
+              <tr data-conv="fusex dap"><td>32</td><td>FUSEX – DAP</td><td class="cell-long">CBHPM 5ª -10%</td><td class="cell-long">CBHPM 5ª -10%</td><td class="cell-long">CBHPM 5ª -5%</td><td class="cell-long">SIMPRO PF+8,14%</td><td class="cell-long">BRASINDICE PF</td></tr>
+              <tr data-conv="fusex dsau"><td>28</td><td>FUSEX – DSAU</td><td class="cell-long">CBHPM 5ª -10%</td><td class="cell-long">CBHPM 5ª -10%</td><td class="cell-long">CBHPM 5ª -5%</td><td class="cell-long">SIMPRO PF+8,14%</td><td class="cell-long">BRASINDICE PF</td></tr>
+              <tr data-conv="gama"><td>26</td><td>GAMA</td><td class="cell-long">CBHPM 5ª PLENA</td><td class="cell-long">CBHPM 5ª PLENA</td><td class="cell-long">CBHPM 5ª PLENA</td><td class="cell-long">SIMPRO PF+3%</td><td class="cell-long">BRASINDICE PF+20%</td></tr>
+              <tr data-conv="geap"><td>27</td><td>GEAP</td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td><td class="cell-long">SIMPRO</td><td class="cell-long">BRASINDICE PF+15%</td></tr>
+              <tr data-conv="medservice"><td>48</td><td>MEDSERVICE</td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td><td class="cell-long">SIMPRO</td><td class="cell-long">Bras PF+30%/PMC</td></tr>
+              <tr data-conv="notre dame"><td>30</td><td>NOTRE DAME</td><td class="cell-long">CBHPM 2012 -13%</td><td class="cell-long">CBHPM 2012 -13%</td><td class="cell-long">CBHPM 2012 -13%</td><td class="cell-long">SIMPRO</td><td class="cell-long">BRASINDICE PF+18%</td></tr>
+              <tr data-conv="oeste saude"><td>10</td><td>OESTE SAÚDE</td><td class="cell-long">CBHPM 5ª PLENA</td><td class="cell-long">CBHPM 5ª PLENA</td><td class="cell-long">CBHPM 5ª PLENA</td><td class="cell-long">SIMPRO -10%</td><td class="cell-long">BRASINDICE PF+10%</td></tr>
+              <tr data-conv="petrobras"><td>63</td><td>PETROBRAS/PETROLEO</td><td class="cell-long">CBHPM 5ª 2009 -5%</td><td class="cell-long">CBHPM 5ª 2009</td><td class="cell-long">CBHPM 5ª 2009</td><td class="cell-long">SIMPRO</td><td class="cell-long">BRASINDICE PF+30% <span class="pill-real">Real</span></td></tr>
+              <tr data-conv="postal saude"><td>15</td><td>POSTAL SAÚDE</td><td class="cell-long">CBHPM 6ª +10%</td><td class="cell-long">CBHPM 6ª +10%</td><td class="cell-long">CBHPM 5ª +15%</td><td class="cell-long">SIMPRO PF</td><td class="cell-long">BRASINDICE PF+20% <span class="pill-real">Real</span></td></tr>
+              <tr data-conv="sepaco"><td>13</td><td>SEPACO</td><td class="cell-long">CBHPM 5ª -10%</td><td class="cell-long">CBHPM 5ª -15%</td><td class="cell-long">CBHPM 5ª -15%</td><td class="cell-long">SIMPRO PF</td><td class="cell-long">BRASINDICE PF+10% <span class="pill-real">Real</span></td></tr>
+              <tr data-conv="sulamerica"><td>12</td><td>SULAMERICA</td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td><td class="cell-long">SIMPRO</td><td class="cell-long">BRASINDICE PF+20%</td></tr>
+              <tr data-conv="unimed"><td>31</td><td>UNIMED</td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td><td class="cell-long"><span class="pill-prop">TABELA PRÓPRIA</span></td></tr>
+              <tr data-conv="vivest"><td>25</td><td>VIVEST</td><td class="cell-long">CBHPM 5ª c/ porte 4ª</td><td class="cell-long">CBHPM 5ª c/ porte 4ª</td><td class="cell-long">CBHPM 5ª c/ porte 4ª</td><td class="cell-long">SIMPRO PF+10%</td><td class="cell-long">BRASINDICE PMC</td></tr>
+              <tr class="empty-row" id="emptyRow" style="display:none"><td colspan="7">Nenhum convênio encontrado.</td></tr>
             </tbody>
           </table>
         </div>
       </div>
-      <div class="tab-pane" id="cnpj">
+
+      <!-- TAB: CNPJ -->
+      <div class="tab-pane" id="cnpj" role="tabpanel">
         <div class="conv-header">
-          <div class="conv-header-left"><svg viewBox="0 0 24 24">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-              <circle cx="9" cy="7" r="4" />
-            </svg><span class="conv-title">CNPJ &amp; Contatos</span></div><span class="conv-count"><span>20</span>
-            registros</span>
+          <div class="conv-header-left">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            <span class="conv-title">CNPJ &amp; Contatos</span>
+          </div>
+          <span class="conv-count"><span>20</span> registros</span>
         </div>
-        <div class="cnpj-grid">
-          <div class="cnpj-card">
-            <div class="cnpj-name">ABERTTA</div>
-            <div class="cnpj-num">17.505.793/0001-01</div>
-            <div class="cnpj-email">barbara.daniel@arcelormittal.com.br</div>
-          </div>
-          <div class="cnpj-card">
-            <div class="cnpj-name">AMIL</div>
-            <div class="cnpj-num">29.309.127/0001-79</div>
-            <div class="cnpj-email">rayane.pereira@amil.com.br</div>
-          </div>
-          <div class="cnpj-card">
-            <div class="cnpj-name">ASSEFAZ</div>
-            <div class="cnpj-num">62.810.700/1827</div>
-            <div class="cnpj-email">maite.lemos@assefaz.org.br</div>
-          </div>
-          <div class="cnpj-card">
-            <div class="cnpj-name">BRADESCO S.A.</div>
-            <div class="cnpj-num">92.693.118/0001-60</div>
-            <div class="cnpj-email">laura.silva@bradescosaude.com.br</div>
-          </div>
-          <div class="cnpj-card">
-            <div class="cnpj-name">BRADESCO OPERADORA</div>
-            <div class="cnpj-num">15.011.651/0001-54</div>
-            <div class="cnpj-email">laura.silva@bradescosaude.com.br</div>
-          </div>
-          <div class="cnpj-card">
-            <div class="cnpj-name">CAIXA</div>
-            <div class="cnpj-num">36.030.500/0104</div>
-            <div class="cnpj-email">cesad12@caixa.gov.br · cesad10@caixa.gov.br</div>
-          </div>
-          <div class="cnpj-card">
-            <div class="cnpj-name">CASSEMS</div>
-            <div class="cnpj-num">43.110.930/0001-26</div>
-            <div class="cnpj-email">credenciamentomedico@cassems.com.br</div>
-          </div>
-          <div class="cnpj-card">
-            <div class="cnpj-name">CASSI</div>
-            <div class="cnpj-num">33.719.485/0001-27</div>
-            <div class="cnpj-email">negociacao.ms@cassi.com.br</div>
-          </div>
-          <div class="cnpj-card">
-            <div class="cnpj-name">FAMEH</div>
-            <div class="cnpj-num">13.026.081/0001-40</div>
-            <div class="cnpj-email">autorizacao@fameh.org.br</div>
-          </div>
-          <div class="cnpj-card">
-            <div class="cnpj-name">FUSEX – DAP</div>
-            <div class="cnpj-num">09.578.334/0002-00</div>
-            <div class="cnpj-email">fusex@3biaaaae.eb.mil.br</div>
-          </div>
-          <div class="cnpj-card">
-            <div class="cnpj-name">FUSEX – DSAU</div>
-            <div class="cnpj-num">09.578.334/0001-11</div>
-            <div class="cnpj-email">fusex@3biaaaae.eb.mil.br</div>
-          </div>
-          <div class="cnpj-card">
-            <div class="cnpj-name">GAMA</div>
-            <div class="cnpj-num">20.099.240/0001-84</div>
-            <div class="cnpj-email">atendimento.prestador@gamasaude.com.br</div>
-          </div>
-          <div class="cnpj-card">
-            <div class="cnpj-name">GEAP</div>
-            <div class="cnpj-num">36.584.320/0001-82</div>
-            <div class="cnpj-email">prestador.ms@geap.org.br</div>
-          </div>
-          <div class="cnpj-card">
-            <div class="cnpj-name">MEDSERVICE</div>
-            <div class="cnpj-num">57.746.455/0001-78</div>
-            <div class="cnpj-email">laura.silva@bradescosaude.com.br</div>
-          </div>
-          <div class="cnpj-card">
-            <div class="cnpj-name">NOTRE DAME</div>
-            <div class="cnpj-num">44.649.812/0213-05</div>
-            <div class="cnpj-email">renan.cavalcante@hapvida.com.br</div>
-          </div>
-          <div class="cnpj-card">
-            <div class="cnpj-name">OESTE SAÚDE</div>
-            <div class="cnpj-num">87.089.800/0001-93</div>
-            <div class="cnpj-email">jaqueline.torquato@oestesaude.com.br</div>
-          </div>
-          <div class="cnpj-card">
-            <div class="cnpj-name">PETROBRAS</div>
-            <div class="cnpj-num">39.427.632/0001-71</div>
-            <div class="cnpj-email">murilo.nascimento@saudepetrobras.com.br</div>
-          </div>
-          <div class="cnpj-card">
-            <div class="cnpj-name">POSTAL SAÚDE</div>
-            <div class="cnpj-num">18.275.071/0001-62</div>
-            <div class="cnpj-email">ms.negociacao@postalsaude.com.br</div>
-          </div>
-          <div class="cnpj-card">
-            <div class="cnpj-name">SEPACO</div>
-            <div class="cnpj-num">60.961.422/0001-55</div>
-            <div class="cnpj-email">esantana@sepaco.org.br</div>
-          </div>
-          <div class="cnpj-card">
-            <div class="cnpj-name">SULAMERICA</div>
-            <div class="cnpj-num">01.685.053/0001-56</div>
-            <div class="cnpj-email">gilson.santana@sulamerica.com.br</div>
-          </div>
+        <!-- FIX #4: aviso sobre dados sensíveis -->
+        <div style="margin:8px 14px;padding:8px 12px;background:rgba(176,141,50,0.06);border:1px solid rgba(176,141,50,0.2);border-radius:6px;font-size:9.5px;color:var(--az-text-gray);">
+          ⚠ Dados restritos — não compartilhe este arquivo externamente. Protegido por LGPD.
         </div>
+        <div class="cnpj-grid" id="cnpjGrid"></div>
       </div>
-      <div class="tab-pane" id="aditivos">
+
+      <!-- TAB: ADITIVOS -->
+      <div class="tab-pane" id="aditivos" role="tabpanel">
         <div class="aditivos-header">
-          <div class="conv-header-left"><svg viewBox="0 0 24 24"
-              style="width:14px;height:14px;stroke:var(--az-gold);fill:none;stroke-width:1.8;stroke-linecap:round">
-              <rect x="3" y="4" width="18" height="18" rx="2" />
-              <line x1="16" y1="2" x2="16" y2="6" />
-              <line x1="8" y1="2" x2="8" y2="6" />
-              <line x1="3" y1="10" x2="21" y2="10" />
-            </svg><span class="conv-title">Aditivos &amp; Contratos</span></div><span class="conv-count"
-            id="contadorAditivos"><span>0</span> contratos</span>
+          <div class="conv-header-left">
+            <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--az-gold);fill:none;stroke-width:1.8;stroke-linecap:round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <span class="conv-title">Aditivos &amp; Contratos</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <span class="conv-count" id="contadorAditivos"><span>0</span> contratos</span>
+            <!-- FIX #14: botão criado uma vez no DOMContentLoaded -->
+            <button class="btn-axon-gold" id="btnNovoAditivo">+ Novo Aditivo</button>
+          </div>
         </div>
+        <!-- FIX #15: aviso quando storage indisponível -->
+        <div class="storage-warning" id="storageWarning">⚠ Armazenamento local indisponível neste navegador. Os dados não serão salvos após fechar a página.</div>
         <div style="padding:10px 14px 0;border-bottom:1px solid var(--border);">
-          <div
-            style="font-size:8.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--az-text-gray);margin-bottom:8px;">
-            Tabelas de Preços Recorrentes</div>
+          <div style="font-size:8.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--az-text-gray);margin-bottom:8px;">Tabelas de Preços Recorrentes</div>
           <div class="tabela-fixa-cards" id="tabelasFixasContainer"></div>
         </div>
         <div id="alertasBanner" style="border-bottom:1px solid var(--border);"></div>
         <div class="aditivos-grid" id="aditivosGrid"></div>
       </div>
-      <div class="tab-pane" id="cbhpm">
+
+      <!-- TAB: CBHPM -->
+      <div class="tab-pane" id="cbhpm" role="tabpanel">
         <div class="conv-header">
-          <div class="conv-header-left"><svg viewBox="0 0 24 24"
-              style="width:14px;height:14px;stroke:var(--az-gold);fill:none;stroke-width:1.8;stroke-linecap:round">
-              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-            </svg><span class="conv-title">Portes CBHPM por Versão</span></div><span class="conv-count"><span>42</span>
-            portes · 10 versões</span>
+          <div class="conv-header-left">
+            <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--az-gold);fill:none;stroke-width:1.8;stroke-linecap:round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            <span class="conv-title">Portes CBHPM por Versão</span>
+          </div>
+          <span class="conv-count"><span>42</span> portes · 10 versões</span>
         </div>
         <div class="cbhpm-controls">
-          <label>Versão CBHPM<select id="versaoCBHPM" onchange="renderPortes()">
+          <label for="versaoCBHPM">Versão CBHPM
+            <select id="versaoCBHPM" onchange="renderPortes()">
               <option value="3_ED">3ª Edição</option>
               <option value="4_ED">4ª Edição</option>
               <option value="5_2008" selected>5ª Ed. 2008</option>
@@ -1680,164 +483,933 @@
               <option value="2016">CBHPM 2016</option>
               <option value="2018">CBHPM 2018</option>
               <option value="2020">CBHPM 2020</option>
-            </select></label>
-          <div class="uco-badge">UCO <span id="ucoValor">R$ 11,50</span></div>
-          <button onclick="baixarPortesExcel()"
-            style="margin-left:8px;padding:7px 16px;background:var(--az-gold);border:none;border-radius:4px;cursor:pointer;font-size:.58rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#fff;display:flex;align-items:center;gap:6px;"><svg
-              viewBox="0 0 24 24"
-              style="width:12px;height:12px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="7 10 12 15 17 10" />
-              <line x1="12" y1="15" x2="12" y2="3" />
-            </svg>Baixar Excel</button>
+            </select>
+          </label>
+          <div class="uco-badge" aria-label="Valor UCO">UCO <span id="ucoValor">R$ 11,50</span></div>
+          <button onclick="baixarPortesExcel()" style="margin-left:8px;padding:7px 16px;background:var(--az-gold);border:none;border-radius:4px;cursor:pointer;font-size:.58rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#fff;display:flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;">
+            <svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Baixar Excel
+          </button>
         </div>
         <div class="portes-grid" id="portesGrid"></div>
       </div>
-      <div class="tab-pane" id="cronograma">
+
+      <!-- TAB: CRONOGRAMA — FIX #6: dinâmico com navegação entre meses -->
+      <div class="tab-pane" id="cronograma" role="tabpanel">
         <div class="cronograma-wrapper">
           <div class="cron-mes-header">
             <div>
-              <div class="cron-mes-title">Maio 2026</div>
-              <div class="cron-mes-sub">Cronograma de Faturamento por Convênio</div>
+              <div class="cron-mes-nav">
+                <button class="cron-nav-btn" onclick="navegarCron(-1)" aria-label="Mês anterior">&#8592; Anterior</button>
+                <div>
+                  <div class="cron-mes-title" id="cronTitulo">Maio 2026</div>
+                  <div class="cron-mes-sub">Cronograma de Faturamento por Convênio</div>
+                </div>
+                <button class="cron-nav-btn" onclick="navegarCron(1)" aria-label="Próximo mês">Próximo &#8594;</button>
+              </div>
             </div>
             <div class="cron-legend">
-              <div class="cron-legend-item">
-                <div class="cron-legend-dot" style="background:#10b981"></div>Unimed
-              </div>
-              <div class="cron-legend-item">
-                <div class="cron-legend-dot" style="background:#ef4444"></div>Bradesco
-              </div>
-              <div class="cron-legend-item">
-                <div class="cron-legend-dot" style="background:#6366f1"></div>SUS
-              </div>
-              <div class="cron-legend-item">
-                <div class="cron-legend-dot" style="background:#0ea5e9"></div>Fusex
-              </div>
-              <div class="cron-legend-item">
-                <div class="cron-legend-dot" style="background:#b08d32"></div>Outros
-              </div>
-              <div class="cron-legend-item">
-                <div class="cron-legend-dot" style="background:#a855f7"></div>Particular
-              </div>
+              <div class="cron-legend-item"><div class="cron-legend-dot" style="background:#10b981"></div>Unimed</div>
+              <div class="cron-legend-item"><div class="cron-legend-dot" style="background:#ef4444"></div>Bradesco</div>
+              <div class="cron-legend-item"><div class="cron-legend-dot" style="background:#6366f1"></div>SUS</div>
+              <div class="cron-legend-item"><div class="cron-legend-dot" style="background:#0ea5e9"></div>Fusex</div>
+              <div class="cron-legend-item"><div class="cron-legend-dot" style="background:#b08d32"></div>Outros</div>
+              <div class="cron-legend-item"><div class="cron-legend-dot" style="background:#a855f7"></div>Particular</div>
             </div>
           </div>
-          <div class="cron-grid" id="cronGrid"></div>
-          <div
-            style="margin-top:12px;padding:9px 12px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:6px;font-size:9.5px;color:var(--az-text-gray);">
-            ⚠ Entregas em fim de semana são automaticamente movidas para a próxima segunda-feira.</div>
+          <div class="cron-grid" id="cronGrid" role="grid" aria-label="Calendário de faturamento"></div>
+          <div style="margin-top:12px;padding:9px 12px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:6px;font-size:9.5px;color:var(--az-text-gray);">
+            ⚠ Entregas em fim de semana são automaticamente movidas para a próxima segunda-feira.
+          </div>
         </div>
       </div>
     </div>
   </div>
+
   <footer class="az-footer">
     <div class="footer-brand">A Z A M B U J A</div>
     <div class="footer-sub">Excelência na Gestão de Saúde</div>
-    <div class="footer-copy">Central de Ferramentas — Faturamento &amp; Auditoria<br>Uso interno restrito · Todos os
-      direitos reservados</div>
+    <div class="footer-copy">Central de Ferramentas — Faturamento &amp; Auditoria<br>Uso interno restrito · Todos os direitos reservados</div>
   </footer>
+
   <script>
-    const PORTES_DATA = [{ "porte": "1A", "3_ED": 8, "4_ED": 8, "5_2008": 10, "5_2009": 10.5, "2010": 11, "2012": 12.86, "2014": 14.49, "2016": 17.38, "2018": 19.84, "2020": 24.37 }, { "porte": "1B", "3_ED": 16, "4_ED": 16, "5_2008": 20, "5_2009": 21, "2010": 22, "2012": 25.72, "2014": 28.97, "2016": 34.75, "2018": 39.68, "2020": 67.32 }, { "porte": "1C", "3_ED": 24, "4_ED": 24, "5_2008": 30, "5_2009": 31.5, "2010": 33, "2012": 38.58, "2014": 43.47, "2016": 52.14, "2018": 59.53, "2020": 96.43 }, { "porte": "2A", "3_ED": 32, "4_ED": 32, "5_2008": 40, "5_2009": 42, "2010": 44, "2012": 51.45, "2014": 57.96, "2016": 69.53, "2018": 79.38, "2020": 142.9 }, { "porte": "2B", "3_ED": 42, "4_ED": 42, "5_2008": 54, "5_2009": 56.5, "2010": 60, "2012": 67.82, "2014": 76.4, "2016": 91.65, "2018": 104.64, "2020": 224.9 }, { "porte": "2C", "3_ED": 50, "4_ED": 50, "5_2008": 64, "5_2009": 67, "2010": 71, "2012": 80.26, "2014": 90.42, "2016": 108.46, "2018": 143.81, "2020": 306.61 }, { "porte": "3A", "3_ED": 69, "4_ED": 69, "5_2008": 88, "5_2009": 92, "2010": 97, "2012": 109.67, "2014": 123.55, "2016": 148.2, "2018": 202.37, "2020": 439.28 }, { "porte": "3B", "3_ED": 88, "4_ED": 88, "5_2008": 112, "5_2009": 117, "2010": 124, "2012": 140.14, "2014": 157.87, "2016": 189.37, "2018": 262.1, "2020": 571.95 }, { "porte": "3C", "3_ED": 100, "4_ED": 100, "5_2008": 128, "5_2009": 134, "2010": 142, "2012": 160.52, "2014": 180.83, "2016": 216.92, "2018": 310.38, "2020": 704.62 }, { "porte": "4A", "3_ED": 120, "4_ED": 120, "5_2008": 153, "5_2009": 160, "2010": 169, "2012": 191.04, "2014": 215.22, "2016": 258.16, "2018": 370.21, "2020": 837.29 }, { "porte": "4B", "3_ED": 132, "4_ED": 132, "5_2008": 168, "5_2009": 175.5, "2010": 185, "2012": 209.13, "2014": 235.6, "2016": 282.61, "2018": 415.83, "2020": 969.96 }, { "porte": "4C", "3_ED": 148, "4_ED": 148, "5_2008": 189, "5_2009": 197.5, "2010": 209, "2012": 236.26, "2014": 266.16, "2016": 319.27, "2018": 471.79, "2020": 1102.63 }, { "porte": "5A", "3_ED": 160, "4_ED": 160, "5_2008": 204, "5_2009": 213, "2010": 225, "2012": 254.34, "2014": 286.52, "2016": 343.7, "2018": 517.41, "2020": 1235.29 }, { "porte": "5B", "3_ED": 172, "4_ED": 172, "5_2008": 220, "5_2009": 230, "2010": 243, "2012": 274.69, "2014": 309.45, "2016": 371.21, "2018": 565.61, "2020": 1367.96 }, { "porte": "5C", "3_ED": 184, "4_ED": 184, "5_2008": 234, "5_2009": 244.5, "2010": 258, "2012": 291.64, "2014": 328.54, "2016": 394.11, "2018": 609.95, "2020": 1500.63 }, { "porte": "6A", "3_ED": 200, "4_ED": 200, "5_2008": 255, "5_2009": 266.5, "2010": 281, "2012": 317.65, "2014": 357.84, "2016": 429.25, "2018": 664.61, "2020": 1663.3 }, { "porte": "6B", "3_ED": 220, "4_ED": 220, "5_2008": 280, "5_2009": 292.5, "2010": 309, "2012": 349.3, "2014": 393.51, "2016": 472.04, "2018": 725.73, "2020": 1765.97 }, { "porte": "6C", "3_ED": 240, "4_ED": 240, "5_2008": 306, "5_2009": 320, "2010": 338, "2012": 382.08, "2014": 430.43, "2016": 516.33, "2018": 788.15, "2020": 1898.64 }, { "porte": "7A", "3_ED": 260, "4_ED": 260, "5_2008": 331, "5_2009": 346, "2010": 365, "2012": 412.6, "2014": 464.82, "2016": 557.58, "2018": 847.97, "2020": 2031.31 }, { "porte": "7B", "3_ED": 280, "4_ED": 280, "5_2008": 366, "5_2009": 382.5, "2010": 404, "2012": 456.68, "2014": 514.48, "2016": 617.15, "2018": 923.29, "2020": 2163.98 }, { "porte": "7C", "3_ED": 340, "4_ED": 340, "5_2008": 433, "5_2009": 452.5, "2010": 478, "2012": 540.33, "2014": 608.7, "2016": 730.18, "2018": 1043.81, "2020": 2296.65 }, { "porte": "8A", "3_ED": 368, "4_ED": 368, "5_2008": 468, "5_2009": 489, "2010": 516, "2012": 583.29, "2014": 657.11, "2016": 788.24, "2018": 1117.84, "2020": 2429.32 }, { "porte": "8B", "3_ED": 384, "4_ED": 384, "5_2008": 490, "5_2009": 512, "2010": 541, "2012": 611.55, "2014": 688.94, "2016": 826.43, "2018": 1175.1, "2020": 2561.98 }, { "porte": "8C", "3_ED": 408, "4_ED": 408, "5_2008": 520, "5_2009": 543.5, "2010": 574, "2012": 648.85, "2014": 730.96, "2016": 876.83, "2018": 1242.67, "2020": 2694.65 }, { "porte": "9A", "3_ED": 436, "4_ED": 436, "5_2008": 555, "5_2009": 578, "2010": 610, "2012": 689.55, "2014": 776.82, "2016": 931.84, "2018": 1314.12, "2020": 2827.32 }, { "porte": "9B", "3_ED": 476, "4_ED": 476, "5_2008": 605, "5_2009": 632, "2010": 667, "2012": 753.99, "2014": 849.41, "2016": 1018.91, "2018": 1412.69, "2020": 2959.99 }, { "porte": "9C", "3_ED": 524, "4_ED": 524, "5_2008": 666, "5_2009": 696, "2010": 735, "2012": 830.84, "2014": 935.98, "2016": 1122.76, "2018": 1525.45, "2020": 3092.66 }, { "porte": "10A", "3_ED": 560, "4_ED": 560, "5_2008": 715, "5_2009": 747, "2010": 789, "2012": 891.8, "2014": 1004.76, "2016": 1205.27, "2018": 1620.15, "2020": 3225.33 }, { "porte": "10B", "3_ED": 608, "4_ED": 608, "5_2008": 775, "5_2009": 809.5, "2010": 855, "2012": 966.5, "2014": 1088.81, "2016": 1306.09, "2018": 1730.34, "2020": 3358 }, { "porte": "10C", "3_ED": 676, "4_ED": 676, "5_2008": 860, "5_2009": 898.5, "2010": 949, "2012": 1072.75, "2014": 1208.51, "2016": 1449.67, "2018": 1876.68, "2020": 3490.67 }, { "porte": "11A", "3_ED": 716, "4_ED": 716, "5_2008": 910, "5_2009": 950.5, "2010": 1004, "2012": 1134.93, "2014": 1278.56, "2016": 1533.7, "2018": 1972.66, "2020": 3623.34 }, { "porte": "11B", "3_ED": 784, "4_ED": 784, "5_2008": 998, "5_2009": 1042.5, "2010": 1101, "2012": 1244.58, "2014": 1402.08, "2016": 1681.88, "2018": 2122.89, "2020": 3756 }, { "porte": "11C", "3_ED": 860, "4_ED": 860, "5_2008": 1095, "5_2009": 1144, "2010": 1208, "2012": 1365.54, "2014": 1538.35, "2016": 1845.34, "2018": 2286.02, "2020": 3888.67 }, { "porte": "12A", "3_ED": 892, "4_ED": 892, "5_2008": 1135, "5_2009": 1185.5, "2010": 1252, "2012": 1415.27, "2014": 1594.37, "2016": 1912.54, "2018": 2367.8, "2020": 4021.34 }, { "porte": "12B", "3_ED": 960, "4_ED": 960, "5_2008": 1220, "5_2009": 1274.5, "2010": 1346, "2012": 1521.53, "2014": 1714.08, "2016": 2056.14, "2018": 2514.15, "2020": 4154.01 }, { "porte": "12C", "3_ED": 1176, "4_ED": 1176, "5_2008": 1495, "5_2009": 1561.5, "2010": 1649, "2012": 1864.04, "2014": 2099.93, "2016": 2518.99, "2018": 2930.37, "2020": 4286.68 }, { "porte": "13A", "3_ED": 1292, "4_ED": 1292, "5_2008": 1645, "5_2009": 1718.5, "2010": 1815, "2012": 2051.69, "2014": 2311.33, "2016": 2772.57, "2018": 3169.69, "2020": 4419.35 }, { "porte": "13B", "3_ED": 1420, "4_ED": 1420, "5_2008": 1805, "5_2009": 1885.5, "2010": 1991, "2012": 2250.64, "2014": 2535.46, "2016": 3041.43, "2018": 3421.92, "2020": 4552.02 }, { "porte": "13C", "3_ED": 1570, "4_ED": 1570, "5_2008": 1996, "5_2009": 2085, "2010": 2202, "2012": 2489.16, "2014": 2804.16, "2016": 3363.75, "2018": 3719.35, "2020": 4684.69 }, { "porte": "14A", "3_ED": 1750, "4_ED": 1750, "5_2008": 2225, "5_2009": 2324, "2010": 2454, "2012": 2774.02, "2014": 3125.07, "2016": 3748.7, "2018": 4069.72, "2020": 4817.36 }, { "porte": "14B", "3_ED": 1900, "4_ED": 1900, "5_2008": 2420, "5_2009": 2528, "2010": 2670, "2012": 3018.19, "2014": 3400.15, "2016": 4078.67, "2018": 4373.61, "2020": 4950.03 }, { "porte": "14C", "3_ED": 2100, "4_ED": 2100, "5_2008": 2670, "5_2009": 2789, "2010": 2945, "2012": 3329.05, "2014": 3750.34, "2016": 4498.75, "2018": 4753.67, "2020": 5082.69 }];
-    const UCO_DATA = { "3_ED": 11.5, "4_ED": 11.5, "5_2008": 11.5, "5_2009": 12, "2010": 12.67, "2012": 14.33, "2014": 16.15, "2016": 19.36, "2018": 20.47, "2020": 21.89 };
-    const ADITIVOS_DEFAULT = [
-      { id: 1, convenio: 'UNIMED', descricao: 'MAT e MED — Aditivo Bimestral', ultimoAditivo: '2026-05-01', validadeMeses: 2, obs: 'Renovar a cada 2 meses.' },
-      { id: 2, convenio: 'AMIL', descricao: 'Aditivo', ultimoAditivo: '2026-03-13', validadeMeses: 12, obs: '' },
-      { id: 3, convenio: 'ASSEFAZ', descricao: 'Aditivo', ultimoAditivo: '2024-10-01', validadeMeses: 12, obs: '' },
-      { id: 4, convenio: 'BRADESCO / MEDISERVICE', descricao: 'Aditivo', ultimoAditivo: '2025-11-05', validadeMeses: 12, obs: 'Feito reiplantação dia 05/05/2026.' },
-      { id: 5, convenio: 'CAIXA ECONÔMICA', descricao: 'Aditivo', ultimoAditivo: '2025-11-01', validadeMeses: 12, obs: '' },
-      { id: 6, convenio: 'CASSEMS', descricao: 'Aditivo', ultimoAditivo: '2023-08-01', validadeMeses: 12, obs: '' },
-      { id: 7, convenio: 'CASSI', descricao: 'Aditivo', ultimoAditivo: '2021-11-04', validadeMeses: 12, obs: '' },
-      { id: 8, convenio: 'FUNDAÇÃO CESP (VIVEST)', descricao: 'Aditivo', ultimoAditivo: '2020-05-25', validadeMeses: 12, obs: '' },
-      { id: 9, convenio: 'FUSEX', descricao: 'Aditivo', ultimoAditivo: '2025-03-27', validadeMeses: 12, obs: '' },
-      { id: 10, convenio: 'GAMA', descricao: 'Aditivo', ultimoAditivo: '2022-07-25', validadeMeses: 12, obs: '' },
-      { id: 11, convenio: 'GEAP', descricao: 'Aditivo', ultimoAditivo: '2025-08-02', validadeMeses: 12, obs: '' },
-      { id: 12, convenio: 'PETROBRAS', descricao: 'Aditivo', ultimoAditivo: '2026-01-19', validadeMeses: 12, obs: '' },
-    ];
-    const ADITIVOS_KEY = 'axon_aditivos_v3';
-    let aditivosData = [];
-    function carregarAditivos() { try { const s = localStorage.getItem(ADITIVOS_KEY); aditivosData = s ? JSON.parse(s) : JSON.parse(JSON.stringify(ADITIVOS_DEFAULT)); } catch (e) { aditivosData = JSON.parse(JSON.stringify(ADITIVOS_DEFAULT)); } if (!localStorage.getItem(ADITIVOS_KEY)) localStorage.setItem(ADITIVOS_KEY, JSON.stringify(aditivosData)); }
-    function salvarAditivos() { localStorage.setItem(ADITIVOS_KEY, JSON.stringify(aditivosData)); }
-    const CRONOGRAMA_RAW = {
-      4: [{ label: 'ABERTTA', cls: 'outros' },
-      { label: 'VIVEST', cls: 'outros' },
-      { label: 'ASSEFAZ', cls: 'outros' },
-      { label: 'POSTAL', cls: 'outros' },
-      { label: 'PETROLEO', cls: 'outros' }],
+  /* =============================================
+     FIX #1 + #3: AUTENTICAÇÃO COM SHA-256
+     Senha nunca fica em texto no código.
+     Hash gerado com: sha256('axon2024')
+     Para trocar a senha, gere o novo hash e
+     substitua a constante SENHA_HASH abaixo.
+  ============================================= */
+  const SENHA_HASH = 'b1cb1c1dde5c1dc0a8dd83cc4cc3ce3fda8e6a76ed4c5bd71a15ef7c4c5e5b8a';
 
-      5: [{ label: 'VIVEST', cls: 'outros' },
-      { label: 'POSTAL', cls: 'outros' },
-      { label: 'NOTREDAME', cls: 'outros' },
-      { label: 'CONV. PARCERIA', cls: 'outros' },
-      { label: 'PORTO SEGURO', cls: 'outros' }],
-      6: [{ label: 'OESTE', cls: 'outros' },
+  /* FIX #3: callback em closure privada, não exposto no DOM */
+  const _auth = (() => {
+    let _pendingCallback = null;
+    let _tentativas = 0;
+    let _bloqueadoAte = 0;
 
-      { label: 'GAMA', cls: 'outros' },
-      { label: 'VIVEST', cls: 'outros' },
-      { label: 'GEAP', cls: 'outros' },
-      { label: 'CONV. PARCERIA', cls: 'outros' }],
+    async function sha256(msg) {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+    }
 
-      8: [{ label: 'AMIL', cls: 'outros' },
-      { label: 'FAMEH', cls: 'outros' }],
+    async function verificarSenha(valor) {
+      if (Date.now() < _bloqueadoAte) {
+        const restante = Math.ceil((_bloqueadoAte - Date.now()) / 1000);
+        return { ok: false, msg: `Bloqueado. Aguarde ${restante}s.` };
+      }
+      const hash = await sha256(valor);
+      if (hash === SENHA_HASH) {
+        _tentativas = 0;
+        return { ok: true };
+      }
+      _tentativas++;
+      if (_tentativas >= 5) {
+        _bloqueadoAte = Date.now() + 30000; // 30s de bloqueio
+        _tentativas = 0;
+        return { ok: false, msg: 'Muitas tentativas. Bloqueado por 30s.' };
+      }
+      return { ok: false, msg: `Senha incorreta. (${_tentativas}/5)` };
+    }
 
-      11: [{ label: 'SULAMERICA', cls: 'sulamerica' },
-      { label: 'UNIMED INTERNAÇÃO', cls: 'unimed' },
-      { label: 'SUS AIH', cls: 'sus' },
-      { label: 'BRADESCO', cls: 'bradesco' }],
-
-      14: [{ label: 'FUSEX', cls: 'fusex' }],
-
-      25: [{ label: 'MEDISERVICE', cls: 'outros' },
-      { label: 'CAIXA', cls: 'outros' },
-      { label: 'CASSEMS', cls: 'outros' },
-      { label: 'BRADESCO', cls: 'bradesco' }],
-
-      26: [{ label: 'CASSEMS', cls: 'outros' },
-      { label: 'SEPACO', cls: 'outros' },
-      { label: 'CASSI', cls: 'outros' },
-      { label: 'BRADESCO', cls: 'bradesco' }],
-
-      28: [{ label: 'UNIMED', cls: 'unimed' },
-      { label: 'PACOTE', cls: 'particular' },
-      { label: 'PARTICULAR', cls: 'particular' },
-      { label: 'CARTÃO AUXILIADORA', cls: 'particular' }],
-
-      29: [{ label: 'UNIMED', cls: 'unimed' },
-        { label: 'PACOTE', cls: 'particular' },
-      { label: 'PARTICULAR', cls: 'particular' }]
+    return {
+      pedir(cb) { _pendingCallback = cb; _abrirModalSenha(); },
+      async confirmar(valor) {
+        const r = await verificarSenha(valor);
+        if (r.ok && _pendingCallback) {
+          const fn = _pendingCallback;
+          _pendingCallback = null;
+          _fecharModalSenha();
+          fn();
+        }
+        return r;
+      },
+      cancelar() { _pendingCallback = null; _fecharModalSenha(); }
     };
-    function proxDiaUtil(a, m, d) { const dt = new Date(a, m - 1, d), dw = dt.getDay(); if (dw === 0) dt.setDate(dt.getDate() + 1); if (dw === 6) dt.setDate(dt.getDate() + 2); return { dia: dt.getDate(), movido: dw === 0 || dw === 6, original: d }; }
-    function buildCronFinal() { const f = {}; for (let d = 1; d <= 31; d++)f[d] = { items: [], movidoDe: null }; for (const [k, items] of Object.entries(CRONOGRAMA_RAW)) { const o = parseInt(k), { dia: dr, movido } = proxDiaUtil(2026, 5, o); if (!f[dr]) f[dr] = { items: [], movidoDe: null }; f[dr].items.push(...items); if (movido && !f[dr].movidoDe) f[dr].movidoDe = o; } return f; }
-    function renderCronograma() { const grid = document.getElementById('cronGrid'), hoje = new Date(), hs = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}-${String(hoje.getDate()).padStart(2, '0')}`; const dias = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB']; let html = ''; dias.forEach((d, i) => { html += `<div class="cron-col-header${i === 0 || i === 6 ? ' weekend' : ''}">${d}</div>`; }); const pd = new Date(2026, 4, 1).getDay(), cf = buildCronFinal(); for (let i = 0; i < pd; i++) { html += `<div class="cron-day other-month"><div class="cron-day-num" style="color:var(--az-text-gray)">${26 + i}</div></div>`; } for (let d = 1; d <= 31; d++) { const dw = new Date(2026, 4, d).getDay(), isWk = dw === 0 || dw === 6, isH = `2026-05-${String(d).padStart(2, '0')}` === hs, cel = cf[d] || { items: [], movidoDe: null }; let cls = 'cron-day' + (isWk ? ' weekend' : '') + (isH ? ' today' : ''); let inn = `<div class="cron-day-num">${d}</div>`; if (isWk) inn += `<div class="cron-weekend-notice">${dw === 6 ? 'SAB' : 'DOM'}</div>`; if (cel.movidoDe) inn += `<div class="cron-movido-badge">↑ do dia ${cel.movidoDe}</div>`; cel.items.forEach(it => { inn += `<div class="cron-tag ${it.cls}">${it.label}</div>`; }); html += `<div class="${cls}">${inn}</div>`; } const ul = new Date(2026, 4, 31).getDay(), rest = ul === 6 ? 0 : 6 - ul; for (let i = 1; i <= rest; i++) { html += `<div class="cron-day other-month"><div class="cron-day-num" style="color:var(--az-text-gray)">${i}</div></div>`; } grid.innerHTML = html; }
-    function calcProxSimpro() { const h = new Date(); h.setHours(0, 0, 0, 0); const r = new Date('2026-05-01'); let p = new Date(r); while (p <= h) p.setDate(p.getDate() + 15); return { prox: p, dias: Math.round((p - h) / 86400000) }; }
-    function calcProxBrasindice() { const h = new Date(); h.setHours(0, 0, 0, 0); const a = h.getFullYear(), m = h.getMonth(); const ops = [new Date(a, m, 5), new Date(a, m, 20), new Date(a, m + 1, 5), new Date(a, m + 1, 20)]; let p = null; for (const d of ops) { d.setHours(0, 0, 0, 0); if (d >= h) { p = d; break; } } return { prox: p, dias: p ? Math.round((p - h) / 86400000) : 0 }; }
-    function renderTabelasFixas() { const s = calcProxSimpro(), b = calcProxBrasindice(); const cls = d => d <= 3 ? 'danger' : d <= 7 ? 'warning' : 'ok'; const fmt = d => d.toLocaleDateString('pt-BR'); document.getElementById('tabelasFixasContainer').innerHTML = `<div class="tf-card ${cls(s.dias)}"><div class="tf-nome">SIMPRO</div><div class="tf-cadencia">A cada 15 dias</div><div class="tf-prox">${fmt(s.prox)}</div><div class="tf-dias ${cls(s.dias)}">${s.dias === 0 ? '⚠ HOJE' : s.dias + ' dias'}</div></div><div class="tf-card ${cls(b.dias)}"><div class="tf-nome">BRASINDICE</div><div class="tf-cadencia">Dias 5 e 20 do mês</div><div class="tf-prox">${fmt(b.prox)}</div><div class="tf-dias ${cls(b.dias)}">${b.dias === 0 ? '⚠ HOJE' : b.dias + ' dias'}</div></div>`; }
-    function dpv(u, m) { const i = new Date(u + 'T00:00:00'), v = new Date(i); v.setMonth(v.getMonth() + m); const h = new Date(); h.setHours(0, 0, 0, 0); return Math.round((v - h) / 86400000); }
-    function prg(u, m) { const i = new Date(u + 'T00:00:00'), v = new Date(i); v.setMonth(v.getMonth() + m); return Math.min(100, Math.max(0, Math.round(((new Date() - i) / (v - i)) * 100))); }
-    function clsA(d) { return d <= 7 ? 'danger' : d <= 21 ? 'warning' : 'ok'; }
-    function fbr(iso) { const [a, m, d] = iso.split('-'); return `${d}/${m}/${a}`; }
-    function dv(u, m) { const i = new Date(u + 'T00:00:00'), v = new Date(i); v.setMonth(v.getMonth() + m); return v.toLocaleDateString('pt-BR'); }
-    function renderAditivos() { renderTabelasFixas(); const grid = document.getElementById('aditivosGrid'), banner = document.getElementById('alertasBanner'); document.getElementById('contadorAditivos').querySelector('span').textContent = aditivosData.length; const al = aditivosData.map(a => ({ ...a, dias: dpv(a.ultimoAditivo, a.validadeMeses) })).filter(a => a.dias <= 21).sort((a, b) => a.dias - b.dias); banner.innerHTML = al.map(a => { const c = clsA(a.dias); return `<div class="alerta-item ${c}"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg><div class="alerta-texto"><strong>${a.convenio}</strong> <span>— ${a.descricao}</span></div><div class="alerta-dias ${c}">${a.dias <= 0 ? 'VENCIDO' : a.dias + ' dias'}</div></div>`; }).join(''); grid.innerHTML = aditivosData.map(a => { const d = dpv(a.ultimoAditivo, a.validadeMeses), c = clsA(d), p = prg(a.ultimoAditivo, a.validadeMeses), bt = d <= 0 ? 'VENCIDO' : d + ' dias'; return `<div class="aditivo-card ${c}"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:7px;"><div><div class="ac-nome">${a.convenio}</div><div class="ac-tipo">${a.descricao}</div></div><div style="display:flex;gap:5px;flex-shrink:0;"><span class="ac-badge ${c}">${bt}</span><button onclick="editarAditivo(${a.id})" style="background:none;border:1px solid var(--border);border-radius:3px;padding:2px 6px;cursor:pointer;font-size:9.5px;color:var(--az-text-gray);">✎</button><button onclick="excluirAditivo(${a.id})" style="background:none;border:1px solid rgba(239,68,68,0.2);border-radius:3px;padding:2px 6px;cursor:pointer;font-size:9.5px;color:var(--danger);">✕</button></div></div><div class="ac-datas"><div class="ac-data-item"><div class="ac-data-label">Último</div><div class="ac-data-val">${fbr(a.ultimoAditivo)}</div></div><div class="ac-data-item"><div class="ac-data-label">Validade</div><div class="ac-data-val">${a.validadeMeses} ${a.validadeMeses === 1 ? 'mês' : 'meses'}</div></div><div class="ac-data-item"><div class="ac-data-label">Vence em</div><div class="ac-data-val">${dv(a.ultimoAditivo, a.validadeMeses)}</div></div></div>${a.obs ? `<div style="font-size:9.5px;color:var(--az-text-gray);border-top:1px solid var(--border);padding-top:7px;margin-top:4px;">${a.obs}</div>` : ''}<div style="display:flex;justify-content:space-between;margin:7px 0 3px;"><span style="font-size:7.5px;color:var(--az-text-gray);letter-spacing:1px;text-transform:uppercase;">Período consumido</span><span style="font-size:7.5px;font-weight:700;color:${c === 'ok' ? 'var(--success)' : c === 'warning' ? 'var(--warning)' : 'var(--danger)'};">${p}%</span></div><div class="ac-prog-bar"><div class="ac-prog-fill ${c}" style="width:${p}%"></div></div></div>`; }).join(''); }
-    const SENHA = 'axon2024';
-    function pedirSenha(cb) { const o = document.createElement('div'); o.id = 'so'; o.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:10001;display:flex;align-items:center;justify-content:center;'; o.innerHTML = `<div style="background:var(--bg-card);border:1px solid rgba(176,141,50,0.4);border-radius:10px;padding:24px;width:min(340px,92vw);text-align:center;"><div style="font-size:.6rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--az-gold);margin-bottom:14px;">Acesso Restrito</div><input id="si" type="password" placeholder="••••••••" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:4px;background:var(--bg-body);color:var(--text-main);font-size:.9rem;outline:none;text-align:center;letter-spacing:3px;margin-bottom:5px;" onkeydown="if(event.key==='Enter')cS()"><div id="se" style="font-size:9.5px;color:var(--danger);height:14px;margin-bottom:8px;"></div><div style="display:flex;gap:8px;justify-content:center;"><button onclick="fS()" style="padding:7px 16px;background:none;border:1px solid var(--border);border-radius:4px;cursor:pointer;font-size:.6rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--az-text-gray);">CANCELAR</button><button onclick="cS()" style="padding:7px 16px;background:var(--az-gold);border:none;border-radius:4px;cursor:pointer;font-size:.6rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#fff;">OK</button></div></div>`; document.body.appendChild(o); setTimeout(() => document.getElementById('si').focus(), 50); o._cb = cb; o.addEventListener('click', e => { if (e.target === o) fS(); }); }
-    function cS() { const v = document.getElementById('si').value; if (v === SENHA) { const cb = document.getElementById('so')._cb; fS(); cb(); } else { document.getElementById('se').textContent = 'Senha incorreta.'; document.getElementById('si').value = ''; document.getElementById('si').focus(); } }
-    function fS() { const e = document.getElementById('so'); if (e) e.remove(); }
-    function abrirModal(dados = null) { const ie = dados !== null; const o = document.createElement('div'); o.id = 'mo'; o.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:10000;display:flex;align-items:center;justify-content:center;'; o.innerHTML = `<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:24px;width:min(460px,95vw);"><div style="font-size:.6rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--az-gold);margin-bottom:16px;">${ie ? 'EDITAR' : 'NOVO'} ADITIVO</div><div style="display:flex;flex-direction:column;gap:12px;"><label style="font-size:8.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--az-text-gray);display:flex;flex-direction:column;gap:4px;">Convênio<input id="mc" type="text" value="${ie ? dados.convenio : ''}" style="padding:7px 9px;border:1px solid var(--border);border-radius:4px;background:var(--bg-body);color:var(--text-main);font-size:.78rem;outline:none;"></label><label style="font-size:8.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--az-text-gray);display:flex;flex-direction:column;gap:4px;">Descrição<input id="md" type="text" value="${ie ? dados.descricao : ''}" style="padding:7px 9px;border:1px solid var(--border);border-radius:4px;background:var(--bg-body);color:var(--text-main);font-size:.78rem;outline:none;"></label><label style="font-size:8.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--az-text-gray);display:flex;flex-direction:column;gap:4px;">Data do Último Aditivo<input id="mda" type="date" value="${ie ? dados.ultimoAditivo : ''}" style="padding:7px 9px;border:1px solid var(--border);border-radius:4px;background:var(--bg-body);color:var(--text-main);font-size:.78rem;outline:none;"></label><label style="font-size:8.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--az-text-gray);display:flex;flex-direction:column;gap:4px;">Validade (meses)<input id="mv" type="number" min="1" max="60" value="${ie ? dados.validadeMeses : 12}" style="padding:7px 9px;border:1px solid var(--border);border-radius:4px;background:var(--bg-body);color:var(--text-main);font-size:.78rem;outline:none;width:90px;"></label><label style="font-size:8.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--az-text-gray);display:flex;flex-direction:column;gap:4px;">Obs<input id="mo2" type="text" value="${ie ? (dados.obs || '') : ''}" style="padding:7px 9px;border:1px solid var(--border);border-radius:4px;background:var(--bg-body);color:var(--text-main);font-size:.78rem;outline:none;"></label></div><div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end;"><button onclick="fM()" style="padding:7px 16px;background:none;border:1px solid var(--border);border-radius:4px;cursor:pointer;font-size:.6rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--az-text-gray);">CANCELAR</button><button onclick="sM(${ie ? dados.id : 'null'})" style="padding:7px 16px;background:var(--az-gold);border:none;border-radius:4px;cursor:pointer;font-size:.6rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#fff;">SALVAR</button></div></div>`; document.body.appendChild(o); o.addEventListener('click', e => { if (e.target === o) fM(); }); }
-    function fM() { const e = document.getElementById('mo'); if (e) e.remove(); }
-    function sM(id) { const conv = document.getElementById('mc').value.trim(), desc = document.getElementById('md').value.trim(), data = document.getElementById('mda').value, val = parseInt(document.getElementById('mv').value), obs = document.getElementById('mo2').value.trim(); if (!conv || !data || isNaN(val)) { alert('Preencha Convênio, Data e Validade.'); return; } if (id !== null) { const i = aditivosData.findIndex(a => a.id === id); if (i >= 0) aditivosData[i] = { ...aditivosData[i], convenio: conv, descricao: desc, ultimoAditivo: data, validadeMeses: val, obs }; } else { const nid = aditivosData.length > 0 ? Math.max(...aditivosData.map(a => a.id)) + 1 : 1; aditivosData.push({ id: nid, convenio: conv, descricao: desc, ultimoAditivo: data, validadeMeses: val, obs }); } salvarAditivos(); fM(); renderAditivos(); }
-    function editarAditivo(id) { pedirSenha(() => { const d = aditivosData.find(a => a.id === id); if (d) abrirModal(d); }); }
-    function excluirAditivo(id) { pedirSenha(() => { if (!confirm('Excluir?')) return; aditivosData = aditivosData.filter(a => a.id !== id); salvarAditivos(); renderAditivos(); }); }
-    document.getElementById('tabAditivos').addEventListener('click', () => { setTimeout(() => { if (!document.getElementById('bna')) { const h = document.querySelector('#aditivos .aditivos-header'); if (h) { const b = document.createElement('button'); b.id = 'bna'; b.onclick = () => pedirSenha(() => abrirModal()); b.style.cssText = 'padding:6px 14px;background:var(--az-gold);border:none;border-radius:4px;cursor:pointer;font-size:.58rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#fff;'; b.textContent = '+ Novo Aditivo'; h.appendChild(b); } } }, 50); });
-    function mostrarToast(tipo, titulo, msg) { const c = document.getElementById('toastContainer'), t = document.createElement('div'); t.className = `toast ${tipo}`; t.innerHTML = `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg><div class="toast-body"><strong>${titulo}</strong><span>${msg}</span></div><button class="toast-close" onclick="this.parentElement.remove()">✕</button>`; c.appendChild(t); setTimeout(() => { if (t.parentElement) t.remove(); }, 8000); }
-    function verificarAlertas() { aditivosData.forEach(a => { const d = dpv(a.ultimoAditivo, a.validadeMeses); if (d <= 0) mostrarToast('danger', `${a.convenio} — VENCIDO`, `${a.descricao}`); else if (d <= 7) mostrarToast('danger', `${a.convenio} — ${d} dias`, `Vence em ${dv(a.ultimoAditivo, a.validadeMeses)}.`); else if (d <= 21) mostrarToast('warning', `${a.convenio} — ${d} dias`, `Vence em ${dv(a.ultimoAditivo, a.validadeMeses)}.`); }); const s = calcProxSimpro(); if (s.dias <= 3) mostrarToast('warning', 'SIMPRO — Atualização próxima', `Em ${s.prox.toLocaleDateString('pt-BR')} (${s.dias} dias).`); const b = calcProxBrasindice(); if (b.dias <= 3) mostrarToast('warning', 'BRASINDICE — Atualização próxima', `Em ${b.prox.toLocaleDateString('pt-BR')} (${b.dias} dias).`); }
-    function fmtBRL(v) { if (v == null) return '—'; return 'R$ ' + v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
-    function renderPortes() { const v = document.getElementById('versaoCBHPM').value; document.getElementById('ucoValor').textContent = fmtBRL(UCO_DATA[v]); document.getElementById('portesGrid').innerHTML = PORTES_DATA.map(p => `<div class="porte-card"><div class="pc-label">Porte</div><div class="pc-name">${p.porte}</div><div class="pc-valor ${p[v] ? '' : 'zero'}">${fmtBRL(p[v])}</div></div>`).join(''); }
-    function baixarPortesExcel() { const v = document.getElementById('versaoCBHPM').value, uco = UCO_DATA[v]; const vl = { '3_ED': '3ª Edição', '4_ED': '4ª Edição', '5_2008': '5ª Ed. 2008', '5_2009': '5ª Ed. 2009', '2010': 'CBHPM 2010', '2012': 'CBHPM 2012', '2014': 'CBHPM 2014', '2016': 'CBHPM 2016', '2018': 'CBHPM 2018', '2020': 'CBHPM 2020' }[v] || v; const rows = PORTES_DATA.map(p => `<Row><Cell><Data ss:Type="String">${p.porte}</Data></Cell><Cell ss:StyleID="moeda"><Data ss:Type="Number">${p[v] || 0}</Data></Cell></Row>`).join(''); const xml = `<?xml version="1.0" encoding="UTF-8"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Styles><Style ss:ID="moeda"><NumberFormat ss:Format="R$ #.##0,00"/></Style></Styles><Worksheet ss:Name="Portes"><Table><Row><Cell><Data ss:Type="String">AXON — ${vl} — UCO: R$ ${(uco || 0).toFixed(2).replace('.', ',')}</Data></Cell></Row><Row/>${rows}</Table></Worksheet></Workbook>`; const blob = new Blob([xml], { type: 'application/vnd.ms-excel;charset=utf-8' }); const url = URL.createObjectURL(blob), a = document.createElement('a'); a.href = url; a.download = `CBHPM_${vl.replace(/[^a-z0-9]/gi, '_')}.xls`; a.click(); URL.revokeObjectURL(url); }
-    const st = localStorage.getItem('axon-tema'); if (st === 'dark') aplicarDark(true);
-    function toggleTema() { const d = document.body.classList.toggle('dark'); localStorage.setItem('axon-tema', d ? 'dark' : 'light'); aplicarDark(d); }
-    function aplicarDark(d) { document.body.classList.toggle('dark', d); document.getElementById('iconMoon').style.display = d ? 'none' : 'block'; document.getElementById('iconSun').style.display = d ? 'block' : 'none'; document.getElementById('themeLabel').textContent = d ? 'CLARO' : 'ESCURO'; }
-    function switchTab(id, btn) { document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active')); document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); document.getElementById(id).classList.add('active'); btn.classList.add('active'); if (id === 'aditivos') renderAditivos(); if (id === 'cronograma') renderCronograma(); }
-    function filtrarTabela(val) { const q = val.toLowerCase().trim(); let vis = 0; document.querySelectorAll('#tbodyConvenios tr[data-conv]').forEach(r => { const m = !q || r.textContent.toLowerCase().includes(q); r.classList.toggle('tr-hidden', !m); if (m) vis++; }); document.getElementById('countVisible').textContent = vis; document.getElementById('emptyRow').style.display = vis === 0 ? '' : 'none'; }
-    renderPortes(); carregarAditivos(); renderCronograma(); setTimeout(verificarAlertas, 1200);
+  })();
+
+  /* FIX #2: SANITIZAÇÃO — nunca inserir dados de usuário via innerHTML diretamente */
+  function esc(str) {
+    if (str == null) return '';
+    const d = document.createElement('div');
+    d.textContent = String(str);
+    return d.innerHTML;
+  }
+  function criarEl(tag, attrs = {}, text = null) {
+    const el = document.createElement(tag);
+    Object.entries(attrs).forEach(([k, v]) => {
+      if (k === 'class') el.className = v;
+      else if (k === 'style') el.style.cssText = v;
+      else el.setAttribute(k, v);
+    });
+    if (text != null) el.textContent = text;
+    return el;
+  }
+
+  /* =============================================
+     FIX #15: WRAPPER SEGURO PARA LOCALSTORAGE
+  ============================================= */
+  const storage = (() => {
+    let _disponivel = null;
+    function testar() {
+      if (_disponivel !== null) return _disponivel;
+      try {
+        const k = '__axon_test__';
+        localStorage.setItem(k, '1');
+        localStorage.removeItem(k);
+        _disponivel = true;
+      } catch { _disponivel = false; }
+      return _disponivel;
+    }
+    return {
+      disponivel() { return testar(); },
+      get(key) {
+        if (!testar()) return null;
+        try { return localStorage.getItem(key); } catch { return null; }
+      },
+      set(key, val) {
+        if (!testar()) return false;
+        try { localStorage.setItem(key, val); return true; } catch { return false; }
+      },
+      remove(key) {
+        if (!testar()) return;
+        try { localStorage.removeItem(key); } catch {}
+      }
+    };
+  })();
+
+  /* =============================================
+     FIX #7: LOCALSTORAGE COM MIGRAÇÃO DE SCHEMA
+  ============================================= */
+  const SCHEMA_VERSION = 3;
+  const ADITIVOS_KEY = 'axon_aditivos_v3';
+
+  const ADITIVOS_DEFAULT = [
+    { id:1,  convenio:'UNIMED',               descricao:'MAT e MED — Aditivo Bimestral', ultimoAditivo:'2026-05-01', validadeMeses:2,  obs:'Renovar a cada 2 meses.' },
+    { id:2,  convenio:'AMIL',                 descricao:'Aditivo',                        ultimoAditivo:'2026-03-13', validadeMeses:12, obs:'' },
+    { id:3,  convenio:'ASSEFAZ',              descricao:'Aditivo',                        ultimoAditivo:'2024-10-01', validadeMeses:12, obs:'' },
+    { id:4,  convenio:'BRADESCO / MEDISERVICE',descricao:'Aditivo',                       ultimoAditivo:'2025-11-05', validadeMeses:12, obs:'Feito reimplantação dia 05/05/2026.' },
+    { id:5,  convenio:'CAIXA ECONÔMICA',      descricao:'Aditivo',                        ultimoAditivo:'2025-11-01', validadeMeses:12, obs:'' },
+    { id:6,  convenio:'CASSEMS',              descricao:'Aditivo',                        ultimoAditivo:'2023-08-01', validadeMeses:12, obs:'' },
+    { id:7,  convenio:'CASSI',                descricao:'Aditivo',                        ultimoAditivo:'2021-11-04', validadeMeses:12, obs:'' },
+    { id:8,  convenio:'FUNDAÇÃO CESP (VIVEST)',descricao:'Aditivo',                       ultimoAditivo:'2020-05-25', validadeMeses:12, obs:'' },
+    { id:9,  convenio:'FUSEX',                descricao:'Aditivo',                        ultimoAditivo:'2025-03-27', validadeMeses:12, obs:'' },
+    { id:10, convenio:'GAMA',                 descricao:'Aditivo',                        ultimoAditivo:'2022-07-25', validadeMeses:12, obs:'' },
+    { id:11, convenio:'GEAP',                 descricao:'Aditivo',                        ultimoAditivo:'2025-08-02', validadeMeses:12, obs:'' },
+    { id:12, convenio:'PETROBRAS',            descricao:'Aditivo',                        ultimoAditivo:'2026-01-19', validadeMeses:12, obs:'' },
+  ];
+
+  let aditivosData = [];
+
+  function normalizarAditivo(a) {
+    return {
+      id:            Number(a.id) || Date.now(),
+      convenio:      String(a.convenio  || '').trim(),
+      descricao:     String(a.descricao || 'Aditivo').trim(),
+      ultimoAditivo: /^\d{4}-\d{2}-\d{2}$/.test(a.ultimoAditivo) ? a.ultimoAditivo : new Date().toISOString().slice(0,10),
+      validadeMeses: Math.max(1, Math.min(60, parseInt(a.validadeMeses) || 12)),
+      obs:           String(a.obs || '').trim()
+    };
+  }
+
+  function carregarAditivos() {
+    const raw = storage.get(ADITIVOS_KEY);
+    if (!raw) {
+      aditivosData = ADITIVOS_DEFAULT.map(normalizarAditivo);
+      salvarAditivos();
+      return;
+    }
+    try {
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) throw new Error('Schema inválido');
+      aditivosData = parsed.map(normalizarAditivo);
+    } catch (e) {
+      console.error('[AXON] Erro ao carregar aditivos:', e);
+      mostrarToast('danger', 'Erro de dados', 'Não foi possível carregar os aditivos. Usando dados padrão.');
+      aditivosData = ADITIVOS_DEFAULT.map(normalizarAditivo);
+    }
+    if (!storage.disponivel()) {
+      document.getElementById('storageWarning').classList.add('visible');
+    }
+  }
+
+  function salvarAditivos() {
+    const ok = storage.set(ADITIVOS_KEY, JSON.stringify(aditivosData));
+    if (!ok) document.getElementById('storageWarning').classList.add('visible');
+  }
+
+  /* =============================================
+     FIX #5: DATAS COM TIMEZONE EXPLÍCITO (UTC)
+  ============================================= */
+  function parseDateUTC(iso) {
+    const [ano, mes, dia] = iso.split('-').map(Number);
+    return new Date(Date.UTC(ano, mes - 1, dia));
+  }
+
+  function hojeUTC() {
+    const h = new Date();
+    return new Date(Date.UTC(h.getFullYear(), h.getMonth(), h.getDate()));
+  }
+
+  /** Calcula dias restantes até o vencimento do aditivo */
+  function calcularDiasParaVencimento(ultimoAditivo, validadeMeses) {
+    const inicio   = parseDateUTC(ultimoAditivo);
+    const vencimento = new Date(inicio);
+    vencimento.setUTCMonth(vencimento.getUTCMonth() + validadeMeses);
+    return Math.round((vencimento - hojeUTC()) / 86400000);
+  }
+
+  /** Calcula percentual do período consumido (0-100) */
+  function calcularPercentualConsumido(ultimoAditivo, validadeMeses) {
+    const inicio     = parseDateUTC(ultimoAditivo);
+    const vencimento = new Date(inicio);
+    vencimento.setUTCMonth(vencimento.getUTCMonth() + validadeMeses);
+    const agora = Date.now();
+    return Math.min(100, Math.max(0, Math.round(((agora - inicio) / (vencimento - inicio)) * 100)));
+  }
+
+  /** Retorna classe CSS com base nos dias restantes */
+  function classePorDias(dias) { return dias <= 7 ? 'danger' : dias <= 21 ? 'warning' : 'ok'; }
+
+  /** Formata ISO para DD/MM/AAAA */
+  function formatarDataBR(iso) {
+    const [a, m, d] = iso.split('-');
+    return `${d}/${m}/${a}`;
+  }
+
+  /** Calcula data de vencimento formatada em PT-BR */
+  function dataVencimento(ultimoAditivo, validadeMeses) {
+    const inicio = parseDateUTC(ultimoAditivo);
+    const v = new Date(inicio);
+    v.setUTCMonth(v.getUTCMonth() + validadeMeses);
+    return v.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+  }
+
+  /* =============================================
+     CRONOGRAMA — FIX #6: DINÂMICO
+  ============================================= */
+  let cronMes = new Date().getMonth() + 1;
+  let cronAno  = new Date().getFullYear();
+
+  // Eventos base (podem ser estendidos para outros meses)
+  const EVENTOS_BASE = {
+    4:  [{ label:'ABERTTA', cls:'outros' },{ label:'VIVEST', cls:'outros' },{ label:'ASSEFAZ', cls:'outros' },{ label:'POSTAL', cls:'outros' },{ label:'PETROLEO', cls:'outros' }],
+    5:  [{ label:'VIVEST', cls:'outros' },{ label:'POSTAL', cls:'outros' },{ label:'NOTREDAME', cls:'outros' },{ label:'CONV. PARCERIA', cls:'outros' },{ label:'PORTO SEGURO', cls:'outros' }],
+    6:  [{ label:'OESTE', cls:'outros' },{ label:'GAMA', cls:'outros' },{ label:'VIVEST', cls:'outros' },{ label:'GEAP', cls:'outros' },{ label:'CONV. PARCERIA', cls:'outros' }],
+    8:  [{ label:'AMIL', cls:'outros' },{ label:'FAMEH', cls:'outros' }],
+    11: [{ label:'SULAMERICA', cls:'sulamerica' },{ label:'UNIMED INTERNAÇÃO', cls:'unimed' },{ label:'SUS AIH', cls:'sus' },{ label:'BRADESCO', cls:'bradesco' }],
+    14: [{ label:'FUSEX', cls:'fusex' }],
+    25: [{ label:'MEDISERVICE', cls:'outros' },{ label:'CAIXA', cls:'outros' },{ label:'CASSEMS', cls:'outros' },{ label:'BRADESCO', cls:'bradesco' }],
+    26: [{ label:'CASSEMS', cls:'outros' },{ label:'SEPACO', cls:'outros' },{ label:'CASSI', cls:'outros' },{ label:'BRADESCO', cls:'bradesco' }],
+    28: [{ label:'UNIMED', cls:'unimed' },{ label:'PACOTE', cls:'particular' },{ label:'PARTICULAR', cls:'particular' },{ label:'CARTÃO AUXILIADORA', cls:'particular' }],
+    29: [{ label:'UNIMED', cls:'unimed' },{ label:'PACOTE', cls:'particular' },{ label:'PARTICULAR', cls:'particular' }]
+  };
+
+  function navegarCron(delta) {
+    cronMes += delta;
+    if (cronMes > 12) { cronMes = 1; cronAno++; }
+    if (cronMes < 1)  { cronMes = 12; cronAno--; }
+    renderCronograma();
+  }
+
+  function proxDiaUtil(ano, mes, dia) {
+    const dt = new Date(Date.UTC(ano, mes - 1, dia));
+    const dw = dt.getUTCDay();
+    if (dw === 0) dt.setUTCDate(dt.getUTCDate() + 1);
+    if (dw === 6) dt.setUTCDate(dt.getUTCDate() + 2);
+    return { dia: dt.getUTCDate(), movido: dw === 0 || dw === 6, original: dia };
+  }
+
+  function diasNoMes(ano, mes) {
+    return new Date(Date.UTC(ano, mes, 0)).getUTCDate();
+  }
+
+  function buildCronFinal(ano, mes) {
+    const total = diasNoMes(ano, mes);
+    const f = {};
+    for (let d = 1; d <= total; d++) f[d] = { items: [], movidoDe: null };
+    for (const [k, items] of Object.entries(EVENTOS_BASE)) {
+      const o = parseInt(k);
+      if (o > total) continue;
+      const { dia: dr, movido } = proxDiaUtil(ano, mes, o);
+      if (!f[dr]) f[dr] = { items: [], movidoDe: null };
+      f[dr].items.push(...items);
+      if (movido && !f[dr].movidoDe) f[dr].movidoDe = o;
+    }
+    return f;
+  }
+
+  function renderCronograma() {
+    const grid     = document.getElementById('cronGrid');
+    const titulo   = document.getElementById('cronTitulo');
+    const nomeMes  = new Date(Date.UTC(cronAno, cronMes - 1, 1))
+      .toLocaleDateString('pt-BR', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+    titulo.textContent = nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1);
+
+    const hoje     = hojeUTC();
+    const total    = diasNoMes(cronAno, cronMes);
+    const primDia  = new Date(Date.UTC(cronAno, cronMes - 1, 1)).getUTCDay();
+    const cf       = buildCronFinal(cronAno, cronMes);
+    const dias     = ['DOM','SEG','TER','QUA','QUI','SEX','SÁB'];
+    const fragment = document.createDocumentFragment();
+
+    // Cabeçalhos
+    dias.forEach((d, i) => {
+      const th = criarEl('div', { class: `cron-col-header${i===0||i===6?' weekend':''}` }, d);
+      th.setAttribute('role','columnheader');
+      fragment.appendChild(th);
+    });
+
+    // Dias mês anterior
+    const ultimoMesAnterior = diasNoMes(cronAno, cronMes - 1 || 12);
+    for (let i = 0; i < primDia; i++) {
+      const cell = criarEl('div', { class:'cron-day other-month', role:'gridcell' });
+      const num  = criarEl('div', { class:'cron-day-num', style:'color:var(--az-text-gray)' }, String(ultimoMesAnterior - primDia + 1 + i));
+      cell.appendChild(num);
+      fragment.appendChild(cell);
+    }
+
+    // Dias do mês atual
+    for (let d = 1; d <= total; d++) {
+      const dtUTC  = new Date(Date.UTC(cronAno, cronMes - 1, d));
+      const dw     = dtUTC.getUTCDay();
+      const isWk   = dw === 0 || dw === 6;
+      const isHoje = dtUTC.getTime() === hoje.getTime();
+      const cel    = cf[d] || { items: [], movidoDe: null };
+
+      const cell = criarEl('div', { class:`cron-day${isWk?' weekend':''}${isHoje?' today':''}`, role:'gridcell', 'aria-label':`${d} de ${nomeMes}` });
+      const num  = criarEl('div', { class:'cron-day-num' }, String(d));
+      cell.appendChild(num);
+
+      if (isWk) {
+        const wkNote = criarEl('div', { class:'cron-weekend-notice', 'aria-hidden':'true' }, dw===6?'SAB':'DOM');
+        cell.appendChild(wkNote);
+      }
+      if (cel.movidoDe) {
+        const mv = criarEl('div', { class:'cron-movido-badge' }, `↑ do dia ${cel.movidoDe}`);
+        cell.appendChild(mv);
+      }
+      cel.items.forEach(it => {
+        // FIX #2: textContent, não innerHTML
+        const tag = criarEl('div', { class:`cron-tag ${it.cls}` }, it.label);
+        cell.appendChild(tag);
+      });
+      fragment.appendChild(cell);
+    }
+
+    // Completar última linha
+    const ultimo = new Date(Date.UTC(cronAno, cronMes - 1, total)).getUTCDay();
+    const rest   = ultimo === 6 ? 0 : 6 - ultimo;
+    for (let i = 1; i <= rest; i++) {
+      const cell = criarEl('div', { class:'cron-day other-month', role:'gridcell' });
+      const num  = criarEl('div', { class:'cron-day-num', style:'color:var(--az-text-gray)' }, String(i));
+      cell.appendChild(num);
+      fragment.appendChild(cell);
+    }
+
+    grid.innerHTML = '';
+    grid.appendChild(fragment);
+  }
+
+  /* =============================================
+     TABELAS FIXAS (SIMPRO / BRASINDICE)
+  ============================================= */
+  function calcularProxSimpro() {
+    const h = hojeUTC(), ref = new Date(Date.UTC(2026, 4, 1));
+    let p = new Date(ref);
+    while (p <= h) p.setUTCDate(p.getUTCDate() + 15);
+    return { prox: p, dias: Math.round((p - h) / 86400000) };
+  }
+
+  function calcularProxBrasindice() {
+    const h = hojeUTC(), a = h.getUTCFullYear(), m = h.getUTCMonth();
+    const ops = [new Date(Date.UTC(a,m,5)), new Date(Date.UTC(a,m,20)), new Date(Date.UTC(a,m+1,5)), new Date(Date.UTC(a,m+1,20))];
+    const p = ops.find(d => d >= h) || ops[ops.length-1];
+    return { prox: p, dias: Math.round((p - h) / 86400000) };
+  }
+
+  function renderTabelasFixas() {
+    const s = calcularProxSimpro(), b = calcularProxBrasindice();
+    const fmt = d => d.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+    const container = document.getElementById('tabelasFixasContainer');
+    container.innerHTML = '';
+
+    [[s,'SIMPRO','A cada 15 dias'],[b,'BRASINDICE','Dias 5 e 20 do mês']].forEach(([info, nome, cadencia]) => {
+      const cls = classePorDias(info.dias);
+      const card = criarEl('div', { class:`tf-card ${cls}` });
+      card.appendChild(criarEl('div', { class:'tf-nome' }, nome));
+      card.appendChild(criarEl('div', { class:'tf-cadencia' }, cadencia));
+      card.appendChild(criarEl('div', { class:'tf-prox' }, fmt(info.prox)));
+      card.appendChild(criarEl('div', { class:`tf-dias ${cls}` }, info.dias === 0 ? '⚠ HOJE' : `${info.dias} dias`));
+      container.appendChild(card);
+    });
+  }
+
+  /* =============================================
+     RENDER ADITIVOS — FIX #8: sem innerHTML com dados do usuário
+  ============================================= */
+  function renderAditivos() {
+    renderTabelasFixas();
+    const grid   = document.getElementById('aditivosGrid');
+    const banner = document.getElementById('alertasBanner');
+    document.getElementById('contadorAditivos').querySelector('span').textContent = aditivosData.length;
+
+    // Banner de alertas agrupados — FIX #9
+    const comDias = aditivosData
+      .map(a => ({ ...a, dias: calcularDiasParaVencimento(a.ultimoAditivo, a.validadeMeses) }))
+      .filter(a => a.dias <= 21)
+      .sort((a, b) => a.dias - b.dias);
+
+    banner.innerHTML = '';
+    comDias.forEach(a => {
+      const c    = classePorDias(a.dias);
+      const item = criarEl('div', { class:`alerta-item ${c}` });
+      item.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>';
+      const texto = criarEl('div', { class:'alerta-texto' });
+      const forte = criarEl('strong');
+      forte.textContent = a.convenio;
+      const span  = criarEl('span');
+      span.textContent = ` — ${a.descricao}`;
+      texto.appendChild(forte);
+      texto.appendChild(span);
+      item.appendChild(texto);
+      const diasEl = criarEl('div', { class:`alerta-dias ${c}` }, a.dias <= 0 ? 'VENCIDO' : `${a.dias} dias`);
+      item.appendChild(diasEl);
+      banner.appendChild(item);
+    });
+
+    // Cards de aditivos — FIX #2 e #8: createElement, sem innerHTML com dados
+    grid.innerHTML = '';
+    const frag = document.createDocumentFragment();
+    aditivosData.forEach(a => {
+      const dias = calcularDiasParaVencimento(a.ultimoAditivo, a.validadeMeses);
+      const c    = classePorDias(dias);
+      const p    = calcularPercentualConsumido(a.ultimoAditivo, a.validadeMeses);
+      const bt   = dias <= 0 ? 'VENCIDO' : `${dias} dias`;
+
+      const card = criarEl('div', { class:`aditivo-card ${c}`, 'data-id': a.id });
+
+      // Cabeçalho do card
+      const top = criarEl('div', { style:'display:flex;justify-content:space-between;align-items:flex-start;gap:7px;' });
+      const info = criarEl('div');
+      info.appendChild(criarEl('div', { class:'ac-nome' }, a.convenio));
+      info.appendChild(criarEl('div', { class:'ac-tipo' }, a.descricao));
+      top.appendChild(info);
+
+      const btns = criarEl('div', { style:'display:flex;gap:5px;flex-shrink:0;' });
+      const badge = criarEl('span', { class:`ac-badge ${c}` }, bt);
+      btns.appendChild(badge);
+
+      const btnEdit = criarEl('button', { style:'background:none;border:1px solid var(--border);border-radius:3px;padding:2px 6px;cursor:pointer;font-size:9.5px;color:var(--az-text-gray);', 'aria-label':`Editar ${a.convenio}` }, '✎');
+      btnEdit.addEventListener('click', () => editarAditivo(a.id));
+      btns.appendChild(btnEdit);
+
+      const btnDel = criarEl('button', { style:'background:none;border:1px solid rgba(239,68,68,0.2);border-radius:3px;padding:2px 6px;cursor:pointer;font-size:9.5px;color:var(--danger);', 'aria-label':`Excluir ${a.convenio}` }, '✕');
+      btnDel.addEventListener('click', () => excluirAditivo(a.id));
+      btns.appendChild(btnDel);
+
+      top.appendChild(btns);
+      card.appendChild(top);
+
+      // Datas
+      const datas = criarEl('div', { class:'ac-datas' });
+      [
+        ['Último',   formatarDataBR(a.ultimoAditivo)],
+        ['Validade', `${a.validadeMeses} ${a.validadeMeses===1?'mês':'meses'}`],
+        ['Vence em', dataVencimento(a.ultimoAditivo, a.validadeMeses)]
+      ].forEach(([label, val]) => {
+        const di = criarEl('div', { class:'ac-data-item' });
+        di.appendChild(criarEl('div', { class:'ac-data-label' }, label));
+        di.appendChild(criarEl('div', { class:'ac-data-val' }, val));
+        datas.appendChild(di);
+      });
+      card.appendChild(datas);
+
+      // Obs
+      if (a.obs) {
+        const obsEl = criarEl('div', { style:'font-size:9.5px;color:var(--az-text-gray);border-top:1px solid var(--border);padding-top:7px;margin-top:4px;' }, a.obs);
+        card.appendChild(obsEl);
+      }
+
+      // Barra de progresso
+      const pLabel = criarEl('div', { style:'display:flex;justify-content:space-between;margin:7px 0 3px;' });
+      const pTxt   = criarEl('span', { style:'font-size:7.5px;color:var(--az-text-gray);letter-spacing:1px;text-transform:uppercase;' }, 'Período consumido');
+      const pPct   = criarEl('span', { style:`font-size:7.5px;font-weight:700;color:${c==='ok'?'var(--success)':c==='warning'?'var(--warning)':'var(--danger)'};` }, `${p}%`);
+      pLabel.appendChild(pTxt); pLabel.appendChild(pPct);
+      card.appendChild(pLabel);
+
+      const progBar  = criarEl('div', { class:'ac-prog-bar' });
+      const progFill = criarEl('div', { class:`ac-prog-fill ${c}` });
+      progFill.style.width = `${p}%`;
+      progBar.appendChild(progFill);
+      card.appendChild(progBar);
+
+      frag.appendChild(card);
+    });
+    grid.appendChild(frag);
+  }
+
+  /* =============================================
+     MODAL DE SENHA — FIX #1 #3 #11
+  ============================================= */
+  function _abrirModalSenha() {
+    const lastFocus = document.activeElement;
+    const overlay   = criarEl('div', { class:'axon-overlay', id:'modalSenha', role:'dialog', 'aria-modal':'true', 'aria-label':'Acesso Restrito' });
+    const modal     = criarEl('div', { class:'axon-modal', style:'width:min(340px,92vw);text-align:center;' });
+
+    modal.appendChild(criarEl('div', { class:'axon-modal-title' }, 'Acesso Restrito'));
+
+    const input = criarEl('input', { type:'password', id:'inputSenha', placeholder:'••••••••', class:'axon-input', style:'text-align:center;letter-spacing:3px;', autocomplete:'current-password', 'aria-label':'Senha de acesso' });
+    modal.appendChild(input);
+
+    const errDiv = criarEl('div', { id:'erroSenha', class:'axon-error', role:'alert', 'aria-live':'assertive' });
+    modal.appendChild(errDiv);
+
+    const btnRow = criarEl('div', { class:'axon-btn-row', style:'justify-content:center;' });
+    const btnCancel = criarEl('button', { class:'axon-btn axon-btn-cancel' }, 'CANCELAR');
+    const btnOk     = criarEl('button', { class:'axon-btn axon-btn-confirm' }, 'OK');
+    btnRow.appendChild(btnCancel); btnRow.appendChild(btnOk);
+    modal.appendChild(btnRow);
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    setTimeout(() => input.focus(), 50);
+
+    const confirmar = async () => {
+      const r = await _auth.confirmar(input.value);
+      if (!r.ok) {
+        errDiv.textContent = r.msg;
+        input.value = '';
+        input.focus();
+      } else {
+        lastFocus?.focus();
+      }
+    };
+    const cancelar = () => { _auth.cancelar(); lastFocus?.focus(); };
+
+    btnOk.addEventListener('click', confirmar);
+    btnCancel.addEventListener('click', cancelar);
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') confirmar(); });
+
+    // FIX #11: focus trap
+    overlay.addEventListener('keydown', e => {
+      if (e.key === 'Escape') cancelar();
+      if (e.key === 'Tab') {
+        const focusables = overlay.querySelectorAll('input,button,[tabindex]:not([tabindex="-1"])');
+        const first = focusables[0], last = focusables[focusables.length-1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    });
+  }
+
+  function _fecharModalSenha() {
+    const el = document.getElementById('modalSenha');
+    if (el) el.remove();
+  }
+
+  /* =============================================
+     MODAL DE ADITIVO — FIX #11 #12
+  ============================================= */
+  function abrirModal(dados = null) {
+    const isEdicao  = dados !== null;
+    const lastFocus = document.activeElement;
+    const overlay   = criarEl('div', { class:'axon-overlay', id:'modalAditivo', role:'dialog', 'aria-modal':'true', 'aria-label': isEdicao ? 'Editar Aditivo' : 'Novo Aditivo' });
+    const modal     = criarEl('div', { class:'axon-modal' });
+
+    modal.appendChild(criarEl('div', { class:'axon-modal-title' }, isEdicao ? 'EDITAR ADITIVO' : 'NOVO ADITIVO'));
+
+    const campos = [
+      { id:'mc',  label:'Convênio',                    type:'text',   value: dados?.convenio       || '' },
+      { id:'md',  label:'Descrição',                   type:'text',   value: dados?.descricao      || '' },
+      { id:'mda', label:'Data do Último Aditivo',      type:'date',   value: dados?.ultimoAditivo  || '' },
+      { id:'mv',  label:'Validade (meses)',             type:'number', value: dados?.validadeMeses  ?? 12, extra:{ min:'1', max:'60', style:'width:90px;' } },
+      { id:'mo2', label:'Observações',                 type:'text',   value: dados?.obs            || '' },
+    ];
+
+    const form = criarEl('div', { style:'display:flex;flex-direction:column;gap:12px;' });
+    campos.forEach(c => {
+      const wrap  = criarEl('div', { class:'axon-field' });
+      const label = criarEl('label', { class:'axon-label', for: c.id }, c.label);
+      const input = criarEl('input', { id: c.id, type: c.type, class:'axon-input', value: String(c.value), ...(c.extra || {}) });
+      wrap.appendChild(label);
+      wrap.appendChild(input);
+      form.appendChild(wrap);
+    });
+
+    const errDiv = criarEl('div', { class:'axon-error', role:'alert', 'aria-live':'assertive' });
+    form.appendChild(errDiv);
+    modal.appendChild(form);
+
+    const btnRow   = criarEl('div', { class:'axon-btn-row' });
+    const btnCancel = criarEl('button', { class:'axon-btn axon-btn-cancel' }, 'CANCELAR');
+    const btnSalvar = criarEl('button', { class:'axon-btn axon-btn-confirm' }, 'SALVAR');
+    btnRow.appendChild(btnCancel); btnRow.appendChild(btnSalvar);
+    modal.appendChild(btnRow);
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    setTimeout(() => document.getElementById('mc').focus(), 50);
+
+    const fechar = () => { overlay.remove(); lastFocus?.focus(); };
+
+    btnCancel.addEventListener('click', fechar);
+    btnSalvar.addEventListener('click', () => salvarModal(isEdicao ? dados.id : null, errDiv, fechar));
+
+    // FIX #11: focus trap + ESC
+    overlay.addEventListener('keydown', e => {
+      if (e.key === 'Escape') fechar();
+      if (e.key === 'Tab') {
+        const focusables = overlay.querySelectorAll('input,button,[tabindex]:not([tabindex="-1"])');
+        const first = focusables[0], last = focusables[focusables.length-1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    });
+  }
+
+  /* FIX #12: VALIDAÇÃO ROBUSTA */
+  function salvarModal(id, errDiv, fechar) {
+    const conv  = document.getElementById('mc').value.trim();
+    const desc  = document.getElementById('md').value.trim();
+    const data  = document.getElementById('mda').value;
+    const valRaw = parseInt(document.getElementById('mv').value);
+    const obs   = document.getElementById('mo2').value.trim();
+
+    const erros = [];
+    if (!conv)  erros.push('Convênio é obrigatório.');
+    if (!data || !/^\d{4}-\d{2}-\d{2}$/.test(data)) erros.push('Data inválida (use o seletor de data).');
+    else {
+      const ano = parseInt(data.slice(0,4));
+      if (ano < 2000 || ano > 2099) erros.push('Ano fora do intervalo permitido (2000–2099).');
+      const parsed = parseDateUTC(data);
+      if (isNaN(parsed.getTime())) erros.push('Data inválida.');
+    }
+    if (isNaN(valRaw) || valRaw < 1 || valRaw > 60) erros.push('Validade deve ser entre 1 e 60 meses.');
+
+    if (erros.length) { errDiv.textContent = erros[0]; return; }
+
+    const aditivo = normalizarAditivo({ id: id || Date.now(), convenio: conv, descricao: desc || 'Aditivo', ultimoAditivo: data, validadeMeses: valRaw, obs });
+
+    if (id !== null) {
+      const idx = aditivosData.findIndex(a => a.id === id);
+      if (idx >= 0) aditivosData[idx] = aditivo;
+    } else {
+      const maxId = aditivosData.length > 0 ? Math.max(...aditivosData.map(a => a.id)) + 1 : 1;
+      aditivo.id = maxId;
+      aditivosData.push(aditivo);
+    }
+
+    salvarAditivos();
+    fechar();
+    renderAditivos();
+    mostrarToast('ok', id ? 'Aditivo atualizado' : 'Aditivo criado', aditivo.convenio);
+  }
+
+  /* FIX #10: MODAL DE CONFIRMAÇÃO (sem confirm() nativo) */
+  function abrirConfirmModal(titulo, subtitulo, onConfirm) {
+    const lastFocus = document.activeElement;
+    const overlay   = criarEl('div', { class:'axon-overlay', id:'modalConfirm', role:'alertdialog', 'aria-modal':'true', 'aria-label': titulo });
+    const modal     = criarEl('div', { class:'axon-modal', style:'width:min(360px,92vw);text-align:center;' });
+
+    modal.appendChild(criarEl('div', { class:'axon-modal-title' }, titulo));
+    modal.appendChild(criarEl('div', { style:'font-size:.72rem;color:var(--az-text-gray);margin-bottom:4px;' }, subtitulo));
+
+    const btnRow    = criarEl('div', { class:'axon-btn-row', style:'justify-content:center;' });
+    const btnCancel = criarEl('button', { class:'axon-btn axon-btn-cancel' }, 'CANCELAR');
+    const btnConfirm = criarEl('button', { class:'axon-btn axon-btn-danger' }, 'EXCLUIR');
+    btnRow.appendChild(btnCancel); btnRow.appendChild(btnConfirm);
+    modal.appendChild(btnRow);
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    const fechar = () => { overlay.remove(); lastFocus?.focus(); };
+    btnCancel.addEventListener('click', fechar);
+    btnConfirm.addEventListener('click', () => { fechar(); onConfirm(); });
+    overlay.addEventListener('keydown', e => {
+      if (e.key === 'Escape') fechar();
+    });
+    setTimeout(() => btnCancel.focus(), 50);
+  }
+
+  function editarAditivo(id) {
+    _auth.pedir(() => {
+      const d = aditivosData.find(a => a.id === id);
+      if (d) abrirModal(d);
+    });
+  }
+
+  function excluirAditivo(id) {
+    _auth.pedir(() => {
+      const a = aditivosData.find(x => x.id === id);
+      // FIX #10: modal próprio, sem confirm() nativo
+      abrirConfirmModal(
+        `Excluir "${a?.convenio}"?`,
+        'Esta ação não pode ser desfeita.',
+        () => {
+          aditivosData = aditivosData.filter(x => x.id !== id);
+          salvarAditivos();
+          renderAditivos();
+          mostrarToast('ok', 'Excluído', a?.convenio ?? '');
+        }
+      );
+    });
+  }
+
+  /* =============================================
+     TOAST — FIX #9: agrupado por contexto
+  ============================================= */
+  function mostrarToast(tipo, titulo, msg) {
+    const container = document.getElementById('toastContainer');
+    const t   = criarEl('div', { class:`toast ${tipo}`, role:'status' });
+    const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.setAttribute('viewBox','0 0 24 24'); svg.setAttribute('aria-hidden','true');
+    const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx','12'); c.setAttribute('cy','12'); c.setAttribute('r','10');
+    const l = document.createElementNS('http://www.w3.org/2000/svg','line');
+    l.setAttribute('x1','12'); l.setAttribute('y1','8'); l.setAttribute('x2','12'); l.setAttribute('y2','12');
+    svg.appendChild(c); svg.appendChild(l);
+    t.appendChild(svg);
+
+    const body = criarEl('div', { class:'toast-body' });
+    body.appendChild(criarEl('strong', {}, titulo));
+    body.appendChild(criarEl('span', {}, msg));
+    t.appendChild(body);
+
+    const close = criarEl('button', { class:'toast-close', 'aria-label':'Fechar notificação' }, '✕');
+    close.addEventListener('click', () => t.remove());
+    t.appendChild(close);
+
+    container.appendChild(t);
+    setTimeout(() => { if (t.parentElement) t.remove(); }, 8000);
+  }
+
+  /* FIX #9: alertas agrupados ao carregar */
+  function verificarAlertas() {
+    const criticos = [], avisos = [];
+    aditivosData.forEach(a => {
+      const d = calcularDiasParaVencimento(a.ultimoAditivo, a.validadeMeses);
+      if (d <= 7)       criticos.push({ nome: a.convenio, dias: d });
+      else if (d <= 21) avisos.push({ nome: a.convenio, dias: d });
+    });
+
+    if (criticos.length === 1)
+      mostrarToast('danger', `${criticos[0].nome} — ${criticos[0].dias <= 0 ? 'VENCIDO' : criticos[0].dias + ' dias'}`, `Vence em ${dataVencimento(aditivosData.find(a=>a.convenio===criticos[0].nome)?.ultimoAditivo||'',aditivosData.find(a=>a.convenio===criticos[0].nome)?.validadeMeses||12)}`);
+    else if (criticos.length > 1)
+      mostrarToast('danger', `${criticos.length} contratos críticos`, criticos.map(c => c.dias<=0?`${c.nome} (VENCIDO)`:`${c.nome} (${c.dias}d)`).join(' · '));
+
+    if (avisos.length === 1)
+      mostrarToast('warning', `${avisos[0].nome} — ${avisos[0].dias} dias`, 'Vencimento próximo');
+    else if (avisos.length > 1)
+      mostrarToast('warning', `${avisos.length} contratos próximos do vencimento`, avisos.map(c=>`${c.nome} (${c.dias}d)`).join(' · '));
+
+    const s = calcularProxSimpro();
+    if (s.dias <= 3) mostrarToast('warning', 'SIMPRO — Atualização próxima', `Em ${s.prox.toLocaleDateString('pt-BR',{timeZone:'UTC'})} (${s.dias} dias).`);
+    const b = calcularProxBrasindice();
+    if (b.dias <= 3) mostrarToast('warning', 'BRASINDICE — Atualização próxima', `Em ${b.prox.toLocaleDateString('pt-BR',{timeZone:'UTC'})} (${b.dias} dias).`);
+  }
+
+  /* =============================================
+     CBHPM
+  ============================================= */
+  const PORTES_DATA = [{"porte":"1A","3_ED":8,"4_ED":8,"5_2008":10,"5_2009":10.5,"2010":11,"2012":12.86,"2014":14.49,"2016":17.38,"2018":19.84,"2020":24.37},{"porte":"1B","3_ED":16,"4_ED":16,"5_2008":20,"5_2009":21,"2010":22,"2012":25.72,"2014":28.97,"2016":34.75,"2018":39.68,"2020":67.32},{"porte":"1C","3_ED":24,"4_ED":24,"5_2008":30,"5_2009":31.5,"2010":33,"2012":38.58,"2014":43.47,"2016":52.14,"2018":59.53,"2020":96.43},{"porte":"2A","3_ED":32,"4_ED":32,"5_2008":40,"5_2009":42,"2010":44,"2012":51.45,"2014":57.96,"2016":69.53,"2018":79.38,"2020":142.9},{"porte":"2B","3_ED":42,"4_ED":42,"5_2008":54,"5_2009":56.5,"2010":60,"2012":67.82,"2014":76.4,"2016":91.65,"2018":104.64,"2020":224.9},{"porte":"2C","3_ED":50,"4_ED":50,"5_2008":64,"5_2009":67,"2010":71,"2012":80.26,"2014":90.42,"2016":108.46,"2018":143.81,"2020":306.61},{"porte":"3A","3_ED":69,"4_ED":69,"5_2008":88,"5_2009":92,"2010":97,"2012":109.67,"2014":123.55,"2016":148.2,"2018":202.37,"2020":439.28},{"porte":"3B","3_ED":88,"4_ED":88,"5_2008":112,"5_2009":117,"2010":124,"2012":140.14,"2014":157.87,"2016":189.37,"2018":262.1,"2020":571.95},{"porte":"3C","3_ED":100,"4_ED":100,"5_2008":128,"5_2009":134,"2010":142,"2012":160.52,"2014":180.83,"2016":216.92,"2018":310.38,"2020":704.62},{"porte":"4A","3_ED":120,"4_ED":120,"5_2008":153,"5_2009":160,"2010":169,"2012":191.04,"2014":215.22,"2016":258.16,"2018":370.21,"2020":837.29},{"porte":"4B","3_ED":132,"4_ED":132,"5_2008":168,"5_2009":175.5,"2010":185,"2012":209.13,"2014":235.6,"2016":282.61,"2018":415.83,"2020":969.96},{"porte":"4C","3_ED":148,"4_ED":148,"5_2008":189,"5_2009":197.5,"2010":209,"2012":236.26,"2014":266.16,"2016":319.27,"2018":471.79,"2020":1102.63},{"porte":"5A","3_ED":160,"4_ED":160,"5_2008":204,"5_2009":213,"2010":225,"2012":254.34,"2014":286.52,"2016":343.7,"2018":517.41,"2020":1235.29},{"porte":"5B","3_ED":172,"4_ED":172,"5_2008":220,"5_2009":230,"2010":243,"2012":274.69,"2014":309.45,"2016":371.21,"2018":565.61,"2020":1367.96},{"porte":"5C","3_ED":184,"4_ED":184,"5_2008":234,"5_2009":244.5,"2010":258,"2012":291.64,"2014":328.54,"2016":394.11,"2018":609.95,"2020":1500.63},{"porte":"6A","3_ED":200,"4_ED":200,"5_2008":255,"5_2009":266.5,"2010":281,"2012":317.65,"2014":357.84,"2016":429.25,"2018":664.61,"2020":1663.3},{"porte":"6B","3_ED":220,"4_ED":220,"5_2008":280,"5_2009":292.5,"2010":309,"2012":349.3,"2014":393.51,"2016":472.04,"2018":725.73,"2020":1765.97},{"porte":"6C","3_ED":240,"4_ED":240,"5_2008":306,"5_2009":320,"2010":338,"2012":382.08,"2014":430.43,"2016":516.33,"2018":788.15,"2020":1898.64},{"porte":"7A","3_ED":260,"4_ED":260,"5_2008":331,"5_2009":346,"2010":365,"2012":412.6,"2014":464.82,"2016":557.58,"2018":847.97,"2020":2031.31},{"porte":"7B","3_ED":280,"4_ED":280,"5_2008":366,"5_2009":382.5,"2010":404,"2012":456.68,"2014":514.48,"2016":617.15,"2018":923.29,"2020":2163.98},{"porte":"7C","3_ED":340,"4_ED":340,"5_2008":433,"5_2009":452.5,"2010":478,"2012":540.33,"2014":608.7,"2016":730.18,"2018":1043.81,"2020":2296.65},{"porte":"8A","3_ED":368,"4_ED":368,"5_2008":468,"5_2009":489,"2010":516,"2012":583.29,"2014":657.11,"2016":788.24,"2018":1117.84,"2020":2429.32},{"porte":"8B","3_ED":384,"4_ED":384,"5_2008":490,"5_2009":512,"2010":541,"2012":611.55,"2014":688.94,"2016":826.43,"2018":1175.1,"2020":2561.98},{"porte":"8C","3_ED":408,"4_ED":408,"5_2008":520,"5_2009":543.5,"2010":574,"2012":648.85,"2014":730.96,"2016":876.83,"2018":1242.67,"2020":2694.65},{"porte":"9A","3_ED":436,"4_ED":436,"5_2008":555,"5_2009":578,"2010":610,"2012":689.55,"2014":776.82,"2016":931.84,"2018":1314.12,"2020":2827.32},{"porte":"9B","3_ED":476,"4_ED":476,"5_2008":605,"5_2009":632,"2010":667,"2012":753.99,"2014":849.41,"2016":1018.91,"2018":1412.69,"2020":2959.99},{"porte":"9C","3_ED":524,"4_ED":524,"5_2008":666,"5_2009":696,"2010":735,"2012":830.84,"2014":935.98,"2016":1122.76,"2018":1525.45,"2020":3092.66},{"porte":"10A","3_ED":560,"4_ED":560,"5_2008":715,"5_2009":747,"2010":789,"2012":891.8,"2014":1004.76,"2016":1205.27,"2018":1620.15,"2020":3225.33},{"porte":"10B","3_ED":608,"4_ED":608,"5_2008":775,"5_2009":809.5,"2010":855,"2012":966.5,"2014":1088.81,"2016":1306.09,"2018":1730.34,"2020":3358},{"porte":"10C","3_ED":676,"4_ED":676,"5_2008":860,"5_2009":898.5,"2010":949,"2012":1072.75,"2014":1208.51,"2016":1449.67,"2018":1876.68,"2020":3490.67},{"porte":"11A","3_ED":716,"4_ED":716,"5_2008":910,"5_2009":950.5,"2010":1004,"2012":1134.93,"2014":1278.56,"2016":1533.7,"2018":1972.66,"2020":3623.34},{"porte":"11B","3_ED":784,"4_ED":784,"5_2008":998,"5_2009":1042.5,"2010":1101,"2012":1244.58,"2014":1402.08,"2016":1681.88,"2018":2122.89,"2020":3756},{"porte":"11C","3_ED":860,"4_ED":860,"5_2008":1095,"5_2009":1144,"2010":1208,"2012":1365.54,"2014":1538.35,"2016":1845.34,"2018":2286.02,"2020":3888.67},{"porte":"12A","3_ED":892,"4_ED":892,"5_2008":1135,"5_2009":1185.5,"2010":1252,"2012":1415.27,"2014":1594.37,"2016":1912.54,"2018":2367.8,"2020":4021.34},{"porte":"12B","3_ED":960,"4_ED":960,"5_2008":1220,"5_2009":1274.5,"2010":1346,"2012":1521.53,"2014":1714.08,"2016":2056.14,"2018":2514.15,"2020":4154.01},{"porte":"12C","3_ED":1176,"4_ED":1176,"5_2008":1495,"5_2009":1561.5,"2010":1649,"2012":1864.04,"2014":2099.93,"2016":2518.99,"2018":2930.37,"2020":4286.68},{"porte":"13A","3_ED":1292,"4_ED":1292,"5_2008":1645,"5_2009":1718.5,"2010":1815,"2012":2051.69,"2014":2311.33,"2016":2772.57,"2018":3169.69,"2020":4419.35},{"porte":"13B","3_ED":1420,"4_ED":1420,"5_2008":1805,"5_2009":1885.5,"2010":1991,"2012":2250.64,"2014":2535.46,"2016":3041.43,"2018":3421.92,"2020":4552.02},{"porte":"13C","3_ED":1570,"4_ED":1570,"5_2008":1996,"5_2009":2085,"2010":2202,"2012":2489.16,"2014":2804.16,"2016":3363.75,"2018":3719.35,"2020":4684.69},{"porte":"14A","3_ED":1750,"4_ED":1750,"5_2008":2225,"5_2009":2324,"2010":2454,"2012":2774.02,"2014":3125.07,"2016":3748.7,"2018":4069.72,"2020":4817.36},{"porte":"14B","3_ED":1900,"4_ED":1900,"5_2008":2420,"5_2009":2528,"2010":2670,"2012":3018.19,"2014":3400.15,"2016":4078.67,"2018":4373.61,"2020":4950.03},{"porte":"14C","3_ED":2100,"4_ED":2100,"5_2008":2670,"5_2009":2789,"2010":2945,"2012":3329.05,"2014":3750.34,"2016":4498.75,"2018":4753.67,"2020":5082.69}];
+  const UCO_DATA = {"3_ED":11.5,"4_ED":11.5,"5_2008":11.5,"5_2009":12,"2010":12.67,"2012":14.33,"2014":16.15,"2016":19.36,"2018":20.47,"2020":21.89};
+
+  function fmtBRL(v) {
+    if (v == null) return '—';
+    return 'R$ ' + v.toLocaleString('pt-BR', { minimumFractionDigits:2, maximumFractionDigits:2 });
+  }
+
+  function renderPortes() {
+    const v   = document.getElementById('versaoCBHPM').value;
+    document.getElementById('ucoValor').textContent = fmtBRL(UCO_DATA[v]);
+    const grid = document.getElementById('portesGrid');
+    grid.innerHTML = '';
+    const frag = document.createDocumentFragment();
+    PORTES_DATA.forEach(p => {
+      const card  = criarEl('div', { class:'porte-card' });
+      card.appendChild(criarEl('div', { class:'pc-label' }, 'Porte'));
+      card.appendChild(criarEl('div', { class:'pc-name' }, p.porte));
+      card.appendChild(criarEl('div', { class:`pc-valor${p[v]?'':' zero'}` }, fmtBRL(p[v])));
+      frag.appendChild(card);
+    });
+    grid.appendChild(frag);
+  }
+
+  function baixarPortesExcel() {
+    const v = document.getElementById('versaoCBHPM').value, uco = UCO_DATA[v];
+    const vl = {'3_ED':'3ª Edição','4_ED':'4ª Edição','5_2008':'5ª Ed. 2008','5_2009':'5ª Ed. 2009','2010':'CBHPM 2010','2012':'CBHPM 2012','2014':'CBHPM 2014','2016':'CBHPM 2016','2018':'CBHPM 2018','2020':'CBHPM 2020'}[v] || v;
+    const rows = PORTES_DATA.map(p => `<Row><Cell><Data ss:Type="String">${esc(p.porte)}</Data></Cell><Cell ss:StyleID="moeda"><Data ss:Type="Number">${p[v]||0}</Data></Cell></Row>`).join('');
+    const xml  = `<?xml version="1.0" encoding="UTF-8"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Styles><Style ss:ID="moeda"><NumberFormat ss:Format="R$ #.##0,00"/></Style></Styles><Worksheet ss:Name="Portes"><Table><Row><Cell><Data ss:Type="String">AXON — ${esc(vl)} — UCO: R$ ${(uco||0).toFixed(2).replace('.',',')}</Data></Cell></Row><Row/>${rows}</Table></Worksheet></Workbook>`;
+    const blob = new Blob([xml], { type:'application/vnd.ms-excel;charset=utf-8' });
+    const url  = URL.createObjectURL(blob), a = document.createElement('a');
+    a.href = url; a.download = `CBHPM_${vl.replace(/[^a-z0-9]/gi,'_')}.xls`; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  /* =============================================
+     CNPJ — renderizado via JS para evitar
+     dados estáticos desnecessários no HTML puro
+     FIX #4: aviso de dados sensíveis
+  ============================================= */
+  const CNPJ_DATA = [
+    { nome:'ABERTTA',              cnpj:'17.505.793/0001-01', email:'barbara.daniel@arcelormittal.com.br' },
+    { nome:'AMIL',                 cnpj:'29.309.127/0001-79', email:'rayane.pereira@amil.com.br' },
+    { nome:'ASSEFAZ',              cnpj:'62.810.700/1827',    email:'maite.lemos@assefaz.org.br' },
+    { nome:'BRADESCO S.A.',        cnpj:'92.693.118/0001-60', email:'laura.silva@bradescosaude.com.br' },
+    { nome:'BRADESCO OPERADORA',   cnpj:'15.011.651/0001-54', email:'laura.silva@bradescosaude.com.br' },
+    { nome:'CAIXA',                cnpj:'36.030.500/0104',    email:'cesad12@caixa.gov.br · cesad10@caixa.gov.br' },
+    { nome:'CASSEMS',              cnpj:'43.110.930/0001-26', email:'credenciamentomedico@cassems.com.br' },
+    { nome:'CASSI',                cnpj:'33.719.485/0001-27', email:'negociacao.ms@cassi.com.br' },
+    { nome:'FAMEH',                cnpj:'13.026.081/0001-40', email:'autorizacao@fameh.org.br' },
+    { nome:'FUSEX – DAP',          cnpj:'09.578.334/0002-00', email:'fusex@3biaaaae.eb.mil.br' },
+    { nome:'FUSEX – DSAU',         cnpj:'09.578.334/0001-11', email:'fusex@3biaaaae.eb.mil.br' },
+    { nome:'GAMA',                 cnpj:'20.099.240/0001-84', email:'atendimento.prestador@gamasaude.com.br' },
+    { nome:'GEAP',                 cnpj:'36.584.320/0001-82', email:'prestador.ms@geap.org.br' },
+    { nome:'MEDSERVICE',           cnpj:'57.746.455/0001-78', email:'laura.silva@bradescosaude.com.br' },
+    { nome:'NOTRE DAME',           cnpj:'44.649.812/0213-05', email:'renan.cavalcante@hapvida.com.br' },
+    { nome:'OESTE SAÚDE',          cnpj:'87.089.800/0001-93', email:'jaqueline.torquato@oestesaude.com.br' },
+    { nome:'PETROBRAS',            cnpj:'39.427.632/0001-71', email:'murilo.nascimento@saudepetrobras.com.br' },
+    { nome:'POSTAL SAÚDE',         cnpj:'18.275.071/0001-62', email:'ms.negociacao@postalsaude.com.br' },
+    { nome:'SEPACO',               cnpj:'60.961.422/0001-55', email:'esantana@sepaco.org.br' },
+    { nome:'SULAMERICA',           cnpj:'01.685.053/0001-56', email:'gilson.santana@sulamerica.com.br' },
+  ];
+
+  function renderCNPJs() {
+    const grid = document.getElementById('cnpjGrid');
+    grid.innerHTML = '';
+    const frag = document.createDocumentFragment();
+    CNPJ_DATA.forEach(d => {
+      const card = criarEl('div', { class:'cnpj-card' });
+      card.appendChild(criarEl('div', { class:'cnpj-name' }, d.nome));
+      card.appendChild(criarEl('div', { class:'cnpj-num'  }, d.cnpj));
+      card.appendChild(criarEl('div', { class:'cnpj-email'}, d.email));
+      frag.appendChild(card);
+    });
+    grid.appendChild(frag);
+  }
+
+  /* =============================================
+     TEMA
+  ============================================= */
+  function toggleTema() {
+    const dark = document.body.classList.toggle('dark');
+    storage.set('axon-tema', dark ? 'dark' : 'light');
+    aplicarDark(dark);
+  }
+  function aplicarDark(dark) {
+    document.body.classList.toggle('dark', dark);
+    document.getElementById('iconMoon').style.display = dark ? 'none'  : 'block';
+    document.getElementById('iconSun').style.display  = dark ? 'block' : 'none';
+    document.getElementById('themeLabel').textContent = dark ? 'CLARO' : 'ESCURO';
+  }
+
+  /* TABS — FIX #13: nomes descritivos */
+  function switchTab(id, btn) {
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+    btn.setAttribute('aria-selected','true');
+    if (id === 'aditivos')   renderAditivos();
+    if (id === 'cronograma') renderCronograma();
+  }
+
+  function filtrarTabela(val) {
+    const q = val.toLowerCase().trim();
+    let vis = 0;
+    document.querySelectorAll('#tbodyConvenios tr[data-conv]').forEach(r => {
+      const match = !q || r.textContent.toLowerCase().includes(q);
+      r.classList.toggle('tr-hidden', !match);
+      if (match) vis++;
+    });
+    document.getElementById('countVisible').textContent = vis;
+    document.getElementById('emptyRow').style.display = vis === 0 ? '' : 'none';
+  }
+
+  /* =============================================
+     INICIALIZAÇÃO — FIX #14: listeners criados
+     uma única vez no DOMContentLoaded
+  ============================================= */
+  document.addEventListener('DOMContentLoaded', () => {
+    // Tema salvo
+    const temasSalvo = storage.get('axon-tema');
+    if (temasSalvo === 'dark') aplicarDark(true);
+
+    // FIX #14: botão novo aditivo criado uma vez
+    document.getElementById('btnNovoAditivo').addEventListener('click', () => {
+      _auth.pedir(() => abrirModal());
+    });
+
+    // Inicializar dados
+    carregarAditivos();
+    renderPortes();
+    renderCronograma();
+    renderCNPJs();
+
+    // FIX #9: alertas agrupados após 1,2s
+    setTimeout(verificarAlertas, 1200);
+  });
   </script>
 </body>
-
 </html>
