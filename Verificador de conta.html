@@ -3,14 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>AXON | Auditoria Anti-Glosa</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js">
-    /* ── MODAL GUIA ── */
-    function abrirGuia() { document.getElementById('modalGuia').classList.add('open'); document.body.style.overflow = 'hidden'; }
-    function fecharGuia() { document.getElementById('modalGuia').classList.remove('open'); document.body.style.overflow = ''; }
-    function fecharGuiaOverlay(e) { if (e.target === document.getElementById('modalGuia')) fecharGuia(); }
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') fecharGuia(); });
-
-</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
             --az-dark: #0a1322; --az-gold: #b08d32; --az-text-gray: #717d8a;
@@ -167,7 +160,53 @@
         .az-footer .footer-sub   { color: var(--az-gold); font-size: 0.65rem; font-weight: 600; letter-spacing: 5px; text-transform: uppercase; margin-bottom: 28px; }
         .az-footer .footer-copy  { font-size: 0.55rem; opacity: 0.45; letter-spacing: 2px; text-transform: uppercase; line-height: 1.8; }
 
-        /* ── MODAL GUIA ── */
+    
+    /* ── OPME ── */
+    function toggleOpme(checkbox) {
+        const tr = checkbox.closest('tr');
+        const idx = parseInt(tr.dataset.idx);
+        const marcado = checkbox.checked;
+
+        dadosProcessados[idx].Opme = marcado;
+        tr.dataset.opme = marcado ? 'true' : 'false';
+        tr.classList.toggle('is-opme', marcado);
+        atualizarOpmeInfo();
+    }
+
+    function atualizarOpmeInfo() {
+        const total = dadosProcessados.filter(d => d.Opme).length;
+        const el = document.getElementById('opmeInfo');
+        if (total > 0) {
+            el.style.display = 'inline-block';
+            el.textContent = total + (total === 1 ? ' OPME' : ' OPMEs marcados');
+        } else {
+            el.style.display = 'none';
+        }
+    }
+
+    function exportarSoOPME() {
+        const opmes = dadosProcessados.filter(d => d.Opme);
+        if (!opmes.length) return alert('Nenhum item marcado como OPME.');
+        const ws = XLSX.utils.json_to_sheet(opmes.map(d => ({
+            Arquivo:       d.Arquivo,
+            Tabela:        d.Tab,
+            Codigo_XML:    d.CodXML,
+            Data_Execucao: d.Data,
+            Profat:        d.Profat,
+            Descricao:     d.Desc,
+            Valor_Conta:   d.VConta,
+            Valor_Base:    d.VTnumm,
+            Diferenca:     d.Status === 'DIVERGENTE' ? d.VConta - d.VTnumm : 0,
+            Status:        d.Status,
+            Num_Guia:      (d.Status==='DIVERGENTE'||d.Status==='NÃO ENCONTRADO') ? (d.Guia||'—') : '',
+            OPME:          'SIM'
+        })));
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "OPME");
+        XLSX.writeFile(wb, "AXON_OPME.xlsx");
+    }
+
+    /* ── MODAL GUIA ── */
         .modal-overlay {
             display: none; position: fixed; inset: 0; z-index: 1000;
             background: rgba(6,11,19,0.65); backdrop-filter: blur(3px);
@@ -274,6 +313,40 @@
         }
         .btn-ajuda:hover { border-color: var(--az-gold); color: var(--az-gold); }
         .btn-ajuda svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; }
+
+        /* ── OPME ── */
+        .b-opme { background: #7c3aed; }
+
+        .opme-check-wrap {
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+        }
+        .opme-check {
+            appearance: none; -webkit-appearance: none;
+            width: 16px; height: 16px; border: 1.5px solid var(--border);
+            border-radius: 3px; cursor: pointer; transition: all 0.15s;
+            position: relative; flex-shrink: 0;
+        }
+        .opme-check:checked {
+            background: #7c3aed; border-color: #7c3aed;
+        }
+        .opme-check:checked::after {
+            content: ''; position: absolute; left: 4px; top: 1px;
+            width: 5px; height: 9px; border: 2px solid #fff;
+            border-top: none; border-left: none; transform: rotate(45deg);
+        }
+        .opme-check:hover:not(:checked) { border-color: #7c3aed; }
+
+        tr.is-opme td { background: rgba(124,58,237,0.06) !important; }
+        body.dark tr.is-opme td { background: rgba(124,58,237,0.1) !important; }
+
+        /* contador OPME */
+        #opmeInfo {
+            display: none; font-size: 0.62rem; font-weight: 700; letter-spacing: 1px;
+            color: #7c3aed; background: rgba(124,58,237,0.1); border: 1px solid rgba(124,58,237,0.25);
+            padding: 4px 10px; border-radius: 4px; white-space: nowrap;
+        }
+
+
     </style>
 </head>
 <body>
@@ -349,10 +422,12 @@
                 <option value="DIVERGENTE">DIVERGENTE</option>
                 <option value="NÃO ENCONTRADO">NÃO ENCONTRADO</option>
                 <option value="DIARIAS E TAXAS">DIARIAS E TAXAS</option>
+                <option value="__OPME__">OPME</option>
             </select>
             <div id="contadorRegistros"></div>
         </div>
         <div class="bar-btns">
+            <span id="opmeInfo">0 OPME</span>
             <button class="btn-limpar" onclick="limparFiltros()">Limpar Filtros</button>
             <button class="btn-excel" onclick="exportarExcel()">↓ Exportar Excel</button>
         </div>
@@ -363,6 +438,7 @@
         <table id="tabelaPrincipal">
             <thead>
                 <tr>
+                    <th style="width: 38px; text-align:center;">OPME</th>
                     <th style="width: 130px;">Arquivo</th>
                     <th style="width: 45px;">Tab</th>
                     <th style="width: 105px;">Cód XML</th>
@@ -373,12 +449,13 @@
                     <th style="width: 105px;">V. Base</th>
                     <th style="width: 95px;">Δ Diferença</th>
                     <th style="width: 125px;">Status</th>
+                    <th style="width: 130px;">Nº Guia</th>
                 </tr>
             </thead>
             <tbody id="tabelaCorpo">
                 <!-- empty state inicial -->
                 <tr id="emptyRow">
-                    <td colspan="10">
+                    <td colspan="12">
                         <div class="empty-state">
                             <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
                             <p>Carregue o Excel e os XMLs para iniciar a auditoria</p>
@@ -398,281 +475,6 @@
         Altamente Confidencial · Acesso Exclusivo
     </div>
 </footer>
-
-<script>
-    /* ── TEMA ── */
-    let modoEscuro = false;
-
-    function aplicarTema(escuro) {
-        document.body.classList.toggle('dark', escuro);
-        document.getElementById('iconMoon').style.display = escuro ? 'none' : '';
-        document.getElementById('iconSun').style.display  = escuro ? '' : 'none';
-        document.getElementById('themeLabel').textContent = escuro ? 'CLARO' : 'ESCURO';
-    }
-    function toggleTema() {
-        modoEscuro = !modoEscuro;
-        aplicarTema(modoEscuro);
-        localStorage.setItem('axon-tema', modoEscuro ? 'dark' : 'light');
-    }
-    (function() {
-        if (localStorage.getItem('axon-tema') === 'dark') { modoEscuro = true; aplicarTema(true); }
-    })();
-
-    /* ── DADOS ── */
-    let excelIndex = new Map();
-    let dadosProcessados = [];
-    let timeoutFiltro;
-
-    const DOM = {
-        corpo: document.getElementById('tabelaCorpo'),
-        loader: document.getElementById('loader'),
-        btn: document.getElementById('btnProcessar'),
-        summary: document.getElementById('summary'),
-        bar: document.getElementById('actionBar'),
-        contador: document.getElementById('contadorRegistros')
-    };
-
-    function formatarData(val) {
-        if (!val) return "—";
-        // Formatos possíveis: YYYYMMDD ou YYYY-MM-DD
-        const s = String(val).replace(/\D/g, '');
-        if (s.length === 8) {
-            return s.substring(6,8) + '/' + s.substring(4,6) + '/' + s.substring(0,4);
-        }
-        return val;
-    }
-    function limparTexto(val) { return val ? String(val).replace(/\D/g, '').replace(/^0+/, '').trim() : ""; }
-    function extrairValor(val) { return val ? parseFloat(String(val).replace(/[^0-9.,-]/g, '').replace(',', '.')) || 0 : 0; }
-    function formatarReal(val) { return val.toLocaleString('pt-br', {style: 'currency', currency: 'BRL'}); }
-
-    /* ── CARGA DO EXCEL ── */
-    document.getElementById('excelInput').addEventListener('change', function(e) {
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-            const wb = XLSX.read(new Uint8Array(evt.target.result), {type: 'array'});
-            excelIndex.clear();
-            wb.SheetNames.forEach(nome => {
-                const n = nome.trim().toLowerCase();
-                if(["00", "19", "20", "00 unimed", "19unimed", "20unimed"].includes(n)) {
-                    const sheet = XLSX.utils.sheet_to_json(wb.Sheets[nome], {header: 1});
-                    for(let i = 1; i < sheet.length; i++) {
-                        const row = sheet[i];
-                        let cod = limparTexto(row[1]);
-                        if (cod && (!row[4] || String(row[4]).trim() === "")) {
-                            excelIndex.set(cod, {
-                                profat: String(row[5] || "").replace(/\D/g, '').padStart(8, '0'),
-                                valor: extrairValor(row[6])
-                            });
-                        }
-                    }
-                }
-            });
-            // Feedback inline — sem alert()
-            const el = document.getElementById('baseStatus');
-            document.getElementById('baseStatusText').textContent =
-                `Base carregada · ${excelIndex.size.toLocaleString('pt-br')} procedimentos`;
-            el.style.display = 'flex';
-        };
-        reader.readAsArrayBuffer(e.target.files[0]);
-    });
-
-    /* ── PROCESSAMENTO ── */
-    async function iniciarProcessamento() {
-        const xmlFiles = document.getElementById('xmlInput').files;
-        if (!xmlFiles.length || excelIndex.size === 0)
-            return alert("Carregue o Excel e os XMLs primeiro.");
-        DOM.btn.style.display = 'none';
-        DOM.loader.style.display = 'block';
-        setTimeout(() => comparar(xmlFiles), 100);
-    }
-
-    async function comparar(files) {
-        dadosProcessados = [];
-        let sOk = 0, sDiv = 0, sNull = 0, sExt = 0;
-        let cOk = 0, cDiv = 0, cNull = 0, cExt = 0;
-        const parser = new DOMParser();
-
-        for (let file of files) {
-            const text = await file.text();
-            const xml = parser.parseFromString(text, "text/xml");
-            const servicos = xml.getElementsByTagNameNS("*", "servicosExecutados");
-
-            for (let serv of servicos) {
-                const codTab  = serv.getElementsByTagNameNS("*", "codigoTabela")[0]?.textContent || "";
-                const codProc = serv.getElementsByTagNameNS("*", "codigoProcedimento")[0]?.textContent || "";
-                const vXml    = extrairValor(serv.getElementsByTagNameNS("*", "valorUnitario")[0]?.textContent);
-                const desc    = serv.getElementsByTagNameNS("*", "descricaoProcedimento")[0]?.textContent || "---";
-                const dataRaw = serv.getElementsByTagNameNS("*", "dataExecucao")[0]?.textContent || "";
-
-                let status, bCls, vExNum = 0, codF = "---";
-
-                if (!["00", "19", "20"].includes(codTab)) {
-                    status = "DIARIAS E TAXAS"; bCls = "b-ext"; sExt += vXml; cExt++;
-                } else {
-                    const match = excelIndex.get(limparTexto(codProc));
-                    if (match) {
-                        vExNum = match.valor; codF = match.profat;
-                        if (Math.abs(vXml - vExNum) <= 0.021) {
-                            status = "CORRETO"; bCls = "b-ok"; sOk += vXml; cOk++;
-                        } else {
-                            status = "DIVERGENTE"; bCls = "b-div"; sDiv += vXml; cDiv++;
-                        }
-                    } else {
-                        status = "NÃO ENCONTRADO"; bCls = "b-null"; sNull += vXml; cNull++;
-                    }
-                }
-
-                dadosProcessados.push({
-                    Arquivo: file.name, Tab: codTab, CodXML: codProc, Data: formatarData(dataRaw), Profat: codF,
-                    Desc: desc, VConta: vXml, VTnumm: vExNum, Status: status, Cls: bCls
-                });
-            }
-        }
-
-        renderizarTabela(dadosProcessados);
-
-        // Cards — valor + contagem
-        document.getElementById('total-ok').innerText   = formatarReal(sOk);
-        document.getElementById('total-div').innerText  = formatarReal(sDiv);
-        document.getElementById('total-null').innerText = formatarReal(sNull);
-        document.getElementById('total-ext').innerText  = formatarReal(sExt);
-        document.getElementById('count-ok').innerText   = `${cOk.toLocaleString('pt-br')} ${cOk === 1 ? 'item' : 'itens'}`;
-        document.getElementById('count-div').innerText  = `${cDiv.toLocaleString('pt-br')} ${cDiv === 1 ? 'item' : 'itens'}`;
-        document.getElementById('count-null').innerText = `${cNull.toLocaleString('pt-br')} ${cNull === 1 ? 'item' : 'itens'}`;
-        document.getElementById('count-ext').innerText  = `${cExt.toLocaleString('pt-br')} ${cExt === 1 ? 'item' : 'itens'}`;
-
-        DOM.loader.style.display = 'none';
-        DOM.btn.style.display = 'block';
-        DOM.summary.style.display = 'grid';
-        DOM.bar.style.display = 'flex';
-        atualizarContador();
-    }
-
-    /* ── RENDER ── */
-    function renderizarTabela(lista) {
-        if (!lista.length) {
-            DOM.corpo.innerHTML = `
-                <tr><td colspan="9">
-                    <div class="empty-state">
-                        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                        <p>Nenhum registro encontrado para os filtros aplicados</p>
-                    </div>
-                </td></tr>`;
-            return;
-        }
-
-        const fragment = [];
-        for (let item of lista) {
-            // Delta — diferença entre valor da conta e valor da base
-            let deltaHTML = '<span class="delta-zero">—</span>';
-            if (item.Status === 'DIVERGENTE') {
-                const delta = item.VConta - item.VTnumm;
-                const cls   = delta > 0 ? 'delta-pos' : 'delta-neg';
-                const sinal = delta > 0 ? '+' : '';
-                deltaHTML   = `<span class="${cls}">${sinal}${formatarReal(delta)}</span>`;
-            } else if (item.Status === 'CORRETO') {
-                deltaHTML = '<span class="delta-zero">R$ 0,00</span>';
-            }
-
-            fragment.push(`
-                <tr data-cod="${item.CodXML.toLowerCase()}" data-desc="${item.Desc.toLowerCase()}" data-status="${item.Status}">
-                    <td title="${item.Arquivo}">${item.Arquivo.length > 18 ? item.Arquivo.substring(0,16) + '…' : item.Arquivo}</td>
-                    <td>${item.Tab}</td>
-                    <td>${item.CodXML}</td>
-                    <td style="color:var(--az-text-gray);font-size:11px;">${item.Data || "—"}</td>
-                    <td style="color:var(--az-gold);font-weight:700">${item.Profat}</td>
-                    <td title="${item.Desc}">${item.Desc}</td>
-                    <td>${formatarReal(item.VConta)}</td>
-                    <td>${item.VTnumm ? formatarReal(item.VTnumm) : '—'}</td>
-                    <td>${deltaHTML}</td>
-                    <td><span class="badge ${item.Cls}">${item.Status}</span></td>
-                </tr>
-            `);
-        }
-        DOM.corpo.innerHTML = fragment.join('');
-    }
-
-    /* ── FILTROS ── */
-    function debounceFiltro() {
-        clearTimeout(timeoutFiltro);
-        timeoutFiltro = setTimeout(aplicarFiltros, 250);
-    }
-
-    function aplicarFiltros() {
-        const busca       = document.getElementById('filterInput').value.toLowerCase().trim();
-        const statusFiltro = document.getElementById('filterStatus').value;
-        const linhas      = DOM.corpo.getElementsByTagName('tr');
-        let visiveis = 0;
-
-        for (let i = 0; i < linhas.length; i++) {
-            const tr = linhas[i];
-            if (!tr.dataset.status) { tr.style.display = 'none'; continue; } // empty-state row
-            const matchBusca  = !busca || tr.dataset.cod.includes(busca) || tr.dataset.desc.includes(busca);
-            const matchStatus = !statusFiltro || tr.dataset.status === statusFiltro;
-            const visivel     = matchBusca && matchStatus;
-            tr.style.display  = visivel ? "" : "none";
-            if (visivel) visiveis++;
-        }
-
-        // Empty state quando filtro não acha nada
-        const existeEmpty = document.getElementById('emptyFiltered');
-        if (visiveis === 0 && dadosProcessados.length > 0) {
-            if (!existeEmpty) {
-                const tr = document.createElement('tr');
-                tr.id = 'emptyFiltered';
-                tr.innerHTML = `<td colspan="10"><div class="empty-state">
-                    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                    <p>Nenhum registro encontrado para os filtros aplicados</p>
-                </div></td>`;
-                DOM.corpo.appendChild(tr);
-            }
-        } else {
-            existeEmpty?.remove();
-        }
-
-        atualizarContador(visiveis);
-    }
-
-    function limparFiltros() {
-        document.getElementById('filterInput').value = '';
-        document.getElementById('filterStatus').value = '';
-        aplicarFiltros();
-    }
-
-    function atualizarContador(visiveis) {
-        const total = dadosProcessados.length;
-        if (visiveis === undefined) visiveis = total;
-        DOM.contador.innerHTML = visiveis === total
-            ? `<span>${total.toLocaleString('pt-br')}</span> registros`
-            : `<span>${visiveis.toLocaleString('pt-br')}</span> de ${total.toLocaleString('pt-br')} registros`;
-    }
-
-    /* ── EXPORT ── */
-    function exportarExcel() {
-        const ws = XLSX.utils.json_to_sheet(dadosProcessados.map(d => ({
-            Arquivo:     d.Arquivo,
-            Tabela:      d.Tab,
-            Codigo_XML:  d.CodXML,
-            Data_Execucao: d.Data,
-            Profat:      d.Profat,
-            Descricao:   d.Desc,
-            Valor_Conta: d.VConta,
-            Valor_Base:  d.VTnumm,
-            Diferenca:   d.Status === 'DIVERGENTE' ? d.VConta - d.VTnumm : 0,
-            Status:      d.Status
-        })));
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Auditoria");
-        XLSX.writeFile(wb, "AXON_Auditoria_Final.xlsx");
-    }
-
-    /* ── MODAL GUIA ── */
-    function abrirGuia() { document.getElementById('modalGuia').classList.add('open'); document.body.style.overflow = 'hidden'; }
-    function fecharGuia() { document.getElementById('modalGuia').classList.remove('open'); document.body.style.overflow = ''; }
-    function fecharGuiaOverlay(e) { if (e.target === document.getElementById('modalGuia')) fecharGuia(); }
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') fecharGuia(); });
-
-</script>
 
 <!-- Botão ajuda -->
 <button class="btn-ajuda" onclick="abrirGuia()">
@@ -797,5 +599,385 @@
   </div>
 </div>
 
+<script>
+    /* ── TEMA ── */
+    let modoEscuro = false;
+    function aplicarTema(escuro) {
+        document.body.classList.toggle('dark', escuro);
+        document.getElementById('iconMoon').style.display = escuro ? 'none' : '';
+        document.getElementById('iconSun').style.display  = escuro ? '' : 'none';
+        document.getElementById('themeLabel').textContent = escuro ? 'CLARO' : 'ESCURO';
+    }
+    function toggleTema() {
+        modoEscuro = !modoEscuro;
+        aplicarTema(modoEscuro);
+        localStorage.setItem('axon-tema', modoEscuro ? 'dark' : 'light');
+    }
+    (function() {
+        if (localStorage.getItem('axon-tema') === 'dark') { modoEscuro = true; aplicarTema(true); }
+    })();
+
+    /* ── DADOS ── */
+    let excelIndex = new Map();
+    let dadosProcessados = [];
+    let timeoutFiltro;
+
+    const DOM = {
+        corpo: document.getElementById('tabelaCorpo'),
+        loader: document.getElementById('loader'),
+        btn: document.getElementById('btnProcessar'),
+        summary: document.getElementById('summary'),
+        bar: document.getElementById('actionBar'),
+        contador: document.getElementById('contadorRegistros')
+    };
+
+    function formatarData(val) {
+        if (!val) return "—";
+        const s = String(val).replace(/\D/g, '');
+        if (s.length === 8) return s.substring(6,8) + '/' + s.substring(4,6) + '/' + s.substring(0,4);
+        return val;
+    }
+    function limparTexto(val) { return val ? String(val).replace(/\D/g, '').replace(/^0+/, '').trim() : ""; }
+    function extrairValor(val) { return val ? parseFloat(String(val).replace(/[^0-9.,-]/g, '').replace(',', '.')) || 0 : 0; }
+    function formatarReal(val) { return val.toLocaleString('pt-br', {style: 'currency', currency: 'BRL'}); }
+
+    /* ── CARGA EXCEL ── */
+    document.getElementById('excelInput').addEventListener('change', function(e) {
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+            const wb = XLSX.read(new Uint8Array(evt.target.result), {type: 'array'});
+            excelIndex.clear();
+            wb.SheetNames.forEach(nome => {
+                const n = nome.trim().toLowerCase();
+                if(["00", "19", "20", "00 unimed", "19unimed", "20unimed"].includes(n)) {
+                    const sheet = XLSX.utils.sheet_to_json(wb.Sheets[nome], {header: 1});
+                    for(let i = 1; i < sheet.length; i++) {
+                        const row = sheet[i];
+                        let cod = limparTexto(row[1]);
+                        if (cod && (!row[4] || String(row[4]).trim() === "")) {
+                            excelIndex.set(cod, {
+                                profat: String(row[5] || "").replace(/\D/g, '').padStart(8, '0'),
+                                valor: extrairValor(row[6])
+                            });
+                        }
+                    }
+                }
+            });
+            const el = document.getElementById('baseStatus');
+            document.getElementById('baseStatusText').textContent =
+                `Base carregada · ${excelIndex.size.toLocaleString('pt-br')} procedimentos`;
+            el.style.display = 'flex';
+        };
+        reader.readAsArrayBuffer(e.target.files[0]);
+    });
+
+    /* ── PROCESSAMENTO ── */
+    async function iniciarProcessamento() {
+        const xmlFiles = document.getElementById('xmlInput').files;
+        if (!xmlFiles.length || excelIndex.size === 0)
+            return alert("Carregue o Excel e os XMLs primeiro.");
+        DOM.btn.style.display = 'none';
+        DOM.loader.style.display = 'block';
+        setTimeout(() => comparar(xmlFiles), 100);
+    }
+
+    async function comparar(files) {
+        dadosProcessados = [];
+        let sOk = 0, sDiv = 0, sNull = 0, sExt = 0;
+        let cOk = 0, cDiv = 0, cNull = 0, cExt = 0;
+        const parser = new DOMParser();
+
+        for (let file of files) {
+            const text = await file.text();
+            const xml = parser.parseFromString(text, "text/xml");
+            const servicos = xml.getElementsByTagNameNS("*", "servicosExecutados");
+
+            for (let serv of servicos) {
+                const codTab  = serv.getElementsByTagNameNS("*", "codigoTabela")[0]?.textContent || "";
+                const codProc = serv.getElementsByTagNameNS("*", "codigoProcedimento")[0]?.textContent || "";
+                const vXml    = extrairValor(serv.getElementsByTagNameNS("*", "valorUnitario")[0]?.textContent);
+                const desc    = serv.getElementsByTagNameNS("*", "descricaoProcedimento")[0]?.textContent || "---";
+                const dataRaw = serv.getElementsByTagNameNS("*", "dataExecucao")[0]?.textContent || "";
+
+                // Sobe no DOM para encontrar numeroGuiaOperadora no ancestral
+                let guia = "";
+                let ancestor = serv.parentNode;
+                while (ancestor && ancestor.nodeType === 1) {
+                    const g = ancestor.getElementsByTagNameNS("*", "numeroGuiaOperadora")[0];
+                    if (g) { guia = g.textContent.trim() || ""; break; }
+                    ancestor = ancestor.parentNode;
+                }
+
+                let status, bCls, vExNum = 0, codF = "---";
+
+                if (!["00", "19", "20"].includes(codTab)) {
+                    status = "DIARIAS E TAXAS"; bCls = "b-ext"; sExt += vXml; cExt++;
+                } else {
+                    const match = excelIndex.get(limparTexto(codProc));
+                    if (match) {
+                        vExNum = match.valor; codF = match.profat;
+                        if (Math.abs(vXml - vExNum) <= 0.021) {
+                            status = "CORRETO"; bCls = "b-ok"; sOk += vXml; cOk++;
+                        } else {
+                            status = "DIVERGENTE"; bCls = "b-div"; sDiv += vXml; cDiv++;
+                        }
+                    } else {
+                        status = "NÃO ENCONTRADO"; bCls = "b-null"; sNull += vXml; cNull++;
+                    }
+                }
+
+                dadosProcessados.push({
+                    Arquivo: file.name, Tab: codTab, CodXML: codProc,
+                    Data: formatarData(dataRaw), Profat: codF,
+                    Desc: desc, VConta: vXml, VTnumm: vExNum,
+                    Status: status, Cls: bCls, Opme: false, Guia: guia
+                });
+            }
+        }
+
+        renderizarTabela(dadosProcessados);
+        document.getElementById('total-ok').innerText   = formatarReal(sOk);
+        document.getElementById('total-div').innerText  = formatarReal(sDiv);
+        document.getElementById('total-null').innerText = formatarReal(sNull);
+        document.getElementById('total-ext').innerText  = formatarReal(sExt);
+        document.getElementById('count-ok').innerText   = `${cOk.toLocaleString('pt-br')} ${cOk === 1 ? 'item' : 'itens'}`;
+        document.getElementById('count-div').innerText  = `${cDiv.toLocaleString('pt-br')} ${cDiv === 1 ? 'item' : 'itens'}`;
+        document.getElementById('count-null').innerText = `${cNull.toLocaleString('pt-br')} ${cNull === 1 ? 'item' : 'itens'}`;
+        document.getElementById('count-ext').innerText  = `${cExt.toLocaleString('pt-br')} ${cExt === 1 ? 'item' : 'itens'}`;
+
+        DOM.loader.style.display = 'none';
+        DOM.btn.style.display = 'block';
+        DOM.summary.style.display = 'grid';
+        DOM.bar.style.display = 'flex';
+        atualizarContador();
+    }
+
+    /* ── RENDER ── */
+    function renderizarTabela(lista) {
+        if (!lista.length) {
+            DOM.corpo.innerHTML = `<tr><td colspan="12"><div class="empty-state">
+                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <p>Nenhum registro encontrado</p></div></td></tr>`;
+            return;
+        }
+        const fragment = [];
+        for (let i = 0; i < lista.length; i++) {
+            const item = lista[i];
+            let deltaHTML = '<span class="delta-zero">—</span>';
+            if (item.Status === 'DIVERGENTE') {
+                const delta = item.VConta - item.VTnumm;
+                const cls   = delta > 0 ? 'delta-pos' : 'delta-neg';
+                const sinal = delta > 0 ? '+' : '';
+                deltaHTML   = `<span class="${cls}">${sinal}${formatarReal(delta)}</span>`;
+            } else if (item.Status === 'CORRETO') {
+                deltaHTML = '<span class="delta-zero">R$ 0,00</span>';
+            }
+            const mostrarGuia = item.Status === 'DIVERGENTE' || item.Status === 'NÃO ENCONTRADO';
+            const guiaHTML    = mostrarGuia
+                ? `<span style="color:var(--danger);font-weight:700">${item.Guia || '—'}</span>`
+                : `<span style="color:var(--az-text-gray)">—</span>`;
+
+            fragment.push(`
+                <tr data-cod="${item.CodXML.toLowerCase()}" data-desc="${item.Desc.toLowerCase()}" data-status="${item.Status}" data-opme="${item.Opme ? 'true' : 'false'}" data-idx="${i}" class="${item.Opme ? 'is-opme' : ''}">
+                    <td class="opme-check-wrap"><input type="checkbox" class="opme-check" onchange="toggleOpme(this)" title="Marcar como OPME" ${item.Opme ? 'checked' : ''}></td>
+                    <td title="${item.Arquivo}">${item.Arquivo.length > 18 ? item.Arquivo.substring(0,16) + '…' : item.Arquivo}</td>
+                    <td>${item.Tab}</td>
+                    <td>${item.CodXML}</td>
+                    <td style="color:var(--az-text-gray);font-size:11px;">${item.Data || '—'}</td>
+                    <td style="color:var(--az-gold);font-weight:700">${item.Profat}</td>
+                    <td title="${item.Desc}">${item.Desc}</td>
+                    <td>${formatarReal(item.VConta)}</td>
+                    <td>${item.VTnumm ? formatarReal(item.VTnumm) : '—'}</td>
+                    <td>${deltaHTML}</td>
+                    <td><span class="badge ${item.Cls}">${item.Status}</span></td>
+                    <td>${guiaHTML}</td>
+                </tr>
+            `);
+        }
+        DOM.corpo.innerHTML = fragment.join('');
+    }
+
+    /* ── FILTROS ── */
+    function debounceFiltro() {
+        clearTimeout(timeoutFiltro);
+        timeoutFiltro = setTimeout(aplicarFiltros, 250);
+    }
+
+    function aplicarFiltros() {
+        const busca        = document.getElementById('filterInput').value.toLowerCase().trim();
+        const statusFiltro = document.getElementById('filterStatus').value;
+        const linhas       = DOM.corpo.getElementsByTagName('tr');
+        let visiveis = 0;
+
+        for (let i = 0; i < linhas.length; i++) {
+            const tr = linhas[i];
+            if (!tr.dataset.status) { tr.style.display = 'none'; continue; }
+            const matchBusca  = !busca || tr.dataset.cod.includes(busca) || tr.dataset.desc.includes(busca);
+            const matchStatus = !statusFiltro
+                || (statusFiltro === '__OPME__' && tr.dataset.opme === 'true')
+                || (statusFiltro !== '__OPME__' && tr.dataset.status === statusFiltro);
+            const visivel    = matchBusca && matchStatus;
+            tr.style.display = visivel ? "" : "none";
+            if (visivel) visiveis++;
+        }
+
+        const existeEmpty = document.getElementById('emptyFiltered');
+        if (visiveis === 0 && dadosProcessados.length > 0) {
+            if (!existeEmpty) {
+                const tr = document.createElement('tr');
+                tr.id = 'emptyFiltered';
+                tr.innerHTML = `<td colspan="12"><div class="empty-state">
+                    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <p>Nenhum registro encontrado para os filtros aplicados</p>
+                </div></td>`;
+                DOM.corpo.appendChild(tr);
+            }
+        } else {
+            existeEmpty?.remove();
+        }
+        atualizarContador(visiveis);
+    }
+
+    function limparFiltros() {
+        document.getElementById('filterInput').value = '';
+        document.getElementById('filterStatus').value = '';
+        aplicarFiltros();
+    }
+
+    function atualizarContador(visiveis) {
+        const total = dadosProcessados.length;
+        if (visiveis === undefined) visiveis = total;
+        DOM.contador.innerHTML = visiveis === total
+            ? `<span>${total.toLocaleString('pt-br')}</span> registros`
+            : `<span>${visiveis.toLocaleString('pt-br')}</span> de ${total.toLocaleString('pt-br')} registros`;
+    }
+
+    /* ── EXPORT ── */
+    function exportarExcel() {
+        const ws = XLSX.utils.json_to_sheet(dadosProcessados.map(d => ({
+            Arquivo:       d.Arquivo,
+            Tabela:        d.Tab,
+            Codigo_XML:    d.CodXML,
+            Data_Execucao: d.Data,
+            Profat:        d.Profat,
+            Descricao:     d.Desc,
+            Valor_Conta:   d.VConta,
+            Valor_Base:    d.VTnumm,
+            Diferenca:     d.Status === 'DIVERGENTE' ? d.VConta - d.VTnumm : 0,
+            Status:        d.Status,
+            Num_Guia:      (d.Status==='DIVERGENTE'||d.Status==='NÃO ENCONTRADO') ? (d.Guia||'—') : '',
+            OPME:          d.Opme ? 'SIM' : ''
+        })));
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Auditoria");
+        XLSX.writeFile(wb, "AXON_Auditoria_Final.xlsx");
+    }
+
+    /* ── OPME ── */
+    function toggleOpme(checkbox) {
+        const tr  = checkbox.closest('tr');
+        const idx = parseInt(tr.dataset.idx);
+        const marcado = checkbox.checked;
+        const item = dadosProcessados[idx];
+
+        item.Opme = marcado;
+
+        if (marcado) {
+            // Guarda status original e move para CORRETO visualmente
+            item._statusOriginal = item.Status;
+            item._clsOriginal    = item.Cls;
+            item.Status = 'CORRETO';
+            item.Cls    = 'b-ok';
+        } else {
+            // Restaura status original
+            item.Status = item._statusOriginal || item.Status;
+            item.Cls    = item._clsOriginal    || item.Cls;
+            delete item._statusOriginal;
+            delete item._clsOriginal;
+        }
+
+        // Atualiza data-status e badge na linha sem re-renderizar tudo
+        tr.dataset.opme   = marcado ? 'true' : 'false';
+        tr.dataset.status = item.Status;
+        tr.classList.toggle('is-opme', marcado);
+        const badge = tr.querySelector('.badge');
+        if (badge) {
+            badge.className = 'badge ' + item.Cls;
+            badge.textContent = item.Status;
+        }
+        // Oculta/mostra célula Nº Guia
+        const cells = tr.querySelectorAll('td');
+        const guiaCell = cells[cells.length - 1];
+        if (guiaCell) {
+            const mostrar = item.Status === 'DIVERGENTE' || item.Status === 'NÃO ENCONTRADO';
+            guiaCell.innerHTML = mostrar
+                ? `<span style="color:var(--danger);font-weight:700">${item.Guia || '—'}</span>`
+                : `<span style="color:var(--az-text-gray)">—</span>`;
+        }
+
+        recalcularCards();
+        atualizarOpmeInfo();
+    }
+
+    function recalcularCards() {
+        let sOk = 0, sDiv = 0, sNull = 0, sExt = 0;
+        let cOk = 0, cDiv = 0, cNull = 0, cExt = 0;
+        for (const d of dadosProcessados) {
+            const v = d.VConta;
+            if      (d.Status === 'CORRETO')         { sOk   += v; cOk++;   }
+            else if (d.Status === 'DIVERGENTE')       { sDiv  += v; cDiv++;  }
+            else if (d.Status === 'NÃO ENCONTRADO')   { sNull += v; cNull++; }
+            else if (d.Status === 'DIARIAS E TAXAS')  { sExt  += v; cExt++;  }
+        }
+        document.getElementById('total-ok').innerText   = formatarReal(sOk);
+        document.getElementById('total-div').innerText  = formatarReal(sDiv);
+        document.getElementById('total-null').innerText = formatarReal(sNull);
+        document.getElementById('total-ext').innerText  = formatarReal(sExt);
+        document.getElementById('count-ok').innerText   = `${cOk.toLocaleString('pt-br')} ${cOk === 1 ? 'item' : 'itens'}`;
+        document.getElementById('count-div').innerText  = `${cDiv.toLocaleString('pt-br')} ${cDiv === 1 ? 'item' : 'itens'}`;
+        document.getElementById('count-null').innerText = `${cNull.toLocaleString('pt-br')} ${cNull === 1 ? 'item' : 'itens'}`;
+        document.getElementById('count-ext').innerText  = `${cExt.toLocaleString('pt-br')} ${cExt === 1 ? 'item' : 'itens'}`;
+    }
+
+    function atualizarOpmeInfo() {
+        const total = dadosProcessados.filter(d => d.Opme).length;
+        const el = document.getElementById('opmeInfo');
+        if (total > 0) {
+            el.style.display = 'inline-block';
+            el.textContent = total + (total === 1 ? ' OPME' : ' OPMEs marcados');
+        } else {
+            el.style.display = 'none';
+        }
+    }
+
+    function exportarSoOPME() {
+        const opmes = dadosProcessados.filter(d => d.Opme);
+        if (!opmes.length) return alert('Nenhum item marcado como OPME.');
+        const ws = XLSX.utils.json_to_sheet(opmes.map(d => ({
+            Arquivo:       d.Arquivo,
+            Tabela:        d.Tab,
+            Codigo_XML:    d.CodXML,
+            Data_Execucao: d.Data,
+            Profat:        d.Profat,
+            Descricao:     d.Desc,
+            Valor_Conta:   d.VConta,
+            Valor_Base:    d.VTnumm,
+            Diferenca:     d.Status === 'DIVERGENTE' ? d.VConta - d.VTnumm : 0,
+            Status:        d.Status,
+            Num_Guia:      (d.Status==='DIVERGENTE'||d.Status==='NÃO ENCONTRADO') ? (d.Guia||'—') : '',
+            OPME:          'SIM'
+        })));
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "OPME");
+        XLSX.writeFile(wb, "AXON_OPME.xlsx");
+    }
+
+    /* ── MODAL GUIA ── */
+    function abrirGuia()  { document.getElementById('modalGuia').classList.add('open'); document.body.style.overflow = 'hidden'; }
+    function fecharGuia() { document.getElementById('modalGuia').classList.remove('open'); document.body.style.overflow = ''; }
+    function fecharGuiaOverlay(e) { if (e.target === document.getElementById('modalGuia')) fecharGuia(); }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') fecharGuia(); });
+
+</script>
 </body>
 </html>
