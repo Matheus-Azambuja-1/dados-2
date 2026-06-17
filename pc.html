@@ -24,7 +24,6 @@
             --text-main: #0a1322;
             --row-alt: #f8fafb;
         }
-
         body.dark {
             --bg-body: #060b13;
             --bg-card: #0e1726;
@@ -32,13 +31,7 @@
             --text-main: #e0e6ed;
             --row-alt: #0b1520;
         }
-
-        * { 
-            box-sizing: border-box; 
-            margin: 0; 
-            padding: 0; 
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-body);
@@ -49,629 +42,111 @@
             flex-direction: column;
         }
 
-        /* ── LOGIN OVERLAY ── */
-        #login-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(8px);
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .login-card {
-            background: var(--bg-card);
-            padding: 60px;
-            border-radius: 2px;
-            border: 1px solid rgba(176,141,50,0.25);
-            text-align: center;
-            width: 90%;
-            max-width: 420px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            animation: slideUp 0.5s ease-out;
-            position: relative;
-        }
-
-        .login-card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(ellipse at 50% 0%, rgba(176,141,50,0.05) 0%, transparent 70%);
-            border-radius: 2px;
-            pointer-events: none;
-        }
-
-        .login-card > * {
-            position: relative;
-            z-index: 1;
-        }
-
-        .login-card i {
-            font-size: 2.5rem;
-            color: var(--az-gold);
-            margin-bottom: 25px;
-            display: block;
-            animation: slideUp 0.6s ease-out 0.1s backwards;
-        }
-
-        .login-card h2 {
-            margin: 0 0 8px 0;
-            font-size: 1.6rem;
-            font-weight: 900;
-            letter-spacing: 6px;
-            text-transform: uppercase;
-            color: var(--text-main);
-            animation: slideUp 0.6s ease-out 0.2s backwards;
-        }
-
-        .login-card p {
-            color: var(--az-text-gray);
-            font-size: 0.65rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 35px;
-            animation: slideUp 0.6s ease-out 0.3s backwards;
-        }
-
-        .login-card input {
-            width: 100%;
-            padding: 14px 16px;
-            margin-bottom: 14px;
-            border-radius: 0;
-            border: 1px solid rgba(176,141,50,0.2);
-            background: var(--bg-body);
-            color: var(--text-main);
-            font-size: 0.9rem;
-            outline: none;
-            transition: all 0.3s ease;
-            animation: slideUp 0.6s ease-out 0.4s backwards;
-        }
-
-        .login-card input::placeholder {
-            color: var(--az-text-gray);
-        }
-
-        .login-card input:focus {
-            border-color: var(--az-gold);
-            background: var(--bg-card);
-            box-shadow: inset 0 0 0 2px rgba(176,141,50,0.1);
-        }
-
-        .login-card button {
-            width: 100%;
-            padding: 14px 16px;
-            border-radius: 0;
-            border: 1px solid var(--az-gold);
-            background: var(--az-gold);
-            color: #000;
-            font-weight: 700;
-            font-size: 0.75rem;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            animation: slideUp 0.6s ease-out 0.5s backwards;
-        }
-
-        .login-card button:hover {
-            background: var(--az-gold-light);
-            border-color: var(--az-gold-light);
-            letter-spacing: 4px;
-        }
-
-        .login-card button:active {
-            transform: scale(0.99);
-        }
-
-        #error-msg {
-            color: #ef4444;
-            margin-top: 15px;
-            font-size: 0.75rem;
-            display: none;
-            animation: slideUp 0.3s ease-out;
-            letter-spacing: 1px;
-        }
-
         /* ── THEME TOGGLE ── */
         .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 999;
-            background: var(--bg-card);
-            border: 1px solid rgba(176,141,50,0.35);
-            border-radius: 3px;
-            padding: 8px 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.6rem;
-            font-weight: 700;
-            color: var(--az-text-gray);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            box-shadow: 0 1px 5px rgba(0,0,0,0.07);
-            transition: all 0.25s;
-            user-select: none;
+            position: fixed; top: 20px; right: 20px; z-index: 999;
+            background: var(--bg-card); border: 1px solid rgba(176,141,50,0.35);
+            border-radius: 3px; padding: 8px 16px; cursor: pointer;
+            display: flex; align-items: center; gap: 10px;
+            font-size: 0.6rem; font-weight: 700; color: var(--az-text-gray);
+            letter-spacing: 2px; text-transform: uppercase;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.07); transition: all 0.25s; user-select: none;
         }
-
-        .theme-toggle:hover {
-            border-color: var(--az-gold);
-            color: var(--az-gold);
-        }
-
-        .theme-toggle svg {
-            width: 14px;
-            height: 14px;
-            stroke: currentColor;
-            fill: none;
-            stroke-width: 1.8;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            transition: transform 0.3s;
-        }
-
-        .theme-toggle:hover svg {
-            transform: rotate(12deg);
-        }
+        .theme-toggle:hover { border-color: var(--az-gold); color: var(--az-gold); }
+        .theme-toggle svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.3s; }
+        .theme-toggle:hover svg { transform: rotate(12deg); }
 
         /* ── HERO ── */
         .hero {
-            background: var(--az-dark);
-            padding: 60px 30px;
-            text-align: center;
-            border-bottom: 1px solid rgba(176,141,50,0.25);
-            position: relative;
-            overflow: hidden;
+            background: var(--az-dark); padding: 60px 30px; text-align: center;
+            border-bottom: 1px solid rgba(176,141,50,0.25); position: relative; overflow: hidden;
         }
+        .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 0%, rgba(176,141,50,0.08) 0%, transparent 70%); pointer-events: none; }
+        .hero-content { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; }
+        .hero-line { width: 295px; height: 2px; background: var(--az-gold); margin: 24px auto -51px; }
+        .hero-brand { font-size: 1.9rem; font-weight: 0; letter-spacing: 14px; color: #fff; text-transform: uppercase; margin-bottom: 25px; }
+        .hero-sub { color: var(--az-gold); font-size: 1.0rem; font-weight: 600; letter-spacing: 8px; text-transform: uppercase; margin-bottom: 6px; }
+        .hero-desc { color: rgba(255,255,255,0.38); font-size: 0.68rem; letter-spacing: 2px; text-transform: uppercase; }
 
-        .hero::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(ellipse at 50% 0%, rgba(176,141,50,0.08) 0%, transparent 70%);
-            pointer-events: none;
+        /* Badge usuário no hero */
+        .user-badge-hero {
+            position: absolute; top: 20px; left: 20px; z-index: 10;
+            display: flex; align-items: center; gap: 10px;
         }
-
-        .hero-content {
-            position: relative;
-            z-index: 1;
-            max-width: 1400px;
-            margin: 0 auto;
+        .user-badge-pill {
+            display: flex; align-items: center; gap: 7px;
+            padding: 6px 14px; background: rgba(176,141,50,0.12);
+            border: 1px solid rgba(176,141,50,0.25); color: var(--az-gold);
+            font-size: .62rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
         }
-
-        .hero-line {
-            width: 295px;
-            height: 2px;
-            background: var(--az-gold);
-            margin: 24px auto -51px;
+        .btn-logout-hero {
+            padding: 6px 14px; background: transparent;
+            border: 1px solid rgba(239,68,68,0.35); color: #ef4444;
+            font-size: .6rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+            cursor: pointer; font-family: 'Inter',sans-serif; transition: all .2s;
         }
-
-        .hero-brand {
-            font-size: 1.9rem;
-            font-weight: 0;
-            letter-spacing: 14px;
-            color: #fff;
-            text-transform: uppercase;
-            margin-bottom: 25px;
-        }
-
-        .hero-sub {
-            color: var(--az-gold);
-            font-size: 1.0rem;
-            font-weight: 600;
-            letter-spacing: 8px;
-            text-transform: uppercase;
-            margin-bottom: 6px;
-        }
-
-        .hero-desc {
-            color: rgba(255,255,255,0.38);
-            font-size: 0.68rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
+        .btn-logout-hero:hover { background: rgba(239,68,68,.1); }
 
         /* ── MAIN ── */
-        .main-content {
-            flex: 1;
-            padding: 50px 30px;
-            max-width: 1400px;
-            margin: 0 auto;
-            width: 100%;
-        }
+        .main-content { flex: 1; padding: 50px 30px; max-width: 1400px; margin: 0 auto; width: 100%; }
 
         /* ── CONTROLS ── */
-        .controls-section {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 40px;
-            align-items: flex-end;
-            flex-wrap: wrap;
-        }
-
-        .control-group {
-            flex: 1;
-            min-width: 250px;
-        }
-
-        .control-group label {
-            display: block;
-            font-size: 0.6rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: var(--az-text-gray);
-            margin-bottom: 8px;
-        }
-
-        .control-group input,
-        .control-group select {
-            width: 100%;
-            padding: 12px 14px;
-            border: 1px solid var(--border);
-            background: var(--bg-card);
-            color: var(--text-main);
-            border-radius: 0;
-            font-size: 0.9rem;
-            font-family: 'Inter', sans-serif;
-            transition: all 0.2s;
-            outline: none;
-        }
-
-        .control-group input:focus,
-        .control-group select:focus {
-            border-color: var(--az-gold);
-            box-shadow: inset 0 0 0 2px rgba(176,141,50,0.1);
-        }
+        .controls-section { display: flex; gap: 20px; margin-bottom: 40px; align-items: flex-end; flex-wrap: wrap; }
+        .control-group { flex: 1; min-width: 250px; }
+        .control-group label { display: block; font-size: 0.6rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--az-text-gray); margin-bottom: 8px; }
+        .control-group input, .control-group select { width: 100%; padding: 12px 14px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-main); border-radius: 0; font-size: 0.9rem; font-family: 'Inter', sans-serif; transition: all 0.2s; outline: none; }
+        .control-group input:focus, .control-group select:focus { border-color: var(--az-gold); box-shadow: inset 0 0 0 2px rgba(176,141,50,0.1); }
 
         /* ── FILTERS ── */
-        .filters-bar {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .filter-btn {
-            padding: 8px 16px;
-            border: 1px solid var(--border);
-            background: var(--bg-card);
-            color: var(--az-text-gray);
-            font-size: 0.75rem;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            cursor: pointer;
-            border-radius: 0;
-            transition: all 0.2s;
-        }
-
-        .filter-btn:hover {
-            border-color: var(--az-gold);
-            color: var(--az-gold);
-        }
-
-        .filter-btn.active {
-            background: var(--az-gold);
-            border-color: var(--az-gold);
-            color: #000;
-        }
+        .filters-bar { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; align-items: center; }
+        .filter-btn { padding: 8px 16px; border: 1px solid var(--border); background: var(--bg-card); color: var(--az-text-gray); font-size: 0.75rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; border-radius: 0; transition: all 0.2s; }
+        .filter-btn:hover { border-color: var(--az-gold); color: var(--az-gold); }
+        .filter-btn.active { background: var(--az-gold); border-color: var(--az-gold); color: #000; }
 
         /* ── TABLE ── */
-        .table-wrapper {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 0;
-            overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        thead {
-            background: linear-gradient(90deg, rgba(176,141,50,0.05), rgba(176,141,50,0.02));
-            border-bottom: 2px solid var(--border);
-        }
-
-        th {
-            text-align: left;
-            padding: 16px 18px;
-            font-size: 0.7rem;
-            color: var(--az-text-gray);
-            font-weight: 700;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            border-right: 1px solid var(--border);
-        }
-
-        th:last-child {
-            border-right: none;
-        }
-
-        tbody tr {
-            border-bottom: 1px solid var(--border);
-            transition: all 0.2s;
-        }
-
-        tbody tr:hover {
-            background: var(--row-alt);
-        }
-
-        tbody tr:last-child {
-            border-bottom: none;
-        }
-
-        td {
-            padding: 16px 18px;
-            vertical-align: middle;
-            font-size: 0.9rem;
-            border-right: 1px solid var(--border);
-        }
-
-        td:last-child {
-            border-right: none;
-        }
-
-        .sector-badge {
-            display: inline-block;
-            font-size: 0.65rem;
-            background: rgba(176,141,50,0.1);
-            border: 1px solid rgba(176,141,50,0.25);
-            color: var(--az-gold);
-            padding: 5px 10px;
-            border-radius: 0;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .procedure-name {
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .procedure-code {
-            font-size: 0.8rem;
-            color: var(--az-text-gray);
-        }
-
-        .price-tag {
-            display: inline-block;
-            font-size: 0.85rem;
-            background: rgba(16,185,137,0.1);
-            border: 1px solid rgba(16,185,137,0.25);
-            color: var(--success);
-            padding: 6px 12px;
-            border-radius: 0;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-
-        .tr-hidden {
-            display: none !important;
-        }
+        .table-wrapper { background: var(--bg-card); border: 1px solid var(--border); overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: linear-gradient(90deg, rgba(176,141,50,0.05), rgba(176,141,50,0.02)); border-bottom: 2px solid var(--border); }
+        th { text-align: left; padding: 16px 18px; font-size: 0.7rem; color: var(--az-text-gray); font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; border-right: 1px solid var(--border); }
+        th:last-child { border-right: none; }
+        tbody tr { border-bottom: 1px solid var(--border); transition: all 0.2s; }
+        tbody tr:hover { background: var(--row-alt); }
+        tbody tr:last-child { border-bottom: none; }
+        td { padding: 16px 18px; vertical-align: middle; font-size: 0.9rem; border-right: 1px solid var(--border); }
+        td:last-child { border-right: none; }
+        .sector-badge { display: inline-block; font-size: 0.65rem; background: rgba(176,141,50,0.1); border: 1px solid rgba(176,141,50,0.25); color: var(--az-gold); padding: 5px 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+        .procedure-name { font-weight: 600; margin-bottom: 4px; }
+        .procedure-code { font-size: 0.8rem; color: var(--az-text-gray); }
+        .price-tag { display: inline-block; font-size: 0.85rem; background: rgba(16,185,137,0.1); border: 1px solid rgba(16,185,137,0.25); color: var(--success); padding: 6px 12px; font-weight: 700; letter-spacing: 0.5px; }
 
         /* ── STATS ── */
-        .stats-row {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-
-        .stat-card {
-            flex: 1;
-            min-width: 200px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            padding: 20px;
-            text-align: center;
-        }
-
-        .stat-label {
-            font-size: 0.65rem;
-            color: var(--az-text-gray);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-        }
-
-        .stat-value {
-            font-size: 1.8rem;
-            font-weight: 900;
-            color: var(--az-gold);
-            letter-spacing: -1px;
-        }
+        .stats-row { display: flex; gap: 20px; margin-bottom: 30px; flex-wrap: wrap; }
+        .stat-card { flex: 1; min-width: 200px; background: var(--bg-card); border: 1px solid var(--border); padding: 20px; text-align: center; }
+        .stat-label { font-size: 0.65rem; color: var(--az-text-gray); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+        .stat-value { font-size: 1.8rem; font-weight: 900; color: var(--az-gold); letter-spacing: -1px; }
 
         /* ── FOOTER ── */
-  .az-footer {
-    background: var(--az-dark);
-    color: #fff;
-    text-align: center;
-    padding: 50px 30px 35px;
-    border-top: 1px solid rgba(176,141,50,0.25);
-  }
-  .az-footer::before {
-    content: '';
-    display: block;
-    width: 60px; height: 2px;
-    background: var(--az-gold);
-    margin: 0 auto 30px;
-  }
-  .footer-brand {
-    font-size: 1.1rem; font-weight: 800;
-    letter-spacing: 10px; color: #fff;
-    text-transform: uppercase; margin-bottom: 8px;
-  }
-  .footer-sub {
-    color: var(--az-gold);
-    font-size: 0.65rem; font-weight: 600;
-    letter-spacing: 5px; text-transform: uppercase;
-    margin-bottom: 28px;
-  }
-  .footer-copy {
-    font-size: 0.55rem;
-    opacity: 0.4;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    line-height: 1.8;
-  }
-        /* ── LOGOUT BTN ── */
-        .btn-logout {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: rgba(239, 68, 68, 0.15);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #ef4444;
-            padding: 8px 16px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            cursor: pointer;
-            border-radius: 0;
-            transition: all 0.2s;
-            z-index: 100;
-        }
-
-        .btn-logout:hover {
-            background: rgba(239, 68, 68, 0.25);
-            border-color: #ef4444;
-        }
-
-        /* ── RESPONSIVIDADE ── */
-        @media (max-width: 768px) {
-            .hero {
-                padding: 40px 20px;
-            }
-
-            .hero-brand {
-                font-size: 1.8rem;
-                letter-spacing: 10px;
-            }
-
-            .main-content {
-                padding: 30px 20px;
-            }
-
-            .controls-section {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .control-group {
-                width: 100%;
-            }
-
-            .filters-bar {
-                gap: 8px;
-            }
-
-            th, td {
-                padding: 12px;
-                font-size: 0.75rem;
-            }
-
-            .stats-row {
-                flex-direction: column;
-            }
-
-            .stat-card {
-                width: 100%;
-            }
-
-            .login-card {
-                padding: 40px 25px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .hero-brand {
-                font-size: 1.4rem;
-                letter-spacing: 8px;
-            }
-
-            .main-content {
-                padding: 20px 15px;
-            }
-
-            th, td {
-                padding: 10px;
-                font-size: 0.7rem;
-            }
-
-            .login-card {
-                width: 95%;
-                padding: 30px 20px;
-            }
-
-            .theme-toggle {
-                padding: 6px 12px;
-                font-size: 0.55rem;
-            }
-        }
+        .az-footer { background: var(--az-dark); color: #fff; text-align: center; padding: 50px 30px 35px; border-top: 1px solid rgba(176,141,50,0.25); }
+        .az-footer::before { content: ''; display: block; width: 60px; height: 2px; background: var(--az-gold); margin: 0 auto 30px; }
+        .footer-brand { font-size: 1.1rem; font-weight: 800; letter-spacing: 10px; color: #fff; text-transform: uppercase; margin-bottom: 8px; }
+        .footer-sub { color: var(--az-gold); font-size: 0.65rem; font-weight: 600; letter-spacing: 5px; text-transform: uppercase; margin-bottom: 28px; }
+        .footer-copy { font-size: 0.55rem; opacity: 0.4; letter-spacing: 2px; text-transform: uppercase; line-height: 1.8; }
 
         /* ── SCROLLBAR ── */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-body); }
+        ::-webkit-scrollbar-thumb { background: rgba(176,141,50,0.4); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--az-gold); }
 
-        ::-webkit-scrollbar-track {
-            background: var(--bg-body);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: rgba(176,141,50,0.4);
-            border-radius: 0;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--az-gold);
+        @media (max-width: 768px) {
+            .hero { padding: 40px 20px; }
+            .main-content { padding: 30px 20px; }
+            .controls-section { flex-direction: column; }
+            .stats-row { flex-direction: column; }
         }
     </style>
 </head>
 <body>
-
-<!-- LOGIN -->
-<div id="login-overlay">
-    <button onclick="fazerLogout()" class="btn-logout" title="Sair"><i class="fa-solid fa-power-off"></i> SAIR</button>
-    <div class="login-card">
-        <i class="fa-solid fa-lock"></i>
-        <h2>Acesso Restrito</h2>
-        <p>Premium Portal</p>
-        <input type="text" id="user-input" placeholder="Utilizador">
-        <input type="password" id="pass-input" placeholder="Palavra-passe">
-        <button onclick="validarAcesso()">Entrar</button>
-        <p id="error-msg">Dados incorretos.</p>
-    </div>
-</div>
 
 <!-- THEME TOGGLE -->
 <button class="theme-toggle" onclick="toggleTema()">
@@ -682,6 +157,16 @@
 
 <!-- HERO -->
 <div class="hero">
+    <!-- Badge do usuário logado -->
+    <div class="user-badge-hero">
+        <div class="user-badge-pill" id="userBadge" style="display:none">
+            <i class="fas fa-user-circle"></i>
+            <span id="userBadgeNome">—</span>
+        </div>
+        <button class="btn-logout-hero" id="btnLogout" style="display:none" onclick="fazerLogout()">
+            <i class="fas fa-sign-out-alt"></i> Sair
+        </button>
+    </div>
     <div class="hero-content">
         <div class="hero-line"></div>
         <div class="hero-brand">Catálogo de Procedimentos e Valores</div>
@@ -692,23 +177,11 @@
 
 <!-- MAIN -->
 <div class="main-content">
-    <!-- STATS -->
     <div class="stats-row">
-        <div class="stat-card">
-            <div class="stat-label">Total Encontrado</div>
-            <div class="stat-value" id="total-stat">0</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">Setores Ativos</div>
-            <div class="stat-value" id="setores-stat">0</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">Valor Médio</div>
-            <div class="stat-value" id="media-stat">R$ 0</div>
-        </div>
+        <div class="stat-card"><div class="stat-label">Total Encontrado</div><div class="stat-value" id="total-stat">0</div></div>
+        <div class="stat-card"><div class="stat-label">Setores Ativos</div><div class="stat-value" id="setores-stat">0</div></div>
+        <div class="stat-card"><div class="stat-label">Valor Médio</div><div class="stat-value" id="media-stat">R$ 0</div></div>
     </div>
-
-    <!-- CONTROLS -->
     <div class="controls-section">
         <div class="control-group" style="flex: 2;">
             <label>Pesquisar</label>
@@ -724,11 +197,7 @@
             </select>
         </div>
     </div>
-
-    <!-- FILTERS -->
     <div class="filters-bar" id="filter-group"></div>
-
-    <!-- TABLE -->
     <div class="table-wrapper">
         <table>
             <thead>
@@ -742,27 +211,84 @@
             <tbody id="tabela"></tbody>
         </table>
     </div>
-
 </div>
 
 <!-- FOOTER -->
 <footer class="az-footer">
-  <div class="footer-brand"> A Z A M B U J A </div>
-  <div class="footer-sub">Excelência na Gestão de Saúde</div>
-  <div class="footer-copy">
-    Central de Ferramentas — Faturamento/Auditoria &AMP; CADASTRO <br>
-    Uso interno restrito · Todos os direitos reservados
-  </div>
+    <div class="footer-brand">A Z A M B U J A</div>
+    <div class="footer-sub">Excelência na Gestão de Saúde</div>
+    <div class="footer-copy">Central de Ferramentas — Faturamento/Auditoria &amp; CADASTRO<br>Uso interno restrito · Todos os direitos reservados</div>
 </footer>
 
 <script>
-    const USUARIOS = {
-        "admin": "azambuja",
-        "cadastro": "cad2026",
-        "faturamento": "fat600",
-        "comercial": "hnsa123"
-    };
+    // ── ENDPOINT (mesmo do Portal) ──────────────────────────────
+    const _c = [
+        'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbQ==',
+        'L21hY3Jvcy9zL0FLZnljYnhWUHRyWDJVNQ==',
+        'QnJDekJ6WHZjTy1lNzY3dU80bkI1eWJyZQ==',
+        'Q3U2Q09iYkdCWmVjVG1aa1N6LVBOTFVhamZLT2tHcTAvZXhlYw=='
+    ];
+    const ENDPOINT = _c.map(s => atob(s)).join('');
 
+    // ── TRACKER — registra acesso na aba "entradas" ─────────────
+    (function axonTracker() {
+        const usuario = sessionStorage.getItem('axon_portal_user') || localStorage.getItem('axon_portal_user') || '—';
+        const nome    = sessionStorage.getItem('axon_portal_nome') || localStorage.getItem('axon_portal_nome') || '—';
+        const NOME_PAGINA = 'Pacotes Hospitalares (pc.html)';
+
+    
+        // Registra o acesso
+        function enviarLog(ip) {
+            const cb  = '_axon_tr_' + Date.now();
+            const url = ENDPOINT
+                + '?acao=logEntrada'
+                + '&u='      + encodeURIComponent(usuario)
+                + '&nome='   + encodeURIComponent(nome)
+                + '&ip='     + encodeURIComponent(ip)
+                + '&pagina=' + encodeURIComponent(NOME_PAGINA)
+                + '&callback=' + cb + '&t=' + Date.now();
+            window[cb] = () => { delete window[cb]; };
+            const s = document.createElement('script');
+            s.onerror = () => { delete window[cb]; };
+            s.src = url;
+            document.head.appendChild(s);
+            setTimeout(() => { if (s.parentNode) s.remove(); }, 8000);
+        }
+
+        fetch('https://api.ipify.org?format=json')
+            .then(r => r.json())
+            .then(d  => enviarLog(d.ip || '—'))
+            .catch(()  => enviarLog('—'));
+    })();
+
+    function fazerLogout() {
+        sessionStorage.removeItem('axon_portal_auth');
+        sessionStorage.removeItem('axon_portal_user');
+        sessionStorage.removeItem('axon_portal_nome');
+        sessionStorage.removeItem('axon_portal_kpi');
+        sessionStorage.removeItem('axon_portal_cadastro');
+        sessionStorage.removeItem('axon_portal_login_ts');
+        localStorage.removeItem('axon_portal_auth');
+        localStorage.removeItem('axon_portal_user');
+        localStorage.removeItem('axon_portal_nome');
+        window.location.href = 'index.html';
+    }
+
+    // ── TEMA ────────────────────────────────────────────────────
+    function toggleTema() {
+        const isDark = document.body.classList.toggle('dark');
+        localStorage.setItem('axon-tema', isDark ? 'dark' : 'light');
+        aplicarDark(isDark);
+    }
+    function aplicarDark(isDark) {
+        document.body.classList.toggle('dark', isDark);
+        document.getElementById('iconMoon').style.display = isDark ? 'none'  : 'block';
+        document.getElementById('iconSun').style.display  = isDark ? 'block' : 'none';
+        document.getElementById('themeLabel').textContent = isDark ? 'CLARO' : 'ESCURO';
+    }
+    if (localStorage.getItem('axon-tema') === 'dark') aplicarDark(true);
+
+    // ── DADOS ───────────────────────────────────────────────────
     const DATA = [
 { s: "AMBULATÓRIO", p: "Biopsia de Prostata - HNSA", c: "31201040-10999972", v1: 1000.00, v2: 898.08 },
 { s: "AMBULATÓRIO", p: "Biopsia de Vulva", c: "31301029-10999992", v1: 560.00, v2: 480.00 },
@@ -813,9 +339,9 @@
 { s: "AMBULATÓRIO", p: "Cauterização de Lesão - Dr Delso", c: "", v1: 50.00, v2: 46.00 },
 { s: "AMBULATÓRIO", p: "Infiltração Dr Bruna - Sem Medicação", c: "30713145-11000006", v1: 250.00, v2: 220.00 },
 { s: "AMBULATÓRIO", p: "cCOLETA + MIELOGRAMA", c: "40304892-11000095", v1: 850.00, v2: 800.00 },
-        { s: "BUCO MAXILO", p: "Exodontia com Internação", c: "82000832-11000011", v1: 2500.00, v2: 2190.00 },
-        { s: "BUCO MAXILO", p: "Implante Zigomático (com diária)", c: "", v1: 2300.00, v2: 1990.00 },
-        { s: "BUCO MAXILO", p: "Implante Zigomático (sem diária)", c: "", v1: 1500.00, v2: 1275.00 },
+{ s: "BUCO MAXILO", p: "Exodontia com Internação", c: "82000832-11000011", v1: 2500.00, v2: 2190.00 },
+{ s: "BUCO MAXILO", p: "Implante Zigomático (com diária)", c: "", v1: 2300.00, v2: 1990.00 },
+{ s: "BUCO MAXILO", p: "Implante Zigomático (sem diária)", c: "", v1: 1500.00, v2: 1275.00 },
 { s: "CIRURGIA GERAL", p: "Apendicectomia", c: "31003079-80000000", v1: 2500.00, v2: 2149.98 },
 { s: "CIRURGIA GERAL", p: "Cisto Pilonidal", c: "31009042-80000001", v1: 1800.00, v2: 1552.99 },
 { s: "CIRURGIA GERAL", p: "Cisto Tireoglosso", c: "30212074-10999976", v1: 2450.00, v2: 1936.00 },
@@ -870,7 +396,7 @@
 { s: "GINECOLOGIA", p: "Sling", c: "31103332-11000073", v1: 1800.00, v2: 1590.00 },
 { s: "GINECOLOGIA", p: "Perineoplastia", c: "31004300-10999954", v1: 1800.00, v2: 1575.00 },
 { s: "GINECOLOGIA", p: "Perineo + Sling", c: "31103332-11000037", v1: 2300.00, v2: 2000.00 },
-{ s: "GINECOLOGIA", p: "Histeroscopia ", c: "31303188-99999940", v1: 2350.00, v2: 2035.00 },
+{ s: "GINECOLOGIA", p: "Histeroscopia", c: "31303188-99999940", v1: 2350.00, v2: 2035.00 },
 { s: "GINECOLOGIA", p: "Conização", c: "91040224-11000090", v1: 1850.00, v2: 1600.00 },
 { s: "GINECOLOGIA", p: "Laqueadura Tubária", c: "", v1: 2735.00, v2: 2370.33 },
 { s: "GINECOLOGIA", p: "Cisto Bartholin", c: "", v1: 2100.00, v2: 1818.14 },
@@ -899,7 +425,7 @@
 { s: "ONCOLOGIA", p: "Endometriose profunda (peritoneal) + Colectomia segmentar ONCOLOGICA", c: "91040198-11000056", v1: 5515.00, v2: 4780.00 },
 { s: "ONCOLOGIA", p: "Retossigmoidectomia por Vídeo (Sem UTI)", c: "31003796-11000087", v1: 7000.00, v2: 6040.00 },
 { s: "ONCOLOGIA", p: "Resseção (Exerese) de Tumoração Assoalho Boca (Palato)", c: "91040243-11000109", v1: 4545.00, v2: 3940.00 },
-{ s: "ONCOLOGIA", p: "HISTERECTOMIA (ENDOMETRIOSE PROFUNDA )", c: "91040247-11000112", v1: 4840.00, v2: 4195.00 },
+{ s: "ONCOLOGIA", p: "HISTERECTOMIA (ENDOMETRIOSE PROFUNDA)", c: "91040247-11000112", v1: 4840.00, v2: 4195.00 },
 { s: "VASCULAR", p: "Endarterectomia", c: "31309296-99999005", v1: 9800.00, v2: 9070.00 },
 { s: "VASCULAR", p: "Fistula Arteriovenosa", c: "", v1: 1850.00, v2: 1585.97 },
 { s: "VASCULAR", p: "Implante de Porto-a-Cath", c: "30913101-10999978", v1: 2800.00, v2: 2406.85 },
@@ -922,8 +448,8 @@
 { s: "UROLOGIA", p: "Retirada de Duplo J (com 1 diária)", c: "", v1: 1800.00, v2: 1570.00 },
 { s: "UROLOGIA", p: "Retirada de Duplo J (sem diária)", c: "31103472-99999007", v1: 1000.00, v2: 850.00 },
 { s: "UROLOGIA", p: "Reversão Vasectomia (Vaso vasostomia)", c: "31205038-09999916", v1: 3500.00, v2: 3030.00 },
-{ s: "UROLOGIA", p: "Uretroplastia Peniana", c: "91040237-11000103", v1: 2550.00, v2: 2200.00 }, 
-{ s: "PLÁSTICA", p: "Implante de Protese (mama hibrida), ...", c: "91040239-11000105", v1: 6540, v2: 5670.00 },
+{ s: "UROLOGIA", p: "Uretroplastia Peniana", c: "91040237-11000103", v1: 2550.00, v2: 2200.00 },
+{ s: "PLÁSTICA", p: "Implante de Protese (mama hibrida)", c: "91040239-11000105", v1: 6540, v2: 5670.00 },
 { s: "PLÁSTICA", p: "Lipoaspiração e Enxerto", c: "31309298-99999008", v1: 4200.00, v2: 3650.00 },
 { s: "PLÁSTICA", p: "Abdominoplastia, Lipoaspiração e Enxerto", c: "30102030-99999931", v1: 6000.00, v2: 5217.00 },
 { s: "PLÁSTICA", p: "Abdominoplastia, Lipoaspiração e Enxerto com técnicas", c: "31309282-99999976", v1: 8970.00, v2: 7775.00 },
@@ -940,13 +466,13 @@
 { s: "PLÁSTICA", p: "Mastopexia com prótese", c: "31309293-99999002", v1: 5100.00, v2: 4440.00 },
 { s: "PLÁSTICA", p: "Retirada Protese", c: "31309299-99999009", v1: 3100.00, v2: 2800.00 },
 { s: "PLÁSTICA", p: "Mamoplastia Redutora ou Mastopexia sem protese", c: "31309249-99999012", v1: 4700.00, v2: 4070.00 },
-{ s: "PLÁSTICA", p: "Abdominoplastia, Lipoaspiração com técnicas (Enxerto Gluteos) e Mastopexia", c: "31309247-99999011", v1: 9780.00, v2: 8480.00 },
+{ s: "PLÁSTICA", p: "Abdominoplastia, Lipoaspiração, Enxerto (Enxerto Gluteos) e Mastopexia", c: "31309247-99999011", v1: 9780.00, v2: 8480.00 },
 { s: "PLÁSTICA", p: "Lipoaspiração com Técnicas e Subcision/OU Morpheus", c: "98040173-99999912", v1: 8500.00, v2: 7383.00 },
 { s: "PLÁSTICA", p: "Implante de Protese", c: "31309251-10999904", v1: 2850.00, v2: 2490.00 },
 { s: "PLÁSTICA", p: "Lipoaspiração, Enxerto e Explante de Protese", c: "31309252-99999928", v1: 5450.00, v2: 4750.00 },
 { s: "PLÁSTICA", p: "Implante de Protese (Troca)", c: "31309253-99999929", v1: 3200.00, v2: 2850.00 },
 { s: "PLÁSTICA", p: "Mamoplastia Redutora sem Protese e Lipoaspiração pré Axila", c: "98040178-09999909", v1: 5500.00, v2: 4790.00 },
-{ s: "PLÁSTICA", p: "Mini Lifting Facil, Blefaroplastia (ou Suspensão de Supercilio), Laser (CO2)", c: "98040177-09999908", v1: 4000.00, v2: 3470.00 },
+{ s: "PLÁSTICA", p: "Mini Lifting Facil, Blefaroplastia e Laser (CO2)", c: "98040177-09999908", v1: 4000.00, v2: 3470.00 },
 { s: "PLÁSTICA", p: "Mastopexia com Protese, Braqueoplastia e Dermolipectomia (Torax)", c: "31309254-09999910", v1: 7200.00, v2: 6260.00 },
 { s: "PLÁSTICA", p: "Ginecomastia", c: "30602114-9999919", v1: 3400.00, v2: 2970.00 },
 { s: "PLÁSTICA", p: "Lipoaspiração e Implante de Protese com técnicas", c: "31309300-99999905", v1: 8300.00, v2: 7215.00 },
@@ -954,7 +480,7 @@
 { s: "PLÁSTICA", p: "Troca de Protese por Ruptura (Unilateral)", c: "91040180-11000009", v1: 2400.00, v2: 2100.00 },
 { s: "PLÁSTICA", p: "Lipoaspiração, Implante de Prótese e Enxerto", c: "30102020-11000020", v1: 5300.00, v2: 4600.00 },
 { s: "PLÁSTICA", p: "Abdominoplastia e Blefaroplatia JJ", c: "30301033-11000019", v1: 5250.00, v2: 4550.00 },
-{ s: "PLÁSTICA", p: "MiniAbdominoplastia, Lipoaspiração, Enxerto Gluteos e Mastopexia (ou Mama Redutora) com Renuvion", c: "", v1: 7900.00, v2: 6850.00 },
+{ s: "PLÁSTICA", p: "MiniAbdominoplastia, Lipoaspiração, Enxerto e Mastopexia com Renuvion", c: "", v1: 7900.00, v2: 6850.00 },
 { s: "PLÁSTICA", p: "Morpheus e Nanofat", c: "31309301-11000035", v1: 4400.00, v2: 3800.00 },
 { s: "PLÁSTICA", p: "Abdominoplastia e Mamoplastia Redutora", c: "30602351-11000036", v1: 6350.00, v2: 5480.00 },
 { s: "PLÁSTICA", p: "Mastopexia com Protese e Lipoaspiração de Braço", c: "91040190-11000041", v1: 5850.00, v2: 5070.00 },
@@ -970,15 +496,13 @@
 { s: "PLÁSTICA", p: "Mamoplastia Redutora, lipoaspiração e Renuvion", c: "91040211-11000069", v1: 7385.00, v2: 6400.00 },
 { s: "PLÁSTICA", p: "Lifting Facial", c: "91040212-11000070", v1: 4090.00, v2: 3545.00 },
 { s: "PLÁSTICA", p: "Mastopexia com Protese JJ", c: "91040214-11000072", v1: 6275.00, v2: 5440.00 },
-{ s: "PLÁSTICA", p: "Abdominoplastia, Lipoaspiração, Enxerto e Correção de Mama Acessoria (Pre Axila)", c: "91040213-11000071", v1: 7260.00, v2: 6290.00 },
+{ s: "PLÁSTICA", p: "Abdominoplastia, Lipoaspiração, Enxerto e Correção de Mama Acessoria", c: "91040213-11000071", v1: 7260.00, v2: 6290.00 },
 { s: "PLÁSTICA", p: "Abdominoplastia, Lipoaspiração e Implante de Prótese", c: "91040215-11000075", v1: 6700.00, v2: 5800.00 },
 { s: "PLÁSTICA", p: "Abdominoplastia, Lipoaspiração, Enxerto com técnicas e Cruroplastia JJ", c: "91040222-11000086", v1: 9580.00, v2: 8300.00 },
 { s: "PLÁSTICA", p: "Abdominoplastia, Lipoaspiração, Enxerto e Blefaroplastia", c: "91040223-11000088", v1: 7000.00, v2: 6150.00 },
 { s: "PLÁSTICA", p: "Lipoaspiração e Enxerto (Renuvion)", c: "91040230-11000093", v1: 6150.00, v2: 5350.00 },
 { s: "PLÁSTICA", p: "Correção de Cicatriz - Ambulatorial JJ", c: "91040233-11000096", v1: 1240.00, v2: 1075.00 },
-{ s: "PLÁSTICA", p: "Abdominoplastia, Lipoaspiração,  Enxerto e Mastopexia (com ou sem prótese) ", c: "91040241-11000107", v1: 8340.00, v2: 7230.00 }, 
-        { s: "PLÁSTICA", p: "Blefaroplastia (Sup/Inf), Frontoplastia e Nanofat", c: "91040251-91040251", v1: 5900.00, v2: 5100.00 }, 
-        { s: "PLÁSTICA", p: "HERNIORRAFIA INCISIONAL VÍDEO", c: "31009107-11000117", v1: 3075.00, v2: 2665.00 }, 
+{ s: "PLÁSTICA", p: "Abdominoplastia, Lipoaspiração, Enxerto e Mastopexia", c: "91040241-11000107", v1: 8340.00, v2: 7230.00 },
 { s: "ORTOPEDIA", p: "Tunel do Carpo", c: "30737079-10999970", v1: 1800.00, v2: 1558.00 },
 { s: "ORTOPEDIA", p: "Desbridamento", c: "91040242-11000108", v1: 2300.00, v2: 2000.00 },
 { s: "ORTOPEDIA", p: "Tenodese ou Tenolise", c: "91040240-11000106", v1: 2600.00, v2: 2010.00 },
@@ -1038,41 +562,13 @@
     ];
 
     let currentFilter = "TODOS";
-    let currentSort = "nome";
-
-    function validarAcesso() {
-        const u = document.getElementById('user-input').value;
-        const p = document.getElementById('pass-input').value;
-        if (USUARIOS[u] && USUARIOS[u] === p) {
-            document.getElementById('login-overlay').style.display = 'none';
-        } else {
-            document.getElementById('error-msg').style.display = 'block';
-        }
-    }
-
-    function fazerLogout() {
-        window.location.reload();
-    }
-
-    function toggleTema() {
-        const isDark = document.body.classList.toggle('dark');
-        localStorage.setItem('axon-tema', isDark ? 'dark' : 'light');
-        aplicarDark(isDark);
-    }
-
-    function aplicarDark(isDark) {
-        document.body.classList.toggle('dark', isDark);
-        document.getElementById('iconMoon').style.display = isDark ? 'none' : 'block';
-        document.getElementById('iconSun').style.display = isDark ? 'block' : 'none';
-        document.getElementById('themeLabel').textContent = isDark ? 'CLARO' : 'ESCURO';
-    }
 
     function initFilters() {
         const sectors = ["TODOS", ...new Set(DATA.map(d => d.s))];
         const container = document.getElementById('filter-group');
-        container.innerHTML = sectors.map(s => `
-            <button class="filter-btn ${s === 'TODOS' ? 'active' : ''}" onclick="filterBy('${s}', this)">${s}</button>
-        `).join('');
+        container.innerHTML = sectors.map(s =>
+            `<button class="filter-btn ${s === 'TODOS' ? 'active' : ''}" onclick="filterBy('${s}', this)">${s}</button>`
+        ).join('');
     }
 
     function filterBy(sector, btn) {
@@ -1084,27 +580,20 @@
 
     function render() {
         const search = document.getElementById('busca').value.toLowerCase();
-        const sort = document.getElementById('ordenacao').value;
-        
+        const sort   = document.getElementById('ordenacao').value;
+
         let filtered = DATA.filter(d => {
-            const matchesSearch = d.p.toLowerCase().includes(search) || d.c.toLowerCase().includes(search) || d.s.toLowerCase().includes(search);
-            const matchesSector = currentFilter === "TODOS" || d.s === currentFilter;
+            const matchesSearch  = d.p.toLowerCase().includes(search) || d.c.toLowerCase().includes(search) || d.s.toLowerCase().includes(search);
+            const matchesSector  = currentFilter === "TODOS" || d.s === currentFilter;
             return matchesSearch && matchesSector;
         });
 
-        // Ordenação
-        if (sort === 'nome') {
-            filtered.sort((a, b) => a.p.localeCompare(b.p));
-        } else if (sort === 'preco-asc') {
-            filtered.sort((a, b) => a.v1 - b.v1);
-        } else if (sort === 'preco-desc') {
-            filtered.sort((a, b) => b.v1 - a.v1);
-        } else if (sort === 'cartao') {
-            filtered.sort((a, b) => b.v2 - a.v2);
-        }
+        if      (sort === 'nome')       filtered.sort((a,b) => a.p.localeCompare(b.p));
+        else if (sort === 'preco-asc')  filtered.sort((a,b) => a.v1 - b.v1);
+        else if (sort === 'preco-desc') filtered.sort((a,b) => b.v1 - a.v1);
+        else if (sort === 'cartao')     filtered.sort((a,b) => b.v2 - a.v2);
 
-        const tbody = document.getElementById('tabela');
-        tbody.innerHTML = filtered.map(d => `
+        document.getElementById('tabela').innerHTML = filtered.map(d => `
             <tr>
                 <td><span class="sector-badge">${d.s}</span></td>
                 <td>
@@ -1116,25 +605,23 @@
             </tr>
         `).join('');
 
-        // Stats
-        document.getElementById('total-stat').textContent = filtered.length;
-        const setores = new Set(filtered.map(d => d.s)).size;
-        document.getElementById('setores-stat').textContent = setores;
-        const media = filtered.length > 0 ? (filtered.reduce((sum, d) => sum + d.v1, 0) / filtered.length).toFixed(2) : 0;
-        document.getElementById('media-stat').textContent = 'R$ ' + parseFloat(media).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        document.getElementById('total-stat').textContent    = filtered.length;
+        document.getElementById('setores-stat').textContent  = new Set(filtered.map(d => d.s)).size;
+        const media = filtered.length > 0 ? filtered.reduce((s,d) => s + d.v1, 0) / filtered.length : 0;
+        document.getElementById('media-stat').textContent    = 'R$ ' + media.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
     }
 
-    // Eventos
     document.getElementById('busca').addEventListener('input', render);
-    document.addEventListener('keypress', (e) => {
-        if(e.key === 'Enter') validarAcesso();
-    });
-
-    // Recuperar tema
-    const savedTema = localStorage.getItem('axon-tema');
-    if (savedTema === 'dark') aplicarDark(true);
 
     window.onload = () => {
+        // Badge do usuário logado
+        const nomeLogado = sessionStorage.getItem('axon_portal_nome') || localStorage.getItem('axon_portal_nome') || '';
+        if (nomeLogado) {
+            const badge = document.getElementById('userBadge');
+            const btnLogout = document.getElementById('btnLogout');
+            if (badge) { document.getElementById('userBadgeNome').textContent = nomeLogado; badge.style.display = 'flex'; }
+            if (btnLogout) btnLogout.style.display = 'inline-flex';
+        }
         initFilters();
         render();
     };
