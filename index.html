@@ -1,863 +1,1756 @@
-<!doctype html>  
-<html lang="pt-BR">  
-<head>  
-  <meta charset="utf-8" />  
-  <title>Portal Corporativo | AXON </title>  
-  <meta name="description" content="Portal estratégico de otimização de processos hospitalares" />  
-  <meta name="viewport" content="width=device-width,initial-scale=1" />  
-    
-  <link rel="preconnect" href="https://fonts.googleapis.com">  
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>  
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">  
-    
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">  
-  <link rel="icon" type="image/png" href="https://i.imgur.com/vNrUft9.png" />  
-  
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!doctype html>
+<html lang="pt-BR">
 
-  <style>  
-    /* --- DESIGN SYSTEM REFINED --- */  
-    :root {  
-      /* Cores Primárias */  
-      --color-brand-primary: #0369A1;  
-      --color-brand-primary-light: #0EA5E9;  
-      --color-brand-dark: #0F172A;  
-      
-      /* Backgrounds */  
-      --color-sidebar-bg: #0B1120;  
-      --color-sidebar-hover: rgba(255, 255, 255, 0.05);  
-      --color-bg-canvas: #F8FAFC;  
-      --color-surface: #FFFFFF;  
-      
-      /* Texto */  
-      --color-text-main: #1E293B;  
-      --color-text-muted: #64748B;  
-      --color-text-light: #94A3B8;  
-      
-      /* Estados */  
-      --color-success: #10B981;  
-      --color-warning: #F59E0B;  
-      --color-danger: #EF4444;  
-      --color-audit: #6366F1;  
-      --color-info: #3B82F6;  
-      
-      /* Sombras */  
-      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);  
-      --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.03);  
-      --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);  
-      --shadow-modal: 0 25px 50px -12px rgba(0, 0, 0, 0.25);  
-      
-      /* Border Radius */  
-      --radius-sm: 6px;  
-      --radius-md: 10px;  
-      --radius-lg: 16px;  
-      --radius-xl: 24px;  
-      
-      /* Transições */  
-      --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);  
-      --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);  
-    }  
+<head>
+  <meta charset="utf-8" />
+  <title>Portal Corporativo | AXON</title>
+  <meta name="description" content="Portal estratégico de otimização de processos hospitalares" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="icon" type="image/png" href="https://i.imgur.com/vNrUft9.png" />
+  <style>
+    :root {
+      --color-brand-primary: #0369A1;
+      --color-brand-primary-light: #1ABBCE;
+      --color-brand-accent: #1ABBCE;
+      --color-brand-dark: #051B3D;
+      --color-sidebar-bg: #050B1A;
+      --color-bg-canvas: #050916;
+      --color-surface: #0A1222;
+      --color-card: #101B2E;
+      --color-text-primary: #F8FAFC;
+      --color-text-secondary: #A3B4D1;
+      --color-text-muted: #7D8FA9;
+      --color-gold: #C7A34A;
+      --color-success: #10B981;
+      --color-warning: #F59E0B;
+      --color-danger: #EF4444;
+      --shadow-sm: 0 2px 14px rgba(0, 0, 0, 0.18);
+      --shadow-card: 0 18px 45px -24px rgba(0, 0, 0, 0.45);
+      --shadow-elevate: 0 24px 70px -28px rgba(0, 0, 0, 0.45);
+      --shadow-panel: 0 0 0 1px rgba(255, 255, 255, 0.04), 0 18px 40px rgba(0, 0, 0, 0.28);
+      --shadow-modal: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 22px;
+      --radius-xl: 32px;
+      --transition-fast: 180ms cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-base: 260ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
-    body.dark-mode {  
-      --color-bg-canvas: #0F172A;  
-      --color-surface: #1E293B;  
-      --color-text-main: #F1F5F9;  
-      --color-text-muted: #94A3B8;  
-      --color-brand-dark: #F8FAFC;  
-      --color-sidebar-hover: rgba(255, 255, 255, 0.08);  
-      --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.2);  
-    }  
+    body.dark-mode {
+      --color-bg-canvas: #050916;
+      --color-surface: #0A1222;
+      --color-card: #101B2E;
+      --color-sidebar-bg: #050B1A;
+      --color-text-primary: #F8FAFC;
+      --color-text-secondary: #A3B4D1;
+      --color-text-muted: #7D8FA9;
+      --color-sidebar-hover: rgba(26, 187, 206, 0.14);
+      --color-panel-border: rgba(255, 255, 255, 0.12);
+      --shadow-card: 0 20px 55px -26px rgba(0, 0, 0, 0.55);
+    }
 
-    * {  
-      margin: 0;  
-      padding: 0;  
-      box-sizing: border-box;  
-      -webkit-font-smoothing: antialiased;  
-      -moz-osx-font-smoothing: grayscale;  
-    }  
+    body.light-mode {
+      --color-bg-canvas: #F3F5F9;
+      --color-surface: #FAFBFC;
+      --color-card: #FFFFFF;
+      --color-sidebar-bg: #F1F3F8;
+      --color-text-primary: #051B2C;
+      --color-text-secondary: #384454;
+      --color-text-muted: #5B6B7C;
+      --color-sidebar-hover: rgba(3, 105, 161, 0.12);
+      --color-panel-border: rgba(0, 0, 0, 0.12);
+      --shadow-card: 0 18px 45px -24px rgba(0, 0, 0, 0.16);
+    }
 
-    html {  
-      scroll-behavior: smooth;  
-    }  
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+    }
 
-    body {  
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;  
-      background-color: var(--color-bg-canvas);  
-      color: var(--color-text-main);  
-      display: flex;  
-      height: 100vh;  
-      overflow: hidden;  
-      line-height: 1.5;  
-      transition: background-color var(--transition-base);  
-    }  
+    html {
+      scroll-behavior: smooth;
+    }
 
-    /* --- SIDEBAR REFINED --- */  
-    .sidebar {  
-      width: 280px;  
-      background-color: var(--color-sidebar-bg);  
-      color: #fff;  
-      display: flex;  
-      flex-direction: column;  
-      flex-shrink: 0;  
-      padding: 28px 20px;  
-      z-index: 100;  
-      border-right: 1px solid rgba(255, 255, 255, 0.05);  
-    }  
+    body {
+      position: relative;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--color-bg-canvas);
+      color: var(--color-text-primary);
+      display: flex;
+      min-height: 100vh;
+      overflow: hidden;
+      line-height: 1.5;
+      transition: background-color var(--transition-base), color var(--transition-base);
+    }
 
-    .brand {  
-      display: flex;  
-      align-items: center;  
-      gap: 14px;  
-      padding-bottom: 32px;  
-      margin-bottom: 8px;  
-    }  
-    .brand img {  
-      height: 36px;  
-      filter: brightness(0) invert(1);  
-    }  
-    .brand-text {  
-      font-family: 'Manrope', sans-serif;  
-      font-weight: 800;  
-      font-size: 1.25rem;  
-      letter-spacing: -0.02em;  
-      background: linear-gradient(135deg, #fff 0%, #E2E8F0 100%);  
-      -webkit-background-clip: text;  
-      -webkit-text-fill-color: transparent;  
-      background-clip: text;  
-    }  
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background-image: url("https://i.imgur.com/DOK9k47.pngg");
+      background-repeat: no-repeat;
+      background-position: center 20%;
+      background-size: 520px;
+      opacity: 0.08;
+      filter: brightness(1.1) saturate(0.65) blur(0.4px);
+    }
 
-    .nav-menu {  
-      list-style: none;  
-      display: flex;  
-      flex-direction: column;  
-      gap: 4px;  
-      flex: 1;  
-    }  
-    .nav-header {  
-      font-size: 0.75rem;  
-      text-transform: uppercase;  
-      color: #64748B;  
-      margin: 24px 0 12px 12px;  
-      font-weight: 600;  
-      letter-spacing: 0.05em;  
-    }  
-    .nav-item {  
-      display: flex;  
-      align-items: center;  
-      gap: 14px;  
-      padding: 14px 16px;  
-      border-radius: var(--radius-md);  
-      color: #CBD5E1;  
-      text-decoration: none;  
-      font-size: 0.94rem;  
-      font-weight: 500;  
-      transition: all var(--transition-fast);  
-      cursor: pointer;  
-      position: relative;  
-    }  
-    .nav-item i {  
-      width: 20px;  
-      text-align: center;  
-      font-size: 1.1rem;  
-      opacity: 0.8;  
-    }  
-    .nav-item:hover {  
-      background: var(--color-sidebar-hover);  
-      color: #fff;  
-      transform: translateX(2px);  
-    }  
-    .nav-item.active {  
-      background: rgba(3, 105, 161, 0.2);  
-      color: #fff;  
-      font-weight: 600;  
-    }  
-    .nav-item.active::before {  
-      content: '';  
-      position: absolute;  
-      left: 0;  
-      top: 50%;  
-      transform: translateY(-50%);  
-      width: 4px;  
-      height: 60%;  
-      background: var(--color-brand-primary-light);  
-      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;  
-    }  
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 300px;
+      background: var(--color-sidebar-bg);
+      color: var(--color-text-primary);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      padding: 32px 26px;
+      z-index: 100;
+      border-right: 1px solid var(--color-panel-border);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
 
-    .support-box {  
-      margin-top: auto;  
-      padding-top: 20px;  
-    }  
-    .btn-support {  
-      display: flex;  
-      align-items: center;  
-      justify-content: center;  
-      gap: 10px;  
-      width: 100%;  
-      padding: 14px;  
-      border-radius: var(--radius-md);  
-      background: rgba(239, 68, 68, 0.1);  
-      color: #FCA5A5;  
-      border: 1px solid rgba(239, 68, 68, 0.2);  
-      font-weight: 600;  
-      font-size: 0.9rem;  
-      text-decoration: none;  
-      transition: all var(--transition-fast);  
-    }  
-    .btn-support:hover {  
-      background: rgba(239, 68, 68, 0.2);  
-      color: #fff;  
-      border-color: rgba(239, 68, 68, 0.4);  
-      transform: translateY(-1px);  
-    }  
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 36px;
+      margin-bottom: 28px;
+      border-bottom: 1px solid var(--color-panel-border);
+    }
 
-    .user-mini {  
-      display: flex;  
-      align-items: center;  
-      gap: 14px;  
-      padding-top: 24px;  
-      margin-top: 24px;  
-      border-top: 1px solid rgba(255, 255, 255, 0.08);  
-    }  
-    .avatar {  
-      width: 44px;  
-      height: 44px;  
-      border-radius: 50%;  
-      background: linear-gradient(135deg, #3B82F6, #0EA5E9);  
-      display: flex;  
-      align-items: center;  
-      justify-content: center;  
-      font-weight: 700;  
-      color: white;  
-      font-size: 1.1rem;  
-      box-shadow: var(--shadow-sm);  
-    }  
-    .user-info h4 {  
-      font-size: 0.9rem;  
-      color: #fff;  
-      font-weight: 600;  
-      margin-bottom: 2px;  
-    }  
-    .user-info span {  
-      font-size: 0.8rem;  
-      color: #94A3B8;  
-      font-weight: 500;  
-    }  
+    .brand img {
+      height: 34px;
+      filter: brightness(0) invert(1);
+    }
 
-    /* --- ÁREA PRINCIPAL --- */  
-    .main-content {  
-      flex: 1;  
-      display: flex;  
-      flex-direction: column;  
-      overflow-y: auto;  
-      position: relative;  
-    }  
-    .topbar {  
-      height: 76px;  
-      display: flex;  
-      align-items: center;  
-      justify-content: space-between;  
-      padding: 0 40px;  
-      background: transparent;  
-      flex-shrink: 0;  
-      border-bottom: 1px solid rgba(0, 0, 0, 0.04);  
-    }  
-    body.dark-mode .topbar {  
-      border-bottom-color: rgba(255, 255, 255, 0.04);  
-    }  
-    .breadcrumbs {  
-      font-size: 0.9rem;  
-      color: var(--color-text-muted);  
-      font-weight: 500;  
-    }  
-    .breadcrumbs b {  
-      color: var(--color-text-main);  
-      font-weight: 600;  
-    }  
+    body.light-mode .brand img {
+      filter: brightness(0.9) invert(0);
+      opacity: 0.85;
+    }
 
-    .system-status {  
-      display: flex;  
-      align-items: center;  
-      gap: 10px;  
-      font-size: 0.85rem;  
-      color: var(--color-success);  
-      font-weight: 600;  
-      background: rgba(16, 185, 129, 0.08);  
-      padding: 8px 16px;  
-      border-radius: 20px;  
-      border: 1px solid rgba(16, 185, 129, 0.15);  
-    }  
-    .status-dot {  
-      width: 8px;  
-      height: 8px;  
-      background: var(--color-success);  
-      border-radius: 50%;  
-      position: relative;  
-    }  
-    .status-dot::after {  
-      content: '';  
-      position: absolute;  
-      top: -4px;  
-      left: -4px;  
-      right: -4px;  
-      bottom: -4px;  
-      background: var(--color-success);  
-      border-radius: 50%;  
-      opacity: 0.3;  
-      animation: pulse 2s infinite;  
-    }  
-    @keyframes pulse {  
-      0% { transform: scale(1); opacity: 0.3; }  
-      50% { transform: scale(1.2); opacity: 0.1; }  
-      100% { transform: scale(1); opacity: 0.3; }  
-    }  
+    .brand-text {
+      display: block;
+      margin: 0;
+      font-family: 'Manrope', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--color-text-primary);
+    }
 
-    .theme-toggle {  
-      background: none;  
-      border: none;  
-      font-size: 1.3rem;  
-      color: var(--color-text-muted);  
-      cursor: pointer;  
-      margin-left: 20px;  
-      padding: 8px;  
-      border-radius: var(--radius-md);  
-      transition: all var(--transition-fast);  
-    }  
-    .theme-toggle:hover {  
-      background: rgba(0, 0, 0, 0.04);  
-      color: var(--color-text-main);  
-    }  
-    body.dark-mode .theme-toggle:hover {  
-      background: rgba(255, 255, 255, 0.04);  
-    }  
+    .nav-menu {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1;
+    }
 
-    .dashboard-wrapper {  
-      max-width: 1440px;  
-      margin: 0 auto;  
-      width: 100%;  
-      padding: 32px 40px 100px 40px;  
-    }  
+    .nav-header {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      color: var(--color-text-secondary);
+      margin: 24px 0 12px 12px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+    }
 
-    /* --- LÓGICA DE EXIBIÇÃO (SPA) --- */  
-    .section-group {  
-      display: none;  
-      margin-bottom: 60px;  
-      animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);  
-    }  
-    .section-group.active {  
-      display: block;  
-    }  
-    @keyframes fadeIn {  
-      from { opacity: 0; transform: translateY(15px); }  
-      to { opacity: 1; transform: translateY(0); }  
-    }  
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 18px;
+      border-radius: var(--radius-lg);
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: all var(--transition-fast);
+      cursor: pointer;
+      position: relative;
+    }
 
-    .section-title {  
-      display: flex;  
-      align-items: center;  
-      justify-content: space-between;  
-      margin-bottom: 32px;  
-      padding-bottom: 16px;  
-      border-bottom: 1px solid rgba(0, 0, 0, 0.06);  
-    }  
-    body.dark-mode .section-title {  
-      border-color: rgba(255, 255, 255, 0.06);  
-    }  
-    .section-title h2 {  
-      font-family: 'Manrope', sans-serif;  
-      font-size: 1.75rem;  
-      font-weight: 800;  
-      color: var(--color-brand-dark);  
-      letter-spacing: -0.02em;  
-    }  
-    .section-badge {  
-      font-size: 0.8rem;  
-      background: rgba(3, 105, 161, 0.1);  
-      color: var(--color-brand-primary);  
-      padding: 6px 12px;  
-      border-radius: var(--radius-md);  
-      font-weight: 600;  
-      text-transform: uppercase;  
-      letter-spacing: 0.03em;  
-    }  
+    .nav-item i {
+      width: 22px;
+      text-align: center;
+      font-size: 1.1rem;
+      opacity: 0.85;
+    }
 
-    /* HERO BANNER REFINED */  
-    .hero-banner {  
-      background: linear-gradient(135deg, var(--color-brand-primary) 0%, #0C4A6E 100%);  
-      border-radius: var(--radius-xl);  
-      padding: 48px;  
-      color: white;  
-      margin-bottom: 48px;  
-      position: relative;  
-      overflow: hidden;  
-      box-shadow: var(--shadow-hover);  
-      display: flex;  
-      justify-content: space-between;  
-      align-items: center;  
-    }  
-    .hero-content {  
-      position: relative;  
-      z-index: 2;  
-      max-width: 680px;  
-    }  
-    .hero-content h1 {  
-      font-family: 'Manrope', sans-serif;  
-      font-size: 2.5rem;  
-      font-weight: 800;  
-      margin-bottom: 16px;  
-      line-height: 1.2;  
-      letter-spacing: -0.02em;  
-    }  
-    .hero-content p {  
-      font-size: 1.1rem;  
-      opacity: 0.9;  
-      line-height: 1.6;  
-      margin-bottom: 32px;  
-      max-width: 600px;  
-    }  
-    .hero-stats {  
-      display: flex;  
-      gap: 24px;  
-    }  
-    .stat-item {  
-      background: rgba(255, 255, 255, 0.1);  
-      backdrop-filter: blur(10px);  
-      padding: 16px 24px;  
-      border-radius: var(--radius-lg);  
-      border: 1px solid rgba(255, 255, 255, 0.15);  
-      min-width: 150px;  
-    }  
-    .stat-item h3 {  
-      font-size: 1.5rem;  
-      font-weight: 800;  
-      margin-bottom: 4px;  
-    }  
-    .stat-item span {  
-      font-size: 0.85rem;  
-      text-transform: uppercase;  
-      letter-spacing: 0.05em;  
-      opacity: 0.8;  
-      font-weight: 500;  
-    }  
-    .hero-decoration {  
-      position: absolute;  
-      right: -40px;  
-      top: -40px;  
-      font-size: 18rem;  
-      opacity: 0.08;  
-      color: white;  
-      transform: rotate(-15deg);  
-    }  
+    .nav-item:hover {
+      background: var(--color-sidebar-hover);
+      color: var(--color-text-primary);
+      transform: translateX(2px);
+    }
 
-    /* GRID & CARDS REFINED */  
-    .app-grid {  
-      display: grid;  
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));  
-      gap: 28px;  
-    }  
-    .card {  
-      background: var(--color-surface);  
-      border-radius: var(--radius-lg);  
-      padding: 32px;  
-      text-decoration: none;  
-      border: 1px solid rgba(0, 0, 0, 0.04);  
-      box-shadow: var(--shadow-card);  
-      transition: all var(--transition-base);  
-      display: flex;  
-      flex-direction: column;  
-      justify-content: space-between;  
-      height: 240px;  
-      position: relative;  
-      overflow: hidden;  
-    }  
-    .card:hover {  
-      transform: translateY(-6px);  
-      box-shadow: var(--shadow-hover);  
-      border-color: rgba(3, 105, 161, 0.15);  
-    }  
-    .card::before {  
-      content: '';  
-      position: absolute;  
-      left: 0;  
-      top: 0;  
-      bottom: 0;  
-      width: 4px;  
-      background: var(--color-brand-primary);  
-      opacity: 0;  
-      transition: opacity var(--transition-fast);  
-    }  
-    .card:hover::before {  
-      opacity: 1;  
-    }  
+    .nav-item.active {
+      background: rgba(26, 187, 206, 0.22);
+      color: var(--color-text-primary);
+      font-weight: 600;
+    }
 
-    .card-icon-wrapper {  
-      width: 60px;  
-      height: 60px;  
-      background: #F0F9FF;  
-      color: var(--color-brand-primary);  
-      border-radius: var(--radius-lg);  
-      display: flex;  
-      align-items: center;  
-      justify-content: center;  
-      font-size: 1.8rem;  
-      margin-bottom: 24px;  
-      transition: all var(--transition-fast);  
-    }  
-    body.dark-mode .card-icon-wrapper {  
-      background: rgba(3, 105, 161, 0.15);  
-    }  
-    .card:hover .card-icon-wrapper {  
-      background: var(--color-brand-primary);  
-      color: white;  
-      transform: scale(1.05);  
-    }  
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 60%;
+      background: var(--color-brand-accent);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    }
 
-    .card-title {  
-      font-family: 'Manrope', sans-serif;  
-      font-size: 1.25rem;  
-      font-weight: 700;  
-      color: var(--color-brand-dark);  
-      margin-bottom: 12px;  
-      line-height: 1.3;  
-    }  
-    .card-desc {  
-      font-size: 0.95rem;  
-      color: var(--color-text-muted);  
-      line-height: 1.5;  
-    }  
-    .card-footer {  
-      margin-top: auto;  
-      padding-top: 20px;  
-      display: flex;  
-      align-items: center;  
-      justify-content: space-between;  
-      font-size: 0.85rem;  
-      font-weight: 600;  
-      color: var(--color-brand-primary);  
-      text-transform: uppercase;  
-      letter-spacing: 0.02em;  
-      opacity: 0;  
-      transform: translateY(10px);  
-      transition: all var(--transition-fast);  
-    }  
-    .card:hover .card-footer {  
-      opacity: 1;  
-      transform: translateY(0);  
-    }  
+    .user-mini {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding-top: 26px;
+      margin-top: 26px;
+      border-top: 1px solid var(--color-panel-border);
+    }
 
-    .card.accent {  
-      background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);  
-      border: 1px solid rgba(3, 105, 161, 0.08);  
-    }  
-    body.dark-mode .card.accent {  
-      background: linear-gradient(145deg, #1E293B 0%, #0f172a 100%);  
-      border-color: #334155;  
-    }  
+    .avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0CA8C0, #1ABBCE);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: white;
+      font-size: 1.1rem;
+      box-shadow: var(--shadow-sm);
+    }
 
-    footer {  
-      position: fixed;  
-      bottom: 0;  
-      right: 0;  
-      width: calc(100% - 280px);  
-      background-color: var(--color-surface);  
-      text-align: center;  
-      padding: 20px;  
-      color: var(--color-text-muted);  
-      font-size: 0.85rem;  
-      border-top: 1px solid rgba(0, 0, 0, 0.06);  
-      z-index: 90;  
-      font-weight: 500;  
-    }  
-    body.dark-mode footer {  
-      border-top-color: rgba(255, 255, 255, 0.06);  
-    }  
+    .user-info h4 {
+      font-size: 0.95rem;
+      color: var(--color-text-primary);
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
 
-    @media (max-width: 992px) {  
-      .sidebar {  
-        display: none;  
-      }  
-      .dashboard-wrapper {  
-        padding: 24px 24px 100px 24px;  
-      }  
-      footer {  
-        width: 100%;  
-      }  
-      .hero-banner {  
-        flex-direction: column;  
-        align-items: flex-start;  
-        padding: 32px;  
-      }  
-      .hero-content h1 {  
-        font-size: 2rem;  
-      }  
-      .app-grid {  
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));  
-        gap: 20px;  
-      }  
-    }  
+    .user-info span {
+      font-size: 0.82rem;
+      color: var(--color-text-secondary);
+      font-weight: 500;
+    }
 
-    /* PASSWORD PROMPT REFINED */  
-    .password-prompt-overlay {  
-      position: fixed;  
-      top: 0;  
-      left: 0;  
-      width: 100%;  
-      height: 100%;  
-      background: rgba(0, 0, 0, 0.7);  
-      backdrop-filter: blur(8px);  
-      z-index: 2000;  
-      display: flex;  
-      align-items: center;  
-      justify-content: center;  
-      opacity: 0;  
-      visibility: hidden;  
-      transition: all var(--transition-base);  
-    }  
-    .password-prompt-overlay.visible {  
-      opacity: 1;  
-      visibility: visible;  
-    }  
-    .password-box {  
-      background: var(--color-surface);  
-      padding: 40px;  
-      border-radius: var(--radius-xl);  
-      box-shadow: var(--shadow-modal);  
-      text-align: center;  
-      width: 90%;  
-      max-width: 420px;  
-      transform: scale(0.95) translateY(10px);  
-      transition: all var(--transition-base);  
-    }  
-    .password-prompt-overlay.visible .password-box {  
-      transform: scale(1) translateY(0);  
-    }  
-    .password-box h3 {  
-      font-family: 'Manrope', sans-serif;  
-      font-size: 1.5rem;  
-      margin-bottom: 12px;  
-      color: var(--color-brand-dark);  
-      font-weight: 700;  
-    }  
-    .password-box p {  
-      font-size: 0.95rem;  
-      color: var(--color-text-muted);  
-      margin-bottom: 28px;  
-      line-height: 1.5;  
-    }  
-    .password-input {  
-      width: 100%;  
-      padding: 14px 18px;  
-      border-radius: var(--radius-md);  
-      border: 1px solid rgba(0, 0, 0, 0.1);  
-      background: var(--color-bg-canvas);  
-      color: var(--color-text-main);  
-      margin-bottom: 20px;  
-      font-size: 1rem;  
-      font-family: 'Inter', sans-serif;  
-      transition: all var(--transition-fast);  
-    }  
-    body.dark-mode .password-input {  
-      border-color: #334155;  
-    }  
-    .password-input:focus {  
-      border-color: var(--color-brand-primary);  
-      box-shadow: 0 0 0 3px rgba(3, 105, 161, 0.1);  
-    }  
-    .btn-group {  
-      display: flex;  
-      flex-direction: column;  
-      gap: 12px;  
-    }  
-    .btn-group button {  
-      width: 100%;  
-      padding: 14px;  
-      border-radius: var(--radius-md);  
-      font-weight: 600;  
-      border: none;  
-      cursor: pointer;  
-      transition: all var(--transition-fast);  
-      font-family: 'Inter', sans-serif;  
-      font-size: 0.95rem;  
-    }  
-    .btn-submit {  
-      background: var(--color-brand-primary);  
-      color: white;  
-    }  
-    .btn-submit:hover {  
-      background: var(--color-brand-primary-light);  
-      transform: translateY(-1px);  
-      box-shadow: 0 4px 12px rgba(3, 105, 161, 0.25);  
-    }  
-    .btn-cancel {  
-      background: transparent;  
-      color: var(--color-text-muted);  
-      border: 1px solid rgba(0, 0, 0, 0.1);  
-    }  
-    body.dark-mode .btn-cancel {  
-      border-color: #334155;  
-    }  
-    .btn-cancel:hover {  
-      background: rgba(0, 0, 0, 0.04);  
-      color: var(--color-text-main);  
-    }  
-    body.dark-mode .btn-cancel:hover {  
-      background: rgba(255, 255, 255, 0.04);  
-    }  
-  </style>  
-</head>  
+    .btn-logout {
+      margin-top: 14px;
+      width: 100%;
+      padding: 10px;
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.18);
+      color: #FCA5A5;
+      border-radius: var(--radius-lg);
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-family: 'Inter', sans-serif;
+    }
 
-<body>  
+    .btn-logout:hover {
+      background: rgba(239, 68, 68, 0.18);
+      color: #fff;
+    }
 
-  <aside class="sidebar">  
-    <div class="brand">  
-      <img src="https://hospitalauxiliadora.com.br/wp-content/uploads/2025/03/logo-hospital-auxiliadora.png" alt="HNSA">  
-      <span class="brand-text">Portal Corporativo</span>  
-    </div>  
+    /* ── MAIN ── */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      position: relative;
+    }
 
-    <ul class="nav-menu">  
-      <div class="nav-header">Navegação Principal</div>  
+    .topbar {
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 36px;
+      background: var(--color-surface);
+      backdrop-filter: blur(18px);
+      flex-shrink: 0;
+      border-bottom: 1px solid var(--color-panel-border);
+    }
 
-      <a onclick="switchSection('sec-inicio', this)" class="nav-item active">  
-        <i class="fa-solid fa-house"></i> Dashboard  
-      </a>  
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
 
-      <a onclick="requestKpiAccess(this)" class="nav-item">  
-        <i class="fa-solid fa-chart-line"></i> KPI Performance  
-      </a>  
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
 
-      <a onclick="switchSection('sec-faturamento', this)" class="nav-item">  
-        <i class="fa-solid fa-file-invoice-dollar"></i> Faturamento  
-      </a>  
+    .breadcrumbs {
+      font-size: 0.95rem;
+      color: var(--color-text-secondary);
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
 
-      <a onclick="switchSection('sec-auditoria', this)" class="nav-item">  
-        <i class="fa-solid fa-clipboard-check"></i> Cadastro  
-      </a>  
+    .breadcrumbs b {
+      color: var(--color-text-primary);
+      font-weight: 700;
+    }
 
-      <a onclick="switchSection('sec-gerencial', this)" class="nav-item">  
-        <i class="fa-solid fa-briefcase"></i> Gerencial  
-      </a>  
-    </ul>  
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--color-card);
+      border: 1px solid var(--color-panel-border);
+      padding: 8px 12px;
+      border-radius: 18px;
+    }
 
-    <div class="support-box">  
-      <a href="Abertura de Chamad.html" class="btn-support">  
-        <i class="fa-solid fa-bug"></i>   
-      </a>  
-    </div>  
+    .search-box label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
 
-    <div class="user-mini">  
-      <div class="avatar">G.A</div>  
-      <div class="user-info">  
-        <h4>Administrador do Sistema</h4>  
-        <span>AXON</span>  
-      </div>  
-    </div>  
-  </aside>  
+    .search-input {
+      min-width: 220px;
+      width: 260px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: transparent;
+      border: none;
+      color: var(--color-text-primary);
+      font-size: 0.95rem;
+      outline: none;
+      transition: all var(--transition-fast);
+    }
 
-  <main class="main-content">  
-    <header class="topbar">  
-      <div class="breadcrumbs">Portal Corporativo / <b id="page-title">Dashboard</b></div>  
-      <div style="display:flex; align-items:center;">  
-        <div class="system-status"><span class="status-dot"></span> Sistema Online</div>  
-        <button class="theme-toggle" id="theme-toggle"><i class="fa-regular fa-moon"></i></button>  
-      </div>  
-    </header>  
+    .search-input::placeholder {
+      color: var(--color-text-secondary);
+      opacity: 0.7;
+    }
 
-    <div class="dashboard-wrapper">  
-      <div class="section-group active" id="sec-inicio">  
-        <div class="hero-banner">  
-          <i class="fa-solid fa-rocket hero-decoration"></i>  
-          <div class="hero-content">  
-            <h1>Excelência Operacional Hospitalar</h1>  
-            <p>Uma plataforma integrada que conecta processos, automatiza fluxos críticos e potencializa a gestão de recursos, promovendo eficiência operacional, redução de desperdícios e decisões orientadas por dados.</p>  
-            <div class="hero-stats">  
-              <div class="stat-item"><h3>+47%</h3><span>Eficiência Operacional</span></div>  
-              <div class="stat-item"><h3>99.8%</h3><span>Precisão nos Dados</span></div>  
-            </div>  
-          </div>  
-        </div>  
+    .search-input:focus {
+      outline: none;
+      box-shadow: none;
+    }
 
-        <div class="section-title">  
-          <h2>Módulos Estratégicos</h2>  
-          <span class="section-badge">Acesso Prioritário</span>  
-        </div>  
+    .search-button {
+      width: 44px;
+      height: 44px;
+      border-radius: 16px;
+      border: none;
+      background: var(--color-brand-accent);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    }
 
-        <div class="app-grid">  
-          <a onclick="switchSection('sec-faturamento', document.querySelectorAll('.nav-item')[2])" class="card accent" style="cursor: pointer;">  
-            <div>  
-              <div class="card-icon-wrapper"><i class="fa-solid fa-wand-magic-sparkles"></i></div>  
-              <div class="card-title">Automação de Faturamento</div>  
-              <div class="card-desc">Correções automatizadas em lote de XML e padronização de dados para agilidade e precisão.</div>  
-            </div>  
-            <div class="card-footer"><span>Acessar Módulo</span> <i class="fa-solid fa-arrow-right"></i></div>  
-          </a>  
+    .search-button:hover {
+      transform: translateY(-1px);
+      background: var(--color-brand-accent);
+      opacity: 0.9;
+    }
 
-          <a onclick="switchSection('sec-auditoria', document.querySelectorAll('.nav-item')[3])" class="card accent" style="cursor:pointer;">  
-            <div>  
-              <div class="card-icon-wrapper" style="color: var(--color-audit); background: #EEF2FF;"><i class="fa-solid fa-clipboard-check"></i></div>  
-              <div class="card-title">Gestão de Auditoria</div>  
-              <div class="card-desc">Controle preventivo de glosas, vinculação de atendimentos e monitoramento de conformidade.</div>  
-            </div>  
-            <div class="card-footer"><span>Acessar Painel</span> <i class="fa-solid fa-arrow-right"></i></div>  
-          </a>  
-        </div>  
-      </div>  
+    .system-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+      color: var(--color-success);
+      font-weight: 600;
+      background: rgba(16, 185, 129, 0.12);
+      padding: 10px 18px;
+      border-radius: 22px;
+      border: 1px solid rgba(16, 185, 129, 0.18);
+    }
 
-      <div class="section-group" id="sec-auditoria">  
-        <div class="section-title">  
-          <h2>Cadastro de Regras</h2>  
-          <span class="section-badge">Controle</span>  
-        </div>  
-        <div class="app-grid">  
-          <a href="AXON.html" class="card">  
-            <div>  
-              <div class="card-icon-wrapper" style="color: var(--color-audit); background: #EEF2FF;"><i class="fa-solid fa-link"></i></div>  
-              <div class="card-title">Pagina inicial Cadastro</div>  
-              <div class="card-desc">Integração inteligente para analise de prazos.</div>  
-            </div>  
-            <div class="card-footer"><span>Acessar Ferramenta</span> <i class="fa-solid fa-arrow-right"></i></div>  
-          </a>  
-        </div>  
-      </div>  
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--color-success);
+      border-radius: 50%;
+      position: relative;
+    }
 
-      <div class="section-group" id="sec-faturamento">  
-        <div class="section-title">  
-          <h2>Faturamento & Auditoria</h2>  
-          <span class="section-badge">Processos Operacionais</span>  
-        </div>  
-        <div class="app-grid">  
-          <a href="Correção XML Ambulatorial.html" class="card">  
-            <div><div class="card-icon-wrapper" style="color: #8B5CF6; background: #F5F3FF;"><i class="fa-solid fa-file-medical"></i></div><div class="card-title">Validação Ambulatorial</div><div class="card-desc">Auditoria automatizada de produção ambulatorial.</div></div>  
-            <div class="card-footer"><span>Iniciar Validação</span> <i class="fa-solid fa-arrow-right"></i></div>  
-          </a>  
-          <a href="Correção XML.html" class="card">  
-            <div><div class="card-icon-wrapper"><i class="fa-solid fa-file-code"></i></div><div class="card-title">Gerador Sequencial </div><div class="card-desc">Análise e correção de sequencial de faturamento.</div></div>  
-            <div class="card-footer"><span>Validar Arquivos</span> <i class="fa-solid fa-arrow-right"></i></div>  
-          </a>  
-          <a href="data.html" class="card">  
-            <div><div class="card-icon-wrapper" style="color: #F59E0B; background: #FFFBEB;"><i class="fa-regular fa-clock"></i></div><div class="card-title">Padronização Temporal</div><div class="card-desc">Correção em massa de inconsistências em datas e horários.</div></div>  
-            <div class="card-footer"><span>Executar Correção</span> <i class="fa-solid fa-arrow-right"></i></div>  
-          </a>  
-          <a href="Buscar e Substituir.html" class="card">  
-            <div><div class="card-icon-wrapper" style="color: #10B981; background: #ECFDF5;"><i class="fa-solid fa-magnifying-glass"></i></div><div class="card-title">Edição Inteligente</div><div class="card-desc">Busca e substituição avançada em grandes volumes de dados.</div></div>  
-            <div class="card-footer"><span>Acessar Editor</span> <i class="fa-solid fa-arrow-right"></i></div>  
-          </a>  
-          <a href="xml.html" class="card">  
-            <div><div class="card-icon-wrapper" style="color: #10B981; background: #ECFDF5;"><i class="fa-solid fa-calendar-check"></i></div><div class="card-title">Validação de Lotes TISS
-</div><div class="card-desc">Sistema web para auditoria e validação de arquivos XML no padrão TISS.</div></div>  
-            <div class="card-footer"><span>Consultar Status</span> <i class="fa-solid fa-arrow-right"></i></div>  
-          </a>
-          <a href="pc.html" class="card">  
-  <div>
-    <div class="card-icon-wrapper" style="color: #3B82F6; background: #EFF6FF;">
-      <i class="fa-solid fa-layer-group"></i>
+    .status-dot::after {
+      content: '';
+      position: absolute;
+      top: -4px;
+      left: -4px;
+      right: -4px;
+      bottom: -4px;
+      background: var(--color-success);
+      border-radius: 50%;
+      opacity: 0.28;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        opacity: 0.3;
+      }
+
+      50% {
+        transform: scale(1.2);
+        opacity: 0.18;
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 0.3;
+      }
+    }
+
+    .theme-toggle {
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      padding: 10px;
+      border-radius: 16px;
+      transition: all var(--transition-fast);
+    }
+
+    .theme-toggle:hover {
+      background: var(--color-card);
+      color: var(--color-text-primary);
+    }
+
+    .dashboard-wrapper {
+      max-width: 1440px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 42px 40px 120px 40px;
+    }
+
+    .section-group {
+      display: none;
+      margin-bottom: 48px;
+      animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .section-group.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--color-panel-border);
+    }
+
+    .section-title h2 {
+      font-family: 'Manrope', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--color-text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    .section-badge {
+      font-size: 0.8rem;
+      background: rgba(199, 163, 74, 0.16);
+      color: var(--color-gold);
+      padding: 7px 14px;
+      border-radius: 999px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .hero-banner {
+      background: linear-gradient(180deg, rgba(3, 105, 161, 0.12), rgba(3, 105, 161, 0.04)), var(--color-card);
+      border-radius: var(--radius-xl);
+      padding: 46px 42px;
+      min-height: 300px;
+      color: var(--color-text-primary);
+      margin-bottom: 40px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      box-shadow: var(--shadow-panel);
+      border: 1px solid var(--color-panel-border);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 660px;
+    }
+
+    .hero-content h1 {
+      font-family: 'Manrope', sans-serif;
+      font-size: 2.8rem;
+      font-weight: 800;
+      margin-bottom: 20px;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: var(--color-text-primary);
+    }
+
+    .hero-content p {
+      font-size: 1rem;
+      opacity: 0.88;
+      line-height: 1.8;
+      margin-bottom: 32px;
+      color: var(--color-text-secondary);
+      max-width: 640px;
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .stat-item {
+      background: rgba(26, 187, 206, 0.08);
+      backdrop-filter: blur(10px);
+      padding: 24px;
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--color-panel-border);
+      min-width: 150px;
+    }
+
+    .stat-item h3 {
+      font-size: 1.9rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: var(--color-text-primary);
+    }
+
+    .stat-item span {
+      display: block;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      opacity: 0.78;
+      font-weight: 700;
+      color: var(--color-text-secondary);
+    }
+
+    .hero-decoration {
+      position: absolute;
+      right: -28px;
+      top: -42px;
+      font-size: 18rem;
+      opacity: 0.08;
+      color: white;
+      transform: rotate(-15deg);
+      pointer-events: none;
+    }
+
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 26px;
+    }
+
+    .card {
+      background: var(--color-card);
+      border-radius: var(--radius-xl);
+      padding: 28px;
+      text-decoration: none;
+      border: 1px solid var(--color-panel-border);
+      box-shadow: var(--shadow-card);
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 240px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-elevate);
+      border-color: rgba(26, 187, 206, 0.18);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: linear-gradient(180deg, var(--color-brand-primary), var(--color-brand-primary-light));
+      opacity: 0;
+      transition: opacity var(--transition-fast);
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    .card-icon-wrapper {
+      width: 60px;
+      height: 60px;
+      background: rgba(26, 187, 206, 0.12);
+      color: var(--color-brand-accent);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      margin-bottom: 22px;
+      transition: all var(--transition-fast);
+      box-shadow: 0 12px 24px rgba(26, 187, 206, 0.12);
+    }
+
+    body.dark-mode .card-icon-wrapper {
+      background: rgba(26, 187, 206, 0.16);
+    }
+
+    .card:hover .card-icon-wrapper {
+      background: var(--color-brand-primary);
+      color: white;
+      transform: scale(1.04);
+    }
+
+    .card-title {
+      font-family: 'Manrope', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      margin-bottom: 10px;
+      line-height: 1.35;
+    }
+
+    .card-desc {
+      font-size: 0.95rem;
+      color: var(--color-text-secondary);
+      line-height: 1.75;
+    }
+
+    .card-footer {
+      margin-top: 20px;
+      padding-top: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      text-transform: none;
+      letter-spacing: 0.02em;
+      gap: 8px;
+      border-top: 1px solid var(--color-panel-border);
+    }
+
+    .card-footer i {
+      font-size: 0.9rem;
+    }
+
+    .card.accent {
+      background: rgba(199, 163, 74, 0.08);
+      border-color: rgba(199, 163, 74, 0.16);
+    }
+
+    .card.accent .card-icon-wrapper {
+      background: rgba(199, 163, 74, 0.16);
+      color: var(--color-gold);
+      box-shadow: 0 12px 24px rgba(199, 163, 74, 0.16);
+    }
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      width: calc(100% - 280px);
+      background-color: var(--color-surface);
+      text-align: center;
+      padding: 18px 0;
+      color: var(--color-text-muted);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--color-panel-border);
+      z-index: 90;
+      font-weight: 500;
+      box-shadow: 0 -2px 14px rgba(15, 23, 42, 0.06);
+    }
+
+    body.dark-mode footer {
+      background: var(--color-surface);
+      border-top-color: var(--color-panel-border);
+    }
+
+    @media(max-width:992px) {
+      .sidebar {
+        display: none;
+      }
+
+      .dashboard-wrapper {
+        padding: 24px 24px 100px 24px;
+      }
+
+      footer {
+        width: 100%;
+      }
+
+      .hero-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 32px;
+      }
+
+      .hero-content h1 {
+        font-size: 2rem;
+      }
+
+      .app-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+      }
+    }
+
+    /* ════════════════════════════════════════
+       LOGIN OVERLAY — REDESIGN PROFISSIONAL
+    ════════════════════════════════════════ */
+    .login-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #060D1A;
+      overflow: hidden;
+    }
+
+    /* Marca d'água corporativa no fundo do login */
+    .login-overlay::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(8, 14, 31, 0.58), rgba(8, 14, 31, 0.92)),
+        url("https://i.imgur.com/DOK9k47.png") no-repeat center 24%;
+      background-size: 760px;
+      opacity: 0.14;
+      z-index: 0;
+      pointer-events: none;
+      filter: grayscale(0.45) contrast(0.9) blur(0.25px);
+    }
+
+    /* Canvas do fundo animado */
+    #login-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    /* Gradiente radial central sobreposto ao canvas */
+    .login-overlay::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.07), transparent 32%),
+        radial-gradient(circle at 15% 80%, rgba(26, 187, 206, 0.06), transparent 18%),
+        radial-gradient(circle at 85% 78%, rgba(255, 255, 255, 0.05), transparent 15%);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .login-scripture {
+      position: absolute;
+      left: 32px;
+      bottom: 32px;
+      z-index: 2;
+      max-width: 280px;
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 0.82rem;
+      line-height: 1.8;
+      letter-spacing: 0.02em;
+      text-align: left;
+      background: rgba(3, 18, 38, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 18px 20px;
+      box-shadow: 0 20px 56px rgba(0, 0, 0, 0.22);
+      backdrop-filter: blur(14px);
+      font-style: italic;
+    }
+
+    .login-scripture span {
+      display: block;
+      margin-top: 10px;
+      color: rgba(148, 163, 184, 0.9);
+      font-size: 0.75rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    /* Linha de acento horizontal — detalhe de design */
+    .login-accent-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 2px;
+      background: linear-gradient(90deg,
+          transparent 0%,
+          rgba(26, 187, 206, 0) 15%,
+          rgba(26, 187, 206, 0.7) 35%,
+          rgba(26, 187, 206, 1) 50%,
+          rgba(26, 187, 206, 0.7) 65%,
+          rgba(26, 187, 206, 0) 85%,
+          transparent 100%);
+      z-index: 3;
+      animation: accentPulse 4s ease-in-out infinite;
+    }
+
+    @keyframes accentPulse {
+
+      0%,
+      100% {
+        opacity: 0.5;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    /* Wrapper do card — layout 3 colunas */
+    .login-split {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      justify-items: center;
+      width: 100%;
+      height: 100%;
+      padding: 40px;
+      gap: 60px;
+    }
+
+    /* Painel lateral com marca */
+    .login-brand-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      max-width: 360px;
+    }
+
+    .login-brand-panel img {
+      max-width: 280px;
+      height: auto;
+      margin-bottom: 40px;
+      filter: drop-shadow(0 24px 48px rgba(26, 187, 206, 0.18));
+      animation: logoFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes logoFloat {
+
+      0%,
+      100% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-8px);
+      }
+    }
+
+    .login-brand-tagline {
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.72);
+      text-align: center;
+      line-height: 1.7;
+      letter-spacing: 0.02em;
+      max-width: 300px;
+    }
+
+    /* Caixa de features AXON */
+    .login-features-box {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      max-width: 360px;
+    }
+
+    .feature-item {
+      background: rgba(26, 187, 206, 0.12);
+      border: 1px solid rgba(26, 187, 206, 0.22);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      backdrop-filter: blur(12px);
+      transition: all 280ms ease;
+      cursor: default;
+    }
+
+    .feature-item:hover {
+      background: rgba(26, 187, 206, 0.18);
+      border-color: rgba(26, 187, 206, 0.32);
+      transform: translateY(-2px);
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(26, 187, 206, 0.22);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      color: #1ABBCE;
+      flex-shrink: 0;
+    }
+
+    .feature-content h4 {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #F8FAFC;
+      margin-bottom: 4px;
+      letter-spacing: 0.01em;
+    }
+
+    .feature-content p {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.68);
+      line-height: 1.5;
+    }
+
+    /* Card principal */
+    .login-card {
+      width: 100%;
+      max-width: 420px;
+      background: rgba(11, 17, 32, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 20px;
+      padding: 48px 44px;
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      box-shadow:
+        0 0 0 1px rgba(26, 187, 206, 0.06),
+        0 32px 80px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      animation: cardAppear 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+      text-align: center;
+    }
+
+    @keyframes cardAppear {
+      from {
+        opacity: 0;
+        transform: translateY(24px) scale(0.97);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @media(max-width:1280px) {
+      .login-split {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        padding: 30px;
+      }
+
+      .login-brand-panel {
+        max-width: 100%;
+      }
+
+      .login-features-box {
+        max-width: 100%;
+      }
+
+      .feature-item {
+        flex-direction: row;
+      }
+    }
+
+    /* Cabeçalho do card */
+    .login-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 40px;
+      text-align: center;
+      flex-direction: column;
+    }
+
+    .login-logo-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(26, 187, 206, 0.95), rgba(3, 105, 161, 0.96));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: #fff;
+      flex-shrink: 0;
+      box-shadow: 0 20px 40px rgba(3, 105, 161, 0.22);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .login-logo-icon i {
+      display: block;
+      font-size: 1.1rem;
+    }
+
+    .login-logo-text {
+      font-family: 'Manrope', sans-serif;
+      font-weight: 800;
+      font-size: 1.18rem;
+      color: #fff;
+      letter-spacing: -0.01em;
+      line-height: 1.1;
+    }
+
+    .login-logo-sub {
+      font-size: 0.76rem;
+      color: rgba(248, 250, 252, 0.72);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-top: 3px;
+      font-weight: 600;
+    }
+
+    /* Textos de boas vindas */
+    .login-greeting {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #1ABBCE;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .login-greeting::before {
+      content: '';
+      display: inline-block;
+      width: 20px;
+      height: 1.5px;
+      background: #1ABBCE;
+      border-radius: 2px;
+    }
+
+    .login-title {
+      font-family: 'Manrope', sans-serif;
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: #F8FAFC;
+      margin-bottom: 6px;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+    }
+
+    .login-subtitle {
+      font-size: 0.95rem;
+      color: rgba(241, 245, 249, 0.75);
+      margin-bottom: 36px;
+      line-height: 1.7;
+      max-width: 360px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Campos */
+    .login-field {
+      margin: 0 auto 18px;
+      max-width: 340px;
+    }
+
+    .login-label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #64748B;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .login-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .login-input-wrap i {
+      position: absolute;
+      left: 16px;
+      color: rgba(241, 245, 249, 0.48);
+      font-size: 1rem;
+      pointer-events: none;
+      transition: color 180ms ease;
+    }
+
+    .login-input {
+      width: 100%;
+      padding: 15px 18px 15px 44px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      color: #F1F5F9;
+      font-size: 0.95rem;
+      font-family: 'Inter', sans-serif;
+      transition: all 180ms ease;
+      outline: none;
+      letter-spacing: 0.01em;
+    }
+
+    .login-input::placeholder {
+      color: rgba(241, 245, 249, 0.56);
+    }
+
+    .login-input:focus {
+      border-color: rgba(26, 187, 206, 0.5);
+      background: rgba(26, 187, 206, 0.05);
+      box-shadow: 0 0 0 3px rgba(26, 187, 206, 0.12);
+    }
+
+    .login-input-wrap:focus-within i {
+      color: #1ABBCE;
+    }
+
+    /* Botão principal */
+    .login-btn {
+      width: 100%;
+      padding: 16px 18px;
+      background: linear-gradient(135deg, #0E8A9E, #1ABBCE);
+      border: none;
+      border-radius: 16px;
+      color: #fff;
+      font-family: 'Manrope', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.03em;
+      transition: all 220ms ease;
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 18px 40px rgba(3, 105, 161, 0.22);
+    }
+
+    .login-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 20px 40px rgba(3, 105, 161, 0.28);
+      background: linear-gradient(135deg, #1ABBCE, #2ECFE0);
+    }
+
+    .login-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .login-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .login-btn span,
+    .login-btn i {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Erro */
+    .login-error {
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      color: #FCA5A5;
+      padding: 11px 14px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      margin-top: 14px;
+      display: none;
+      font-weight: 500;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .login-error.show {
+      display: flex;
+    }
+
+    /* Footer do card */
+    .login-footer {
+      margin-top: 34px;
+      padding-top: 22px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      text-align: center;
+      font-size: 0.78rem;
+      color: rgba(255, 255, 255, 0.65);
+      letter-spacing: 0.18em;
+      line-height: 1.85;
+      display: grid;
+      gap: 6px;
+      justify-items: center;
+    }
+
+    .login-footer .footer-brand {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.92rem;
+      letter-spacing: 0.42em;
+      font-weight: 700;
+    }
+
+    /* Spinner */
+    .spin {
+      animation: spinAnim 0.8s linear infinite;
+    }
+
+    @keyframes spinAnim {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: var(--color-surface);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-left: 4px solid var(--color-success);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      box-shadow: var(--shadow-hover);
+      z-index: 8000;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 300px;
+      transform: translateY(20px);
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .toast-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(16, 185, 129, 0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-success);
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .toast-title {
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--color-text-primary);
+      margin-bottom: 2px;
+    }
+
+    .toast-sub {
+      font-size: 0.8rem;
+      color: var(--color-text-muted);
+    }
+
+    /* ════════════════════════════════════════
+       SPLASH SCREEN — AXON BRANDING
+    ════════════════════════════════════════ */
+    .splash-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      background: linear-gradient(135deg, #050916 0%, #0A1222 50%, #051B3D 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 40px;
+      opacity: 1;
+      animation: splashFadeIn 0.10s ease-out forwards;
+      pointer-events: none;
+    }
+
+    .splash-screen.fade-out {
+      animation: splashFadeOut 1.0s ease-in forwards;
+    }
+
+    @keyframes splashFadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes splashFadeOut {
+      from {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      to {
+        opacity: 0;
+        transform: scale(1.05);
+      }
+    }
+
+    .splash-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 32px;
+      animation: splashContentFloat 1s ease-out forwards;
+    }
+
+    @keyframes splashContentFloat {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .splash-brain-wrapper {
+      width: 160px;
+      height: 160px;
+      animation: brainPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes brainPulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 20px rgba(26, 187, 206, 0.3));
+      }
+
+      50% {
+        transform: scale(1.08);
+        filter: drop-shadow(0 0 40px rgba(26, 187, 206, 0.5));
+      }
+    }
+
+    .splash-text {
+      text-align: center;
+      animation: splashTextFade 1.2s ease-out 0.8s forwards;
+      opacity: 0;
+    }
+
+    @keyframes splashTextFade {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    .splash-title {
+      font-family: 'Manrope', sans-serif;
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: #1ABBCE;
+      letter-spacing: 0.05em;
+      line-height: 1.2;
+      margin: 0;
+      text-transform: uppercase;
+    }
+
+    .splash-subtitle {
+      font-size: 0.95rem;
+      color: #A3B4D1;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin: 0;
+      margin-top: 4px;
+    }
+
+    .splash-description {
+      font-size: 0.9rem;
+      color: #7D8FA9;
+      font-weight: 400;
+      line-height: 1.6;
+      max-width: 380px;
+      margin-top: 20px;
+      margin-bottom: 0;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ══ SPLASH SCREEN ══ -->
+  <div class="splash-screen" id="splashScreen">
+    <div class="splash-content">
+      <!-- Imagem de fundo como PNG -->
+      <div class="splash-brain-wrapper">
+        <img src="https://i.imgur.com/DOK9k47.png" alt="AXON"
+          style="width: 100%; height: 100%; object-fit: contain; opacity: 0.9;">
+      </div>
+
+      <!-- Texto -->
+      <div class="splash-text">
+        <p class="splash-title">AXON</p>
+        <p class="splash-subtitle">TECHNOLOGY SOLUTIONS</p>
+        <p class="splash-description">Soluções inovadoras em gestão hospitalar e processamento de dados para otimizar
+          suas operações clínicas.</p>
+      </div>
     </div>
-    <div class="card-title">Pacotes Hospitalares</div>
-    <div class="card-desc">Sistema Web para análise de pacotes cadastrados em sistema.</div>
-  </div>  
-  <div class="card-footer"><span>Consultar Status</span> <i class="fa-solid fa-arrow-right"></i></div>  
-</a>
-        </div>  
-      </div>  
+  </div>
 
+  <!-- ══ LOGIN OVERLAY ══ -->
+  <div class="login-overlay" id="loginOverlay">
+    <!-- Canvas de partículas -->
+    <canvas id="login-canvas"></canvas>
+    <!-- Linha de acento no topo -->
+    <div class="login-accent-line"></div>
+    <div class="login-scripture" id="loginScripture"></div>
+    <div class="login-split">
+      <div class="login-brand-panel">
+        <!-- Logo AXON integrado -->
+        <svg width="320" height="120" viewBox="0 0 280 180"
+          style="margin-bottom:30px;filter:drop-shadow(0 24px 48px rgba(26,187,206,0.18));animation:logoFloat 1s ease-in-out infinite;">
+          <!-- Fundo do logo -->
+          <rect width="480" height="180" rx="20" fill="#051B3D" opacity="0" />
+          <!-- Texto AXON -->
+          <text x="240" y="110" font-family="Manrope, sans-serif" font-size="96" font-weight="800" fill="#1ABBCE"
+            text-anchor="middle" letter-spacing="8" </text>
+            <!-- Tagline -->
+            <text x="240" y="155" font-family="Inter, sans-serif" font-size="18" font-weight="500" fill="#94B9D0"
+              text-anchor="middle" letter-spacing="3"></text>
+        </svg>
+
+      </div>
+      <div class="login-card">
+        <div class="login-logo">
+          <div>
+            <div class="login-logo-text"></div>
+            <div class="login-logo-sub"></div>
+          </div>
+        </div>
+
+
+        <div class="login-title">Bem‑vindo</div>
+        <div class="login-subtitle">Insira suas credenciais institucionais para acessar o portal.</div>
+
+        <div class="login-field">
+          <label class="login-label">Usuário</label>
+          <div class="login-input-wrap">
+            <input class="login-input" id="loginUser" type="text" placeholder="Digite seu usuário"
+              autocomplete="username">
+            <i class="fa-solid fa-user"></i>
+          </div>
+        </div>
+        <div class="login-field">
+          <label class="login-label">Senha</label>
+          <div class="login-input-wrap">
+            <input class="login-input" id="loginPass" type="password" placeholder="••••••••"
+              autocomplete="current-password">
+            <i class="fa-solid fa-lock"></i>
+          </div>
+        </div>
+
+        <button class="login-btn" id="loginBtn" onclick="tentarLogin()">
+          <i class="fa-solid fa-arrow-right-to-bracket" id="loginIcon"></i>
+          <span id="loginBtnText">Entrar no Portal</span>
+        </button>
+
+        <div class="login-error" id="loginError">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          <span id="loginErrorMsg">Usuário ou senha incorretos.</span>
+        </div>
+
+        <div class="login-footer">
+          <span>Portal de uso interno restrito</span>
+          <span class="footer-brand">A Z A M B U J A</span>
+          <span>© 2026</span>
+        </div>
+      </div>
+
+      <!-- Caixa de Features AXON -->
+      <div class="login-features-box">
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TOAST ══ -->
+  <div class="toast" id="toast">
+    <div class="toast-icon"><i class="fa-solid fa-check"></i></div>
+    <div>
+      <div class="toast-title" id="toastTitle">Login realizado</div>
+      <div class="toast-sub" id="toastSub">Bem-vindo ao Portal AXON</div>
+    </div>
+  </div>
+
+  <!-- ══ PORTAL ══ -->
+  <aside class="sidebar" id="sidebar" style="display:none">
+    <div class="brand">
+      <img src="https://hospitalauxiliadora.com.br/wp-content/uploads/2025/03/logo-hospital-auxiliadora.png" alt="HNSA">
+      <span class="brand-text">Portal Corporativo</span>
+    </div>
+    <ul class="nav-menu">
+      <div class="nav-header">Navegação Principal</div>
+      <a onclick="switchSection('sec-inicio', this)" class="nav-item active">
+        <i class="fa-solid fa-house"></i> Dashboard
+      </a>
+      <a id="navKpi" href="KPI.html" class="nav-item">
+        <i class="fa-solid fa-chart-line"></i> KPI Performance
+      </a>
+      <a onclick="switchSection('sec-faturamento', this)" class="nav-item">
+        <i class="fa-solid fa-file-invoice-dollar"></i> Faturamento
+      </a>
+      <a id="navCadastro" onclick="switchSection('sec-auditoria', this)" class="nav-item">
+        <i class="fa-solid fa-clipboard-check"></i> Cadastro
+      </a>
+      <a onclick="switchSection('sec-gerencial', this)" class="nav-item">
+        <i class="fa-solid fa-briefcase"></i> Gerencial
+      </a>
+    </ul>
+    <div class="user-mini">
+      <div class="avatar" id="sidebarAvatar">??</div>
+      <div class="user-info">
+        <h4 id="sidebarNome">—</h4>
+        <span>AXON</span>
+      </div>
+    </div>
+    <button class="btn-logout" onclick="fazerLogout()">
+      <i class="fa-solid fa-right-from-bracket"></i> Sair
+    </button>
+  </aside>
+
+  <main class="main-content" id="mainContent" style="display:none">
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="breadcrumbs">Portal Corporativo / <b id="page-title">Dashboard</b></div>
+      </div>
+      <div class="topbar-actions">
+        <form class="search-box" onsubmit="searchPortal(event)">
+          <label for="topbarSearch">Buscar painel</label>
+          <input id="topbarSearch" class="search-input" type="search" placeholder="Buscar módulo, processo ou KPI"
+            aria-label="Buscar painel">
+          <button class="search-button" type="submit" aria-label="Buscar"><i
+              class="fa-solid fa-magnifying-glass"></i></button>
+        </form>
+        <div class="system-status"><span class="status-dot"></span> Sistema Online</div>
+        <button class="theme-toggle" id="theme-toggle"><i class="fa-regular fa-moon"></i></button>
+      </div>
+    </header>
+
+    <div class="dashboard-wrapper">
+      <div class="section-group active" id="sec-inicio">
+        <div class="hero-banner">
+          <i class="fa-solid fa-rocket hero-decoration"></i>
+          <div class="hero-content">
+            <h1>Command Center para Operações de Saúde</h1>
+            <p>Uma plataforma corporativa desenvolvida para transformar dados complexos em inteligência executiva.
+
+              Integra faturamento, auditoria, compliance e indicadores assistenciais em um único ecossistema de decisão,
+              proporcionando maior previsibilidade financeira, governança e eficiência operacional.</p>
+            <div class="hero-stats">
+              <div class="stat-item">
+                <h3>R$ 4M</h3><span>em faturamento monitorado</span>
+              </div>
+              <div class="stat-item">
+                <h3>4%</h3><span>de índice médio de glosas controladas</span>
+              </div>
+              <div class="stat-item">
+                <h3>70%</h3><span>Redução de retrabalho/erros</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="section-title">
+          <h2>Módulos Estratégicos</h2>
+          <span class="section-badge">Acesso Prioritário</span>
+        </div>
+        <div class="app-grid">
+          <a onclick="switchSection('sec-faturamento', document.querySelectorAll('.nav-item')[2])" class="card accent"
+            style="cursor:pointer;">
+            <div>
+              <div class="card-icon-wrapper"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+              <div class="card-title">Automação de Faturamento</div>
+              <div class="card-desc">Correções automatizadas em lote de XML e padronização de dados para agilidade e
+                precisão.</div>
+            </div>
+            <div class="card-footer"><span>Acessar Módulo</span> <i class="fa-solid fa-arrow-right"></i></div>
+          </a>
+          <a onclick="switchSection('sec-auditoria', document.querySelectorAll('.nav-item')[3])" class="card accent"
+            style="cursor:pointer;">
+            <div>
+              <div class="card-icon-wrapper" style="color:var(--color-audit);background:#EEF2FF;"><i
+                  class="fa-solid fa-clipboard-check"></i></div>
+              <div class="card-title">Gestão de Auditoria</div>
+              <div class="card-desc">Controle preventivo de glosas, vinculação de atendimentos e monitoramento de
+                conformidade.</div>
+            </div>
+            <div class="card-footer"><span>Acessar Painel</span> <i class="fa-solid fa-arrow-right"></i></div>
+          </a>
+        </div>
+      </div>
+
+      <div class="section-group" id="sec-auditoria">
+        <div class="section-title">
+          <h2>Cadastro de Regras</h2>
+          <span class="section-badge">Controle</span>
+        </div>
+        <div class="app-grid">
+          <a href="AXON.html" class="card">
+            <div>
+              <div class="card-icon-wrapper" style="color:var(--color-audit);background:#EEF2FF;"><i
+                  class="fa-solid fa-link"></i></div>
+              <div class="card-title">Página inicial Cadastro</div>
+              <div class="card-desc">Integração inteligente para análise de prazos.</div>
+            </div>
+            <div class="card-footer"><span>Acessar Ferramenta</span> <i class="fa-solid fa-arrow-right"></i></div>
+          </a>
+        </div>
+      </div>
+
+      <div class="section-group" id="sec-faturamento">
+        <div class="section-title">
+          <h2>Faturamento & Auditoria</h2>
+          <span class="section-badge">Processos Operacionais</span>
+        </div>
+        <div class="app-grid">
+          <a href="Correção XML Ambulatorial.html" class="card">
+            <div>
+              <div class="card-icon-wrapper" style="color:#8B5CF6;background:#F5F3FF;"><i
+                  class="fa-solid fa-file-medical"></i></div>
+              <div class="card-title">Validação Ambulatorial</div>
+              <div class="card-desc">Auditoria automatizada de produção ambulatorial.</div>
+            </div>
+            <div class="card-footer"><span>Iniciar Validação</span> <i class="fa-solid fa-arrow-right"></i></div>
+          </a>
+          <a href="Correção XML.html" class="card">
+            <div>
+              <div class="card-icon-wrapper"><i class="fa-solid fa-file-code"></i></div>
+              <div class="card-title">Gerador Sequencial</div>
+              <div class="card-desc">Análise e correção de sequencial de faturamento.</div>
+            </div>
+            <div class="card-footer"><span>Validar Arquivos</span> <i class="fa-solid fa-arrow-right"></i></div>
+          </a>
+          <a href="data.html" class="card">
+            <div>
+              <div class="card-icon-wrapper" style="color:#F59E0B;background:#FFFBEB;"><i
+                  class="fa-regular fa-clock"></i></div>
+              <div class="card-title">Padronização Temporal</div>
+              <div class="card-desc">Correção em massa de inconsistências em datas e horários.</div>
+            </div>
+            <div class="card-footer"><span>Executar Correção</span> <i class="fa-solid fa-arrow-right"></i></div>
+          </a>
+          <a href="Buscar e Substituir.html" class="card">
+            <div>
+              <div class="card-icon-wrapper" style="color:#10B981;background:#ECFDF5;"><i
+                  class="fa-solid fa-magnifying-glass"></i></div>
+              <div class="card-title">Edição Inteligente</div>
+              <div class="card-desc">Busca e substituição avançada em grandes volumes de dados.</div>
+            </div>
+            <div class="card-footer"><span>Acessar Editor</span> <i class="fa-solid fa-arrow-right"></i></div>
+          </a>
+          <a href="xml.html" class="card">
+            <div>
+              <div class="card-icon-wrapper" style="color:#10B981;background:#ECFDF5;"><i
+                  class="fa-solid fa-calendar-check"></i></div>
+              <div class="card-title">Validação de Lotes TISS</div>
+              <div class="card-desc">Sistema web para auditoria e validação de arquivos XML no padrão TISS.</div>
+            </div>
+            <div class="card-footer"><span>Consultar Status</span> <i class="fa-solid fa-arrow-right"></i></div>
+          </a>
+          <a href="pc.html" class="card">
+            <div>
+              <div class="card-icon-wrapper" style="color:#3B82F6;background:#EFF6FF;"><i
+                  class="fa-solid fa-layer-group"></i></div>
+              <div class="card-title">Pacotes Hospitalares</div>
+              <div class="card-desc">Sistema Web para análise de pacotes cadastrados em sistema.</div>
+            </div>
+            <div class="card-footer"><span>Consultar Status</span> <i class="fa-solid fa-arrow-right"></i></div>
+          </a>
+        </div>
+      </div>
       <div class="section-group" id="sec-gerencial">  
         <div class="section-title">  
           <h2>Gestão Estratégica</h2>  
@@ -865,137 +1758,572 @@
         </div>  
         <div class="app-grid">  
           <a href="Movimentação de Contas.html" class="card accent">  
-            <div><div class="card-icon-wrapper"><i class="fa-solid fa-money-bill-transfer"></i></div><div class="card-title">Gestão de Movimentação</div><div class="card-desc">Monitoramento e controle completo da movimentação convênio</div></div>  
-            <div class="card-footer"><span>Acessar Sistema</span> <i class="fa-solid fa-arrow-right"></i></div>  
+            <div><div class="card-icon-wrapper"><i class="fa-solid fa-money-bill-transfer"></i></div><div class="card-title">Contas Médicas</div><div class="card-desc">Painel estratégico para conciliação e análise de movimentações financeiras.</div></div>  
+            <div class="card-footer"><span>Abrir Dashboard</span> <i class="fa-solid fa-arrow-right"></i></div>  
           </a>  
           <a href="sus.html" class="card accent">  
-            <div><div class="card-icon-wrapper"><i class="fa-solid fa-hospital-user"></i></div><div class="card-title">Gestão de Movimentação SUS</div><div class="card-desc">Monitoramento e controle completo da movimentação AIH/SUS.</div></div>  
+            <div><div class="card-icon-wrapper"><i class="fa-solid fa-hospital-user"></i></div><div class="card-title">Gestão de Internações</div><div class="card-desc">Monitoramento e controle completo da movimentação AIH/SUS.</div></div>  
             <div class="card-footer"><span>Acessar Sistema</span> <i class="fa-solid fa-arrow-right"></i></div>  
           </a>  
         </div>  
       </div>  
     </div>  
 
-    <div id="password-prompt" class="password-prompt-overlay">  
-      <div class="password-box">  
-        <h3>Acesso Restrito</h3>  
-        <p>Esta seção requer autenticação adicional. Insira a senha de segurança para continuar.</p>  
-        <p id="password-error" style="display: none; color: var(--color-danger); font-size: 0.9rem; margin-bottom: 16px; font-weight: 500;">  
-          <i class="fa-solid fa-circle-exclamation"></i> Senha incorreta. Tente novamente.  
-        </p>  
-        <input type="password" id="password-input" class="password-input" placeholder="Digite a senha de acesso" autocomplete="off">  
-        <div class="btn-group">  
-          <button onclick="checkPassword()" class="btn-submit">Confirmar Acesso</button>  
-          <button onclick="closePasswordPrompt()" class="btn-cancel">Cancelar</button>  
-        </div>  
-      </div>  
-    </div>  
+    </div>
+    </div>
+  </main>
 
-    <footer>© 2026 Axon | Todos os direitos reservados</footer>  
-  </main>  
+  <script>
+    /* ── CONFIG ─────────────────────────────────────────── */
+    const _c = [
+      'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbQ==',
+      'L21hY3Jvcy9zL0FLZnljYnhWUHRyWDJVNQ==',
+      'QnJDekJ6WHZjTy1lNzY3dU80bkI1eWJyZQ==',
+      'Q3U2Q09iYkdCWmVjVG1aa1N6LVBOTFVhamZLT2tHcTAvZXhlYw=='
+    ];
+    const ENDPOINT = _c.map(s => atob(s)).join('');
 
-  <script>  
-    /* Lógica de Tema Aprimorada */  
-    const themeBtn = document.getElementById('theme-toggle');  
-    const icon = themeBtn.querySelector('i');  
-    const body = document.body;  
-    const savedTheme = localStorage.getItem('hnsa-theme');  
+    /* ── TEMA ───────────────────────────────────────────── */
+    const themeBtn = document.getElementById('theme-toggle');
+    const themeIcon = themeBtn.querySelector('i');
+    function setTheme(isDark) {
+      if (isDark) {
+        document.body.classList.add('dark-mode');
+        document.body.classList.remove('light-mode');
+        themeIcon.classList.replace('fa-moon', 'fa-sun');
+      } else {
+        document.body.classList.add('light-mode');
+        document.body.classList.remove('dark-mode');
+        themeIcon.classList.replace('fa-sun', 'fa-moon');
+      }
+    }
+    const savedTheme = localStorage.getItem('hnsa-theme');
+    setTheme(savedTheme === 'light' ? false : true);
+    themeBtn.addEventListener('click', () => {
+      const isDark = !document.body.classList.contains('dark-mode');
+      setTheme(isDark);
+      localStorage.setItem('hnsa-theme', isDark ? 'dark' : 'light');
+    });
+    function showToast(title, sub, duration = 3000) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastTitle').textContent = title;
+      document.getElementById('toastSub').textContent = sub;
+      toast.classList.add('show');
+      clearTimeout(window._toastTimeout);
+      window._toastTimeout = setTimeout(() => toast.classList.remove('show'), duration);
+    }
+    function searchPortal(event) {
+      event.preventDefault();
+      const query = document.getElementById('topbarSearch').value.trim().toLowerCase();
+      const cards = Array.from(document.querySelectorAll('.app-grid .card'));
+      let matches = 0;
+      cards.forEach(card => {
+        const text = card.innerText.toLowerCase();
+        const visible = !query || text.includes(query);
+        card.style.display = visible ? '' : 'none';
+        if (visible) matches += 1;
+      });
+      if (!query) {
+        showToast('Busca limpa', 'Todos os módulos foram restaurados.');
+      } else if (matches === 0) {
+        showToast('Nenhum resultado', 'Tente outro termo ou navegue pelos módulos.');
+      } else {
+        showToast(`${matches} resultado(s)`, 'Busca aplicada no painel.');
+      }
+    }
 
-    function setTheme(isDark) {  
-      if (isDark) {  
-        body.classList.add('dark-mode');  
-        icon.classList.replace('fa-moon', 'fa-sun');  
-      } else {  
-        body.classList.remove('dark-mode');  
-        icon.classList.replace('fa-sun', 'fa-moon');  
-      }  
-    }  
+    /* ══════════════════════════════════════════════════════
+       CANVAS DE PARTÍCULAS — fundo animado do login
+    ══════════════════════════════════════════════════════ */
+    (function initParticles() {
+      const canvas = document.getElementById('login-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const overlay = document.getElementById('loginOverlay');
 
-    if (savedTheme === 'dark') setTheme(true);  
-    themeBtn.addEventListener('click', () => {  
-      const isDark = !body.classList.contains('dark-mode');  
-      setTheme(isDark);  
-      localStorage.setItem('hnsa-theme', isDark ? 'dark' : 'light');  
-    });  
+      const CFG = {
+        count: 70,
+        connDist: 140,
+        speed: 0.38,
+        nodeSizeMin: 1.5,
+        nodeSizeMax: 3.2,
+        pulseRatio: 0.12,
+        blue: '#1ABBCE',
+        blueDim: 'rgba(26,187,206,',
+        gray: 'rgba(148,163,184,',
+        sweepSpeed: 0.022
+      };
 
-    /* LÓGICA DE NAVEGAÇÃO */  
-    let pendingElement = null;  
-    let isKpiRequest = false;  
+      let W, H, nodes = [], raf, sweepX = 0;
 
-    function requestKpiAccess(element) {  
-      isKpiRequest = true;  
-      if(element) pendingElement = element;  
-      document.getElementById('password-prompt').classList.add('visible');  
-      const passInput = document.getElementById('password-input');  
-      passInput.focus();  
-    }  
+      function resize() {
+        W = canvas.width = overlay.offsetWidth;
+        H = canvas.height = overlay.offsetHeight;
+        sweepX = 0;
+      }
 
-    function closePasswordPrompt() {  
-      document.getElementById('password-prompt').classList.remove('visible');  
-      document.getElementById('password-input').value = '';  
-      document.getElementById('password-error').style.display = 'none';  
-      isKpiRequest = false;  
-    }  
+      function makeNodes() {
+        nodes = Array.from({ length: CFG.count }, () => {
+          const isPulse = Math.random() < CFG.pulseRatio;
+          const isBlue = Math.random() < 0.30;
+          return {
+            x: Math.random() * W,
+            y: Math.random() * H,
+            vx: (Math.random() - 0.5) * CFG.speed,
+            vy: (Math.random() - 0.5) * CFG.speed,
+            r: CFG.nodeSizeMin + Math.random() * (CFG.nodeSizeMax - CFG.nodeSizeMin),
+            alpha: 0.25 + Math.random() * 0.45,
+            isBlue,
+            isPulse,
+            phase: Math.random() * Math.PI * 2
+          };
+        });
+      }
 
-    function checkPassword() {  
-      const password = document.getElementById('password-input').value;  
-      if (password === 'hnsa2025') {  
-        if(isKpiRequest) window.location.href = 'KPI.html';  
-        closePasswordPrompt();  
-      } else {  
-        document.getElementById('password-error').style.display = 'block';  
-        document.getElementById('password-input').value = '';  
-        document.getElementById('password-input').focus();  
-      }  
-    }  
+      function draw(ts) {
+        ctx.clearRect(0, 0, W, H);
 
-    function switchSection(sectionId, element) {  
-      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));  
-      if (element) {  
-        element.classList.add('active');  
-      } else {  
-        const navs = document.querySelectorAll('.nav-item');  
-        if(sectionId === 'sec-inicio') navs[0].classList.add('active');  
-        if(sectionId === 'sec-faturamento') navs[2].classList.add('active');  
-        if(sectionId === 'sec-auditoria') navs[3].classList.add('active');  
-      }  
+        /* glow radial */
+        const g = ctx.createRadialGradient(W * 0.5, H * 0.5, 0, W * 0.5, H * 0.5, W * 0.6);
+        g.addColorStop(0, 'rgba(3,105,161,0.09)');
+        g.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, W, H);
 
-      document.querySelectorAll('.section-group').forEach(sec => sec.classList.remove('active'));  
-      const target = document.getElementById(sectionId);  
-      if (target) target.classList.add('active');  
+        /* mover nós */
+        nodes.forEach(n => {
+          n.x += n.vx; n.y += n.vy;
+          if (n.x < 0 || n.x > W) n.vx *= -1;
+          if (n.y < 0 || n.y > H) n.vy *= -1;
+        });
 
-      const titleMap = {  
-        'sec-inicio': 'Dashboard',  
-        'sec-gerencial': 'Gestão Estratégica',  
-        'sec-faturamento': 'Faturamento',  
-        'sec-auditoria': 'Auditoria'  
-      };  
-      document.getElementById('page-title').innerText = titleMap[sectionId] || 'Portal';  
-    }  
+        /* conexões */
+        for (let i = 0; i < nodes.length; i++) {
+          for (let j = i + 1; j < nodes.length; j++) {
+            const a = nodes[i], b = nodes[j];
+            const dx = a.x - b.x, dy = a.y - b.y;
+            const d = Math.sqrt(dx * dx + dy * dy);
+            if (d >= CFG.connDist) continue;
+            const t = 1 - d / CFG.connDist;
+            const isB = a.isBlue || b.isBlue;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.strokeStyle = isB
+              ? CFG.blueDim + (t * 0.28) + ')'
+              : CFG.gray + (t * 0.12) + ')';
+            ctx.lineWidth = isB ? 0.7 : 0.5;
+            ctx.stroke();
+          }
+        }
 
-    document.getElementById('password-input').addEventListener('keypress', (e) => {  
-      if(e.key === 'Enter') checkPassword();  
-    });  
+        /* nós */
+        nodes.forEach(n => {
+          let r = n.r, alpha = n.alpha;
+          if (n.isPulse) {
+            const p = (Math.sin(ts * 0.0018 + n.phase) + 1) * 0.5;
+            r = 2 + p * 4;
+            alpha = 0.2 + p * 0.7;
+            /* anel externo */
+            ctx.beginPath();
+            ctx.arc(n.x, n.y, r + 6, 0, Math.PI * 2);
+            ctx.strokeStyle = CFG.blueDim + (alpha * 0.18) + ')';
+            ctx.lineWidth = 0.8;
+            ctx.stroke();
+          }
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
+          ctx.fillStyle = n.isBlue
+            ? CFG.blueDim + alpha + ')'
+            : CFG.gray + (alpha * 0.6) + ')';
+          ctx.fill();
+        });
 
-    // Foco automático no input de senha quando o modal abre  
-    document.getElementById('password-prompt').addEventListener('transitionend', () => {  
-      if(document.getElementById('password-prompt').classList.contains('visible')) {  
-        document.getElementById('password-input').focus();  
-      }  
-    });  
-  </script>  
-</body>  
+        /* linha de varredura */
+        sweepX = (sweepX + CFG.sweepSpeed * W / 60) % (W + 240);
+        const sg = ctx.createLinearGradient(sweepX - 120, 0, sweepX + 120, 0);
+        sg.addColorStop(0, 'rgba(26,187,206,0)');
+        sg.addColorStop(0.4, 'rgba(26,187,206,0.035)');
+        sg.addColorStop(0.5, 'rgba(26,187,206,0.055)');
+        sg.addColorStop(0.6, 'rgba(26,187,206,0.035)');
+        sg.addColorStop(1, 'rgba(26,187,206,0)');
+        ctx.fillStyle = sg;
+        ctx.fillRect(sweepX - 120, 0, 240, H);
+
+        raf = requestAnimationFrame(draw);
+      }
+
+      resize();
+      makeNodes();
+      raf = requestAnimationFrame(draw);
+      window.addEventListener('resize', () => { resize(); makeNodes(); });
+
+      /* Para a animação ao fechar o overlay */
+      window._stopLoginCanvas = () => cancelAnimationFrame(raf);
+    })();
+
+    /* ── JSONP ──────────────────────────────────────────── */
+    function fetchJsonp(url) {
+      return new Promise((resolve, reject) => {
+        const cb = '_axon_' + Date.now();
+        const t = setTimeout(() => { cleanup(); reject(new Error('Timeout')); }, 12000);
+        function cleanup() { clearTimeout(t); delete window[cb]; const e = document.getElementById('_jscb_portal'); if (e) e.remove(); }
+        window[cb] = d => { cleanup(); resolve(d); };
+        const s = document.createElement('script');
+        s.id = '_jscb_portal';
+        s.onerror = () => { cleanup(); reject(new Error('Falha de conexão.')); };
+        s.src = url + '&callback=' + cb + '&t=' + Date.now();
+        document.head.appendChild(s);
+      });
+    }
+
+    /* ── LOGIN ──────────────────────────────────────────── */
+    async function tentarLogin() {
+      const u = document.getElementById('loginUser').value.trim();
+      const p = document.getElementById('loginPass').value.trim();
+      if (!u || !p) { mostrarErro('Preencha usuário e senha.'); return; }
+      const btn = document.getElementById('loginBtn');
+      const icon = document.getElementById('loginIcon');
+      const txt = document.getElementById('loginBtnText');
+      btn.disabled = true;
+      icon.className = 'fa-solid fa-spinner spin';
+      txt.textContent = 'Verificando...';
+      document.getElementById('loginError').classList.remove('show');
+      try {
+        const url = ENDPOINT + '?acao=auth&u=' + encodeURIComponent(u) + '&s=' + encodeURIComponent(p);
+        const data = await fetchJsonp(url);
+        if (data.status === 'ok') {
+          sessionStorage.setItem('axon_portal_auth', '1');
+          sessionStorage.setItem('axon_portal_user', data.usuario || u);
+          sessionStorage.setItem('axon_portal_nome', data.nome || u);
+          sessionStorage.setItem('axon_portal_kpi',      (data.kpi      || '').toLowerCase() === 'ok' ? '1' : '0');
+          sessionStorage.setItem('axon_portal_cadastro', (data.cadastro || '').toLowerCase() === 'ok' ? '1' : '0');
+          sessionStorage.setItem('axon_portal_login_ts', Date.now().toString());
+          registrarEntrada(data.usuario || u, data.nome || u);
+          iniciarWatchdogSessao();
+          abrirPortal(data.nome || u, data.usuario || u);
+        } else {
+          mostrarErro('Usuário ou senha incorretos.');
+          btn.disabled = false;
+          icon.className = 'fa-solid fa-arrow-right-to-bracket';
+          txt.textContent = 'Entrar no Portal';
+        }
+      } catch (e) {
+        mostrarErro('Erro de conexão: ' + e.message);
+        btn.disabled = false;
+        icon.className = 'fa-solid fa-arrow-right-to-bracket';
+        txt.textContent = 'Entrar no Portal';
+      }
+    }
+
+    function mostrarErro(msg) {
+      const el = document.getElementById('loginError');
+      document.getElementById('loginErrorMsg').textContent = msg;
+      el.classList.add('show');
+    }
+
+    function registrarEntrada(usuario, nome) {
+      fetch('https://api.ipify.org?format=json')
+        .then(r => r.json())
+        .then(d => enviarLog(usuario, nome, d.ip || '—'))
+        .catch(() => enviarLog(usuario, nome, '—'));
+    }
+
+    function enviarLog(usuario, nome, ip) {
+      const cb = '_axon_log_' + Date.now();
+      const pagina = 'Portal Corporativo (index.html)';
+      const url = ENDPOINT + '?acao=logEntrada' + '&u=' + encodeURIComponent(usuario)
+        + '&nome=' + encodeURIComponent(nome) + '&ip=' + encodeURIComponent(ip)
+        + '&pagina=' + encodeURIComponent(pagina) + '&callback=' + cb + '&t=' + Date.now();
+      window[cb] = () => { delete window[cb]; };
+      const s = document.createElement('script');
+      s.onerror = () => { delete window[cb]; };
+      s.src = url;
+      document.head.appendChild(s);
+      setTimeout(() => { if (s.parentNode) s.remove(); }, 8000);
+    }
+
+    function updateDailyScripture() {
+      const verses = [
+        { text: 'Tudo o que fizerem, façam de todo o coração, como para o Senhor, não para os homens, sabendo que receberão do Senhor a recompensa da herança, pois é a Cristo, o Senhor, a quem vocês servem.', ref: 'Colossenses 3:23-24' },
+        { text: 'Confia no Senhor de todo o teu coração e não te estribes no teu próprio entendimento.', ref: 'Provérbios 3:5' },
+
+        { text: 'Entrega o teu caminho ao Senhor; confia nele, e ele tudo fará.', ref: 'Salmos 37:5' },
+
+        { text: 'O Senhor é o meu pastor; nada me faltará.', ref: 'Salmos 23:1' },
+
+        { text: 'Porque sou eu que conheço os planos que tenho para vocês, diz o Senhor.', ref: 'Jeremias 29:11' },
+
+        { text: 'Buscai primeiro o Reino de Deus e a sua justiça, e todas estas coisas vos serão acrescentadas.', ref: 'Mateus 6:33' },
+
+        { text: 'Se Deus é por nós, quem será contra nós?', ref: 'Romanos 8:31' },
+
+        { text: 'Não fui eu que lhe ordenei? Seja forte e corajoso.', ref: 'Josué 1:9' },
+
+        { text: 'Lâmpada para os meus pés é a tua palavra e luz para o meu caminho.', ref: 'Salmos 119:105' },
+
+        { text: 'O coração do homem pode fazer planos, mas a resposta certa dos lábios vem do Senhor.', ref: 'Provérbios 16:1' },
+
+        { text: 'Os que esperam no Senhor renovarão as suas forças.', ref: 'Isaías 40:31' },
+
+        { text: 'Em tudo dai graças, porque esta é a vontade de Deus.', ref: '1 Tessalonicenses 5:18' },
+
+        { text: 'Alegrem-se na esperança, sejam pacientes na tribulação, perseverem na oração.', ref: 'Romanos 12:12' },
+
+        { text: 'O Senhor é a minha força e o meu escudo; nele o meu coração confia.', ref: 'Salmos 28:7' },
+
+        { text: 'Porque para Deus nada é impossível.', ref: 'Lucas 1:37' },
+
+        { text: 'Bem-aventurado o homem que confia no Senhor.', ref: 'Jeremias 17:7' },
+
+        { text: 'A resposta branda desvia o furor, mas a palavra dura suscita a ira.', ref: 'Provérbios 15:1' },
+
+        { text: 'O temor do Senhor é o princípio da sabedoria.', ref: 'Provérbios 9:10' },
+
+        { text: 'Lancem sobre ele toda a sua ansiedade, porque ele tem cuidado de vocês.', ref: '1 Pedro 5:7' },
+
+        { text: 'A paz de Deus, que excede todo entendimento, guardará os vossos corações.', ref: 'Filipenses 4:7' },
+
+        { text: 'Mas os que confiam no Senhor são como o monte Sião, que não se abala, mas permanece para sempre.', ref: 'Salmos 125:1' },
+      ];
+      const now = new Date();
+      const dailyIndex = (now.getUTCFullYear() * 10000 + (now.getUTCMonth() + 1) * 100 + now.getUTCDate()) % verses.length;
+      const verse = verses[dailyIndex];
+      const container = document.getElementById('loginScripture');
+      if (!container) return;
+      container.innerHTML = `${verse.text} <span>${verse.ref}</span>`;
+    }
+
+    updateDailyScripture();
+
+    function abrirPortal(nome, usuario) {
+      const overlay = document.getElementById('loginOverlay');
+      overlay.style.transition = 'opacity 0.45s ease, transform 0.45s ease';
+      overlay.style.opacity = '0';
+      overlay.style.transform = 'scale(1.03)';
+      setTimeout(() => {
+        overlay.style.display = 'none';
+        if (window._stopLoginCanvas) window._stopLoginCanvas();
+        document.getElementById('sidebar').style.display = 'flex';
+        document.getElementById('mainContent').style.display = 'flex';
+      }, 440);
+      const iniciais = nome.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase() || 'U';
+      document.getElementById('sidebarAvatar').textContent = iniciais;
+      document.getElementById('sidebarNome').textContent = nome;
+      aplicarPermissaoKpi();
+      setTimeout(() => {
+        document.getElementById('toastTitle').textContent = 'Olá, ' + nome.split(' ')[0] + '!';
+        document.getElementById('toastSub').textContent = 'Acesso registrado · Portal AXON';
+        const toast = document.getElementById('toast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 4000);
+      }, 700);
+    }
+
+    function aplicarPermissaoKpi() {
+      // ── KPI ──────────────────────────────────────────────
+      const temKpi = sessionStorage.getItem('axon_portal_kpi') === '1';
+      const navKpi = document.getElementById('navKpi');
+      if (navKpi) {
+        if (temKpi) {
+          navKpi.removeAttribute('data-bloqueado');
+          navKpi.style.opacity = '';
+          navKpi.style.pointerEvents = '';
+          navKpi.style.cursor = '';
+          navKpi.title = '';
+          navKpi.onclick = null;
+        } else {
+          navKpi.removeAttribute('href');
+          navKpi.setAttribute('data-bloqueado', '1');
+          navKpi.style.opacity = '0.38';
+          navKpi.style.pointerEvents = 'none';
+          navKpi.style.cursor = 'not-allowed';
+          navKpi.title = 'Acesso restrito';
+        }
+      }
+
+      // ── CADASTRO ─────────────────────────────────────────
+      const temCadastro = sessionStorage.getItem('axon_portal_cadastro') === '1';
+      const navCadastro = document.getElementById('navCadastro');
+      if (navCadastro) {
+        if (temCadastro) {
+          navCadastro.removeAttribute('data-bloqueado');
+          navCadastro.style.opacity = '';
+          navCadastro.style.pointerEvents = '';
+          navCadastro.style.cursor = '';
+          navCadastro.title = '';
+          navCadastro.onclick = function() { switchSection('sec-auditoria', this); };
+        } else {
+          navCadastro.setAttribute('data-bloqueado', '1');
+          navCadastro.style.opacity = '0.38';
+          navCadastro.style.pointerEvents = 'none';
+          navCadastro.style.cursor = 'not-allowed';
+          navCadastro.title = 'Acesso restrito';
+          navCadastro.onclick = null;
+        }
+      }
+    }
+
+    /* ── WATCHDOG DE SESSÃO (30 min) ───────────────────── */
+    let _watchdogInterval = null;
+    let _alertaExibido = false;
+
+    function iniciarWatchdogSessao() {
+      if (_watchdogInterval) clearInterval(_watchdogInterval);
+      _alertaExibido = false;
+      _watchdogInterval = setInterval(() => {
+        const ts = parseInt(sessionStorage.getItem('axon_portal_login_ts') || '0', 10);
+        if (!ts) return;
+        const LIMITE    = 30 * 60 * 1000;
+        const AVISO     =  2 * 60 * 1000;
+        const decorrido = Date.now() - ts;
+        const restante  = LIMITE - decorrido;
+        if (restante <= 0) {
+          clearInterval(_watchdogInterval);
+          expirarSessao();
+        } else if (restante <= AVISO && !_alertaExibido) {
+          _alertaExibido = true;
+          exibirAvisoExpiracao();
+        }
+      }, 10000);
+    }
+
+    function exibirAvisoExpiracao() {
+      const anterior = document.getElementById('modalExpiracaoSessao');
+      if (anterior) anterior.remove();
+      const modal = document.createElement('div');
+      modal.id = 'modalExpiracaoSessao';
+      modal.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:rgba(5,9,22,0.82);backdrop-filter:blur(6px);';
+      modal.innerHTML = `
+        <div style="background:#0A1222;border:1px solid rgba(199,163,74,0.35);border-radius:18px;padding:36px 40px;max-width:400px;width:90%;box-shadow:0 25px 60px rgba(0,0,0,0.6);text-align:center;">
+          <div style="font-size:2.4rem;margin-bottom:16px;">⏱️</div>
+          <h3 style="font-family:'Manrope',sans-serif;font-size:1.1rem;color:#F8FAFC;margin-bottom:10px;letter-spacing:0.04em;">Sessão expirando</h3>
+          <p style="color:#A3B4D1;font-size:0.9rem;margin-bottom:22px;line-height:1.6;">
+            Sua sessão vai expirar em <strong id="countdownExpiracao" style="color:#C7A34A;"></strong>.<br>Deseja continuar conectado?
+          </p>
+          <div style="display:flex;gap:12px;justify-content:center;">
+            <button onclick="renovarSessao()" style="background:linear-gradient(135deg,#0369A1,#1ABBCE);border:none;border-radius:10px;padding:11px 24px;color:#fff;font-weight:600;font-size:0.9rem;cursor:pointer;">Continuar</button>
+            <button onclick="expirarSessao()" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.35);border-radius:10px;padding:11px 24px;color:#EF4444;font-weight:600;font-size:0.9rem;cursor:pointer;">Sair agora</button>
+          </div>
+        </div>`;
+      document.body.appendChild(modal);
+      const el = document.getElementById('countdownExpiracao');
+      const tick = () => {
+        const ts2   = parseInt(sessionStorage.getItem('axon_portal_login_ts') || '0', 10);
+        const rest2 = ts2 ? Math.max(0, (ts2 + 30 * 60 * 1000) - Date.now()) : 0;
+        if (el) el.textContent = Math.floor(rest2 / 60000) + ':' + String(Math.floor((rest2 % 60000) / 1000)).padStart(2, '0');
+        if (rest2 <= 0) { clearInterval(_cdInt); expirarSessao(); }
+      };
+      tick();
+      const _cdInt = setInterval(tick, 1000);
+    }
+
+    function renovarSessao() {
+      sessionStorage.setItem('axon_portal_login_ts', Date.now().toString());
+      _alertaExibido = false;
+      const m = document.getElementById('modalExpiracaoSessao');
+      if (m) m.remove();
+    }
+
+    function expirarSessao() {
+      clearInterval(_watchdogInterval);
+      const m = document.getElementById('modalExpiracaoSessao');
+      if (m) m.remove();
+      const aviso = document.createElement('div');
+      aviso.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:rgba(5,9,22,0.92);backdrop-filter:blur(8px);';
+      aviso.innerHTML = `
+        <div style="background:#0A1222;border:1px solid rgba(239,68,68,0.25);border-radius:18px;padding:36px 40px;max-width:380px;width:90%;box-shadow:0 25px 60px rgba(0,0,0,0.7);text-align:center;">
+          <div style="font-size:2.4rem;margin-bottom:16px;">🔒</div>
+          <h3 style="font-family:'Manrope',sans-serif;font-size:1.1rem;color:#F8FAFC;margin-bottom:10px;">Sessão encerrada</h3>
+          <p style="color:#A3B4D1;font-size:0.88rem;line-height:1.6;margin-bottom:24px;">
+            Por segurança, sua sessão expirou após 30 minutos.<br>Faça login novamente para continuar.
+          </p>
+          <button onclick="location.reload()" style="background:linear-gradient(135deg,#0369A1,#1ABBCE);border:none;border-radius:10px;padding:12px 28px;color:#fff;font-weight:600;font-size:0.9rem;cursor:pointer;width:100%;">Fazer login novamente</button>
+        </div>`;
+      document.body.appendChild(aviso);
+      sessionStorage.clear();
+      setTimeout(() => location.reload(), 4000);
+    }
+
+    function fazerLogout() {
+      if (_watchdogInterval) clearInterval(_watchdogInterval);
+      sessionStorage.removeItem('axon_portal_auth');
+      sessionStorage.removeItem('axon_portal_user');
+      sessionStorage.removeItem('axon_portal_nome');
+      sessionStorage.removeItem('axon_portal_kpi');
+      sessionStorage.removeItem('axon_portal_cadastro');
+      sessionStorage.removeItem('axon_portal_login_ts');
+      location.reload();
+    }
+
+    /* ── NAVEGAÇÃO ──────────────────────────────────────── */
+    function switchSection(sectionId, element) {
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      if (element) element.classList.add('active');
+      document.querySelectorAll('.section-group').forEach(sec => sec.classList.remove('active'));
+      const target = document.getElementById(sectionId);
+      if (target) target.classList.add('active');
+      const titleMap = { 'sec-inicio': 'Dashboard', 'sec-gerencial': 'Gestão Estratégica', 'sec-faturamento': 'Faturamento', 'sec-auditoria': 'Auditoria / Cadastro' };
+      document.getElementById('page-title').innerText = titleMap[sectionId] || 'Portal';
+    }
+
+    ['loginUser', 'loginPass'].forEach(id => {
+      document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') tentarLogin(); });
+    });
+
+    /* ── SPLASH SCREEN ───────────────────────────────────── */
+    document.addEventListener('DOMContentLoaded', () => {
+      const splash = document.getElementById('splashScreen');
+      const loginOverlay = document.getElementById('loginOverlay');
+
+      // Se já está logado e sessão válida, pula o splash direto
+      const _ts  = parseInt(sessionStorage.getItem('axon_portal_login_ts') || '0', 10);
+      const _ok  = sessionStorage.getItem('axon_portal_auth') === '1';
+      const _exp = _ts && (Date.now() - _ts) >= 30 * 60 * 1000;
+      if (_ok && !_exp) {
+        if (splash) splash.style.display = 'none';
+        return;
+      }
+
+      if (splash && loginOverlay) {
+        loginOverlay.style.opacity = '0';
+        loginOverlay.style.pointerEvents = 'none';
+
+        setTimeout(() => {
+          splash.classList.add('fade-out');
+          setTimeout(() => {
+            splash.style.display = 'none';
+            loginOverlay.style.transition = 'opacity 0.6s ease-out';
+            loginOverlay.style.opacity = '1';
+            loginOverlay.style.pointerEvents = 'auto';
+          }, 1200);
+        }, 3500);
+      }
+    });
+
+    /* ── SESSÃO SALVA ───────────────────────────────────── */
+    if (sessionStorage.getItem('axon_portal_auth') === '1') {
+      const ts = parseInt(sessionStorage.getItem('axon_portal_login_ts') || '0', 10);
+      const agora = Date.now();
+      const LIMITE = 30 * 60 * 1000; // 30 minutos
+      if (!ts || (agora - ts) >= LIMITE) {
+        // Sessão expirada — força novo login
+        sessionStorage.clear();
+        // não abre o portal, deixa o overlay de login aparecer normalmente
+      } else {
+        const nome = sessionStorage.getItem('axon_portal_nome') || 'Usuário';
+        document.getElementById('loginOverlay').style.display = 'none';
+        if (window._stopLoginCanvas) window._stopLoginCanvas();
+        document.getElementById('sidebar').style.display = 'flex';
+        document.getElementById('mainContent').style.display = 'flex';
+        const iniciais = nome.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase() || 'U';
+        document.getElementById('sidebarAvatar').textContent = iniciais;
+        document.getElementById('sidebarNome').textContent = nome;
+        aplicarPermissaoKpi();
+        iniciarWatchdogSessao();
+      }
+    }
+  </script>
+</body>
+
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
