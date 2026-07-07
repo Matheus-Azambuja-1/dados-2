@@ -301,10 +301,10 @@
     let DATA = [];
     let currentFilter = "TODOS";
 
-    // ── Carrega os pacotes da planilha via JSONP (obrigatório) ──────
-    function carregarPacotesDaPlanilha() {
+    // ── Uma tentativa de buscar os pacotes via JSONP ────────────────
+    function tentarCarregarPacotes(tentativaTimeout) {
         return new Promise((resolve) => {
-            const cb  = '_axon_pc_' + Date.now();
+            const cb  = '_axon_pc_' + Date.now() + '_' + Math.floor(Math.random()*10000);
             const url = ENDPOINT_PACOTES
                 + '?acao=getPacotes'
                 + '&callback=' + cb + '&t=' + Date.now();
@@ -312,9 +312,8 @@
             const timeout = setTimeout(() => {
                 delete window[cb];
                 if (s.parentNode) s.remove();
-                console.error('[AXON] Timeout ao buscar pacotes da planilha.');
                 resolve({ ok: false, erro: 'timeout' });
-            }, 15000);
+            }, tentativaTimeout);
 
             window[cb] = (resp) => {
                 clearTimeout(timeout);
@@ -324,7 +323,6 @@
                     DATA = resp.data;
                     resolve({ ok: true });
                 } else {
-                    console.error('[AXON] Resposta inválida/vazia da planilha.', resp);
                     resolve({ ok: false, erro: (resp && resp.erro) || 'resposta_vazia' });
                 }
             };
@@ -333,7 +331,6 @@
             s.onerror = () => {
                 clearTimeout(timeout);
                 delete window[cb];
-                console.error('[AXON] Falha ao carregar script JSONP da planilha.');
                 resolve({ ok: false, erro: 'falha_conexao' });
             };
             s.src = url;
@@ -341,9 +338,38 @@
         });
     }
 
+    // ── Carrega os pacotes com retry automático (cold start do Apps Script) ──
+    async function carregarPacotesDaPlanilha() {
+        const TENTATIVAS = [15000, 20000, 20000]; // 1ª tentativa mais curta, demais dão mais tempo pro cold start
+        let ultimoErro = 'timeout';
+
+        for (let i = 0; i < TENTATIVAS.length; i++) {
+            if (i > 0) {
+                atualizarStatusCarregamento(`Planilha demorando para responder — tentando de novo (${i + 1}/${TENTATIVAS.length})...`);
+            }
+            const resultado = await tentarCarregarPacotes(TENTATIVAS[i]);
+            if (resultado.ok) return resultado;
+            ultimoErro = resultado.erro;
+            console.warn(`[AXON] Tentativa ${i + 1}/${TENTATIVAS.length} falhou: ${ultimoErro}`);
+        }
+
+        console.error('[AXON] Todas as tentativas de carregar a planilha falharam.');
+        return { ok: false, erro: ultimoErro };
+    }
+
+    function atualizarStatusCarregamento(texto) {
+        const el = document.getElementById('tabela');
+        if (el) {
+            el.innerHTML = `
+                <tr><td colspan="4" style="text-align:center; padding:50px 20px; color:var(--az-text-gray); font-size:0.8rem; letter-spacing:1px; text-transform:uppercase;">
+                    ${texto}
+                </td></tr>`;
+        }
+    }
+
     function mostrarErroCarregamento(motivo) {
         const msgs = {
-            timeout:        'A planilha demorou demais para responder.',
+            timeout:        'A planilha demorou demais para responder, mesmo após 3 tentativas.',
             resposta_vazia: 'A planilha respondeu, mas sem dados válidos.',
             falha_conexao:  'Não foi possível conectar ao Apps Script.'
         };
@@ -354,7 +380,7 @@
                         Falha ao carregar dados da planilha
                     </div>
                     <div style="color:var(--az-text-gray); font-size:0.8rem;">
-                        ${msgs[motivo] || 'Erro desconhecido.'} Recarregue a página ou tente novamente em instantes.
+                        ${msgs[motivo] || 'Erro desconhecido.'} Tente recarregar em alguns instantes.
                     </div>
                     <button onclick="location.reload()" style="margin-top:16px; padding:8px 20px; background:transparent; border:1px solid var(--az-gold); color:var(--az-gold); cursor:pointer; font-family:'Inter',sans-serif; font-size:0.7rem; letter-spacing:2px; text-transform:uppercase;">Recarregar</button>
                 </td>
@@ -363,7 +389,6 @@
         document.getElementById('setores-stat').textContent  = '—';
         document.getElementById('media-stat').textContent    = '—';
     }
-
 
     function initFilters() {
         const sectors = ["TODOS", ...new Set(DATA.map(d => d.s))];
