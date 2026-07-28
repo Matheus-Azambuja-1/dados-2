@@ -241,10 +241,6 @@
         .g-badge-cond  { background: rgba(245,158,11,0.15); color: var(--warning); }
         .g-badge-info  { background: rgba(56,139,224,0.12); color: #4b9de0; }
 
-        .g-legenda { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 8px; }
-        .g-leg-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--az-text-gray); }
-        .g-leg-dot  { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
-
         .g-regras { display: flex; flex-direction: column; gap: 10px; }
         .g-regra  { display: flex; gap: 12px; align-items: flex-start; font-size: 0.75rem; color: var(--text-main); line-height: 1.6; }
         .g-regra-num {
@@ -253,14 +249,6 @@
             display: flex; align-items: center; justify-content: center;
             font-size: 10px; font-weight: 700; color: var(--az-gold); margin-top: 1px;
         }
-
-        .g-alerta {
-            display: flex; gap: 10px; align-items: flex-start; padding: 10px 14px;
-            border-radius: 6px; border: 1px solid rgba(239,68,68,0.25);
-            background: rgba(239,68,68,0.06); font-size: 0.72rem;
-            color: var(--danger); line-height: 1.6;
-        }
-        .g-alerta svg { flex-shrink: 0; width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; margin-top: 1px; }
 
         .btn-ajuda {
             position: fixed; top: 16px; right: 200px; z-index: 999;
@@ -276,7 +264,6 @@
 
         .table-wrapper { will-change: transform; }
         .hide { display: none !important; }
-        .b-opme-filter { background: #7c3aed; }
         
         #debugInfo {
             font-size: 11px;
@@ -343,7 +330,7 @@
         </div>
     </div>
 
-    <button id="btnProcessar" class="btn-executar" onclick="iniciarProcessamento()">PROCESSAR AUDITORIA</button>
+    <button id="btnProcessar" class="btn-executar" onclick="iniciarProcessamento()">PROCESSAR DADOS</button>
 
     <div id="loader">
         PROCESSANDO DADOS...
@@ -455,7 +442,7 @@
                 <th class="g-col-b">B <span class="g-badge g-badge-obrig">CHAVE</span></th>
                 <th>C</th>
                 <th>D</th>
-                <th>E <span class="g-badge g-badge-cond">EXCLUSÃO</span></th>
+                <th>E <span class="g-badge g-badge-cond">VIGÊNCIA</span></th>
                 <th class="g-col-fg">F <span class="g-badge g-badge-info">PROFAT</span></th>
                 <th class="g-col-fg">G+ <span class="g-badge g-badge-info">COMPETÊNCIAS</span></th>
               </tr>
@@ -467,7 +454,7 @@
                 <td class="g-col-b" style="font-weight:700;">Código do procedimento</td>
                 <td style="color:var(--az-text-gray);">(qualquer)</td>
                 <td style="color:var(--az-text-gray);">(qualquer)</td>
-                <td style="font-weight:700;">Condição de exclusão</td>
+                <td style="font-weight:700;">Fim de Vigência (ou vazio)</td>
                 <td class="g-col-fg" style="font-weight:700;">Código Profat</td>
                 <td class="g-col-fg" style="font-weight:700;">Valores por competência</td>
               </tr>
@@ -477,11 +464,12 @@
       </div>
 
       <div class="g-secao">
-        <p class="g-secao-titulo">Regras de leitura</p>
+        <p class="g-secao-titulo">Regras de leitura e Vigência</p>
         <div class="g-regras">
           <div class="g-regra"><div class="g-regra-num">1</div><span>O sistema identifica automaticamente as colunas de competência a partir da coluna G.</span></div>
           <div class="g-regra"><div class="g-regra-num">2</div><span>Para cada item, busca a competência vigente na data de execução do XML.</span></div>
-          <div class="g-regra"><div class="g-regra-num">3</div><span>Tolerância de <strong>R$ 0,02</strong> na comparação.</span></div>
+          <div class="g-regra"><div class="g-regra-num">3</div><span><strong>Fim de Vigência (Col. E):</strong> Se preenchida com uma data, a linha só será aplicada para itens executados <em>até</em> aquela data limite. Se vazia, a vigência é indefinida.</span></div>
+          <div class="g-regra"><div class="g-regra-num">4</div><span>Tolerância de <strong>R$ 0,02</strong> na comparação financeira.</span></div>
         </div>
       </div>
     </div>
@@ -552,32 +540,25 @@
         return val.toLocaleString('pt-br', {style: 'currency', currency: 'BRL'}); 
     }
 
-    /* ── PARSE DE COMPETÊNCIAS ATUALIZADO ── */
+    /* ── PARSE DE COMPETÊNCIAS E VIGÊNCIA ── */
     const meses = {'jan':1,'fev':2,'mar':3,'abr':4,'mai':5,'jun':6,'jul':7,'ago':8,'set':9,'out':10,'nov':11,'dez':12};
     
     function parseCompetencia(val) {
         if (!val) return null;
-        
-        // 1. Tratamento para objetos Date nativos gerados por cellDates: true no SheetJS
         if (val instanceof Date && !isNaN(val.getTime())) {
             return new Date(val.getFullYear(), val.getMonth(), 1);
         }
-
         const str = String(val).trim().toLowerCase();
         const key = 'comp_' + str;
         if (cacheData.has(key)) return cacheData.get(key);
 
         let mes = null, ano = null;
-        let match;
-
-        // 2. Tenta formato "jan/26" ou "jan/2026"
-        match = str.match(/(jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez)\s*[\/.-]\s*(\d{2,4})/);
+        let match = str.match(/(jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez)\s*[\/.-]\s*(\d{2,4})/);
         if (match) { 
             mes = meses[match[1]]; 
             ano = parseInt(match[2]); 
         }
         
-        // 3. Tenta formato de data completa "01/07/2026" ou curto "07/2026" / "2026-07-01"
         if (!mes) {
             if (str.includes('-')) {
                 const partes = str.split('-');
@@ -603,17 +584,62 @@
             cacheData.set(key, date);
             return date;
         }
-        
         cacheData.set(key, null);
         return null;
     }
 
-    /* ── CARGA EXCEL ATUALIZADA ── */
+    // Leitura robusta da Coluna E (Data Fim de Vigência)
+    function parseDataVigencia(val) {
+        if (!val) return { isDate: false, date: null, isEmpty: true };
+        
+        if (val instanceof Date && !isNaN(val.getTime())) {
+            return { 
+                isDate: true, 
+                date: new Date(val.getFullYear(), val.getMonth(), val.getDate(), 23, 59, 59, 999), 
+                isEmpty: false 
+            };
+        }
+
+        const str = String(val).trim();
+        if (!str || str.toLowerCase() === "vazio" || str === "-" || str === "null") {
+            return { isDate: false, date: null, isEmpty: true };
+        }
+
+        let ano, mes, dia;
+        if (str.includes('/')) {
+            const p = str.split('/');
+            if (p.length === 3) {
+                dia = parseInt(p[0], 10);
+                mes = parseInt(p[1], 10) - 1;
+                ano = parseInt(p[2], 10);
+            }
+        } else if (str.includes('-')) {
+            const p = str.split('-');
+            if (p.length === 3) {
+                ano = parseInt(p[0], 10);
+                mes = parseInt(p[1], 10) - 1;
+                dia = parseInt(p[2], 10);
+            }
+        }
+
+        if (ano !== undefined && !isNaN(ano) && !isNaN(mes) && !isNaN(dia)) {
+            if (ano < 100) ano += 2000;
+            return { 
+                isDate: true, 
+                date: new Date(ano, mes, dia, 23, 59, 59, 999), 
+                isEmpty: false 
+            };
+        }
+
+        // Caso exista texto que não é data (ex: "EXCLUSÃO", "INATIVO", "X"), o item é tratado como exclusão
+        return { isDate: false, date: null, isEmpty: false };
+    }
+
+    /* ── CARGA EXCEL ── */
     document.getElementById('excelInput').addEventListener('change', function(e) {
         const reader = new FileReader();
         reader.onload = (evt) => {
             try {
-                // Ativamos cellDates: true para ler células formatadas corretamente como objetos Date
                 const wb = XLSX.read(new Uint8Array(evt.target.result), {
                     type: 'array',
                     cellDates: true,
@@ -638,11 +664,8 @@
                     for (let col = 6; col < header.length && col < 30; col++) {
                         const headerVal = header[col];
                         const date = parseCompetencia(headerVal);
-                        if (date) {
-                            compCols.push({ col, date });
-                        }
+                        if (date) compCols.push({ col, date });
                     }
-                    
                     compCols.sort((a, b) => a.date - b.date);
                     
                     for (let i = 1; i < sheet.length; i++) {
@@ -652,35 +675,40 @@
                         const cod = limparTexto(row[1]);
                         if (!cod) continue;
                         
-                        if (row[4] && String(row[4]).trim() !== "") continue;
+                        // Validação da Coluna E (Vigência vs Exclusão)
+                        const vigencia = parseDataVigencia(row[4]);
+                        if (!vigencia.isEmpty && !vigencia.isDate) continue; // Ignora se for palavra "EXCLUSÃO"
                         
                         const competencias = [];
                         for (const comp of compCols) {
                             if (comp.col < row.length) {
                                 const valor = extrairValor(row[comp.col]);
-                                if (valor > 0) {
-                                    competencias.push({ date: comp.date, valor });
-                                }
+                                if (valor > 0) competencias.push({ date: comp.date, valor });
                             }
                         }
                         
                         if (competencias.length === 0 && row[6] !== undefined) {
                             const valor = extrairValor(row[6]);
-                            if (valor > 0) {
-                                competencias.push({ date: new Date(2026, 0, 1), valor });
-                            }
+                            if (valor > 0) competencias.push({ date: new Date(2026, 0, 1), valor });
                         }
                         
                         if (competencias.length > 0) {
                             const profat = String(row[5] || "").replace(/\D/g, '').padStart(8, '0');
-                            excelIndex.set(cod, { profat, competencias });
+                            if (!excelIndex.has(cod)) {
+                                excelIndex.set(cod, []);
+                            }
+                            excelIndex.get(cod).push({ 
+                                profat, 
+                                fimVigencia: vigencia.date, 
+                                competencias 
+                            });
                         }
                     }
                 }
                 
                 const el = document.getElementById('baseStatus');
                 document.getElementById('baseStatusText').textContent =
-                    `Base carregada · ${excelIndex.size.toLocaleString('pt-br')} procedimentos`;
+                    `Base carregada · ${excelIndex.size.toLocaleString('pt-br')} códigos cadastrados`;
                 el.style.display = 'flex';
             } catch (err) {
                 console.error('Erro ao carregar Excel:', err);
@@ -690,7 +718,7 @@
         reader.readAsArrayBuffer(e.target.files[0]);
     });
 
-    /* ── PROCESSAMENTO ── */
+    /* ── PROCESSAMENTO E COMPARAÇÃO ── */
     async function iniciarProcessamento() {
         const xmlFiles = document.getElementById('xmlInput').files;
         if (!xmlFiles.length || excelIndex.size === 0) {
@@ -717,8 +745,6 @@
                 const text = await file.text();
                 const xml = parser.parseFromString(text, "text/xml");
                 const servicos = xml.getElementsByTagNameNS("*", "servicosExecutados");
-                
-                console.log(`Processando ${file.name} - ${servicos.length} serviços`);
 
                 for (let serv of servicos) {
                     const codTab = serv.getElementsByTagNameNS("*", "codigoTabela")[0]?.textContent || "";
@@ -758,31 +784,53 @@
                         sExt += vXml; cExt++;
                     } else {
                         const codLimpo = limparTexto(codProc);
-                        const match = excelIndex.get(codLimpo);
-                        if (match) {
-                            codF = match.profat;
-                            
-                            if (match.competencias && match.competencias.length > 0 && dataExec) {
-                                match.competencias.sort((a, b) => a.date - b.date);
+                        const listaRegras = excelIndex.get(codLimpo);
+
+                        if (listaRegras && listaRegras.length > 0) {
+                            // Filtra regras válidas para a data do item (sem data fim OU dataExec <= fimVigencia)
+                            const regrasValidas = listaRegras.filter(r => {
+                                if (!r.fimVigencia) return true;
+                                if (!dataExec) return true;
+                                return dataExec <= r.fimVigencia;
+                            });
+
+                            if (regrasValidas.length > 0) {
+                                // Prioriza regras que possuem data fim específica (ex: Dipirona que venceu em 30/06)
+                                regrasValidas.sort((a, b) => {
+                                    if (a.fimVigencia && !b.fimVigencia) return -1;
+                                    if (!a.fimVigencia && b.fimVigencia) return 1;
+                                    if (a.fimVigencia && b.fimVigencia) return a.fimVigencia - b.fimVigencia;
+                                    return 0;
+                                });
+
+                                const match = regrasValidas[0];
+                                codF = match.profat;
                                 
-                                let ultimaValida = null;
-                                for (const comp of match.competencias) {
-                                    if (comp.date <= dataExec) {
-                                        ultimaValida = comp;
-                                    } else {
-                                        break;
+                                if (match.competencias && match.competencias.length > 0 && dataExec) {
+                                    match.competencias.sort((a, b) => a.date - b.date);
+                                    let ultimaValida = null;
+                                    for (const comp of match.competencias) {
+                                        if (comp.date <= dataExec) {
+                                            ultimaValida = comp;
+                                        } else {
+                                            break;
+                                        }
                                     }
+                                    vExNum = ultimaValida ? ultimaValida.valor : match.competencias[0].valor;
+                                } else if (match.competencias && match.competencias.length > 0) {
+                                    vExNum = match.competencias[0].valor;
                                 }
-                                
-                                vExNum = ultimaValida ? ultimaValida.valor : match.competencias[0].valor;
-                            }
-                            
-                            if (Math.abs(vXml - vExNum) <= 0.021) {
-                                status = "CORRETO"; bCls = "b-ok"; 
-                                sOk += vXml; cOk++;
+
+                                if (Math.abs(vXml - vExNum) <= 0.021) {
+                                    status = "CORRETO"; bCls = "b-ok"; 
+                                    sOk += vXml; cOk++;
+                                } else {
+                                    status = "DIVERGENTE"; bCls = "b-div"; 
+                                    sDiv += vXml; cDiv++;
+                                }
                             } else {
-                                status = "DIVERGENTE"; bCls = "b-div"; 
-                                sDiv += vXml; cDiv++;
+                                status = "NÃO ENCONTRADO"; bCls = "b-null"; 
+                                sNull += vXml; cNull++;
                             }
                         } else {
                             status = "NÃO ENCONTRADO"; bCls = "b-null"; 
@@ -799,8 +847,6 @@
                 }
             }
 
-            console.log(`Total processado: ${dadosProcessados.length} registros`);
-            
             renderizarTabela(dadosProcessados);
             
             document.getElementById('total-ok').innerText = formatarReal(sOk);
@@ -834,8 +880,6 @@
 
     /* ── RENDER ── */
     function renderizarTabela(lista) {
-        console.log('Renderizando tabela com', lista ? lista.length : 0, 'registros');
-        
         if (!lista || !lista.length) {
             DOM.corpo.innerHTML = `<tr><td colspan="12"><div class="empty-state">
                 <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -844,7 +888,6 @@
         }
 
         let htmlBuffer = '';
-        
         for (let i = 0; i < lista.length; i++) {
             const item = lista[i];
             let deltaHTML = '<span class="delta-zero">—</span>';
@@ -883,9 +926,7 @@
                 </tr>
             `;
         }
-        
         DOM.corpo.innerHTML = htmlBuffer;
-        console.log('Renderização concluída. Linhas inseridas:', lista.length);
     }
 
     /* ── FILTROS ── */
@@ -897,7 +938,6 @@
     function aplicarFiltros() {
         const busca = document.getElementById('filterInput').value.toLowerCase().trim();
         const statusFiltro = document.getElementById('filterStatus').value;
-        
         const linhas = DOM.corpo.querySelectorAll('tr');
         let visiveis = 0;
 
@@ -911,13 +951,11 @@
             if (!tr.dataset || !tr.dataset.status) continue;
             
             let visivel = true;
-            
             if (busca) {
                 const cod = tr.dataset.cod || '';
                 const desc = tr.dataset.desc || '';
                 visivel = cod.includes(busca) || desc.includes(busca);
             }
-            
             if (visivel && statusFiltro) {
                 if (statusFiltro === '__OPME__') {
                     visivel = tr.dataset.opme === 'true';
@@ -925,7 +963,6 @@
                     visivel = tr.dataset.status === statusFiltro;
                 }
             }
-            
             tr.style.display = visivel ? "" : "none";
             if (visivel) visiveis++;
         }
@@ -986,7 +1023,7 @@
         })));
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Auditoria");
-        XLSX.writeFile(wb, "AXON_Auditoria_Final.xlsx");
+        XLSX.writeFile(wb, "AXON_Final.xlsx");
     }
 
     /* ── OPME ── */
@@ -998,7 +1035,6 @@
         
         const marcado = checkbox.checked;
         const item = dadosProcessados[idx];
-
         item.Opme = marcado;
 
         if (marcado) {
