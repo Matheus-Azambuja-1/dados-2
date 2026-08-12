@@ -778,9 +778,18 @@ const DADOS_2025 = [
 
 // 2026: apenas JAN/FEV/MAR com dados reais, demais zerados
 const DADOS_2026 = [
-    {faturamento:3222238.74,taxa:0,recuperado:0,glosa:0},
-    {faturamento:3562469.21,taxa:0,recuperado:0,glosa:0},
-    {faturamento:3228004.22,taxa:0,recuperado:0,glosa:0},
+    {faturamento:3015553.84,taxa:0,recuperado:0,glosa:0},
+    {faturamento:363552.90,taxa:0,recuperado:0,glosa:0},
+    {faturamento:3315787.37,taxa:0,recuperado:0,glosa:0},
+    {faturamento:4212657.08,taxa:0,recuperado:0,glosa:0},
+    {faturamento:3946630.73,taxa:0,recuperado:0,glosa:0},
+    {faturamento:3700749.85,taxa:0,recuperado:0,glosa:0},
+    {faturamento:4449210.52,taxa:0,recuperado:0,glosa:0},
+    {faturamento:,taxa:0,recuperado:0,glosa:0},
+    {faturamento:,taxa:0,recuperado:0,glosa:0},
+    {faturamento:,taxa:0,recuperado:0,glosa:0},
+    {faturamento:,taxa:0,recuperado:0,glosa:0},
+    {faturamento:,taxa:0,recuperado:0,glosa:0},
     ...Array(9).fill({faturamento:0,taxa:0,recuperado:0,glosa:0})
 ];
 
@@ -867,16 +876,23 @@ const DATA_GRUPOS_2025 = {
 const DATA_GRUPOS_2026 = {
     labels:["JAN","FEV","MAR","ABR","MAI","JUN","JUL","AGO","SET","OUT","NOV","DEZ"],
     grupos:[
-        {nome:"PACOTES ESPECIAIS",valores:[641786.90,765078.90,864289.09,0,0,0,0,0,0,0,0,0],quantidades:[2217,2266,2968,0,0,0,0,0,0,0,0,0],porcentagens:[21.67,21.48,26.77,0,0,0,0,0,0,0,0,0],cor:"#38bdf8"},
-        {nome:"HONORARIOS MEDICOS",valores:[611489.74,625493.32,594174.98,0,0,0,0,0,0,0,0,0],quantidades:[4655,4728,5660,0,0,0,0,0,0,0,0,0],porcentagens:[20.64,17.56,18.41,0,0,0,0,0,0,0,0,0],cor:"#34d399"},
-        {nome:"DIARIAS",valores:[365570.02,344056.16,411008.77,0,0,0,0,0,0,0,0,0],quantidades:[656,555,680,0,0,0,0,0,0,0,0,0],porcentagens:[12.34,9.66,12.73,0,0,0,0,0,0,0,0,0],cor:"#8b5cf6"},
-        {nome:"MATERIAIS ESPECIAIS (OPME)",valores:[152011.71,432649.61,90792.39,0,0,0,0,0,0,0,0,0],quantidades:[170,230,165,0,0,0,0,0,0,0,0,0],porcentagens:[5.13,12.14,2.81,0,0,0,0,0,0,0,0,0],cor:"#fbbf24"},
-        {nome:"TAXAS",valores:[249902.05,334471.07,310818.06,0,0,0,0,0,0,0,0,0],quantidades:[1171,1177,1397,0,0,0,0,0,0,0,0,0],porcentagens:[8.44,9.39,9.63,0,0,0,0,0,0,0,0,0],cor:"#f87171"},
-        {nome:"EXAMES E DIAGNOSTICOS",valores:[458053.49,585060.90,541109.77,0,0,0,0,0,0,0,0,0],quantidades:[11332,9210,11115,0,0,0,0,0,0,0,0,0],porcentagens:[15.46,16.42,16.76,0,0,0,0,0,0,0,0,0],cor:"#94a3b8"},
-        {nome:"MEDICAMENTOS",valores:[281730.19,243192.74,216670.89,0,0,0,0,0,0,0,0,0],quantidades:[37191,25232,30728,0,0,0,0,0,0,0,0,0],porcentagens:[9.51,6.83,6.71,0,0,0,0,0,0,0,0,0],cor:"#6366f1"},
-        {nome:"MATERIAIS",valores:[177760.41,200995.18,174696.02,0,0,0,0,0,0,0,0,0],quantidades:[23670,23959,23789,0,0,0,0,0,0,0,0,0],porcentagens:[6.00,5.64,5.41,0,0,0,0,0,0,0,0,0],cor:"#ec4899"},
-        {nome:"GASES MEDICINAIS",valores:[23984.67,31471.33,24435.25,0,0,0,0,0,0,0,0,0],quantidades:[2363,3852,4436,0,0,0,0,0,0,0,0,0],porcentagens:[0.81,0.88,0.76,0,0,0,0,0,0,0,0,0],cor:"#14b8a6"}
-    ]
+      {nome:"PACOTES ESPECIAIS",valores:[642481.90,764708.90,864033.09,861311.42,956588.91,861499.15,931773.24,0,0,0,0,0],quantidades:[2217,2265,2967,2864,2833,2833,2813,0,0,0,0,0],porcentagens:[21.69,21.47,26.83,20.99,25.00,24.17,22.42,0,0,0,0,0],cor:"#38bdf8"},
+
+{nome:"HONORARIOS MEDICOS",valores:[611112.36,625493.32,592664.64,742995.00,636447.28,620619.92,642358.84,0,0,0,0,0],quantidades:[4650,4728,5644,6187,5490,5872,5977,0,0,0,0,0],porcentagens:[20.63,17.56,18.41,18.10,16.63,17.41,15.46,0,0,0,0,0],cor:"#34d399"},
+
+{nome:"DIARIAS",valores:[365570.02,344056.16,408908.77,633985.04,426208.21,535659.11,593542.58,0,0,0,0,0],quantidades:[656,555,677,896,670,681,922,0,0,0,0,0],porcentagens:[12.34,9.66,12.70,15.45,11.14,15.03,14.28,0,0,0,0,0],cor:"#8b5cf6"},
+
+{nome:"MATERIAIS ESPECIAIS (OPME)",valores:[152011.71,432649.61,90792.39,174212.93,187965.07,55518.19,201478.49,0,0,0,0,0],quantidades:[170,230,165,210,227,80,107,0,0,0,0,0],porcentagens:[5.13,12.15,2.82,4.24,4.91,1.56,4.85,0,0,0,0,0],cor:"#fbbf24"},
+
+{nome:"TAXAS",valores:[249902.05,334471.07,310698.74,310340.81,252089.65,295790.48,280577.39,0,0,0,0,0],quantidades:[1171,1177,1373,1297,1340,1434,1699,0,0,0,0,0],porcentagens:[8.44,9.39,9.65,7.56,6.59,8.30,6.75,0,0,0,0,0],cor:"#f87171"},
+
+{nome:"EXAMES E DIAGNOSTICOS",valores:[457996.63,584210.90,539979.57,593367.75,572834.72,577461.01,673913.02,0,0,0,0,0],quantidades:[11330,9208,11094,10923,9864,10714,13090,0,0,0,0,0],porcentagens:[15.46,16.40,16.77,14.46,14.97,16.20,16.22,0,0,0,0,0],cor:"#94a3b8"},
+
+{nome:"MEDICAMENTOS",valores:[281730.19,243192.74,214852.03,442067.60,390288.37,316345.23,464763.31,0,0,0,0,0],quantidades:[37191,25232,30636,37407,30031,39144,67894,0,0,0,0,0],porcentagens:[9.51,6.83,6.67,10.77,10.20,8.88,11.18,0,0,0,0,0],cor:"#6366f1"},
+
+{nome:"MATERIAIS",valores:[177621.75,200995.18,173746.56,298826.54,346914.79,230547.11,323553.80,0,0,0,0,0],quantidades:[23664,23959,23682,32194,27642,25881,26750,0,0,0,0,0],porcentagens:[6.00,5.64,5.40,7.28,9.07,6.47,7.79,0,0,0,0,0],cor:"#ec4899"},
+
+{nome:"GASES MEDICINAIS",valores:[23984.67,31471.33,24435.25,47072.50,57102.90,70978.01,43930.38,0,0,0,0,0],quantidades:[2363,3852,4436,4415,4187,5310,5913,0,0,0,0,0],porcentagens:[0.81,0.88,0.76,1.15,1.49,1.99,1.06,0,0,0,0,0],cor:"#14b8a6"}
 };
 
 const DATA_CONVENIO = {
