@@ -1,54 +1,64 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AXON Auditoria | Validador TISS</title>
     <link rel="icon" type="image/png" href="https://i.imgur.com/vNrUft9.png">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
 
     <style>
         /* ══════════════════════════════════════════
            AXON DESIGN SYSTEM — CSS VARIABLES
         ══════════════════════════════════════════ */
         :root {
-            --az-dark:        #0a1322;
-            --az-darker:      #060b13;
-            --az-gold:        #b08d32;
-            --az-gold-light:  #c9a84c;
-            --az-gold-dim:    rgba(176,141,50,0.18);
-            --az-gold-border: rgba(176,141,50,0.25);
-            --az-text-gray:   #717d8a;
-            --success:        #10b981;
-            --success-bg:     rgba(16,185,129,0.10);
-            --success-border: rgba(16,185,129,0.25);
-            --danger:         #ef4444;
-            --danger-bg:      rgba(239,68,68,0.10);
-            --danger-border:  rgba(239,68,68,0.25);
-            --warning:        #f59e0b;
-            --warning-bg:     rgba(245,158,11,0.10);
-            --warning-border: rgba(245,158,11,0.25);
-            --info:           #3b82f6;
-            --purple:         #8b5cf6;
-            --orange:         #f97316;
+            --az-dark: #0a1322;
+            --az-darker: #060b13;
+            --az-gold: #b08d32;
+            --az-gold-light: #c9a84c;
+            --az-gold-dim: rgba(176, 141, 50, 0.18);
+            --az-gold-border: rgba(176, 141, 50, 0.25);
+            --az-primary: #1f4e79;
+            --az-primary-light: #2f6690;
+            --az-primary-dim: rgba(31, 78, 121, 0.10);
+            --az-primary-border: rgba(31, 78, 121, 0.30);
+            --az-text-gray: #717d8a;
+            --success: #10b981;
+            --success-bg: rgba(16, 185, 129, 0.10);
+            --success-border: rgba(16, 185, 129, 0.25);
+            --danger: #ef4444;
+            --danger-bg: rgba(239, 68, 68, 0.10);
+            --danger-border: rgba(239, 68, 68, 0.25);
+            --warning: #f59e0b;
+            --warning-bg: rgba(245, 158, 11, 0.10);
+            --warning-border: rgba(245, 158, 11, 0.25);
+            --info: #3b82f6;
+            --purple: #8b5cf6;
+            --orange: #f97316;
 
-            --bg-body:   #f4f7fa;
-            --bg-card:   #ffffff;
-            --border:    #edf2f7;
+            --bg-body: #f4f7fa;
+            --bg-card: #ffffff;
+            --border: #edf2f7;
             --text-main: #0a1322;
-            --row-alt:   #f8fafb;
+            --row-alt: #f8fafb;
         }
 
         body.dark {
-            --bg-body:   #060b13;
-            --bg-card:   #0e1726;
-            --border:    #1b2e4b;
+            --bg-body: #060b13;
+            --bg-card: #0e1726;
+            --border: #1b2e4b;
             --text-main: #e0e6ed;
-            --row-alt:   #0b1520;
+            --row-alt: #0b1520;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         body {
             font-family: 'Inter', sans-serif;
@@ -67,7 +77,7 @@
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(6,11,19,0.92);
+            background: rgba(6, 11, 19, 0.92);
             backdrop-filter: blur(8px);
             z-index: 9999;
             justify-content: center;
@@ -82,7 +92,7 @@
         .loading-spinner {
             width: 56px;
             height: 56px;
-            border: 3px solid rgba(176,141,50,0.15);
+            border: 3px solid rgba(176, 141, 50, 0.15);
             border-top: 3px solid var(--az-gold);
             border-right: 3px solid var(--az-gold-light);
             border-radius: 50%;
@@ -90,7 +100,11 @@
             margin: 0 auto 1.25rem;
         }
 
-        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
 
         .loading-content-premium h2 {
             font-size: 1.1rem;
@@ -129,21 +143,30 @@
             color: var(--az-text-gray);
             letter-spacing: 2px;
             text-transform: uppercase;
-            box-shadow: 0 1px 5px rgba(0,0,0,0.07);
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.07);
             transition: all 0.25s;
             user-select: none;
         }
 
-        .theme-toggle:hover { border-color: var(--az-gold); color: var(--az-gold); }
+        .theme-toggle:hover {
+            border-color: var(--az-gold);
+            color: var(--az-gold);
+        }
 
         .theme-toggle svg {
-            width: 14px; height: 14px;
-            stroke: currentColor; fill: none;
-            stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+            width: 14px;
+            height: 14px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
             transition: transform 0.3s;
         }
 
-        .theme-toggle:hover svg { transform: rotate(12deg); }
+        .theme-toggle:hover svg {
+            transform: rotate(12deg);
+        }
 
         /* ══════════════════════════════════════════
            HEADER AXON
@@ -166,20 +189,12 @@
         .header-inner {
             max-width: 1600px;
             margin: 0 auto;
-            padding: 22px 30px;
+            padding: 12px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 2rem;
             position: relative;
-        }
-
-        .header-inner::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(ellipse at 30% 50%, rgba(176,141,50,0.06) 0%, transparent 60%);
-            pointer-events: none;
         }
 
         .brand-premium {
@@ -191,8 +206,8 @@
         }
 
         .logo-wrapper {
-            background: rgba(176,141,50,0.12);
-            padding: 10px 14px;
+            background: rgba(176, 141, 50, 0.12);
+            padding: 0px 0px;
             border: 1px solid var(--az-gold-border);
             display: flex;
             align-items: center;
@@ -200,8 +215,8 @@
         }
 
         .logo-wrapper img {
-            width: 80px;
-            height: 48px;
+            width: 200px;
+            height: 110px;
             filter: brightness(0) invert(1);
             opacity: 0.9;
         }
@@ -213,28 +228,28 @@
         }
 
         .brand-axon {
-            font-size: 1rem;
-            font-weight: 800;
-            letter-spacing: 8px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 2px;
             text-transform: uppercase;
             color: var(--az-gold);
         }
 
         .brand-title {
-            font-size: 1.35rem;
-            font-weight: 900;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+            text-transform: none;
             color: #fff;
             line-height: 1.1;
         }
 
         .brand-sub {
-            font-size: 0.6rem;
-            color: rgba(255,255,255,0.4);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-top: 2px;
+            font-size: 0.68rem;
+            color: rgba(255, 255, 255, 0.55);
+            letter-spacing: 0.2px;
+            text-transform: none;
+            margin-top: 1px;
         }
 
         .header-stats {
@@ -258,10 +273,10 @@
         }
 
         .header-stat-value {
-            font-size: 1.3rem;
-            font-weight: 900;
-            color: var(--az-gold);
-            letter-spacing: -0.5px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.2px;
         }
 
         /* ══════════════════════════════════════════
@@ -284,16 +299,43 @@
             gap: 10px;
         }
 
-        .toast-success { background: var(--bg-card); border-color: rgba(16,185,129,0.4); }
-        .toast-success i { color: var(--success); }
-        .toast-error   { background: var(--bg-card); border-color: rgba(239,68,68,0.4); }
-        .toast-error i  { color: var(--danger); }
-        .toast-info    { background: var(--bg-card); border-color: var(--az-gold-border); }
-        .toast-info i   { color: var(--az-gold); }
+        .toast-success {
+            background: var(--bg-card);
+            border-color: rgba(16, 185, 129, 0.4);
+        }
+
+        .toast-success i {
+            color: var(--success);
+        }
+
+        .toast-error {
+            background: var(--bg-card);
+            border-color: rgba(239, 68, 68, 0.4);
+        }
+
+        .toast-error i {
+            color: var(--danger);
+        }
+
+        .toast-info {
+            background: var(--bg-card);
+            border-color: var(--az-gold-border);
+        }
+
+        .toast-info i {
+            color: var(--az-gold);
+        }
 
         @keyframes slideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to   { transform: translateX(0);    opacity: 1; }
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
 
         /* ══════════════════════════════════════════
@@ -302,7 +344,7 @@
         .container-premium {
             max-width: 1600px;
             margin: 0 auto;
-            padding: 40px 30px;
+            padding: 20px 24px;
         }
 
         /* ══════════════════════════════════════════
@@ -312,51 +354,50 @@
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-top: 2px solid var(--az-gold);
-            padding: 18px 20px;
-            margin-bottom: 30px;
+            padding: 12px 16px;
+            margin-bottom: 18px;
             display: flex;
-            gap: 12px;
+            gap: 10px;
             align-items: center;
             flex-wrap: wrap;
         }
 
         /* ── BUTTONS ── */
         .btn-premium {
-            padding: 10px 18px;
+            padding: 9px 16px;
             border: 1px solid;
             cursor: pointer;
-            font-weight: 700;
-            font-size: 0.72rem;
+            font-weight: 600;
+            font-size: 0.8rem;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            transition: all 0.2s;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            border-radius: 0;
+            transition: all 0.15s;
+            letter-spacing: 0;
+            text-transform: none;
+            border-radius: 2px;
             font-family: 'Inter', sans-serif;
         }
 
-        .btn-premium:hover { transform: translateY(-1px); }
-        .btn-premium:active { transform: scale(0.99); }
-
         .btn-premium-primary {
-            background: var(--az-gold);
-            border-color: var(--az-gold);
-            color: #000;
+            background: var(--az-primary);
+            border-color: var(--az-primary);
+            color: #fff;
         }
+
         .btn-premium-primary:hover {
-            background: var(--az-gold-light);
-            border-color: var(--az-gold-light);
+            background: var(--az-primary-light);
+            border-color: var(--az-primary-light);
         }
 
         .btn-premium-equipe {
-            background: rgba(139,92,246,0.12);
-            border-color: rgba(139,92,246,0.35);
+            background: rgba(139, 92, 246, 0.12);
+            border-color: rgba(139, 92, 246, 0.35);
             color: var(--purple);
         }
+
         .btn-premium-equipe:hover {
-            background: rgba(139,92,246,0.2);
+            background: rgba(139, 92, 246, 0.2);
             border-color: var(--purple);
         }
 
@@ -365,6 +406,7 @@
             border-color: var(--border);
             color: var(--az-text-gray);
         }
+
         .btn-premium-outline:hover {
             border-color: var(--az-gold);
             color: var(--az-gold);
@@ -375,8 +417,9 @@
             border-color: var(--danger-border);
             color: var(--danger);
         }
+
         .btn-premium-danger:hover {
-            background: rgba(239,68,68,0.18);
+            background: rgba(239, 68, 68, 0.18);
             border-color: var(--danger);
         }
 
@@ -410,12 +453,14 @@
         }
 
         .search-premium input:focus {
-            border-color: var(--az-gold);
+            border-color: var(--az-primary);
             background: var(--bg-card);
-            box-shadow: inset 0 0 0 2px rgba(176,141,50,0.08);
+            box-shadow: inset 0 0 0 2px var(--az-primary-dim);
         }
 
-        .search-premium input::placeholder { color: var(--az-text-gray); }
+        .search-premium input::placeholder {
+            color: var(--az-text-gray);
+        }
 
         /* ══════════════════════════════════════════
            EQUIPE PANEL
@@ -435,8 +480,8 @@
         .equipe-import-icon {
             width: 44px;
             height: 44px;
-            background: rgba(139,92,246,0.12);
-            border: 1px solid rgba(139,92,246,0.3);
+            background: rgba(139, 92, 246, 0.12);
+            border: 1px solid rgba(139, 92, 246, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -459,7 +504,9 @@
             color: var(--az-text-gray);
         }
 
-        .equipe-import-text { flex: 1; }
+        .equipe-import-text {
+            flex: 1;
+        }
 
         .equipe-status-pill {
             display: inline-flex;
@@ -501,20 +548,26 @@
         }
 
         .filter-tag-premium {
-            background: var(--az-gold);
-            color: #000;
-            padding: 4px 14px;
-            font-size: 0.65rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+            background: var(--az-primary);
+            color: #fff;
+            padding: 4px 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            text-transform: none;
             display: inline-flex;
             align-items: center;
             gap: 8px;
         }
 
-        .filter-tag-premium i { cursor: pointer; opacity: 0.7; }
-        .filter-tag-premium i:hover { opacity: 1; }
+        .filter-tag-premium i {
+            cursor: pointer;
+            opacity: 0.7;
+        }
+
+        .filter-tag-premium i:hover {
+            opacity: 1;
+        }
 
         /* ══════════════════════════════════════════
            MIXED LOCK WARNING
@@ -533,9 +586,23 @@
             font-size: 0.85rem;
         }
 
-        .mixed-lock-premium.is-visible { display: flex; }
-        .mixed-lock-premium p { font-size: 0.78rem; font-weight: 400; margin-top: 2px; color: var(--az-text-gray); }
-        .mixed-lock-premium strong { display: block; font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; }
+        .mixed-lock-premium.is-visible {
+            display: flex;
+        }
+
+        .mixed-lock-premium p {
+            font-size: 0.78rem;
+            font-weight: 400;
+            margin-top: 2px;
+            color: var(--az-text-gray);
+        }
+
+        .mixed-lock-premium strong {
+            display: block;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
 
         /* ══════════════════════════════════════════
            STATS GRID
@@ -543,23 +610,28 @@
         .stats-grid-premium {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-bottom: 28px;
+            gap: 12px;
+            margin-bottom: 18px;
         }
 
         .stat-card-premium {
             background: var(--bg-card);
             border: 1px solid var(--border);
-            padding: 22px 20px;
+            padding: 14px 16px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.15s;
             position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .stat-card-premium::after {
             content: '';
             position: absolute;
-            bottom: 0; left: 0; right: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
             height: 2px;
             background: var(--az-gold);
             transform: scaleX(0);
@@ -567,30 +639,58 @@
             transition: transform 0.25s;
         }
 
-        .stat-card-premium:hover { border-color: var(--az-gold); }
-        .stat-card-premium:hover::after { transform: scaleX(1); }
+        .stat-card-premium:hover {
+            border-color: var(--az-gold);
+        }
+
+        .stat-card-premium:hover::after {
+            transform: scaleX(1);
+        }
 
         .stat-card-premium.active {
             border-color: var(--az-gold);
             background: var(--az-gold-dim);
         }
-        .stat-card-premium.active::after { transform: scaleX(1); }
+
+        .stat-card-premium.active::after {
+            transform: scaleX(1);
+        }
 
         .stat-icon {
-            width: 40px;
-            height: 40px;
+            width: 34px;
+            height: 34px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 14px;
-            font-size: 1.1rem;
+            margin-bottom: 0;
+            font-size: 0.95rem;
             border: 1px solid;
+            flex-shrink: 0;
         }
 
-        .stat-icon.total   { background: rgba(59,130,246,0.1);  border-color: rgba(59,130,246,0.25);  color: var(--info);    }
-        .stat-icon.errors  { background: var(--danger-bg);       border-color: var(--danger-border);    color: var(--danger);  }
-        .stat-icon.expired { background: rgba(139,92,246,0.1);   border-color: rgba(139,92,246,0.25);   color: var(--purple);  }
-        .stat-icon.value   { background: var(--success-bg);      border-color: var(--success-border);   color: var(--success); }
+        .stat-icon.total {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.25);
+            color: var(--info);
+        }
+
+        .stat-icon.errors {
+            background: var(--danger-bg);
+            border-color: var(--danger-border);
+            color: var(--danger);
+        }
+
+        .stat-icon.expired {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: rgba(139, 92, 246, 0.25);
+            color: var(--purple);
+        }
+
+        .stat-icon.value {
+            background: var(--success-bg);
+            border-color: var(--success-border);
+            color: var(--success);
+        }
 
         .stat-info-premium small {
             font-size: 0.6rem;
@@ -603,10 +703,10 @@
         }
 
         .stat-info-premium strong {
-            font-size: 1.9rem;
-            font-weight: 900;
-            color: var(--az-gold);
-            letter-spacing: -1px;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
             display: block;
         }
 
@@ -649,7 +749,7 @@
         }
 
         .filter-count {
-            background: rgba(0,0,0,0.12);
+            background: rgba(0, 0, 0, 0.12);
             padding: 2px 8px;
             font-size: 0.65rem;
             font-weight: 700;
@@ -703,7 +803,7 @@
         }
 
         .tab-badge {
-            background: rgba(176,141,50,0.15);
+            background: rgba(176, 141, 50, 0.15);
             border: 1px solid var(--az-gold-border);
             color: var(--az-gold);
             padding: 2px 8px;
@@ -744,24 +844,40 @@
         .summary-item-premium::after {
             content: '';
             position: absolute;
-            bottom: 0; left: 0; right: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
             height: 2px;
             background: var(--az-gold);
             transform: scaleX(0);
             transition: transform 0.2s;
         }
 
-        .summary-item-premium:hover { border-color: var(--az-gold); }
-        .summary-item-premium:hover::after { transform: scaleX(1); }
+        .summary-item-premium:hover {
+            border-color: var(--az-gold);
+        }
+
+        .summary-item-premium:hover::after {
+            transform: scaleX(1);
+        }
 
         .summary-item-premium.active {
             background: var(--az-dark);
             border-color: var(--az-gold);
         }
-        .summary-item-premium.active::after { transform: scaleX(1); }
+
+        .summary-item-premium.active::after {
+            transform: scaleX(1);
+        }
 
         .summary-item-premium.active .value,
-        .summary-item-premium.active .label { color: var(--az-gold); }
+        .summary-item-premium.active .label {
+            color: var(--az-primary);
+        }
+        body.dark .summary-item-premium.active .value,
+        body.dark .summary-item-premium.active .label {
+            color: var(--az-gold);
+        }
 
         .summary-item-premium .label {
             font-size: clamp(0.48rem, 0.85vw, 0.6rem);
@@ -776,9 +892,9 @@
         }
 
         .summary-item-premium .value {
-            font-size: clamp(0.9rem, 1.5vw, 1.4rem);
-            font-weight: 900;
-            color: var(--az-gold);
+            font-size: clamp(0.9rem, 1.5vw, 1.3rem);
+            font-weight: 700;
+            color: var(--text-main);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -804,14 +920,24 @@
             transition: all 0.2s;
         }
 
-        .guia-card-premium.has-error             { border-left-color: var(--danger); }
-        .guia-card-premium.is-vencida            { border-left-color: var(--purple); }
-        .guia-card-premium.sem-declaracao-nascido { border-left-color: var(--orange); }
-        .guia-card-premium.sem-declaracao-obito  { border-left-color: #7e22ce; }
+        .guia-card-premium.has-error {
+            border-left-color: var(--danger);
+        }
+
+        .guia-card-premium.is-vencida {
+            border-left-color: var(--purple);
+        }
+
+        .guia-card-premium.sem-declaracao-nascido {
+            border-left-color: var(--orange);
+        }
+
+        .guia-card-premium.sem-declaracao-obito {
+            border-left-color: #7e22ce;
+        }
 
         .guia-card-premium:hover {
             border-top-color: var(--az-gold);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
         }
 
         .guia-header-premium {
@@ -840,12 +966,15 @@
             min-width: 0;
         }
 
-        .guia-header-spacer { flex: 1 1 auto; min-width: 4px; }
+        .guia-header-spacer {
+            flex: 1 1 auto;
+            min-width: 4px;
+        }
 
         .guia-header-valor {
-            font-weight: 900;
-            font-size: 1rem;
-            color: var(--az-gold);
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-main);
             white-space: nowrap;
             flex-shrink: 0;
         }
@@ -870,62 +999,73 @@
 
         /* ── BADGES ── */
         .badge-premium {
-            padding: 4px 10px;
-            font-size: 0.6rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            padding: 3px 9px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: none;
+            letter-spacing: 0.2px;
             white-space: nowrap;
             flex-shrink: 0;
             display: inline-flex;
             align-items: center;
             gap: 5px;
             border: 1px solid;
+            border-radius: 2px;
         }
 
-        .badge-local         { background: rgba(14,165,233,0.1);  border-color: rgba(14,165,233,0.3);  color: #0ea5e9; }
-        .badge-inter         { background: rgba(100,116,139,0.1); border-color: rgba(100,116,139,0.3); color: #64748b; }
-        .badge-personal-local { background: rgba(3,105,161,0.12); border-color: rgba(3,105,161,0.3);  color: #0369a1; }
-        .badge-personal-inter { background: rgba(67,56,202,0.1);  border-color: rgba(67,56,202,0.3);  color: #4338ca; }
+        .badge-local {
+            background: rgba(14, 165, 233, 0.1);
+            border-color: rgba(14, 165, 233, 0.3);
+            color: #0ea5e9;
+        }
 
-        .badge-vencida  { background: rgba(139,92,246,0.12); border-color: rgba(139,92,246,0.3); color: var(--purple); }
-        .badge-equipe   { background: rgba(139,92,246,0.12); border-color: rgba(139,92,246,0.3); color: var(--purple); }
+        .badge-inter {
+            background: rgba(100, 116, 139, 0.1);
+            border-color: rgba(100, 116, 139, 0.3);
+            color: #64748b;
+        }
+
+        .badge-personal-local {
+            background: rgba(3, 105, 161, 0.12);
+            border-color: rgba(3, 105, 161, 0.3);
+            color: #0369a1;
+        }
+
+        .badge-personal-inter {
+            background: rgba(67, 56, 202, 0.1);
+            border-color: rgba(67, 56, 202, 0.3);
+            color: #4338ca;
+        }
+
+        .badge-vencida {
+            background: rgba(139, 92, 246, 0.12);
+            border-color: rgba(139, 92, 246, 0.3);
+            color: var(--purple);
+        }
+
+        .badge-equipe {
+            background: rgba(139, 92, 246, 0.12);
+            border-color: rgba(139, 92, 246, 0.3);
+            color: var(--purple);
+        }
 
         .badge-sem-nascido {
-            background: rgba(249,115,22,0.12);
-            border-color: rgba(249,115,22,0.3);
+            background: rgba(249, 115, 22, 0.12);
+            border-color: rgba(249, 115, 22, 0.3);
             color: var(--orange);
-            animation: nascidoPulse 2.5s ease-in-out infinite;
         }
 
         .badge-sem-obito {
-            background: rgba(126,34,206,0.12);
-            border-color: rgba(126,34,206,0.3);
+            background: rgba(126, 34, 206, 0.12);
+            border-color: rgba(126, 34, 206, 0.3);
             color: #7e22ce;
-            animation: obitoPulse 2.5s ease-in-out infinite;
-        }
-
-        @keyframes nascidoPulse {
-            0%,100% { box-shadow: 0 0 0 rgba(249,115,22,0.2); }
-            50%      { box-shadow: 0 0 10px rgba(249,115,22,0.4); }
-        }
-
-        @keyframes obitoPulse {
-            0%,100% { box-shadow: 0 0 0 rgba(126,34,206,0.2); }
-            50%      { box-shadow: 0 0 10px rgba(126,34,206,0.4); }
         }
 
         .badge-vinculo {
-            background: rgba(245,158,11,0.12);
-            border-color: rgba(245,158,11,0.3);
+            background: rgba(245, 158, 11, 0.12);
+            border-color: rgba(245, 158, 11, 0.3);
             color: var(--warning);
             cursor: pointer;
-            animation: vinculoPulse 2.5s ease-in-out infinite;
-        }
-
-        @keyframes vinculoPulse {
-            0%,100% { box-shadow: 0 0 0 rgba(245,158,11,0.2); }
-            50%      { box-shadow: 0 0 10px rgba(245,158,11,0.4); }
         }
 
         .guia-card-premium.vinculo-highlight {
@@ -934,10 +1074,29 @@
         }
 
         /* CONVENIO BADGES */
-        .badge-unimed   { background: rgba(16,185,129,0.1); border-color: var(--success-border); color: var(--success); }
-        .badge-bradesco { background: var(--danger-bg);     border-color: var(--danger-border);  color: var(--danger);  }
-        .badge-convenio-default { background: rgba(30,41,59,0.1); border-color: rgba(30,41,59,0.3); color: #475569; }
-        body.dark .badge-convenio-default { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); color: #94a3b8; }
+        .badge-unimed {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: var(--success-border);
+            color: var(--success);
+        }
+
+        .badge-bradesco {
+            background: var(--danger-bg);
+            border-color: var(--danger-border);
+            color: var(--danger);
+        }
+
+        .badge-convenio-default {
+            background: rgba(30, 41, 59, 0.1);
+            border-color: rgba(30, 41, 59, 0.3);
+            color: #475569;
+        }
+
+        body.dark .badge-convenio-default {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.12);
+            color: #94a3b8;
+        }
 
         /* ══════════════════════════════════════════
            GUIA BODY
@@ -955,12 +1114,20 @@
         }
 
         @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-6px); }
-            to   { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* ALERTS */
-        .nascido-alert, .obito-alert {
+        .nascido-alert,
+        .obito-alert {
             border: 1px solid;
             padding: 14px 16px;
             margin-bottom: 16px;
@@ -971,20 +1138,36 @@
         }
 
         .nascido-alert {
-            background: rgba(249,115,22,0.07);
-            border-color: rgba(249,115,22,0.3);
+            background: rgba(249, 115, 22, 0.07);
+            border-color: rgba(249, 115, 22, 0.3);
             color: #9a3412;
         }
-        body.dark .nascido-alert { color: #fed7aa; }
-        .nascido-alert i { color: var(--orange); font-size: 1rem; flex-shrink: 0; }
+
+        body.dark .nascido-alert {
+            color: #fed7aa;
+        }
+
+        .nascido-alert i {
+            color: var(--orange);
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
 
         .obito-alert {
-            background: rgba(126,34,206,0.07);
-            border-color: rgba(126,34,206,0.3);
+            background: rgba(126, 34, 206, 0.07);
+            border-color: rgba(126, 34, 206, 0.3);
             color: #4c1d95;
         }
-        body.dark .obito-alert { color: #e9d5ff; }
-        .obito-alert i { color: #7e22ce; font-size: 1rem; flex-shrink: 0; }
+
+        body.dark .obito-alert {
+            color: #e9d5ff;
+        }
+
+        .obito-alert i {
+            color: #7e22ce;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
 
         /* META INFO */
         .guia-meta-row {
@@ -996,8 +1179,14 @@
             color: var(--az-text-gray);
         }
 
-        .guia-meta-row span i { color: var(--az-gold); margin-right: 5px; }
-        .guia-meta-row .danger-text { color: var(--danger); }
+        .guia-meta-row span i {
+            color: var(--az-gold);
+            margin-right: 5px;
+        }
+
+        .guia-meta-row .danger-text {
+            color: var(--danger);
+        }
 
         /* ══════════════════════════════════════════
            TABLE
@@ -1028,10 +1217,12 @@
             padding: 10px 12px;
             text-align: left;
             white-space: nowrap;
-            border-right: 1px solid rgba(255,255,255,0.06);
+            border-right: 1px solid rgba(255, 255, 255, 0.06);
         }
 
-        .table-premium th:last-child { border-right: none; }
+        .table-premium th:last-child {
+            border-right: none;
+        }
 
         .table-premium td {
             padding: 10px 12px;
@@ -1043,19 +1234,34 @@
             border-right: 1px solid var(--border);
         }
 
-        .table-premium td:last-child { border-right: none; }
+        .table-premium td:last-child {
+            border-right: none;
+        }
 
         .table-premium td:first-child,
-        .table-premium td:nth-child(2) { white-space: nowrap; }
+        .table-premium td:nth-child(2) {
+            white-space: nowrap;
+        }
 
         .table-premium td:nth-child(4),
-        .table-premium td:nth-child(5) { text-align: center; white-space: nowrap; }
+        .table-premium td:nth-child(5) {
+            text-align: center;
+            white-space: nowrap;
+        }
 
-        .table-premium td:nth-child(6) { text-align: right; white-space: nowrap; font-weight: 700; }
+        .table-premium td:nth-child(6) {
+            text-align: right;
+            white-space: nowrap;
+            font-weight: 700;
+        }
 
-        .table-premium tr:last-child td { border-bottom: none; }
+        .table-premium tr:last-child td {
+            border-bottom: none;
+        }
 
-        .table-premium tr:nth-child(even) td { background: var(--row-alt); }
+        .table-premium tr:nth-child(even) td {
+            background: var(--row-alt);
+        }
 
         .table-premium tr:hover td {
             background: var(--az-gold-dim);
@@ -1082,7 +1288,66 @@
             border-color: var(--danger-border);
         }
 
-        .item-name { white-space: normal; word-wrap: break-word; word-break: break-word; }
+        .item-name {
+            white-space: normal;
+            word-wrap: break-word;
+            word-break: break-word;
+        }
+
+        .tooltip-erro {
+            position: relative;
+            cursor: help;
+        }
+
+        .tooltip-erro::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%) translateY(4px);
+            background: #0f1420;
+            color: #e8ecf3;
+            border: 1px solid var(--danger-border, rgba(239,68,68,0.4));
+            padding: 10px 12px;
+            font-size: 0.72rem;
+            font-weight: 400;
+            line-height: 1.45;
+            white-space: pre-line;
+            text-align: left;
+            width: max-content;
+            max-width: 280px;
+            border-radius: 6px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.15s ease, transform 0.15s ease;
+            z-index: 50;
+            pointer-events: none;
+        }
+
+        .tooltip-erro::before {
+            content: '';
+            position: absolute;
+            bottom: calc(100% + 4px);
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: #0f1420;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.15s ease;
+            z-index: 50;
+            pointer-events: none;
+        }
+
+        .tooltip-erro:hover::after,
+        .tooltip-erro:hover::before {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+
 
         /* ══════════════════════════════════════════
            GRUPO CARTEIRINHA
@@ -1097,7 +1362,6 @@
 
         .grupo-carteirinha:hover {
             border-color: var(--az-gold);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.07);
         }
 
         .grupo-header {
@@ -1117,7 +1381,7 @@
             font-size: 0.78rem;
             font-weight: 700;
             letter-spacing: 1px;
-            background: rgba(176,141,50,0.15);
+            background: rgba(176, 141, 50, 0.15);
             border: 1px solid var(--az-gold-border);
             padding: 3px 10px;
             color: var(--az-gold);
@@ -1128,7 +1392,7 @@
             flex: 1;
             font-size: 0.85rem;
             font-weight: 600;
-            color: rgba(255,255,255,0.85);
+            color: rgba(255, 255, 255, 0.85);
             min-width: 0;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -1155,11 +1419,35 @@
             border: 1px solid;
         }
 
-        .grupo-pill-default  { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); }
-        .grupo-pill-erro     { background: rgba(239,68,68,0.2);    border-color: rgba(239,68,68,0.4);    color: #fca5a5; }
-        .grupo-pill-vencida  { background: rgba(139,92,246,0.2);   border-color: rgba(139,92,246,0.4);   color: #c4b5fd; }
-        .grupo-pill-nascido  { background: rgba(249,115,22,0.2);   border-color: rgba(249,115,22,0.4);   color: #fdba74; }
-        .grupo-pill-obito    { background: rgba(126,34,206,0.2);   border-color: rgba(126,34,206,0.4);   color: #d8b4fe; }
+        .grupo-pill-default {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.15);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .grupo-pill-erro {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.4);
+            color: #fca5a5;
+        }
+
+        .grupo-pill-vencida {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: rgba(139, 92, 246, 0.4);
+            color: #c4b5fd;
+        }
+
+        .grupo-pill-nascido {
+            background: rgba(249, 115, 22, 0.2);
+            border-color: rgba(249, 115, 22, 0.4);
+            color: #fdba74;
+        }
+
+        .grupo-pill-obito {
+            background: rgba(126, 34, 206, 0.2);
+            border-color: rgba(126, 34, 206, 0.4);
+            color: #d8b4fe;
+        }
 
         .grupo-valor {
             font-weight: 900;
@@ -1171,7 +1459,7 @@
         .grupo-chevron {
             width: 24px;
             height: 24px;
-            background: rgba(176,141,50,0.12);
+            background: rgba(176, 141, 50, 0.12);
             border: 1px solid var(--az-gold-border);
             display: flex;
             align-items: center;
@@ -1182,7 +1470,9 @@
             flex-shrink: 0;
         }
 
-        .grupo-carteirinha.is-open .grupo-chevron { transform: rotate(180deg); }
+        .grupo-carteirinha.is-open .grupo-chevron {
+            transform: rotate(180deg);
+        }
 
         .grupo-guias {
             display: none;
@@ -1199,13 +1489,13 @@
         ══════════════════════════════════════════ */
         .equipe-section {
             margin-bottom: 20px;
-            border: 1px solid rgba(139,92,246,0.3);
+            border: 1px solid rgba(139, 92, 246, 0.3);
             overflow: hidden;
         }
 
         .equipe-section-header {
-            background: rgba(139,92,246,0.12);
-            border-bottom: 1px solid rgba(139,92,246,0.25);
+            background: rgba(139, 92, 246, 0.12);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.25);
             color: var(--purple);
             padding: 10px 16px;
             font-weight: 700;
@@ -1228,7 +1518,10 @@
             background: var(--bg-card);
             border-bottom: 1px solid var(--border);
         }
-        .equipe-proc-block:last-child { border-bottom: none; }
+
+        .equipe-proc-block:last-child {
+            border-bottom: none;
+        }
 
         .equipe-proc-header {
             display: flex;
@@ -1241,8 +1534,8 @@
         }
 
         .equipe-proc-code-badge {
-            background: rgba(139,92,246,0.12);
-            border: 1px solid rgba(139,92,246,0.3);
+            background: rgba(139, 92, 246, 0.12);
+            border: 1px solid rgba(139, 92, 246, 0.3);
             color: var(--purple);
             padding: 3px 10px;
             font-size: 0.65rem;
@@ -1260,8 +1553,8 @@
         }
 
         .equipe-proc-count-pill {
-            background: rgba(139,92,246,0.08);
-            border: 1px solid rgba(139,92,246,0.2);
+            background: rgba(139, 92, 246, 0.08);
+            border: 1px solid rgba(139, 92, 246, 0.2);
             color: var(--purple);
             padding: 2px 8px;
             font-size: 0.6rem;
@@ -1287,15 +1580,54 @@
             border-left: 3px solid;
         }
 
-        .equipe-membro.cirurgiao    { background: rgba(59,130,246,0.07);   border-color: var(--info);    color: var(--text-main); }
-        .equipe-membro.anestesista  { background: rgba(139,92,246,0.07);   border-color: var(--purple);  color: var(--text-main); }
-        .equipe-membro.primeiro-aux { background: rgba(16,185,129,0.07);   border-color: var(--success); color: var(--text-main); }
-        .equipe-membro.segundo-aux  { background: rgba(249,115,22,0.07);   border-color: var(--orange);  color: var(--text-main); }
-        .equipe-membro.desconhecido { background: var(--bg-body);          border-color: var(--border);  color: var(--az-text-gray); }
+        .equipe-membro.cirurgiao {
+            background: rgba(59, 130, 246, 0.07);
+            border-color: var(--info);
+            color: var(--text-main);
+        }
 
-        .equipe-membro i { font-size: 0.8rem; width: 14px; flex-shrink: 0; }
-        .equipe-role-label { font-size: 0.7rem; font-weight: 700; min-width: 90px; color: var(--az-text-gray); }
-        .equipe-membro-nome { flex: 1; font-weight: 600; color: var(--text-main); }
+        .equipe-membro.anestesista {
+            background: rgba(139, 92, 246, 0.07);
+            border-color: var(--purple);
+            color: var(--text-main);
+        }
+
+        .equipe-membro.primeiro-aux {
+            background: rgba(16, 185, 129, 0.07);
+            border-color: var(--success);
+            color: var(--text-main);
+        }
+
+        .equipe-membro.segundo-aux {
+            background: rgba(249, 115, 22, 0.07);
+            border-color: var(--orange);
+            color: var(--text-main);
+        }
+
+        .equipe-membro.desconhecido {
+            background: var(--bg-body);
+            border-color: var(--border);
+            color: var(--az-text-gray);
+        }
+
+        .equipe-membro i {
+            font-size: 0.8rem;
+            width: 14px;
+            flex-shrink: 0;
+        }
+
+        .equipe-role-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            min-width: 90px;
+            color: var(--az-text-gray);
+        }
+
+        .equipe-membro-nome {
+            flex: 1;
+            font-weight: 600;
+            color: var(--text-main);
+        }
 
         .equipe-grau-badge {
             font-size: 0.6rem;
@@ -1323,8 +1655,21 @@
             text-transform: uppercase;
         }
 
-        @keyframes warnPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.65; } }
-        .equipe-alert-falta { animation: warnPulse 2.5s ease-in-out infinite; }
+        @keyframes warnPulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.65;
+            }
+        }
+
+        .equipe-alert-falta {
+            animation: warnPulse 2.5s ease-in-out infinite;
+        }
 
         .equipe-fonte-tag {
             font-size: 0.55rem;
@@ -1336,8 +1681,175 @@
             border: 1px solid;
         }
 
-        .equipe-fonte-principal { background: rgba(59,130,246,0.1); border-color: rgba(59,130,246,0.3); color: var(--info); }
-        .equipe-fonte-equipe    { background: var(--success-bg);    border-color: var(--success-border); color: var(--success); }
+        .equipe-fonte-principal {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.3);
+            color: var(--info);
+        }
+
+        /* Badge compacto C/P usado na frente do nome na tabela consolidada */
+        .equipe-verif-fonte-letra {
+            display: inline-block;
+            font-size: 0.6rem;
+            font-weight: 800;
+            padding: 0 4px;
+            margin-right: 5px;
+            border-radius: 3px;
+            border: 1px solid;
+            line-height: 1.4;
+        }
+
+        .equipe-verif-fonte-letra.eq {
+            background: var(--success-bg);
+            border-color: var(--success-border);
+            color: var(--success);
+        }
+
+        .equipe-verif-fonte-letra.pr {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.3);
+            color: var(--info);
+        }
+
+        .equipe-verif-fonte-letra.err {
+            background: var(--danger-bg);
+            border-color: var(--danger-border);
+            color: var(--danger);
+        }
+
+        /* ══════════════════════════════════════════
+           MODO VERIFICAÇÃO DE EQUIPE (tabela consolidada)
+        ══════════════════════════════════════════ */
+        .btn-premium-outline.is-active-equipe {
+            background: var(--az-primary-dim);
+            border-color: var(--az-primary);
+            color: var(--az-primary-light);
+        }
+
+        .equipe-verif-summary {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 14px 16px;
+        }
+
+        .equipe-verif-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: var(--text-main);
+        }
+
+        .equipe-verif-pill .num {
+            font-size: 0.95rem;
+        }
+
+        .equipe-verif-pill.ok {
+            color: var(--success);
+            border-color: var(--success-border);
+            background: var(--success-bg);
+        }
+
+        .equipe-verif-pill.pendente {
+            color: var(--danger);
+            border-color: var(--danger-border);
+            background: var(--danger-bg);
+        }
+
+        .equipe-verif-table-wrap {
+            padding: 0 16px 16px;
+            overflow-x: auto;
+        }
+
+        table.equipe-verif-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.72rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+        }
+
+        table.equipe-verif-table thead th {
+            position: sticky;
+            top: 0;
+            background: var(--az-dark);
+            color: var(--az-gold-light);
+            text-align: left;
+            padding: 10px 12px;
+            font-size: 0.62rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        table.equipe-verif-table tbody tr {
+            border-bottom: 1px solid var(--border);
+        }
+
+        table.equipe-verif-table tbody tr:nth-child(even) {
+            background: var(--row-alt);
+        }
+
+        table.equipe-verif-table tbody tr.linha-pendente {
+            background: var(--danger-bg);
+        }
+
+        table.equipe-verif-table td {
+            padding: 9px 12px;
+            vertical-align: top;
+        }
+
+        .equipe-verif-guia {
+            white-space: nowrap;
+            font-weight: 700;
+        }
+
+        .equipe-verif-guia small {
+            display: block;
+            font-weight: 400;
+            color: var(--az-text-gray);
+        }
+
+        .equipe-verif-nome-falta {
+            color: var(--danger);
+            font-weight: 700;
+            font-size: 0.68rem;
+        }
+
+        .equipe-verif-nome-falta i {
+            margin-right: 4px;
+        }
+
+        .equipe-verif-status-ok {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--success);
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .equipe-verif-status-falta {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--danger);
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .equipe-fonte-equipe {
+            background: var(--success-bg);
+            border-color: var(--success-border);
+            color: var(--success);
+        }
 
         /* ══════════════════════════════════════════
            EMPTY STATE
@@ -1351,8 +1863,19 @@
             grid-column: 1 / -1;
         }
 
-        .empty-state-premium i { font-size: 2rem; color: var(--az-gold-border); margin-bottom: 14px; display: block; }
-        .empty-state-premium h3 { font-size: 0.9rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
+        .empty-state-premium i {
+            font-size: 2rem;
+            color: var(--az-gold-border);
+            margin-bottom: 14px;
+            display: block;
+        }
+
+        .empty-state-premium h3 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
 
         /* ══════════════════════════════════════════
            FOOTER AZAMBUJA
@@ -1385,11 +1908,11 @@
 
         .footer-sub {
             color: var(--az-gold);
-            font-size: 0.65rem;
+            font-size: 0.68rem;
             font-weight: 600;
-            letter-spacing: 5px;
+            letter-spacing: 1.5px;
             text-transform: uppercase;
-            margin-bottom: 28px;
+            margin-bottom: 20px;
         }
 
         .footer-copy {
@@ -1403,48 +1926,71 @@
         /* ══════════════════════════════════════════
            SCROLLBAR
         ══════════════════════════════════════════ */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg-body); }
-        ::-webkit-scrollbar-thumb { background: rgba(176,141,50,0.4); }
-        ::-webkit-scrollbar-thumb:hover { background: var(--az-gold); }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-body);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c3ccd6;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a3adba;
+        }
 
         /* ══════════════════════════════════════════
            GOOGLE SHEETS INTEGRATION
         ══════════════════════════════════════════ */
         .btn-premium-sheets {
-            background: rgba(15,157,88,0.12);
-            border-color: rgba(15,157,88,0.4);
+            background: rgba(15, 157, 88, 0.12);
+            border-color: rgba(15, 157, 88, 0.4);
             color: #0f9d58;
         }
+
         .btn-premium-sheets:hover {
-            background: rgba(15,157,88,0.22);
+            background: rgba(15, 157, 88, 0.22);
             border-color: #0f9d58;
         }
+
         .btn-premium-sheets.connected {
-            background: rgba(15,157,88,0.18);
+            background: rgba(15, 157, 88, 0.18);
             border-color: #0f9d58;
             color: #0f9d58;
         }
+
         .btn-premium-sheets .sheets-dot {
-            width: 7px; height: 7px;
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
             background: #ccc;
             display: inline-block;
         }
-        .btn-premium-sheets.connected .sheets-dot { background: #0f9d58; box-shadow: 0 0 5px #0f9d58; }
+
+        .btn-premium-sheets.connected .sheets-dot {
+            background: #0f9d58;
+            box-shadow: 0 0 5px #0f9d58;
+        }
 
         /* MODAL SHEETS CONFIG */
         .sheets-modal-overlay {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(6,11,19,0.88);
+            background: rgba(6, 11, 19, 0.88);
             backdrop-filter: blur(6px);
             z-index: 9990;
             justify-content: center;
             align-items: center;
         }
-        .sheets-modal-overlay.open { display: flex; }
+
+        .sheets-modal-overlay.open {
+            display: flex;
+        }
 
         .sheets-modal {
             background: var(--bg-card);
@@ -1464,10 +2010,13 @@
         }
 
         .sheets-modal-icon {
-            width: 44px; height: 44px;
-            background: rgba(15,157,88,0.12);
-            border: 1px solid rgba(15,157,88,0.3);
-            display: flex; align-items: center; justify-content: center;
+            width: 44px;
+            height: 44px;
+            background: rgba(15, 157, 88, 0.12);
+            border: 1px solid rgba(15, 157, 88, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 1.2rem;
             color: #0f9d58;
             flex-shrink: 0;
@@ -1490,14 +2039,19 @@
 
         .sheets-modal-close {
             position: absolute;
-            top: 14px; right: 14px;
-            background: none; border: none;
+            top: 14px;
+            right: 14px;
+            background: none;
+            border: none;
             color: var(--az-text-gray);
             cursor: pointer;
             font-size: 1rem;
             padding: 4px 8px;
         }
-        .sheets-modal-close:hover { color: var(--text-main); }
+
+        .sheets-modal-close:hover {
+            color: var(--text-main);
+        }
 
         .sheets-form-group {
             margin-bottom: 20px;
@@ -1525,8 +2079,15 @@
             border-radius: 0;
             transition: border-color 0.2s;
         }
-        .sheets-form-input:focus { border-color: #0f9d58; }
-        .sheets-form-input::placeholder { color: var(--az-text-gray); font-size: 0.75rem; }
+
+        .sheets-form-input:focus {
+            border-color: #0f9d58;
+        }
+
+        .sheets-form-input::placeholder {
+            color: var(--az-text-gray);
+            font-size: 0.75rem;
+        }
 
         .sheets-form-hint {
             font-size: 0.65rem;
@@ -1534,8 +2095,15 @@
             margin-top: 6px;
             line-height: 1.5;
         }
-        .sheets-form-hint a { color: #0f9d58; text-decoration: none; }
-        .sheets-form-hint a:hover { text-decoration: underline; }
+
+        .sheets-form-hint a {
+            color: #0f9d58;
+            text-decoration: none;
+        }
+
+        .sheets-form-hint a:hover {
+            text-decoration: underline;
+        }
 
         .sheets-modal-actions {
             display: flex;
@@ -1553,9 +2121,27 @@
             align-items: center;
             gap: 10px;
         }
-        .sheets-status-banner.ok    { display:flex; background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.3); color: var(--success); }
-        .sheets-status-banner.error { display:flex; background: var(--danger-bg); border-color: var(--danger-border); color: var(--danger); }
-        .sheets-status-banner.info  { display:flex; background: var(--az-gold-dim); border-color: var(--az-gold-border); color: var(--az-gold); }
+
+        .sheets-status-banner.ok {
+            display: flex;
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+            color: var(--success);
+        }
+
+        .sheets-status-banner.error {
+            display: flex;
+            background: var(--danger-bg);
+            border-color: var(--danger-border);
+            color: var(--danger);
+        }
+
+        .sheets-status-banner.info {
+            display: flex;
+            background: var(--az-gold-dim);
+            border-color: var(--az-gold-border);
+            color: var(--az-gold);
+        }
 
         .sheets-log-indicator {
             display: none;
@@ -1563,7 +2149,7 @@
             bottom: 24px;
             right: 24px;
             background: var(--bg-card);
-            border: 1px solid rgba(15,157,88,0.4);
+            border: 1px solid rgba(15, 157, 88, 0.4);
             border-left: 3px solid #0f9d58;
             padding: 12px 18px;
             font-size: 0.72rem;
@@ -1585,9 +2171,19 @@
             color: var(--az-text-gray);
             line-height: 1.7;
         }
-        .sheets-how-to strong { color: var(--text-main); }
-        .sheets-how-to ol { padding-left: 16px; }
-        .sheets-how-to li { margin-bottom: 4px; }
+
+        .sheets-how-to strong {
+            color: var(--text-main);
+        }
+
+        .sheets-how-to ol {
+            padding-left: 16px;
+        }
+
+        .sheets-how-to li {
+            margin-bottom: 4px;
+        }
+
         .sheets-section-divider {
             border: none;
             border-top: 1px solid var(--border);
@@ -1598,70 +2194,294 @@
            RESPONSIVE
         ══════════════════════════════════════════ */
         @media (max-width: 1200px) {
-            .stats-grid-premium { grid-template-columns: repeat(2, 1fr); }
-            .summary-premium    { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+            .stats-grid-premium {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .summary-premium {
+                grid-template-columns: repeat(5, minmax(0, 1fr));
+            }
         }
 
         @media (max-width: 900px) {
-            .summary-premium { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            .summary-premium {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
         }
 
         @media (max-width: 768px) {
-            .container-premium { padding: 20px 15px; }
-            .header-inner { flex-direction: column; gap: 14px; padding: 16px 20px; }
-            .header-stats { flex-wrap: wrap; justify-content: center; }
-            .toolbar-premium { flex-direction: column; }
-            .search-premium { min-width: unset; width: 100%; }
-            .toolbar-premium .btn-premium { width: 100%; justify-content: center; }
-            .stats-grid-premium { grid-template-columns: repeat(2, 1fr); }
-            .tab-btn-premium { flex: 1 1 100%; }
+            .container-premium {
+                padding: 20px 15px;
+            }
+
+            .header-inner {
+                flex-direction: column;
+                gap: 14px;
+                padding: 16px 20px;
+            }
+
+            .header-stats {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .toolbar-premium {
+                flex-direction: column;
+            }
+
+            .search-premium {
+                min-width: unset;
+                width: 100%;
+            }
+
+            .toolbar-premium .btn-premium {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .stats-grid-premium {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .tab-btn-premium {
+                flex: 1 1 100%;
+            }
         }
+
         /* ══════════════════════════════════════════
    LOGIN OVERLAY
 ══════════════════════════════════════════ */
-.login-overlay{position:fixed;inset:0;background:#060b13;z-index:99999;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-.lx-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(176,141,50,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(176,141,50,0.04) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;}
-.lx-glow{position:absolute;width:500px;height:500px;background:radial-gradient(circle,rgba(176,141,50,0.06) 0%,transparent 70%);left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;}
-.lx-brain{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:.18;}
-.lx-brain svg{width:100%;height:100%;position:absolute;}
-.lx-scan{position:absolute;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(176,141,50,0.5),transparent);animation:lxscan 3.5s ease-in-out infinite;pointer-events:none;}
-@keyframes lxscan{0%{top:0;opacity:0;}10%{opacity:1;}90%{opacity:1;}100%{top:100%;opacity:0;}}
-.lx-node-pulse{animation:lxnp 1s ease-in-out infinite;}
-@keyframes lxnp{0%,100%{opacity:.35;}50%{opacity:1;}}
-.login-box{position:relative;z-index:10;width:380px;max-width:94%;background:rgba(10,19,34,0.85);border:1px solid rgba(176,141,50,0.22);border-top:2px solid var(--az-gold);padding:36px 40px;backdrop-filter:blur(12px);}
-.login-logo{display:flex;align-items:center;gap:14px;margin-bottom:24px;}
-.login-logo-img{background:rgba(176,141,50,0.1);border:1px solid rgba(176,141,50,0.22);padding:9px 13px;display:flex;align-items:center;}
-.login-logo-img img{height:80px;filter:brightness(0) invert(1);opacity:.9;}
-.login-brand-axon{font-size:.52rem;font-weight:800;letter-spacing:7px;text-transform:uppercase;color:var(--az-gold);}
-.login-brand-title{font-size:1.2rem;font-weight:900;color:#fff;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;}
-.login-brand-sub{font-size:.52rem;color:rgba(255,255,255,.28);letter-spacing:2px;text-transform:uppercase;margin-top:2px;}
-.lx-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(176,141,50,0.3),transparent);margin-bottom:22px;}
-.login-field{margin-bottom:16px;}
-.login-label{display:flex;align-items:center;gap:6px;font-size:.55rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--az-text-gray);margin-bottom:7px;}
-.lx-dot{width:4px;height:4px;background:var(--az-gold);display:inline-block;flex-shrink:0;}
-.lx-inp-wrap{position:relative;}
-.lx-inp-ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--az-text-gray);font-size:.75rem;}
-.login-input{width:100%;padding:11px 12px 11px 34px;background:rgba(255,255,255,0.04);border:1px solid rgba(176,141,50,0.18);color:#fff;font-size:.83rem;font-family:'Inter',sans-serif;outline:none;border-radius:0;transition:border-color .2s,background .2s;box-sizing:border-box;}
-.login-input:focus{border-color:var(--az-gold);background:rgba(176,141,50,0.05);}
-.login-input::placeholder{color:rgba(255,255,255,.18);}
-.login-btn{width:100%;padding:13px;background:var(--az-gold);border:none;color:#000;font-family:'Inter',sans-serif;font-size:.68rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;cursor:pointer;margin-top:8px;transition:background .2s,transform .1s;display:flex;align-items:center;justify-content:center;gap:8px;}
-.login-btn:hover{background:var(--az-gold-light);}
-.login-btn:active{transform:scale(0.99);}
-.login-btn:disabled{opacity:.45;cursor:not-allowed;}
-.login-error{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-left:3px solid var(--danger);color:var(--danger);padding:9px 13px;font-size:.7rem;font-weight:600;margin-top:12px;display:none;align-items:center;gap:8px;}
-.login-loading{text-align:center;color:var(--az-gold);font-size:.6rem;letter-spacing:2px;margin-top:10px;display:none;text-transform:uppercase;}
-.lx-footer{margin-top:18px;text-align:center;font-size:.5rem;color:rgba(255,255,255,.18);letter-spacing:1.5px;text-transform:uppercase;}
+        .login-overlay {
+            position: fixed;
+            inset: 0;
+            background: #060b13;
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .lx-grid {
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(176, 141, 50, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(176, 141, 50, 0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+
+        .login-box {
+            position: relative;
+            z-index: 10;
+            width: 380px;
+            max-width: 94%;
+            background: var(--az-dark);
+            border: 1px solid rgba(176, 141, 50, 0.22);
+            border-top: 2px solid var(--az-gold);
+            padding: 36px 40px;
+        }
+
+        .login-logo {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .login-logo-img {
+            background: rgba(176, 141, 50, 0.1);
+            border: 1px solid rgba(176, 141, 50, 0.22);
+            padding: 9px 13px;
+            display: flex;
+            align-items: center;
+        }
+
+        .login-logo-img img {
+            height: 80px;
+            filter: brightness(0) invert(1);
+            opacity: .9;
+        }
+
+        .login-brand-axon {
+            font-size: .52rem;
+            font-weight: 800;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--az-gold);
+        }
+
+        .login-brand-title {
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .login-brand-sub {
+            font-size: .52rem;
+            color: rgba(255, 255, 255, .28);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .lx-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(176, 141, 50, 0.3), transparent);
+            margin-bottom: 22px;
+        }
+
+        .login-field {
+            margin-bottom: 16px;
+        }
+
+        .login-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: .55rem;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--az-text-gray);
+            margin-bottom: 7px;
+        }
+
+        .lx-dot {
+            width: 4px;
+            height: 4px;
+            background: var(--az-gold);
+            display: inline-block;
+            flex-shrink: 0;
+        }
+
+        .lx-inp-wrap {
+            position: relative;
+        }
+
+        .lx-inp-ico {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--az-text-gray);
+            font-size: .75rem;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 11px 12px 11px 34px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(176, 141, 50, 0.18);
+            color: #fff;
+            font-size: .83rem;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            border-radius: 0;
+            transition: border-color .2s, background .2s;
+            box-sizing: border-box;
+        }
+
+        .login-input:focus {
+            border-color: var(--az-gold);
+            background: rgba(176, 141, 50, 0.05);
+        }
+
+        .login-input::placeholder {
+            color: rgba(255, 255, 255, .18);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 13px;
+            background: var(--az-gold);
+            border: none;
+            color: #000;
+            font-family: 'Inter', sans-serif;
+            font-size: .68rem;
+            font-weight: 800;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background .2s, transform .1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .login-btn:hover {
+            background: var(--az-gold-light);
+        }
+
+        .login-btn:active {
+            transform: scale(0.99);
+        }
+
+        .login-btn:disabled {
+            opacity: .45;
+            cursor: not-allowed;
+        }
+
+        .login-error {
+            background: rgba(239, 68, 68, .1);
+            border: 1px solid rgba(239, 68, 68, .25);
+            border-left: 3px solid var(--danger);
+            color: var(--danger);
+            padding: 9px 13px;
+            font-size: .7rem;
+            font-weight: 600;
+            margin-top: 12px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .login-loading {
+            text-align: center;
+            color: var(--az-gold);
+            font-size: .6rem;
+            letter-spacing: 2px;
+            margin-top: 10px;
+            display: none;
+            text-transform: uppercase;
+        }
+
+        .lx-footer {
+            margin-top: 18px;
+            text-align: center;
+            font-size: .5rem;
+            color: rgba(255, 255, 255, .18);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
     </style>
-    
+
 </head>
+
 <body>
-    
-<!-- LOGIN OVERLAY -->
+
+    <!-- LOGIN OVERLAY -->
 
     <!-- THEME TOGGLE -->
     <button class="theme-toggle" onclick="toggleTema()">
-        <svg id="iconSun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-        <svg id="iconMoon" viewBox="0 0 24 24" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg id="iconSun" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="5" />
+            <line x1="12" y1="1" x2="12" y2="3" />
+            <line x1="12" y1="21" x2="12" y2="23" />
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+            <line x1="1" y1="12" x2="3" y2="12" />
+            <line x1="21" y1="12" x2="23" y2="12" />
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+        </svg>
+        <svg id="iconMoon" viewBox="0 0 24 24" style="display:none">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+        </svg>
         <span id="themeLabel">ESCURO</span>
     </button>
 
@@ -1710,7 +2530,7 @@
 
         <!-- TOOLBAR -->
         <div class="toolbar-premium">
-            <input type="file" id="xmlInput"       style="display:none" accept=".xml" multiple>
+            <input type="file" id="xmlInput" style="display:none" accept=".xml" multiple>
             <input type="file" id="xmlEquipeInput" style="display:none" accept=".xml" multiple>
 
             <button class="btn-premium btn-premium-primary" onclick="document.getElementById('xmlInput').click()">
@@ -1719,9 +2539,14 @@
             <button class="btn-premium btn-premium-equipe" onclick="document.getElementById('xmlEquipeInput').click()">
                 <i class="fas fa-user-md"></i><span>Equipe Médica</span>
             </button>
+            <button class="btn-premium btn-premium-outline" id="btnModoEquipe" onclick="app.toggleModoEquipe()"
+                style="display:none;" title="Ver Cirurgião, Anestesista e 1º Auxiliar de todas as guias, sem precisar abrir cada uma">
+                <i class="fas fa-clipboard-list"></i><span>Verificação da Equipe</span>
+            </button>
             <div class="search-premium">
                 <i class="fas fa-search"></i>
-                <input type="text" id="search" placeholder="Buscar por guia, paciente, carteira, convênio ou procedimento...">
+                <input type="text" id="search"
+                    placeholder="Buscar por guia, paciente, carteira, convênio ou procedimento...">
             </div>
             <button class="btn-premium btn-premium-outline" onclick="app.toggleAll(true)">
                 <i class="fas fa-expand-alt"></i> Expandir
@@ -1729,10 +2554,12 @@
             <button class="btn-premium btn-premium-outline" onclick="app.toggleAll(false)">
                 <i class="fas fa-compress-alt"></i> Recolher
             </button>
-            <button class="btn-premium btn-premium-danger" onclick="app.clearAllFilters()" id="clearFiltersBtn" style="display:none">
+            <button class="btn-premium btn-premium-danger" onclick="app.clearAllFilters()" id="clearFiltersBtn"
+                style="display:none">
                 <i class="fas fa-times"></i> Limpar Filtros
             </button>
-            <button class="btn-premium btn-premium-sheets" id="btnSheets" onclick="sheetsConfig.openModal()" title="Configurar log automático no Google Sheets">
+            <button class="btn-premium btn-premium-sheets" id="btnSheets" onclick="sheetsConfig.openModal()"
+                title="Configurar log automático no Google Sheets">
                 <i class="fas fa-table"></i>
                 <span class="sheets-dot"></span>
                 <span id="btnSheetsLabel">Sheets</span>
@@ -1742,7 +2569,8 @@
         <!-- MODAL GOOGLE SHEETS -->
         <div class="sheets-modal-overlay" id="sheetsModalOverlay">
             <div class="sheets-modal">
-                <button class="sheets-modal-close" onclick="sheetsConfig.closeModal()"><i class="fas fa-times"></i></button>
+                <button class="sheets-modal-close" onclick="sheetsConfig.closeModal()"><i
+                        class="fas fa-times"></i></button>
                 <div class="sheets-modal-header">
                     <div class="sheets-modal-icon"><i class="fas fa-table"></i></div>
                     <div>
@@ -1754,15 +2582,19 @@
                 <div style="font-size:0.75rem;color:var(--az-text-gray);line-height:1.8;margin-bottom:20px;">
                     <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;">
                         <i class="fas fa-table" style="color:#0f9d58;margin-top:2px;"></i>
-                        <span>O log é gravado automaticamente a cada importação de XML. Nenhuma configuração necessária.</span>
+                        <span>O log é gravado automaticamente a cada importação de XML. Nenhuma configuração
+                            necessária.</span>
                     </div>
                     <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;">
                         <i class="fas fa-columns" style="color:#0f9d58;margin-top:2px;"></i>
-                        <span>Colunas registradas: <strong style="color:var(--text-main);">Data/Hora · Qtd Arquivos · Nomes · Total Guias · Erros · RA694 · RA554 · Grau · DNV · Óbito · Vencidas · Valor Total</strong></span>
+                        <span>Colunas registradas: <strong style="color:var(--text-main);">Data/Hora · Qtd Arquivos ·
+                                Nomes · Total Guias · Erros · RA694 · RA554 · Grau · DNV · Óbito · Vencidas · Valor
+                                Total</strong></span>
                     </div>
                     <div style="display:flex;align-items:flex-start;gap:10px;">
                         <i class="fas fa-lock" style="color:var(--az-gold);margin-top:2px;"></i>
-                        <span style="color:var(--az-text-gray);">Integração gerenciada internamente. Somente o administrador pode alterar a configuração.</span>
+                        <span style="color:var(--az-text-gray);">Integração gerenciada internamente. Somente o
+                            administrador pode alterar a configuração.</span>
                     </div>
                 </div>
                 <div class="sheets-modal-actions">
@@ -1783,7 +2615,8 @@
             <span id="equipeStatusPill" class="equipe-status-pill equipe-status-pending">
                 <i class="fas fa-clock"></i> Pendente
             </span>
-            <button class="btn-premium btn-premium-outline" style="padding:6px 12px;font-size:0.65rem;" onclick="app.limparEquipe()">
+            <button class="btn-premium btn-premium-outline" style="padding:6px 12px;font-size:0.65rem;"
+                onclick="app.limparEquipe()">
                 <i class="fas fa-trash"></i> Remover
             </button>
         </div>
@@ -1791,7 +2624,9 @@
         <!-- ACTIVE FILTERS -->
         <div id="activeFilters" class="active-filters-premium" style="display:none">
             <i class="fas fa-filter" style="color:var(--az-gold);font-size:0.8rem;"></i>
-            <span style="font-weight:700;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--az-text-gray);">Filtro Ativo</span>
+            <span
+                style="font-weight:700;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--az-text-gray);">Filtro
+                Ativo</span>
             <span id="activeFilterTag" class="filter-tag-premium">
                 <span id="activeFilterText"></span>
                 <i class="fas fa-times" onclick="app.clearAllFilters()" style="cursor:pointer;opacity:0.7;"></i>
@@ -1870,7 +2705,7 @@
         function aplicarDark(isDark) {
             document.body.classList.toggle('dark', isDark);
             document.getElementById('iconMoon').style.display = isDark ? 'none' : 'block';
-            document.getElementById('iconSun').style.display  = isDark ? 'block' : 'none';
+            document.getElementById('iconSun').style.display = isDark ? 'block' : 'none';
             document.getElementById('themeLabel').textContent = isDark ? 'CLARO' : 'ESCURO';
         }
         const savedTema = localStorage.getItem('axon-tema');
@@ -1879,15 +2714,27 @@
 
     <!-- MAIN APP JS (lógica original preservada integralmente) -->
     <script>
+        // Tabela oficial ANS - CodeSystem TUSS-35 (grauParticipacao)
+        // https://fhir.ans.gov.br/CodeSystem/tuss-35
         const GRAU_LABELS = {
-            '00': { label: 'Cirurgião',      classe: 'cirurgiao',    icon: 'fa-user-md',        grauTxt: 'Cirurgião (00)' },
-            '01': { label: '1º Auxiliar',    classe: 'primeiro-aux', icon: 'fa-hands-helping',  grauTxt: '1º Auxiliar (01)' },
-            '02': { label: '2º Auxiliar',    classe: 'segundo-aux',  icon: 'fa-hands-helping',  grauTxt: '2º Auxiliar (02)' },
-            '06': { label: 'Anestesista',    classe: 'anestesista',  icon: 'fa-syringe',        grauTxt: 'Anestesista (06)' },
-            '03': { label: '3º Auxiliar',    classe: 'desconhecido', icon: 'fa-user',           grauTxt: '3º Auxiliar (03)' },
-            '04': { label: 'Instrumentador', classe: 'desconhecido', icon: 'fa-toolbox',        grauTxt: 'Instrumentador (04)' },
-            '05': { label: 'Perfusionista',  classe: 'desconhecido', icon: 'fa-heart',          grauTxt: 'Perfusionista (05)' },
+            '00': { label: 'Cirurgião', classe: 'cirurgiao', icon: 'fa-user-md', grauTxt: 'Cirurgião (00)' },
+            '01': { label: '1º Auxiliar', classe: 'primeiro-aux', icon: 'fa-hands-helping', grauTxt: '1º Auxiliar (01)' },
+            '02': { label: '2º Auxiliar', classe: 'segundo-aux', icon: 'fa-hands-helping', grauTxt: '2º Auxiliar (02)' },
+            '03': { label: '3º Auxiliar', classe: 'desconhecido', icon: 'fa-user', grauTxt: '3º Auxiliar (03)' },
+            '04': { label: '4º Auxiliar', classe: 'desconhecido', icon: 'fa-user', grauTxt: '4º Auxiliar (04)' },
+            '05': { label: 'Instrumentador', classe: 'desconhecido', icon: 'fa-toolbox', grauTxt: 'Instrumentador (05)' },
+            '06': { label: 'Anestesista', classe: 'anestesista', icon: 'fa-syringe', grauTxt: 'Anestesista (06)' },
+            '07': { label: 'Aux. de Anestesia', classe: 'desconhecido', icon: 'fa-syringe', grauTxt: 'Auxiliar de Anestesia (07)' },
+            '08': { label: 'Consultor', classe: 'desconhecido', icon: 'fa-user-md', grauTxt: 'Consultor (08)' },
+            '09': { label: 'Perfusionista', classe: 'desconhecido', icon: 'fa-heart', grauTxt: 'Perfusionista (09)' },
+            '10': { label: 'Pediatra (parto)', classe: 'desconhecido', icon: 'fa-baby', grauTxt: 'Pediatra na sala de parto (10)' },
+            '11': { label: 'Auxiliar SADT', classe: 'desconhecido', icon: 'fa-user', grauTxt: 'Auxiliar SADT (11)' },
+            '12': { label: 'Clínico', classe: 'desconhecido', icon: 'fa-user-md', grauTxt: 'Clínico (12)' },
+            '13': { label: 'Intensivista', classe: 'desconhecido', icon: 'fa-user-md', grauTxt: 'Intensivista (13)' },
         };
+
+        // Ordem canônica de exibição das colunas de grau na tabela consolidada
+        const GRAU_ORDEM = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13'];
 
         function getGrauInfo(grau) {
             const g = (grau || '').toString().padStart(2, '0');
@@ -1901,15 +2748,81 @@
                 this.CODIGOS_DECLARACAO_NASCIDO = ["31309054", "31309127", "31309208", "31309097"];
                 this.MOTIVOS_OBITO = ["41", "42", "43"];
                 this.REGRAS_GRAU = {
-                    "Unimed":   { "10103023": 10, "10103015": 10, "10104020": 13, "10101039": 12,"10102019": 12  },
+                    "Unimed": { "10103023": 10, "10103015": 10, "10104020": 13, "10101039": 12, "10102019": 12 },
                     "Bradesco": { "10103023": 10, "10103015": 12 }
                 };
                 this.REGRAS_CONVENIO = {
-                    "Unimed":              { dias: 30,  cor: "unimed"   },
-                    "Bradesco Saúde":      { dias: 120, cor: "bradesco" },
-                    "Bradesco Operadora":  { dias: 120, cor: "bradesco" },
-                    "DEFAULT":             { dias: 30,  cor: "default"  }
+                    "Unimed": { dias: 30, cor: "unimed" },
+                    "Bradesco Saúde": { dias: 120, cor: "bradesco" },
+                    "Bradesco Operadora": { dias: 120, cor: "bradesco" },
+                    "DEFAULT": { dias: 30, cor: "default" }
                 };
+                // Médicos que JAMAIS podem aparecer como "P" (Repasse/principal) na verificação de
+                // equipe — devem sempre entrar como "C" (Credenciado/equipe). Se o XML principal
+                // trouxer algum destes nomes como profissional direto do procedimento (sem estar
+                // batido no XML de equipe/honorários), isso é sinalizado como erro na tabela.
+                this.MEDICOS_SEMPRE_C = new Set([
+                    "Fernando Jose Lopes Marques", "Antonio Cholfe", "Antonio De Padua Thiago",
+                    "Flavio Ercio Coelho De Vasconcelos", "Marco Antonio Bonini",
+                    "Marco Lucio Trajano Dos Santos", "Neide Keico Yanasse Dos Santos",
+                    "Jose Augusto Morila Guerra", "Evaristo Jurado Filho",
+                    "Ronaldo Sidney Molina Storti", "Ernani Jose Vilela Dos Reis",
+                    "Alexsandra Passarelli Giabardo Marques", "Paulo Carlos Veron Da Motta",
+                    "Josino Da Cunha Viana Neto", "Dirceu Garcia Dias", "Mauro De Almeida",
+                    "Regia Silvia Martins Tosta", "Ronaldo Nunes Ribeiro", "Ary De Queiroz Arao",
+                    "Julio Calil Neto", "Cesar Augusto Ferreira Alves",
+                    "Marcia Leda Capp Hamed Farinazzo", "Fernando Ferreira Freitas",
+                    "Joel Neves Peron", "Carlos Rodrigues De Mello", "Ivan Luiz Daur De Medeiros",
+                    "Mario Marcio Viana Dos Santos Pinto Carrico", "Douglas Henry Borges",
+                    "Luiz Satochi Fukagawa", "Marcus Vinicius Velasques Bruzadin",
+                    "Halan Castanheira Sampaio", "Marco Antonio Bonini Filho",
+                    "Ibsen Arsioli Pinho", "Luciana Yanasse Trajano Dos Santos",
+                    "Monica Mitie Shimizu Correa", "Karla Regina Anacleto Izidorio",
+                    "Vitor Hugo Cavallini", "Maria Beatriz Xavier Soares",
+                    "Marcio Ventura Ribeiro", "Adir Pires Maia Junior",
+                    "Guilherme De Oliveira Lima", "Ulisses Calandrin",
+                    "Vanessa Calil De Almeida Calandrin", "Eneias Dos Santos Cano",
+                    "Jose Ricardo Lourenco Guerra", "Mauricio De Magalhaes Naves Filho",
+                    "Andjara Doueidar Naves", "Rafael Dias De Almeida Mendes",
+                    "Alexandre Marques Martins", "Juliana Dias Granja Maia",
+                    "Marcelo Falco De Oliveira", "Marco Augusto Yanasse Trajano Dos Santos",
+                    "Marco Aurelio Fernandes Teixeira", "Lucas Lara Hahmed",
+                    "Guilherme Consentino Munhoz", "Thiago Bosch Viana",
+                    "Rafael Tibyrica Loureiro Da Rosa", "Lucio Rogerio Costa De Paula",
+                    "Rodrigo Augusto Melao Martinho", "Ruy Jose Da Costa Neto",
+                    "Lucas Assad De Paula", "Renato Pontelli", "Nivaldo Perez Parra Junior",
+                    "Aldo Zampieri Passalacqua", "Cesar Presto Campos",
+                    "Joao Paulo Freitas De Almeida", 
+                    "Maria Francischini Savazi", "Francielle Garcia Vargas",
+                    "Cinthia Santoro Storti Perez", "Airton Viana Montechi",
+                    "Marcelo Martins De Souza", "Rafael Almeida Momesso",
+                    "Deborah De Souza Pacheco", "Secinio Carvalho Dos Santos Junior",
+                    "Suelen Chagas Maia Pereira", "Aline Alves Moreira", "Eduardo Cintra Abib",
+                    "Marcos Flavio De Rezende", "Ulisses Pinto Ferreira",
+                    "Vivian Alves Moreira Fidelis", "Glaucia Moreira Souza De Queiroz",
+                    "Laise Fazanha Sgarbi", "Oacir Batista De Rezende Filho",
+                    "Tarso Nascimbem Ferraz", "Antonio Carlos Cavalcante Godoy",
+                    "Natacha Biscaro Junqueira Ferraz", "Isabela Peron Melhado",
+                    "Nadia Arenas Versali De Castro", "Leonardo Leite De Queiroz Silva",
+                    "Gustavo Floriano De Queiroz", "Daniel Eugenio Montezzo",
+                    "Olavo Satoshi Arantes", "Astrogildo Settini Pessoa Filho",
+                    "Augusto Cesar Bernardes Miguel", "Bruno Takashi Yano",
+                    "Fernando Oguita Arantes", "Monike Daiane Alves Vital",
+                    "Murilo Santos Da Silva", "Flavio Urizzi Da Motta",
+                    "Larissa Alves Da Silveira", "Liliane De Azevedo Ruy Coutrin",
+                    "Cesar Augusto Luz Suenaga", "Renata Falco De Oliveira",
+                    "Joao Gabriel Craveiro Goncalves De Oliveira", "Lilian Cristina Camargo Ottoni",
+                    "Wankel Otto Beccaria Viola", "Vitor Horta De Lima Filho",
+                    "Romualdo Silva Aguiar", "Nikolas Higa Benites",
+                    "Joana Alexandria Ferreira Dias", "Maytha Penteado Galli Ribeiro",
+                    "Sarah Romero Barbosa Sanches", "Francisco Marcio Carvalho Filho",
+                    "Lucas Alberto Furlan", "Junior Vasconcelos", "Fabricio Mazotti",
+                    "Taciana Nascimento Gasparini", "Guilherme Pereira Thiago",
+                    "Diogo Peres Martins Soares", "Vitoria Rocha Peron Thiago",
+                    "Liliane Cosim Camargo Mariano", "Augusto Alves Pavam",
+                    "Bruno Gonzales Miniello", "Bianca Vilela Jorge Mendes",
+                    "Kleber Ronaldo Dos Santos Caetano", "Lara Silva Paixao"
+                ].map(n => this.normalizarNomeMedico(n)));
                 this.arquivos = [];
                 this.filtroAtual = { tipo: 'all', erro: null, codigo: null };
                 this.arquivoAtivo = null;
@@ -1917,6 +2830,7 @@
                 this.equipeCarregada = false;
                 this.equipeArquivos = [];
                 this.nomesProcedimento = new Map();
+                this.modoEquipe = false;
                 this.init();
             }
 
@@ -1928,6 +2842,21 @@
                     clearTimeout(timeout);
                     timeout = setTimeout(() => this.filterSearch(), 300);
                 });
+            }
+
+            // Normaliza nome de médico para comparação robusta: remove acentos, colapsa espaços,
+            // ignora caixa. Usado para checar a lista MEDICOS_SEMPRE_C independente de como o
+            // nome vier grafado no XML.
+            normalizarNomeMedico(nome) {
+                return (nome || '')
+                    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                    .trim().replace(/\s+/g, ' ')
+                    .toUpperCase();
+            }
+
+            // true se este nome está na lista de médicos que nunca podem ser "P" (Repasse/principal)
+            isMedicoSempreC(nome) {
+                return this.MEDICOS_SEMPRE_C.has(this.normalizarNomeMedico(nome));
             }
 
             showLoading(show) { document.getElementById('loading').style.display = show ? 'flex' : 'none'; }
@@ -1947,7 +2876,7 @@
                     dateStr = dateStr.split('T')[0];
                     if (dateStr.includes('/')) { const [d, m, y] = dateStr.split('/'); return new Date(y, m - 1, d); }
                     if (dateStr.includes('-')) { const [y, m, d] = dateStr.split('-'); return new Date(y, m - 1, d); }
-                } catch (e) {}
+                } catch (e) { }
                 return null;
             }
 
@@ -1976,9 +2905,9 @@
 
             identificarCarteira(num) {
                 num = num || '';
-                if (num.startsWith('00758'))     return { label: 'LOCAL PERSONAL', class: 'badge-personal-local', isLocal: true };
-                if (num.startsWith('08650004'))  return { label: 'INTER. PERSONAL', class: 'badge-personal-inter', isLocal: false };
-                if (num.startsWith('0075'))      return { label: 'LOCAL', class: 'badge-local', isLocal: true };
+                if (num.startsWith('00758')) return { label: 'LOCAL PERSONAL', class: 'badge-personal-local', isLocal: true };
+                if (num.startsWith('08650004')) return { label: 'INTER. PERSONAL', class: 'badge-personal-inter', isLocal: false };
+                if (num.startsWith('0075')) return { label: 'LOCAL', class: 'badge-local', isLocal: true };
                 return { label: 'INTERCAMBIO', class: 'badge-inter', isLocal: false };
             }
 
@@ -1990,7 +2919,7 @@
             }
 
             getConvenioBadgeClass(nomeConvenio) {
-                if (nomeConvenio.includes('Unimed'))   return 'badge-unimed';
+                if (nomeConvenio.includes('Unimed')) return 'badge-unimed';
                 if (nomeConvenio.includes('Bradesco')) return 'badge-bradesco';
                 return 'badge-convenio-default';
             }
@@ -2081,7 +3010,7 @@
                             if (conselho !== '06') return;
                             const grau = getT(prof, 'grauParticipacao') || '06';
                             const nome = getT(prof, 'nomeProfissional');
-                            const cpf  = getT(prof, 'cpfContratado');
+                            const cpf = getT(prof, 'cpfContratado');
                             if (!nome) return;
                             this.equipePorGuia.get(chaveCompleta).push({ nome, grau, cpf, conselho, codigoProcedimento, nomeProcedimento, fonte: 'equipe' });
                         });
@@ -2163,11 +3092,11 @@
                     });
 
                     const graus = membros.map(m => (m.grau || '99').toString().padStart(2, '0'));
-                    const temCirurgiao  = graus.includes('00');
-                    const tem1Aux       = graus.includes('01');
+                    const temCirurgiao = graus.includes('00');
+                    const tem1Aux = graus.includes('01');
                     const temAnestesista = graus.includes('06');
                     const alertas = [];
-                    if (temCirurgiao && !tem1Aux)        alertas.push({ icon: 'fa-exclamation-triangle', msg: 'Falta 1º Auxiliar (grau 01)' });
+                    if (temCirurgiao && !tem1Aux) alertas.push({ icon: 'fa-exclamation-triangle', msg: 'Falta 1º Auxiliar (grau 01)' });
                     if (temCirurgiao && !temAnestesista) alertas.push({ icon: 'fa-syringe', msg: 'Falta Anestesista (grau 06)' });
 
                     html += `<div class="equipe-proc-block">
@@ -2181,13 +3110,16 @@
                     membros.forEach(m => {
                         const grauKey = (m.grau || '99').toString().padStart(2, '0');
                         const info = getGrauInfo(grauKey);
-                        const fonteTag = m.fonte === 'equipe'
-                            ? '<span class="equipe-fonte-tag equipe-fonte-equipe">C · Credenciado</span>'
-                            : '<span class="equipe-fonte-tag equipe-fonte-principal">P · Repasse</span>';
-                        html += `<div class="equipe-membro ${info.classe}">
+                        const errouFonte = m.fonte === 'principal' && this.isMedicoSempreC(m.nome);
+                        const fonteTag = errouFonte
+                            ? '<span class="equipe-fonte-tag" style="background:var(--danger-bg);border-color:var(--danger-border);color:var(--danger);" title="Erro: este médico não pode ser P (Repasse) — deve ser sempre C (Credenciado)"><i class="fas fa-exclamation-triangle"></i> P · Repasse (indevido)</span>'
+                            : (m.fonte === 'equipe'
+                                ? '<span class="equipe-fonte-tag equipe-fonte-equipe">C · Credenciado</span>'
+                                : '<span class="equipe-fonte-tag equipe-fonte-principal">P · Repasse</span>');
+                        html += `<div class="equipe-membro ${info.classe}${errouFonte ? ' linha-pendente' : ''}">
                             <i class="fas ${info.icon}"></i>
                             <span class="equipe-role-label">${info.label}</span>
-                            <span class="equipe-membro-nome">${this.escapeHtml(m.nome || '—')}${fonteTag}</span>
+                            <span class="equipe-membro-nome" style="${errouFonte ? 'color:var(--danger);font-weight:600;' : ''}">${this.escapeHtml(m.nome || '—')}${fonteTag}</span>
                             <span class="equipe-grau-badge">${info.grauTxt}</span>
                         </div>`;
                     });
@@ -2205,23 +3137,209 @@
 
             atualizarPainelEquipe() {
                 const painel = document.getElementById('equipePainel');
-                const desc   = document.getElementById('equipeStatusDesc');
-                const pill   = document.getElementById('equipeStatusPill');
+                const desc = document.getElementById('equipeStatusDesc');
+                const pill = document.getElementById('equipeStatusPill');
                 painel.style.display = 'flex';
                 const totalGuiasEquipe = this.equipePorGuia.size;
                 const arquivosStr = this.equipeArquivos.length === 1 ? this.equipeArquivos[0] : `${this.equipeArquivos.length} arquivos carregados`;
                 desc.textContent = `${arquivosStr} · ${totalGuiasEquipe} guias com equipe · ${this.nomesProcedimento.size} procedimentos`;
                 pill.className = 'equipe-status-pill equipe-status-ok';
                 pill.innerHTML = '<i class="fas fa-check-circle"></i> Carregada';
+                const btnModo = document.getElementById('btnModoEquipe');
+                if (btnModo) btnModo.style.display = 'inline-flex';
             }
 
             limparEquipe() {
-                this.equipePorGuia    = new Map();
-                this.equipeCarregada  = false;
-                this.equipeArquivos   = [];
+                this.equipePorGuia = new Map();
+                this.equipeCarregada = false;
+                this.equipeArquivos = [];
+                this.modoEquipe = false;
                 document.getElementById('equipePainel').style.display = 'none';
+                const btnModo = document.getElementById('btnModoEquipe');
+                if (btnModo) { btnModo.style.display = 'none'; btnModo.classList.remove('is-active-equipe'); }
                 if (this.arquivoAtivo) this.renderTabContent(this.arquivoAtivo);
                 this.showToast('Dados de equipe médica removidos', 'info');
+            }
+
+            toggleModoEquipe() {
+                this.modoEquipe = !this.modoEquipe;
+                const btn = document.getElementById('btnModoEquipe');
+                if (btn) btn.classList.toggle('is-active-equipe', this.modoEquipe);
+                if (this.arquivoAtivo) this.renderTabContent(this.arquivoAtivo);
+            }
+
+            // Agrupa a equipe (cirurgião/anestesista/auxiliares) de uma guia por procedimento,
+            // igual à lógica usada no card individual, mas retornando dados (não HTML) para a
+            // tabela de verificação consolidada.
+            getEquipeAgrupada(guia) {
+                if (!this.equipeCarregada) return [];
+                const CODIGOS_IGNORAR_EQUIPE = ['20203047', '20103093'];
+                const equipeExterna = this.getEquipePorGuia(guia.numero, guia.senha || '');
+                const equipeInterna = [];
+                (guia.items || []).forEach(item => {
+                    if (item.profissionais && item.profissionais.length) {
+                        item.profissionais.forEach(prof => {
+                            equipeInterna.push({ ...prof, codigoProcedimento: item.codigo, nomeProcedimento: item.nome, fonte: 'principal' });
+                        });
+                    }
+                });
+
+                const porProcedimento = new Map();
+                equipeInterna.forEach(prof => {
+                    const codProc = prof.codigoProcedimento;
+                    if (!codProc || CODIGOS_IGNORAR_EQUIPE.includes(codProc)) return;
+                    if (!porProcedimento.has(codProc)) porProcedimento.set(codProc, new Map());
+                    const mapaProc = porProcedimento.get(codProc);
+                    const chave = prof.cpf || `${prof.nome}|${prof.grau}`;
+                    if (!mapaProc.has(chave)) mapaProc.set(chave, { ...prof, fonte: prof.fonte || 'principal' });
+                });
+
+                equipeExterna.forEach(prof => {
+                    const codProc = prof.codigoProcedimento;
+                    if (!codProc || CODIGOS_IGNORAR_EQUIPE.includes(codProc)) return;
+                    if (!porProcedimento.has(codProc)) porProcedimento.set(codProc, new Map());
+                    const mapaProc = porProcedimento.get(codProc);
+                    const chave = prof.cpf || `${prof.nome}|${prof.grau}`;
+                    if (!mapaProc.has(chave)) {
+                        mapaProc.set(chave, { ...prof, fonte: 'equipe' });
+                    } else {
+                        const existente = mapaProc.get(chave);
+                        if (existente.fonte === 'principal') {
+                            existente.fonte = 'equipe';
+                            if (!existente.cpf && prof.cpf) existente.cpf = prof.cpf;
+                        }
+                    }
+                });
+
+                const blocos = [];
+                for (let [codProc, mapaMembros] of porProcedimento) {
+                    const membros = Array.from(mapaMembros.values());
+                    let nomeProc = this.nomesProcedimento.get(codProc);
+                    if (!nomeProc || nomeProc === codProc) {
+                        const profEquipe = equipeExterna.find(p => p.codigoProcedimento === codProc);
+                        if (profEquipe && profEquipe.nomeProcedimento) nomeProc = profEquipe.nomeProcedimento;
+                    }
+                    if (!nomeProc || nomeProc === codProc) nomeProc = 'Procedimento não identificado';
+
+                    const porGrau = (g) => membros.filter(m => (m.grau || '99').toString().padStart(2, '0') === g).map(m => m.nome);
+                    const cirurgioes = porGrau('00');
+                    const anestesistas = porGrau('06');
+                    const primeirosAux = porGrau('01');
+                    const faltando = [];
+                    if (cirurgioes.length && !anestesistas.length) faltando.push('Anestesista');
+                    if (cirurgioes.length && !primeirosAux.length) faltando.push('1º Auxiliar');
+
+                    // Agrupa TODOS os membros por grau (não só cirurgião/anestesista/1º aux),
+                    // para exibir todos os médicos e seu grau de participação na tabela consolidada
+                    const porGrauMap = new Map();
+                    const errosFonte = [];
+                    membros.forEach(m => {
+                        const g = (m.grau || '99').toString().padStart(2, '0');
+                        if (!porGrauMap.has(g)) porGrauMap.set(g, []);
+                        const errouFonte = m.fonte === 'principal' && this.isMedicoSempreC(m.nome);
+                        if (errouFonte) errosFonte.push(m.nome);
+                        porGrauMap.get(g).push({ nome: m.nome, fonte: m.fonte, errouFonte });
+                    });
+
+                    blocos.push({ codProc, nomeProc, cirurgioes, anestesistas, primeirosAux, faltando, porGrauMap, errosFonte });
+                }
+                return blocos;
+            }
+
+            renderEquipeVerificacao(guias, containerId) {
+                const content = document.getElementById('tabsContent');
+                if (!this.equipeCarregada) {
+                    content.innerHTML = `<div class="empty-state-premium"><i class="fas fa-user-md"></i><h3>Nenhum XML de equipe importado</h3><p style="font-size:0.7rem;color:var(--az-text-gray);margin-top:6px;">Clique em "Equipe Médica" para importar o XML de repasse/equipe antes de usar a verificação.</p></div>`;
+                    return;
+                }
+
+                const linhas = [];
+                guias.forEach(guia => {
+                    const blocos = this.getEquipeAgrupada(guia);
+                    blocos.forEach(b => linhas.push({ guia, ...b }));
+                });
+
+                const totalLinhas = linhas.length;
+                const totalPendentes = linhas.filter(l => l.faltando.length > 0).length;
+                const totalErrosFonte = linhas.filter(l => l.errosFonte && l.errosFonte.length > 0).length;
+                const totalCompletas = totalLinhas - linhas.filter(l => l.faltando.length > 0 || (l.errosFonte && l.errosFonte.length > 0)).length;
+
+                let html = `<div class="equipe-verif-summary">
+                    <div class="equipe-verif-pill"><i class="fas fa-list"></i><span class="num">${totalLinhas}</span> procedimento(s)</div>
+                    <div class="equipe-verif-pill ok"><i class="fas fa-check-circle"></i><span class="num">${totalCompletas}</span> completo(s)</div>
+                    <div class="equipe-verif-pill pendente"><i class="fas fa-exclamation-triangle"></i><span class="num">${totalPendentes}</span> pendente(s)</div>
+                    ${totalErrosFonte ? `<div class="equipe-verif-pill pendente" style="border-color:var(--danger-border);color:var(--danger);"><i class="fas fa-user-times"></i><span class="num">${totalErrosFonte}</span> médico(s) indevido(s) como P</div>` : ''}
+                </div>
+                <div class="equipe-verif-table-wrap">`;
+
+                if (!linhas.length) {
+                    html += `<div class="empty-state-premium"><i class="fas fa-user-md"></i><h3>Nenhuma guia com dados de equipe nesta aba</h3></div>`;
+                } else {
+                    // Descobre quais graus realmente aparecem nas linhas filtradas e monta
+                    // uma coluna dinâmica para cada um, na ordem canônica GRAU_ORDEM.
+                    const grausPresentes = new Set();
+                    linhas.forEach(l => { for (const g of l.porGrauMap.keys()) grausPresentes.add(g); });
+                    const colunasGrau = GRAU_ORDEM.filter(g => grausPresentes.has(g))
+                        .concat(Array.from(grausPresentes).filter(g => !GRAU_ORDEM.includes(g)).sort());
+
+                    // Graus considerados obrigatórios quando há cirurgião (mesma regra de "faltando" já usada)
+                    const GRAUS_OBRIGATORIOS = ['00', '01', '06'];
+
+                    html += `<table class="equipe-verif-table">
+                        <thead><tr>
+                            <th>Guia</th>
+                            <th>Procedimento</th>`;
+                    colunasGrau.forEach(g => {
+                        const info = getGrauInfo(g);
+                        html += `<th><i class="fas ${info.icon}"></i> ${this.escapeHtml(info.label)} <span style="opacity:.6;font-weight:400;">(${g})</span></th>`;
+                    });
+                    html += `<th>Status</th>
+                        </tr></thead><tbody>`;
+
+                    linhas.forEach(l => {
+                        const g = l.guia;
+                        const displayBeneficiario = g.beneficiario === 'Beneficiário não identificado' ? g.carteira : g.beneficiario;
+                        const nomesTodasColunas = colunasGrau.map(gr => (l.porGrauMap.get(gr) || []).map(p => p.nome).join(' ')).join(' ');
+                        const buscaTexto = `${g.numero || ''} ${displayBeneficiario || ''} ${g.carteira || ''} ${g.convenio || ''} ${l.nomeProc || ''} ${nomesTodasColunas}`.toLowerCase();
+                        const temCirurgiao = (l.porGrauMap.get('00') || []).length > 0;
+                        const temErroFonte = l.errosFonte && l.errosFonte.length > 0;
+                        const partesStatus = [];
+                        if (l.faltando.length) partesStatus.push(`<span class="equipe-verif-status-falta"><i class="fas fa-exclamation-triangle"></i>Falta ${this.escapeHtml(l.faltando.join(' e '))}</span>`);
+                        if (temErroFonte) partesStatus.push(`<span class="equipe-verif-status-falta" style="color:var(--danger);border-color:var(--danger-border);background:var(--danger-bg);" title="Este(s) médico(s) não pode(m) ser lançado(s) como P (Repasse) — deve(m) sempre ser C (Credenciado)"><i class="fas fa-user-times"></i>${this.escapeHtml(l.errosFonte.join(', '))} não pode(m) ser P</span>`);
+                        const statusHtml = partesStatus.length ? partesStatus.join('<br>') : `<span class="equipe-verif-status-ok"><i class="fas fa-check-circle"></i>Completo</span>`;
+
+                        html += `<tr class="equipe-table-row ${(l.faltando.length || temErroFonte) ? 'linha-pendente' : ''}" data-busca="${this.escapeHtml(buscaTexto)}">
+                            <td class="equipe-verif-guia">${this.escapeHtml(g.numero)}<small>${this.escapeHtml(displayBeneficiario)}</small></td>
+                            <td>${this.escapeHtml(l.nomeProc)}<br><small style="color:var(--az-text-gray);">${this.escapeHtml(l.codProc)}</small></td>`;
+
+                        colunasGrau.forEach(gr => {
+                            const pessoas = l.porGrauMap.get(gr) || [];
+                            if (pessoas.length) {
+                                const nomesHtml = pessoas.map(p => {
+                                    const letra = p.fonte === 'equipe' ? 'C' : 'P';
+                                    const classeLetra = p.errouFonte ? 'err' : (p.fonte === 'equipe' ? 'eq' : 'pr');
+                                    const tituloErro = p.errouFonte ? ` title="Erro: médico não pode ser P (Repasse) — deve ser sempre C (Credenciado)"` : '';
+                                    const nomeHtml = p.errouFonte
+                                        ? `<span style="color:var(--danger);font-weight:600;">${this.escapeHtml(p.nome || '—')} <i class="fas fa-exclamation-triangle" style="font-size:0.6rem;"></i></span>`
+                                        : this.escapeHtml(p.nome || '—');
+                                    return `<span class="equipe-verif-fonte-letra ${classeLetra}"${tituloErro}>${letra}</span>${nomeHtml}`;
+                                }).join('<br>');
+                                html += `<td>${nomesHtml}</td>`;
+                            } else if (temCirurgiao && GRAUS_OBRIGATORIOS.includes(gr)) {
+                                html += `<td><span class="equipe-verif-nome-falta"><i class="fas fa-times-circle"></i>—</span></td>`;
+                            } else {
+                                html += `<td style="color:var(--az-text-gray);">—</td>`;
+                            }
+                        });
+
+                        html += `<td>${statusHtml}</td>
+                        </tr>`;
+                    });
+
+                    html += `</tbody></table>`;
+                }
+                html += `</div>`;
+                content.innerHTML = html;
             }
 
             // ========== PROCESSAMENTO PRINCIPAL ==========
@@ -2249,8 +3367,8 @@
                 document.getElementById('headerStats').style.display = 'flex';
                 const totalGuias = this.arquivos.reduce((a, arq) => a + arq.stats.total, 0);
                 const totalValor = this.arquivos.reduce((a, arq) => a + arq.stats.valor, 0);
-                document.getElementById('headerFileCount').innerText  = this.arquivos.length;
-                document.getElementById('headerGuiaCount').innerText  = totalGuias;
+                document.getElementById('headerFileCount').innerText = this.arquivos.length;
+                document.getElementById('headerGuiaCount').innerText = totalGuias;
                 document.getElementById('headerValorTotal').innerText = this.formatCurrency(totalValor);
             }
 
@@ -2266,7 +3384,7 @@
                             this.arquivos.push({ nome: file.name, guias, stats: this.calcularStats(guias) });
                         } catch (e) {
                             this.showToast(`Erro em ${file.name}: ${e.message}`, 'error');
-                            this.arquivos.push({ nome: file.name, guias: [], stats: { total:0,erros:0,erros694:0,erros554:0,errosGrau:0,errosNascido:0,errosObito:0,vencidas:0,valor:0,locais:0,intercambio:0 }, erro: true });
+                            this.arquivos.push({ nome: file.name, guias: [], stats: { total: 0, erros: 0, erros694: 0, erros554: 0, errosGrau: 0, errosNascido: 0, errosObito: 0, vencidas: 0, valor: 0, locais: 0, intercambio: 0 }, erro: true });
                         }
                         resolve();
                     };
@@ -2280,10 +3398,10 @@
                 const elements = doc.querySelectorAll('guiaSP-SADT, guiaResumoInternacao, guiaConsulta, guiaHonorarios');
 
                 elements.forEach(guia => {
-                    const numG   = this.getXMLTag(guia, "numeroGuiaPrestador") || "-";
-                    const cart   = this.getXMLTag(guia, "numeroCarteira") || "";
-                    const nomeB  = this.getXMLTag(guia, "nomeBeneficiario") || "Beneficiário não identificado";
-                    const info   = this.identificarCarteira(cart);
+                    const numG = this.getXMLTag(guia, "numeroGuiaPrestador") || "-";
+                    const cart = this.getXMLTag(guia, "numeroCarteira") || "";
+                    const nomeB = this.getXMLTag(guia, "nomeBeneficiario") || "Beneficiário não identificado";
+                    const info = this.identificarCarteira(cart);
                     let codPrestador = this.getXMLTag(guia, "codigoPrestadorNaOperadora") || this.getXMLTag(doc, "codigoPrestadorNaOperadora");
                     const nomeConvenio = this.identificarConvenio(codPrestador, cart);
                     const dataRef = this.getXMLTag(guia, "dataFinalFaturamento") || this.getXMLTag(guia, "dataAutorizacao") || this.getXMLTag(guia, "dataExecucao") || "";
@@ -2296,16 +3414,27 @@
                     if (!senha) senha = '';
 
                     const todosProcs = [];
-                    const procs = guia.querySelectorAll('procedimentoExecutado, servicosExecutados, procedimentoRealizado');
+                    const seqItensVistos = new Set();
                     const outrasDespesas = guia.getElementsByTagNameNS(this.ns, 'outrasDespesas');
                     Array.from(outrasDespesas).forEach(od => {
                         const despesas = od.getElementsByTagNameNS(this.ns, 'despesa');
                         Array.from(despesas).forEach(despesa => {
+                            const seqItem = this.getXMLTag(despesa, "sequencialItem");
+                            if (seqItem) {
+                                if (seqItensVistos.has(seqItem)) return; // item já processado (mesmo sequencialItem) — evita duplicidade
+                                seqItensVistos.add(seqItem);
+                            }
                             const servicos = despesa.getElementsByTagNameNS(this.ns, 'servicosExecutados');
                             Array.from(servicos).forEach(s => todosProcs.push(s));
                         });
                     });
-                    Array.from(procs).forEach(p => todosProcs.push(p));
+                    // procedimentoExecutado/procedimentoRealizado (guias sem outrasDespesas) — exclui qualquer servicosExecutados
+                    // que já tenha sido capturado acima dentro de outrasDespesas > despesa, para não duplicar o item
+                    const procs = guia.querySelectorAll('procedimentoExecutado, servicosExecutados, procedimentoRealizado');
+                    Array.from(procs).forEach(p => {
+                        if (p.closest('outrasDespesas')) return;
+                        todosProcs.push(p);
+                    });
 
                     const temDeclaracaoNascido = !!(guia.getElementsByTagNameNS(this.ns, "declaracaoNascido")[0] || guia.getElementsByTagName("declaracaoNascido")[0]);
                     const motivoEncerramentoTag = guia.getElementsByTagNameNS(this.ns, "motivoEncerramento")[0] || guia.getElementsByTagName("motivoEncerramento")[0];
@@ -2313,11 +3442,12 @@
                     const temDeclaracaoObito = !!(guia.getElementsByTagNameNS(this.ns, "declaracaoObito")[0] || guia.getElementsByTagName("declaracaoObito")[0]);
                     const exigeObito = motivoEncerramento && this.MOTIVOS_OBITO.includes(motivoEncerramento);
                     const isBradesco = nomeConvenio.includes("Bradesco");
+                    const isUnimed = nomeConvenio.includes("Unimed");
 
                     const tem694 = todosProcs.some(p => { const c = this.getXMLTag(p, "codigoProcedimento"); return c === "60000694" || (c === "60000805" && isBradesco); });
-                    const tem554 = todosProcs.some(p => { const c = this.getXMLTag(p, "codigoProcedimento"); return c === "60000554" || (c === "60000511" && isBradesco); });
+                    const tem554 = todosProcs.some(p => { const c = this.getXMLTag(p, "codigoProcedimento"); return c === "60000554" || (c === "60000511" && isBradesco) || (c === "60000651" && isUnimed); });
                     const cod694Encontrado = todosProcs.map(p => this.getXMLTag(p, "codigoProcedimento")).find(c => c === "60000694" || (c === "60000805" && isBradesco)) || "60000694";
-                    const cod554Encontrado = todosProcs.map(p => this.getXMLTag(p, "codigoProcedimento")).find(c => c === "60000554" || (c === "60000511" && isBradesco)) || "60000554";
+                    const cod554Encontrado = todosProcs.map(p => this.getXMLTag(p, "codigoProcedimento")).find(c => c === "60000554" || (c === "60000511" && isBradesco) || (c === "60000651" && isUnimed)) || "60000554";
 
                     let items = [], valorTotal = 0, temErro = false, erros = [], codigosNascidoPresentes = [];
 
@@ -2342,7 +3472,7 @@
                             if (conselhoM !== '06') return;
                             const grauM = this.getXMLTag(membro, 'grauPart') || '06';
                             const nomeM = this.getXMLTag(membro, 'nomeProf');
-                            const cpfM  = this.getXMLTag(membro, 'cpfContratado');
+                            const cpfM = this.getXMLTag(membro, 'cpfContratado');
                             if (!nomeM) return;
                             profissionaisPrincipal.push({ nome: nomeM, grau: grauM, cpf: cpfM, conselho: conselhoM });
                         });
@@ -2352,7 +3482,7 @@
                             if (conselhoM !== '06') return;
                             const grauM = this.getXMLTag(prof, 'grauParticipacao') || '06';
                             const nomeM = this.getXMLTag(prof, 'nomeProfissional');
-                            const cpfM  = this.getXMLTag(prof, 'cpfContratado');
+                            const cpfM = this.getXMLTag(prof, 'cpfContratado');
                             if (!nomeM) return;
                             profissionaisPrincipal.push({ nome: nomeM, grau: grauM, cpf: cpfM, conselho: conselhoM });
                         });
@@ -2394,31 +3524,33 @@
             }
 
             calcularStats(guias) {
-                let erros694=0,erros554=0,errosGrau=0,errosNascido=0,errosObito=0;
+                let erros694 = 0, erros554 = 0, errosGrau = 0, errosNascido = 0, errosObito = 0;
                 guias.forEach(g => g.erros.forEach(e => {
-                    if (e.tipo==='ra_694') erros694++;
-                    if (e.tipo==='ra_554') erros554++;
-                    if (e.tipo==='grau_incorreto') errosGrau++;
-                    if (e.tipo==='sem_declaracao_nascido') errosNascido++;
-                    if (e.tipo==='sem_declaracao_obito') errosObito++;
+                    if (e.tipo === 'ra_694') erros694++;
+                    if (e.tipo === 'ra_554') erros554++;
+                    if (e.tipo === 'grau_incorreto') errosGrau++;
+                    if (e.tipo === 'sem_declaracao_nascido') errosNascido++;
+                    if (e.tipo === 'sem_declaracao_obito') errosObito++;
                 }));
-                return { total: guias.length, erros: guias.filter(g=>g.temErro).length, erros694, erros554, errosGrau, errosNascido, errosObito, vencidas: guias.filter(g=>g.vencida).length, valor: guias.reduce((a,g)=>a+g.valorTotal,0), locais: guias.filter(g=>g.tipo.isLocal).length, intercambio: guias.filter(g=>!g.tipo.isLocal).length };
+                return { total: guias.length, erros: guias.filter(g => g.temErro).length, erros694, erros554, errosGrau, errosNascido, errosObito, vencidas: guias.filter(g => g.vencida).length, valor: guias.reduce((a, g) => a + g.valorTotal, 0), locais: guias.filter(g => g.tipo.isLocal).length, intercambio: guias.filter(g => !g.tipo.isLocal).length };
             }
 
             identificarVinculos(guias) {
                 const indice = {};
                 guias.forEach(guia => {
                     if (!guia.carteira) return;
-                    const datasItens = (guia.items||[]).map(it=>this.parseDate(it.data)).filter(Boolean).map(d=>d.getTime());
+                    const datasItens = (guia.items || []).map(it => this.parseDate(it.data)).filter(Boolean).map(d => d.getTime());
                     const dataBase = datasItens.length > 0 ? new Date(Math.min(...datasItens)) : this.parseDate(guia.dataReferencia);
                     if (!dataBase) return;
-                    const chave = `${guia.carteira}|${dataBase.toISOString().slice(0,10)}`;
+                    const chave = `${guia.carteira}|${dataBase.toISOString().slice(0, 10)}`;
                     if (!indice[chave]) indice[chave] = [];
                     indice[chave].push(guia);
                 });
                 Object.values(indice).forEach(grupo => {
                     if (grupo.length < 2) return;
-                    grupo.forEach((guia,idx) => { guia.vinculada = true; guia.grupoVinculo = grupo.filter((_,i)=>i!==idx).map(g=>g.numero); });
+                    const temCodigoGatilho = grupo.some(g => (g.items || []).some(it => it.codigo === '10101039'));
+                    if (!temCodigoGatilho) return;
+                    grupo.forEach((guia, idx) => { guia.vinculada = true; guia.grupoVinculo = grupo.filter((_, i) => i !== idx).map(g => g.numero); });
                 });
             }
 
@@ -2428,22 +3560,22 @@
                 return tag ? tag.textContent.trim() : null;
             }
 
-            parseCurrency(value) { if (!value) return 0; return parseFloat(value.toString().replace(',','.')) || 0; }
+            parseCurrency(value) { if (!value) return 0; return parseFloat(value.toString().replace(',', '.')) || 0; }
 
             renderErrorFilters() {
                 const container = document.getElementById('errorFilters');
                 container.style.display = 'flex';
-                const t694    = this.arquivos.reduce((a,arq)=>a+arq.stats.erros694,0);
-                const t554    = this.arquivos.reduce((a,arq)=>a+arq.stats.erros554,0);
-                const tGrau   = this.arquivos.reduce((a,arq)=>a+arq.stats.errosGrau,0);
-                const tNascido = this.arquivos.reduce((a,arq)=>a+arq.stats.errosNascido,0);
-                const tObito  = this.arquivos.reduce((a,arq)=>a+arq.stats.errosObito,0);
+                const t694 = this.arquivos.reduce((a, arq) => a + arq.stats.erros694, 0);
+                const t554 = this.arquivos.reduce((a, arq) => a + arq.stats.erros554, 0);
+                const tGrau = this.arquivos.reduce((a, arq) => a + arq.stats.errosGrau, 0);
+                const tNascido = this.arquivos.reduce((a, arq) => a + arq.stats.errosNascido, 0);
+                const tObito = this.arquivos.reduce((a, arq) => a + arq.stats.errosObito, 0);
                 container.innerHTML = `
-                    <button class="filter-btn-premium ${this.filtroAtual.erro==='694'?'active':''}" onclick="app.filterByError('694')"><i class="fas fa-exclamation-triangle"></i>Erro Enfermaria<span class="filter-count">${t694}</span></button>
-                    <button class="filter-btn-premium ${this.filtroAtual.erro==='554'?'active':''}" onclick="app.filterByError('554')"><i class="fas fa-exclamation-triangle"></i>Erro Apartamento<span class="filter-count">${t554}</span></button>
-                    <button class="filter-btn-premium ${this.filtroAtual.erro==='grau'?'active':''}" onclick="app.filterByError('grau')"><i class="fas fa-exclamation-triangle"></i>Erro Grau Part.<span class="filter-count">${tGrau}</span></button>
-                    <button class="filter-btn-premium ${this.filtroAtual.erro==='nascido'?'active':''}" onclick="app.filterByError('nascido')"><i class="fas fa-baby"></i>DNV<span class="filter-count">${tNascido}</span></button>
-                    <button class="filter-btn-premium ${this.filtroAtual.erro==='obito'?'active':''}" onclick="app.filterByError('obito')"><i class="fas fa-skull"></i>DO<span class="filter-count">${tObito}</span></button>
+                    <button class="filter-btn-premium ${this.filtroAtual.erro === '694' ? 'active' : ''}" onclick="app.filterByError('694')"><i class="fas fa-exclamation-triangle"></i>Erro Enfermaria<span class="filter-count">${t694}</span></button>
+                    <button class="filter-btn-premium ${this.filtroAtual.erro === '554' ? 'active' : ''}" onclick="app.filterByError('554')"><i class="fas fa-exclamation-triangle"></i>Erro Apartamento<span class="filter-count">${t554}</span></button>
+                    <button class="filter-btn-premium ${this.filtroAtual.erro === 'grau' ? 'active' : ''}" onclick="app.filterByError('grau')"><i class="fas fa-exclamation-triangle"></i>Erro Grau Part.<span class="filter-count">${tGrau}</span></button>
+                    <button class="filter-btn-premium ${this.filtroAtual.erro === 'nascido' ? 'active' : ''}" onclick="app.filterByError('nascido')"><i class="fas fa-baby"></i>DNV<span class="filter-count">${tNascido}</span></button>
+                    <button class="filter-btn-premium ${this.filtroAtual.erro === 'obito' ? 'active' : ''}" onclick="app.filterByError('obito')"><i class="fas fa-skull"></i>DO<span class="filter-count">${tObito}</span></button>
                 `;
             }
 
@@ -2469,10 +3601,10 @@
             }
 
             renderGlobalStats() {
-                document.getElementById('vTotal').innerText  = this.arquivos.reduce((a,arq)=>a+arq.stats.total,0);
-                document.getElementById('vErros').innerText  = this.arquivos.reduce((a,arq)=>a+arq.stats.erros,0);
-                document.getElementById('vVencidas').innerText = this.arquivos.reduce((a,arq)=>a+arq.stats.vencidas,0);
-                document.getElementById('vValor').innerText  = this.formatCurrency(this.arquivos.reduce((a,arq)=>a+arq.stats.valor,0));
+                document.getElementById('vTotal').innerText = this.arquivos.reduce((a, arq) => a + arq.stats.total, 0);
+                document.getElementById('vErros').innerText = this.arquivos.reduce((a, arq) => a + arq.stats.erros, 0);
+                document.getElementById('vVencidas').innerText = this.arquivos.reduce((a, arq) => a + arq.stats.vencidas, 0);
+                document.getElementById('vValor').innerText = this.formatCurrency(this.arquivos.reduce((a, arq) => a + arq.stats.valor, 0));
             }
 
             ativarAba(nomeArquivo) {
@@ -2485,17 +3617,24 @@
                 const content = document.getElementById('tabsContent');
                 const arquivo = this.arquivos.find(a => a.nome === nomeArquivo);
                 if (!arquivo) return;
+                const mixedMsgEl = document.getElementById('mixedLockMsg');
+                if (this.modoEquipe) {
+                    mixedMsgEl.classList.remove('is-visible');
+                    this.renderEquipeVerificacao(arquivo.guias, 'tabsContent');
+                    this.filterSearch();
+                    return;
+                }
                 const stats = arquivo.stats;
                 const safeId = nomeArquivo.replace(/[^a-zA-Z0-9]/g, '_');
                 content.innerHTML = `<div class="summary-premium">
-                    <div class="summary-item-premium ${this.filtroAtual.tipo==='all'&&!this.filtroAtual.erro?'active':''}" onclick="app.filterByType('all')"><div class="label">Total</div><div class="value">${stats.total}</div></div>
-                    <div class="summary-item-premium ${this.filtroAtual.tipo==='error'?'active':''}" onclick="app.filterByType('error')"><div class="label">Erros</div><div class="value">${stats.erros}</div></div>
-                    <div class="summary-item-premium ${this.filtroAtual.erro==='694'?'active':''}" onclick="app.filterByError('694')"><div class="label">RA 694/805</div><div class="value">${stats.erros694}</div></div>
-                    <div class="summary-item-premium ${this.filtroAtual.erro==='554'?'active':''}" onclick="app.filterByError('554')"><div class="label">RA 554/511</div><div class="value">${stats.erros554}</div></div>
-                    <div class="summary-item-premium ${this.filtroAtual.erro==='grau'?'active':''}" onclick="app.filterByError('grau')"><div class="label">Erro Grau</div><div class="value">${stats.errosGrau}</div></div>
-                    <div class="summary-item-premium ${this.filtroAtual.erro==='nascido'?'active':''}" onclick="app.filterByError('nascido')"><div class="label">Decl. Nascido</div><div class="value">${stats.errosNascido}</div></div>
-                    <div class="summary-item-premium ${this.filtroAtual.erro==='obito'?'active':''}" onclick="app.filterByError('obito')"><div class="label">Decl. Óbito</div><div class="value">${stats.errosObito}</div></div>
-                    <div class="summary-item-premium ${this.filtroAtual.tipo==='expired'?'active':''}" onclick="app.filterByType('expired')"><div class="label">Vencidas</div><div class="value">${stats.vencidas}</div></div>
+                    <div class="summary-item-premium ${this.filtroAtual.tipo === 'all' && !this.filtroAtual.erro ? 'active' : ''}" onclick="app.filterByType('all')"><div class="label">Total</div><div class="value">${stats.total}</div></div>
+                    <div class="summary-item-premium ${this.filtroAtual.tipo === 'error' ? 'active' : ''}" onclick="app.filterByType('error')"><div class="label">Erros</div><div class="value">${stats.erros}</div></div>
+                    <div class="summary-item-premium ${this.filtroAtual.erro === '694' ? 'active' : ''}" onclick="app.filterByError('694')"><div class="label">RA 694/805</div><div class="value">${stats.erros694}</div></div>
+                    <div class="summary-item-premium ${this.filtroAtual.erro === '554' ? 'active' : ''}" onclick="app.filterByError('554')"><div class="label">RA 554/511</div><div class="value">${stats.erros554}</div></div>
+                    <div class="summary-item-premium ${this.filtroAtual.erro === 'grau' ? 'active' : ''}" onclick="app.filterByError('grau')"><div class="label">Erro Grau</div><div class="value">${stats.errosGrau}</div></div>
+                    <div class="summary-item-premium ${this.filtroAtual.erro === 'nascido' ? 'active' : ''}" onclick="app.filterByError('nascido')"><div class="label">Decl. Nascido</div><div class="value">${stats.errosNascido}</div></div>
+                    <div class="summary-item-premium ${this.filtroAtual.erro === 'obito' ? 'active' : ''}" onclick="app.filterByError('obito')"><div class="label">Decl. Óbito</div><div class="value">${stats.errosObito}</div></div>
+                    <div class="summary-item-premium ${this.filtroAtual.tipo === 'expired' ? 'active' : ''}" onclick="app.filterByType('expired')"><div class="label">Vencidas</div><div class="value">${stats.vencidas}</div></div>
                     <div class="summary-item-premium"><div class="label">Valor</div><div class="value" style="font-size:clamp(0.65rem,1.1vw,0.9rem);">${this.formatCurrency(stats.valor)}</div></div>
                 </div>
                 <div style="padding:0 16px 16px;">
@@ -2511,28 +3650,28 @@
                 if (!container) return;
                 container.innerHTML = '';
                 let gf = guias;
-                if (this.filtroAtual.tipo==='error')   gf = gf.filter(g=>g.temErro);
-                else if (this.filtroAtual.tipo==='expired') gf = gf.filter(g=>g.vencida);
-                if      (this.filtroAtual.erro==='694')    gf = gf.filter(g=>g.erros.some(e=>e.tipo==='ra_694'));
-                else if (this.filtroAtual.erro==='554')    gf = gf.filter(g=>g.erros.some(e=>e.tipo==='ra_554'));
-                else if (this.filtroAtual.erro==='grau')   gf = gf.filter(g=>g.erros.some(e=>e.tipo==='grau_incorreto'));
-                else if (this.filtroAtual.erro==='nascido') gf = gf.filter(g=>g.erros.some(e=>e.tipo==='sem_declaracao_nascido'));
-                else if (this.filtroAtual.erro==='obito')  gf = gf.filter(g=>g.erros.some(e=>e.tipo==='sem_declaracao_obito'));
+                if (this.filtroAtual.tipo === 'error') gf = gf.filter(g => g.temErro);
+                else if (this.filtroAtual.tipo === 'expired') gf = gf.filter(g => g.vencida);
+                if (this.filtroAtual.erro === '694') gf = gf.filter(g => g.erros.some(e => e.tipo === 'ra_694'));
+                else if (this.filtroAtual.erro === '554') gf = gf.filter(g => g.erros.some(e => e.tipo === 'ra_554'));
+                else if (this.filtroAtual.erro === 'grau') gf = gf.filter(g => g.erros.some(e => e.tipo === 'grau_incorreto'));
+                else if (this.filtroAtual.erro === 'nascido') gf = gf.filter(g => g.erros.some(e => e.tipo === 'sem_declaracao_nascido'));
+                else if (this.filtroAtual.erro === 'obito') gf = gf.filter(g => g.erros.some(e => e.tipo === 'sem_declaracao_obito'));
                 if (!gf.length) { container.innerHTML = `<div class="empty-state-premium"><i class="fas fa-search"></i><h3>Nenhuma guia encontrada</h3></div>`; return; }
                 const grupos = new Map();
-                gf.forEach(g => { const k = g.carteira || '__sem_carteira__'; if (!grupos.has(k)) grupos.set(k,[]); grupos.get(k).push(g); });
-                grupos.forEach((gs, carteira) => { container.appendChild(gs.length===1 ? this.createGuiaCard(gs[0]) : this.createGrupoCard(gs, carteira)); });
+                gf.forEach(g => { const k = g.carteira || '__sem_carteira__'; if (!grupos.has(k)) grupos.set(k, []); grupos.get(k).push(g); });
+                grupos.forEach((gs, carteira) => { container.appendChild(gs.length === 1 ? this.createGuiaCard(gs[0]) : this.createGrupoCard(gs, carteira)); });
                 this.updateActiveFiltersDisplay();
             }
 
             createGrupoCard(guias, carteira) {
-                const beneficiario = guias.find(g=>g.beneficiario!=='Beneficiário não identificado')?.beneficiario || 'Beneficiário não identificado';
-                const temErro    = guias.some(g=>g.temErro);
-                const temVencida = guias.some(g=>g.vencida);
-                const temNascido = guias.some(g=>g.erros.some(e=>e.tipo==='sem_declaracao_nascido'));
-                const temObito   = guias.some(g=>g.erros.some(e=>e.tipo==='sem_declaracao_obito'));
-                const valorTotal = guias.reduce((s,g)=>s+g.valorTotal,0);
-                const convenios  = [...new Set(guias.map(g=>g.convenio))].join(' · ');
+                const beneficiario = guias.find(g => g.beneficiario !== 'Beneficiário não identificado')?.beneficiario || 'Beneficiário não identificado';
+                const temErro = guias.some(g => g.temErro);
+                const temVencida = guias.some(g => g.vencida);
+                const temNascido = guias.some(g => g.erros.some(e => e.tipo === 'sem_declaracao_nascido'));
+                const temObito = guias.some(g => g.erros.some(e => e.tipo === 'sem_declaracao_obito'));
+                const valorTotal = guias.reduce((s, g) => s + g.valorTotal, 0);
+                const convenios = [...new Set(guias.map(g => g.convenio))].join(' · ');
                 const grupo = document.createElement('div');
                 grupo.className = 'grupo-carteirinha is-open';
                 grupo.dataset.carteira = carteira;
@@ -2541,10 +3680,10 @@
                         <span class="grupo-carteira-num"><i class="fas fa-id-card"></i> ${carteira}</span>
                         <span class="grupo-beneficiario">${beneficiario}</span>
                         <div class="grupo-meta">
-                            ${temErro    ? '<span class="grupo-pill grupo-pill-erro"><i class="fas fa-exclamation-triangle"></i> Com erros</span>' : ''}
+                            ${temErro ? '<span class="grupo-pill grupo-pill-erro"><i class="fas fa-exclamation-triangle"></i> Com erros</span>' : ''}
                             ${temVencida ? '<span class="grupo-pill grupo-pill-vencida"><i class="fas fa-clock"></i> Vencida</span>' : ''}
                             ${temNascido ? '<span class="grupo-pill grupo-pill-nascido"><i class="fas fa-baby"></i> Sem Decl. Nascido</span>' : ''}
-                            ${temObito   ? '<span class="grupo-pill grupo-pill-obito"><i class="fas fa-skull"></i> Sem Decl. Óbito</span>' : ''}
+                            ${temObito ? '<span class="grupo-pill grupo-pill-obito"><i class="fas fa-skull"></i> Sem Decl. Óbito</span>' : ''}
                             <span class="grupo-pill grupo-pill-default"><i class="fas fa-file-invoice"></i> ${guias.length} guias</span>
                             <span class="grupo-pill grupo-pill-default"><i class="fas fa-hospital"></i> ${convenios}</span>
                             <span class="grupo-valor">${this.formatCurrency(valorTotal)}</span>
@@ -2558,23 +3697,23 @@
             }
 
             createGuiaCard(guia) {
-                const temErroNascido = guia.erros.some(e=>e.tipo==='sem_declaracao_nascido');
-                const temErroObito   = guia.erros.some(e=>e.tipo==='sem_declaracao_obito');
+                const temErroNascido = guia.erros.some(e => e.tipo === 'sem_declaracao_nascido');
+                const temErroObito = guia.erros.some(e => e.tipo === 'sem_declaracao_obito');
                 const card = document.createElement('div');
                 let cardClasses = 'guia-card-premium';
-                if (guia.temErro)      cardClasses += ' has-error';
-                if (guia.vencida)      cardClasses += ' is-vencida';
-                if (temErroNascido)    cardClasses += ' sem-declaracao-nascido';
-                if (temErroObito)      cardClasses += ' sem-declaracao-obito';
+                if (guia.temErro) cardClasses += ' has-error';
+                if (guia.vencida) cardClasses += ' is-vencida';
+                if (temErroNascido) cardClasses += ' sem-declaracao-nascido';
+                if (temErroObito) cardClasses += ' sem-declaracao-obito';
                 card.className = cardClasses;
-                card.dataset.numero      = guia.numero;
+                card.dataset.numero = guia.numero;
                 card.dataset.beneficiario = guia.beneficiario;
-                card.dataset.carteira    = guia.carteira;
-                card.dataset.convenio    = guia.convenio;
-                card.dataset.hasError    = guia.temErro;
-                card.dataset.vencida     = guia.vencida;
-                card.dataset.errorTypes  = guia.erros.map(e=>e.tipo).join(',');
-                if (guia.vinculada) { card.dataset.vinculada = 'true'; card.dataset.grupoVinculo = (guia.grupoVinculo||[]).join(','); }
+                card.dataset.carteira = guia.carteira;
+                card.dataset.convenio = guia.convenio;
+                card.dataset.hasError = guia.temErro;
+                card.dataset.vencida = guia.vencida;
+                card.dataset.errorTypes = guia.erros.map(e => e.tipo).join(',');
+                if (guia.vinculada) { card.dataset.vinculada = 'true'; card.dataset.grupoVinculo = (guia.grupoVinculo || []).join(','); }
 
                 const dataFormatada = this.formatDateDisplay(guia.dataReferencia);
                 const displayBeneficiario = guia.beneficiario === "Beneficiário não identificado"
@@ -2583,22 +3722,28 @@
 
                 let nascidoAlertHtml = '';
                 if (temErroNascido) {
-                    const cods = [...new Set(guia.erros.filter(e=>e.tipo==='sem_declaracao_nascido').map(e=>e.codigo))].join(', ');
+                    const cods = [...new Set(guia.erros.filter(e => e.tipo === 'sem_declaracao_nascido').map(e => e.codigo))].join(', ');
                     nascidoAlertHtml = `<div class="nascido-alert"><i class="fas fa-baby"></i><div><strong>Tag &lt;declaracaoNascido&gt; ausente</strong><ul style="margin-top:4px;padding-left:16px;"><li>Código(s): <strong>${cods}</strong></li><li>Inclua a tag com o número da DN do recém-nascido.</li></ul></div></div>`;
                 }
 
                 let obitoAlertHtml = '';
                 if (temErroObito) {
-                    const erroO = guia.erros.find(e=>e.tipo==='sem_declaracao_obito');
-                    obitoAlertHtml = `<div class="obito-alert"><i class="fas fa-skull"></i><div><strong>Tag &lt;declaracaoObito&gt; ausente</strong><ul style="margin-top:4px;padding-left:16px;"><li>Motivo de encerramento: <strong>${erroO?.motivo||guia.motivoEncerramento}</strong></li><li>Inclua a tag com o número da DO do paciente.</li></ul></div></div>`;
+                    const erroO = guia.erros.find(e => e.tipo === 'sem_declaracao_obito');
+                    obitoAlertHtml = `<div class="obito-alert"><i class="fas fa-skull"></i><div><strong>Tag &lt;declaracaoObito&gt; ausente</strong><ul style="margin-top:4px;padding-left:16px;"><li>Motivo de encerramento: <strong>${erroO?.motivo || guia.motivoEncerramento}</strong></li><li>Inclua a tag com o número da DO do paciente.</li></ul></div></div>`;
                 }
 
                 const convenioBadgeClass = this.getConvenioBadgeClass(guia.convenio);
 
                 let itemsHtml = '';
-                guia.items.forEach(item => {
-                    const raClass   = item.erro    ? 'ra-incorrect-premium' : (item.raCorreto  ? 'ra-correct-premium' : '');
-                    const grauClass = item.erroGrau ? 'ra-incorrect-premium' : (item.grauCorreto ? 'ra-correct-premium' : '');
+                const itemsOrdenados = [...guia.items].sort((a, b) => {
+                    const aErro = (a.erro || a.erroGrau) ? 1 : 0;
+                    const bErro = (b.erro || b.erroGrau) ? 1 : 0;
+                    if (aErro !== bErro) return bErro - aErro;
+                    return (b.valor || 0) - (a.valor || 0);
+                });
+                itemsOrdenados.forEach(item => {
+                    const raClass = item.erro ? 'ra-incorrect-premium tooltip-erro' : (item.raCorreto ? 'ra-correct-premium' : '');
+                    const grauClass = item.erroGrau ? 'ra-incorrect-premium tooltip-erro' : (item.grauCorreto ? 'ra-correct-premium' : '');
                     const quantidadeExibicao = item.quantidade && item.quantidade > 1 ? ` ×${item.quantidade}` : '';
                     let raDisplay = item.ra;
                     if (item.raCorreto && item.raNum !== 1 && item.raNum !== 2) {
@@ -2610,12 +3755,18 @@
                             ? `${item.grau}<br><small style="font-size:0.6rem;">ok: ${item.grauCorreto}</small>`
                             : `${item.grau}`;
                     }
+                    const raTooltip = item.erro
+                        ? ` data-tooltip="${this.escapeHtml('❌ ERRO: ' + item.erro + '\n\n✅ SOLUÇÃO: Corrija o campo RA desta guia para ' + item.raCorreto + '.').replace(/"/g, '&quot;')}"`
+                        : '';
+                    const grauTooltip = item.erroGrau
+                        ? ` data-tooltip="${this.escapeHtml('❌ ERRO: ' + item.erroGrau + '\n\n✅ SOLUÇÃO: Corrija o Grau de Participação desta guia para ' + item.grauCorreto + '.').replace(/"/g, '&quot;')}"`
+                        : '';
                     itemsHtml += `<tr>
                         <td style="white-space:nowrap;">${this.formatDateDisplay(item.data)}</td>
                         <td style="white-space:nowrap;"><strong>${this.escapeHtml(item.codigo)}</strong></td>
                         <td class="item-name">${this.escapeHtml(item.nome)}${quantidadeExibicao}</td>
-                        <td style="text-align:center;"><span class="ra-value-premium ${raClass}">${raDisplay}</span></td>
-                        <td style="text-align:center;">${grauDisplay !== '-' ? `<span class="ra-value-premium ${grauClass}">${grauDisplay}</span>` : '-'}</td>
+                        <td style="text-align:center;"><span class="ra-value-premium ${raClass}"${raTooltip}>${raDisplay}</span></td>
+                        <td style="text-align:center;">${grauDisplay !== '-' ? `<span class="ra-value-premium ${grauClass}"${grauTooltip}>${grauDisplay}</span>` : '-'}</td>
                         <td style="text-align:right;font-weight:700;white-space:nowrap;">${this.formatCurrency(item.valor)}</td>
                     </tr>`;
                 });
@@ -2641,14 +3792,14 @@
                             <span class="guia-beneficiario searchableText">${displayBeneficiario}</span>
                             ${guia.vencida ? '<span class="badge-premium badge-vencida"><i class="fas fa-clock"></i>VENCIDA</span>' : ''}
                             ${temErroNascido ? '<span class="badge-premium badge-sem-nascido"><i class="fas fa-baby"></i>SEM DECL. NASCIDO</span>' : ''}
-                            ${temErroObito   ? '<span class="badge-premium badge-sem-obito"><i class="fas fa-skull"></i>SEM DECL. ÓBITO</span>' : ''}
-                            ${guia.vinculada ? `<span class="badge-premium badge-vinculo" title="Vinculada à(s): ${(guia.grupoVinculo||[]).join(', ')}" onclick="event.stopPropagation();app.destacarVinculos(this)"><i class="fas fa-link"></i>VINCULADA</span>` : ''}
+                            ${temErroObito ? '<span class="badge-premium badge-sem-obito"><i class="fas fa-skull"></i>SEM DECL. ÓBITO</span>' : ''}
+                            ${guia.vinculada ? `<span class="badge-premium badge-vinculo" title="Vinculada à(s): ${(guia.grupoVinculo || []).join(', ')}" onclick="event.stopPropagation();app.destacarVinculos(this)"><i class="fas fa-link"></i>VINCULADA</span>` : ''}
                         </div>
                     </div>
                     <div class="guia-body-premium">
-                        ${equipeHtml}
                         ${nascidoAlertHtml}
                         ${obitoAlertHtml}
+                        ${equipeHtml}
                         <div class="guia-meta-row">
                             <span><i class="fas fa-calendar"></i>Referência: ${dataFormatada}</span>
                             <span><i class="fas fa-cubes"></i>Itens: ${guia.qtdItens}</span>
@@ -2665,14 +3816,14 @@
                 return card;
             }
 
-            filterByType(type) { this.filtroAtual.tipo=type; this.filtroAtual.erro=null; this.updateErrorFiltersUI(); if(this.arquivoAtivo) this.renderTabContent(this.arquivoAtivo); }
-            filterByError(errorType) { if(this.filtroAtual.erro===errorType){this.filtroAtual.erro=null;this.filtroAtual.tipo='all';}else{this.filtroAtual.erro=errorType;this.filtroAtual.tipo='error';} this.updateErrorFiltersUI(); if(this.arquivoAtivo) this.renderTabContent(this.arquivoAtivo); }
-            updateErrorFiltersUI() { document.querySelectorAll('.filter-btn-premium').forEach(btn=>{const o=btn.getAttribute('onclick')||'';let t=null;if(o.includes("'694'"))t='694';else if(o.includes("'554'"))t='554';else if(o.includes("'grau'"))t='grau';else if(o.includes("'nascido'"))t='nascido';else if(o.includes("'obito'"))t='obito';if(t) btn.classList.toggle('active',this.filtroAtual.erro===t);}); }
-            updateActiveFiltersDisplay() { const div=document.getElementById('activeFilters');const btn=document.getElementById('clearFiltersBtn');const txt=document.getElementById('activeFilterText');if(this.filtroAtual.tipo!=='all'||this.filtroAtual.erro){div.style.display='flex';btn.style.display='inline-flex';const map={'694':'Erro RA 60000694','554':'Erro RA 60000554','grau':'Erro Grau','nascido':'Decl. Nascido Ausente','obito':'Decl. Óbito Ausente'};if(this.filtroAtual.erro)txt.innerText=map[this.filtroAtual.erro]||'';else if(this.filtroAtual.tipo==='error')txt.innerText='Guias com erro';else if(this.filtroAtual.tipo==='expired')txt.innerText='Guias vencidas';}else{div.style.display='none';btn.style.display='none';} }
-            clearAllFilters() { this.filtroAtual={tipo:'all',erro:null,codigo:null};this.updateErrorFiltersUI();if(this.arquivoAtivo)this.renderTabContent(this.arquivoAtivo);document.getElementById('search').value=''; }
-            filterSearch() { const query=document.getElementById('search').value.toLowerCase().trim();document.querySelectorAll('.guia-card-premium').forEach(card=>{if(!query){card.style.display='block';return;}const fullText=`${card.dataset.numero||''} ${card.dataset.beneficiario||''} ${card.dataset.carteira||''} ${card.dataset.convenio||''} ${Array.from(card.querySelectorAll('.item-name')).map(el=>el.textContent).join(' ')}`.toLowerCase();const matches=fullText.includes(query);const filtrosAplicados=this.filtroAtual.tipo!=='all'||this.filtroAtual.erro;if(!filtrosAplicados){card.style.display=matches?'block':'none';return;}const et=card.dataset.errorTypes||'';let fa=false;if(this.filtroAtual.tipo==='error'&&card.dataset.hasError==='true')fa=true;else if(this.filtroAtual.tipo==='expired'&&card.dataset.vencida==='true')fa=true;else if(this.filtroAtual.erro==='694')fa=et.includes('ra_694');else if(this.filtroAtual.erro==='554')fa=et.includes('ra_554');else if(this.filtroAtual.erro==='grau')fa=et.includes('grau_incorreto');else if(this.filtroAtual.erro==='nascido')fa=et.includes('sem_declaracao_nascido');else if(this.filtroAtual.erro==='obito')fa=et.includes('sem_declaracao_obito');card.style.display=(fa&&matches)?'block':'none';});document.querySelectorAll('.grupo-carteirinha').forEach(g=>{const filhos=g.querySelectorAll('.guia-card-premium');g.style.display=Array.from(filhos).some(c=>c.style.display!=='none')?'block':'none';}); }
-            toggleAll(open) { document.querySelectorAll('.grupo-carteirinha').forEach(el=>el.classList.toggle('is-open',open));document.querySelectorAll('.guia-card-premium').forEach(el=>el.classList.toggle('is-open',open)); }
-            destacarVinculos(badgeEl) { const card=badgeEl.closest('.guia-card-premium');const nums=[...(card.dataset.grupoVinculo||'').split(',').map(s=>s.trim()).filter(Boolean),card.dataset.numero];document.querySelectorAll('.guia-card-premium.vinculo-highlight').forEach(c=>c.classList.remove('vinculo-highlight'));document.querySelectorAll('.guia-card-premium').forEach(c=>{if(nums.includes(c.dataset.numero)){c.classList.add('vinculo-highlight');c.scrollIntoView({behavior:'smooth',block:'nearest'});}});setTimeout(()=>document.querySelectorAll('.vinculo-highlight').forEach(c=>c.classList.remove('vinculo-highlight')),3000); }
+            filterByType(type) { this.filtroAtual.tipo = type; this.filtroAtual.erro = null; this.updateErrorFiltersUI(); if (this.arquivoAtivo) this.renderTabContent(this.arquivoAtivo); }
+            filterByError(errorType) { if (this.filtroAtual.erro === errorType) { this.filtroAtual.erro = null; this.filtroAtual.tipo = 'all'; } else { this.filtroAtual.erro = errorType; this.filtroAtual.tipo = 'error'; } this.updateErrorFiltersUI(); if (this.arquivoAtivo) this.renderTabContent(this.arquivoAtivo); }
+            updateErrorFiltersUI() { document.querySelectorAll('.filter-btn-premium').forEach(btn => { const o = btn.getAttribute('onclick') || ''; let t = null; if (o.includes("'694'")) t = '694'; else if (o.includes("'554'")) t = '554'; else if (o.includes("'grau'")) t = 'grau'; else if (o.includes("'nascido'")) t = 'nascido'; else if (o.includes("'obito'")) t = 'obito'; if (t) btn.classList.toggle('active', this.filtroAtual.erro === t); }); }
+            updateActiveFiltersDisplay() { const div = document.getElementById('activeFilters'); const btn = document.getElementById('clearFiltersBtn'); const txt = document.getElementById('activeFilterText'); if (this.filtroAtual.tipo !== 'all' || this.filtroAtual.erro) { div.style.display = 'flex'; btn.style.display = 'inline-flex'; const map = { '694': 'Erro RA 60000694', '554': 'Erro RA 60000554', 'grau': 'Erro Grau', 'nascido': 'Decl. Nascido Ausente', 'obito': 'Decl. Óbito Ausente' }; if (this.filtroAtual.erro) txt.innerText = map[this.filtroAtual.erro] || ''; else if (this.filtroAtual.tipo === 'error') txt.innerText = 'Guias com erro'; else if (this.filtroAtual.tipo === 'expired') txt.innerText = 'Guias vencidas'; } else { div.style.display = 'none'; btn.style.display = 'none'; } }
+            clearAllFilters() { this.filtroAtual = { tipo: 'all', erro: null, codigo: null }; this.updateErrorFiltersUI(); if (this.arquivoAtivo) this.renderTabContent(this.arquivoAtivo); document.getElementById('search').value = ''; }
+            filterSearch() { const query = document.getElementById('search').value.toLowerCase().trim(); if (this.modoEquipe) { document.querySelectorAll('.equipe-table-row').forEach(row => { const busca = row.dataset.busca || ''; row.style.display = (!query || busca.includes(query)) ? 'table-row' : 'none'; }); return; } document.querySelectorAll('.guia-card-premium').forEach(card => { if (!query) { card.style.display = 'block'; return; } const fullText = `${card.dataset.numero || ''} ${card.dataset.beneficiario || ''} ${card.dataset.carteira || ''} ${card.dataset.convenio || ''} ${Array.from(card.querySelectorAll('.item-name')).map(el => el.textContent).join(' ')}`.toLowerCase(); const matches = fullText.includes(query); const filtrosAplicados = this.filtroAtual.tipo !== 'all' || this.filtroAtual.erro; if (!filtrosAplicados) { card.style.display = matches ? 'block' : 'none'; return; } const et = card.dataset.errorTypes || ''; let fa = false; if (this.filtroAtual.tipo === 'error' && card.dataset.hasError === 'true') fa = true; else if (this.filtroAtual.tipo === 'expired' && card.dataset.vencida === 'true') fa = true; else if (this.filtroAtual.erro === '694') fa = et.includes('ra_694'); else if (this.filtroAtual.erro === '554') fa = et.includes('ra_554'); else if (this.filtroAtual.erro === 'grau') fa = et.includes('grau_incorreto'); else if (this.filtroAtual.erro === 'nascido') fa = et.includes('sem_declaracao_nascido'); else if (this.filtroAtual.erro === 'obito') fa = et.includes('sem_declaracao_obito'); card.style.display = (fa && matches) ? 'block' : 'none'; }); document.querySelectorAll('.grupo-carteirinha').forEach(g => { const filhos = g.querySelectorAll('.guia-card-premium'); g.style.display = Array.from(filhos).some(c => c.style.display !== 'none') ? 'block' : 'none'; }); }
+            toggleAll(open) { document.querySelectorAll('.grupo-carteirinha').forEach(el => el.classList.toggle('is-open', open)); document.querySelectorAll('.guia-card-premium').forEach(el => el.classList.toggle('is-open', open)); }
+            destacarVinculos(badgeEl) { const card = badgeEl.closest('.guia-card-premium'); const nums = [...(card.dataset.grupoVinculo || '').split(',').map(s => s.trim()).filter(Boolean), card.dataset.numero]; document.querySelectorAll('.guia-card-premium.vinculo-highlight').forEach(c => c.classList.remove('vinculo-highlight')); document.querySelectorAll('.guia-card-premium').forEach(c => { if (nums.includes(c.dataset.numero)) { c.classList.add('vinculo-highlight'); c.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } }); setTimeout(() => document.querySelectorAll('.vinculo-highlight').forEach(c => c.classList.remove('vinculo-highlight')), 3000); }
         }
 
         const app = new TISSAnalyzerPro();
@@ -2680,7 +3831,7 @@
 
     <!-- GOOGLE SHEETS INTEGRATION SCRIPT -->
     <script>
-    const APPS_SCRIPT_CODE = `// ══════════════════════════════════════════
+        const APPS_SCRIPT_CODE = `// ══════════════════════════════════════════
 // AXON AUDITORIA — Google Sheets Logger
 // Cole este script no Apps Script da sua planilha
 // Publique como Web App: Execute as → Você, Acesso → Qualquer pessoa
@@ -2771,196 +3922,196 @@ function testeManual() {
   Logger.log("Script funcionando corretamente!");
 }`;
 
-    // ── AXON Sheets Logger ──────────────────────────────────────────────
-    // Configuração interna — não exposta na interface
-    const _cfg = [
-        "aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbQ==",
-        "L21hY3Jvcy9zL0FLZnljYnhWUHRyWDJVNQ==",
-        "QnJDekJ6WHZjTy1lNzY3dU80bkI1eWJyZQ==",
-        "Q3U2Q09iYkdCWmVjVG1aa1N6LVBOTFVhamZLT2tHcTAvZXhlYw=="
-    ];
-    const _r = s => atob(s);
+        // ── AXON Sheets Logger ──────────────────────────────────────────────
+        // Configuração interna — não exposta na interface
+        const _cfg = [
+            "aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbQ==",
+            "L21hY3Jvcy9zL0FLZnljYnhWUHRyWDJVNQ==",
+            "QnJDekJ6WHZjTy1lNzY3dU80bkI1eWJyZQ==",
+            "Q3U2Q09iYkdCWmVjVG1aa1N6LVBOTFVhamZLT2tHcTAvZXhlYw=="
+        ];
+        const _r = s => atob(s);
 
-    const SheetsConfig = {
-        _getUrl() {
-            return _r(_cfg[0]) + _r(_cfg[1]) + _r(_cfg[2]) + _r(_cfg[3]);
-        },
+        const SheetsConfig = {
+            _getUrl() {
+                return _r(_cfg[0]) + _r(_cfg[1]) + _r(_cfg[2]) + _r(_cfg[3]);
+            },
 
-        init() {
-            // Sempre conectado — URL interna
-            this.setConnected(true);
-            document.getElementById('sheetsModalOverlay').addEventListener('click', (e) => {
-                if (e.target === document.getElementById('sheetsModalOverlay')) this.closeModal();
-            });
-        },
+            init() {
+                // Sempre conectado — URL interna
+                this.setConnected(true);
+                document.getElementById('sheetsModalOverlay').addEventListener('click', (e) => {
+                    if (e.target === document.getElementById('sheetsModalOverlay')) this.closeModal();
+                });
+            },
 
-        openModal() {
-            const banner = document.getElementById('sheetsBanner');
-            banner.className = 'sheets-status-banner ok';
-            banner.innerHTML = '<i class="fas fa-check-circle"></i> Log automático ativo — cada importação é registrada na planilha de auditoria.';
-            banner.style.display = 'flex';
-            document.getElementById('sheetsModalOverlay').classList.add('open');
-        },
+            openModal() {
+                const banner = document.getElementById('sheetsBanner');
+                banner.className = 'sheets-status-banner ok';
+                banner.innerHTML = '<i class="fas fa-check-circle"></i> Log automático ativo — cada importação é registrada na planilha de auditoria.';
+                banner.style.display = 'flex';
+                document.getElementById('sheetsModalOverlay').classList.add('open');
+            },
 
-        closeModal() {
-            document.getElementById('sheetsModalOverlay').classList.remove('open');
-        },
+            closeModal() {
+                document.getElementById('sheetsModalOverlay').classList.remove('open');
+            },
 
-        setConnected(connected) {
-            const btn = document.getElementById('btnSheets');
-            if (!btn) return;
-            const dot = btn.querySelector('.sheets-dot');
-            const label = document.getElementById('btnSheetsLabel');
-            if (connected) {
-                btn.classList.add('connected');
-                if (dot) dot.title = 'Conectado';
-                if (label) label.textContent = 'Sheets ✓';
+            setConnected(connected) {
+                const btn = document.getElementById('btnSheets');
+                if (!btn) return;
+                const dot = btn.querySelector('.sheets-dot');
+                const label = document.getElementById('btnSheetsLabel');
+                if (connected) {
+                    btn.classList.add('connected');
+                    if (dot) dot.title = 'Conectado';
+                    if (label) label.textContent = 'Sheets ✓';
+                }
+            },
+
+            async logarImportacao(arquivos) {
+                if (!arquivos || arquivos.length === 0) return;
+                const url = this._getUrl();
+                const now = new Date();
+                const dataHora = now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR');
+                const usuario = sessionStorage.getItem('axon_portal_nome') || sessionStorage.getItem('axon_user') || '—';
+
+                this.mostrarIndicador(`Registrando ${arquivos.length} arquivo(s) no Sheets...`, 'fa-spinner fa-spin');
+
+                let sucessos = 0;
+                let falhas = 0;
+
+                for (const arq of arquivos) {
+                    const s = arq.stats;
+                    const payload = {
+                        dataHora,
+                        qtdArquivos: 1,
+                        nomeArquivos: arq.nome,
+                        totalGuias: s.total,
+                        guiasComErro: s.erros,
+                        erros694: s.erros694,
+                        erros554: s.erros554,
+                        errosGrau: s.errosGrau,
+                        errosNascido: s.errosNascido,
+                        errosObito: s.errosObito,
+                        guiasVencidas: s.vencidas,
+                        valorTotal: s.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+                        usuario
+                    };
+
+                    try {
+                        await fetch(url, {
+                            method: 'POST',
+                            mode: 'no-cors',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        sucessos++;
+                    } catch (err) {
+                        falhas++;
+                    }
+                }
+
+                if (falhas === 0) {
+                    this.mostrarIndicador(`${sucessos} arquivo(s) registrado(s) no Sheets ✓`, 'fa-check-circle');
+                } else {
+                    this.mostrarIndicador(`${sucessos} registrado(s), ${falhas} falha(s)`, 'fa-exclamation-circle');
+                }
+                setTimeout(() => this.ocultarIndicador(), 4000);
+            },
+
+            mostrarIndicador(texto, iconClass) {
+                let el = document.getElementById('sheetsLogIndicator');
+                if (!el) {
+                    el = document.createElement('div');
+                    el.id = 'sheetsLogIndicator';
+                    el.style.cssText = [
+                        'position:fixed', 'bottom:24px', 'right:24px', 'z-index:9000',
+                        'background:var(--bg-card)', 'border:1px solid rgba(15,157,88,0.4)',
+                        'border-left:3px solid #0f9d58', 'padding:11px 18px',
+                        'font-size:0.72rem', 'font-weight:600', 'color:#0f9d58',
+                        'display:flex', 'align-items:center', 'gap:10px',
+                        'font-family:Inter,sans-serif'
+                    ].join(';');
+                    document.body.appendChild(el);
+                }
+                el.innerHTML = `<i class="fas ${iconClass}"></i><span>${texto}</span>`;
+                el.style.display = 'flex';
+            },
+
+            ocultarIndicador() {
+                const el = document.getElementById('sheetsLogIndicator');
+                if (el) el.style.display = 'none';
             }
-        },
-
-        async logarImportacao(arquivos) {
-    if (!arquivos || arquivos.length === 0) return;
-    const url = this._getUrl();
-    const now = new Date();
-    const dataHora = now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR');
-    const usuario = sessionStorage.getItem('axon_portal_nome') || sessionStorage.getItem('axon_user') || '—';
-
-    this.mostrarIndicador(`Registrando ${arquivos.length} arquivo(s) no Sheets...`, 'fa-spinner fa-spin');
-
-    let sucessos = 0;
-    let falhas = 0;
-
-    for (const arq of arquivos) {
-        const s = arq.stats;
-        const payload = {
-            dataHora,
-            qtdArquivos:  1,
-            nomeArquivos: arq.nome,
-            totalGuias:   s.total,
-            guiasComErro: s.erros,
-            erros694:     s.erros694,
-            erros554:     s.erros554,
-            errosGrau:    s.errosGrau,
-            errosNascido: s.errosNascido,
-            errosObito:   s.errosObito,
-            guiasVencidas: s.vencidas,
-            valorTotal:   s.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
-            usuario
         };
 
-        try {
-            await fetch(url, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            sucessos++;
-        } catch (err) {
-            falhas++;
+        // Inicializar após app estar pronto
+        window.addEventListener('DOMContentLoaded', () => {
+            window.sheetsConfig = SheetsConfig;
+            SheetsConfig.init();
+        });
+        // Fallback se DOMContentLoaded já disparou
+        if (document.readyState !== 'loading') {
+            window.sheetsConfig = SheetsConfig;
+            SheetsConfig.init();
         }
-    }
-
-    if (falhas === 0) {
-        this.mostrarIndicador(`${sucessos} arquivo(s) registrado(s) no Sheets ✓`, 'fa-check-circle');
-    } else {
-        this.mostrarIndicador(`${sucessos} registrado(s), ${falhas} falha(s)`, 'fa-exclamation-circle');
-    }
-    setTimeout(() => this.ocultarIndicador(), 4000);
-},
-
-        mostrarIndicador(texto, iconClass) {
-            let el = document.getElementById('sheetsLogIndicator');
-            if (!el) {
-                el = document.createElement('div');
-                el.id = 'sheetsLogIndicator';
-                el.style.cssText = [
-                    'position:fixed','bottom:24px','right:24px','z-index:9000',
-                    'background:var(--bg-card)','border:1px solid rgba(15,157,88,0.4)',
-                    'border-left:3px solid #0f9d58','padding:11px 18px',
-                    'font-size:0.72rem','font-weight:600','color:#0f9d58',
-                    'display:flex','align-items:center','gap:10px',
-                    'font-family:Inter,sans-serif'
-                ].join(';');
-                document.body.appendChild(el);
-            }
-            el.innerHTML = `<i class="fas ${iconClass}"></i><span>${texto}</span>`;
-            el.style.display = 'flex';
-        },
-
-        ocultarIndicador() {
-            const el = document.getElementById('sheetsLogIndicator');
-            if (el) el.style.display = 'none';
-        }
-    };
-
-    // Inicializar após app estar pronto
-    window.addEventListener('DOMContentLoaded', () => {
-        window.sheetsConfig = SheetsConfig;
-        SheetsConfig.init();
-    });
-    // Fallback se DOMContentLoaded já disparou
-    if (document.readyState !== 'loading') {
-        window.sheetsConfig = SheetsConfig;
-        SheetsConfig.init();
-    }
     </script>
-<!-- LOGIN SCRIPT -->
-<script>
-// ── mesma URL do Sheets já configurada no app ──
-const _lCfg = [
-    "aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbQ==",
-    "L21hY3Jvcy9zL0FLZnljYnhWUHRyWDJVNQ==",
-    "QnJDekJ6WHZjTy1lNzY3dU80bkI1eWJyZQ==",
-    "Q3U2Q09iYkdCWmVjVG1aa1N6LVBOTFVhamZLT2tHcTAvZXhlYw=="
-];
-const _lUrl = _lCfg.map(s => atob(s)).join('');
+    <!-- LOGIN SCRIPT -->
+    <script>
+        // ── mesma URL do Sheets já configurada no app ──
+        const _lCfg = [
+            "aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbQ==",
+            "L21hY3Jvcy9zL0FLZnljYnhWUHRyWDJVNQ==",
+            "QnJDekJ6WHZjTy1lNzY3dU80bkI1eWJyZQ==",
+            "Q3U2Q09iYkdCWmVjVG1aa1N6LVBOTFVhamZLT2tHcTAvZXhlYw=="
+        ];
+        const _lUrl = _lCfg.map(s => atob(s)).join('');
 
-function registrarEntradaXML(usuario) {
+        function registrarEntradaXML(usuario) {
 
-    const NOME_PAGINA = 'Validador TISS (xml.html)';
+            const NOME_PAGINA = 'Validador TISS (xml.html)';
 
-    function enviarLog(ip) {
+            function enviarLog(ip) {
 
-        const cb = '_axon_xml_' + Date.now();
+                const cb = '_axon_xml_' + Date.now();
 
-        const url =
-            _lUrl +
-            '?acao=logEntrada' +
-            '&u=' + encodeURIComponent(usuario) +
-            '&nome=' + encodeURIComponent(usuario) +
-            '&ip=' + encodeURIComponent(ip) +
-            '&pagina=' + encodeURIComponent(NOME_PAGINA) +
-            '&callback=' + cb +
-            '&t=' + Date.now();
+                const url =
+                    _lUrl +
+                    '?acao=logEntrada' +
+                    '&u=' + encodeURIComponent(usuario) +
+                    '&nome=' + encodeURIComponent(usuario) +
+                    '&ip=' + encodeURIComponent(ip) +
+                    '&pagina=' + encodeURIComponent(NOME_PAGINA) +
+                    '&callback=' + cb +
+                    '&t=' + Date.now();
 
-        window[cb] = () => delete window[cb];
+                window[cb] = () => delete window[cb];
 
-        const s = document.createElement('script');
-        s.src = url;
+                const s = document.createElement('script');
+                s.src = url;
 
-        s.onerror = () => delete window[cb];
+                s.onerror = () => delete window[cb];
 
-        document.head.appendChild(s);
+                document.head.appendChild(s);
 
-        setTimeout(() => {
-            if (s.parentNode) s.remove();
-        }, 8000);
-    }
+                setTimeout(() => {
+                    if (s.parentNode) s.remove();
+                }, 8000);
+            }
 
-    fetch('https://api.ipify.org?format=json')
-        .then(r => r.json())
-        .then(d => enviarLog(d.ip || '—'))
-        .catch(() => enviarLog('—'));
-}
-function mostrarUserNoHeader(nome) {
-    // Insere badge de usuário + botão sair no header
-    const headerInner = document.querySelector('.header-inner');
-    if (!headerInner) return;
-    const badge = document.createElement('div');
-    badge.id = 'userBadgeHeader';
-    badge.style.cssText = 'display:flex;align-items:center;gap:10px;position:relative;z-index:1;';
-    badge.innerHTML = `
+            fetch('https://api.ipify.org?format=json')
+                .then(r => r.json())
+                .then(d => enviarLog(d.ip || '—'))
+                .catch(() => enviarLog('—'));
+        }
+        function mostrarUserNoHeader(nome) {
+            // Insere badge de usuário + botão sair no header
+            const headerInner = document.querySelector('.header-inner');
+            if (!headerInner) return;
+            const badge = document.createElement('div');
+            badge.id = 'userBadgeHeader';
+            badge.style.cssText = 'display:flex;align-items:center;gap:10px;position:relative;z-index:1;';
+            badge.innerHTML = `
         <div style="display:flex;align-items:center;gap:7px;padding:6px 14px;background:rgba(176,141,50,0.12);border:1px solid var(--az-gold-border);color:var(--az-gold);font-size:.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;">
             <i class="fas fa-user-circle"></i> ${nome.toUpperCase()}
         </div>
@@ -2968,61 +4119,62 @@ function mostrarUserNoHeader(nome) {
             onmouseover="this.style.background='rgba(239,68,68,.1)'" onmouseout="this.style.background='transparent'">
             <i class="fas fa-sign-out-alt"></i> Sair
         </button>`;
-    headerInner.appendChild(badge);
-}
+            headerInner.appendChild(badge);
+        }
 
-function fazerLogout() {
-    sessionStorage.removeItem('axon_tiss_auth');
-    sessionStorage.removeItem('axon_portal_nome');
-    location.reload();
-}
+        function fazerLogout() {
+            sessionStorage.removeItem('axon_tiss_auth');
+            sessionStorage.removeItem('axon_portal_nome');
+            location.reload();
+        }
 
-// Enter nos campos
-document.addEventListener('DOMContentLoaded', () => {
-    ['loginUser', 'loginPass'].forEach(id => {
-        document.getElementById(id).addEventListener('keydown', e => {
-            if (e.key === 'Enter') tentarLogin();
+        // Enter nos campos
+        document.addEventListener('DOMContentLoaded', () => {
+            ['loginUser', 'loginPass'].forEach(id => {
+                document.getElementById(id).addEventListener('keydown', e => {
+                    if (e.key === 'Enter') tentarLogin();
+                });
+            });
         });
-    });
-});
 
-// Verifica sessão salva — se já logou, pula a tela
-// Substitua o bloco "if (sessionStorage.getItem('axon_tiss_auth') === '1')" por:
+        // Verifica sessão salva — se já logou, pula a tela
+        // Substitua o bloco "if (sessionStorage.getItem('axon_tiss_auth') === '1')" por:
 
-(function axonTracker() {
-    const usuario = sessionStorage.getItem('axon_portal_nome') 
-                 || sessionStorage.getItem('axon_user') 
-                 || '—';
-    const NOME_PAGINA = 'Validador TISS (xml.html)';
+        (function axonTracker() {
+            const usuario = sessionStorage.getItem('axon_portal_nome')
+                || sessionStorage.getItem('axon_user')
+                || '—';
+            const NOME_PAGINA = 'Validador TISS (xml.html)';
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => mostrarUserNoHeader(usuario));
-    } else {
-        mostrarUserNoHeader(usuario);
-    }
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', () => mostrarUserNoHeader(usuario));
+            } else {
+                mostrarUserNoHeader(usuario);
+            }
 
-    function enviarLog(ip) {
-        const cb  = '_axon_xml_' + Date.now();
-        const url = _lUrl
-            + '?acao=logEntrada'
-            + '&u='      + encodeURIComponent(usuario)
-            + '&nome='   + encodeURIComponent(usuario)
-            + '&ip='     + encodeURIComponent(ip)
-            + '&pagina=' + encodeURIComponent(NOME_PAGINA)
-            + '&callback=' + cb + '&t=' + Date.now();
-        window[cb] = () => { delete window[cb]; };
-        const s = document.createElement('script');
-        s.onerror = () => { delete window[cb]; };
-        s.src = url;
-        document.head.appendChild(s);
-        setTimeout(() => { if (s.parentNode) s.remove(); }, 8000);
-    }
+            function enviarLog(ip) {
+                const cb = '_axon_xml_' + Date.now();
+                const url = _lUrl
+                    + '?acao=logEntrada'
+                    + '&u=' + encodeURIComponent(usuario)
+                    + '&nome=' + encodeURIComponent(usuario)
+                    + '&ip=' + encodeURIComponent(ip)
+                    + '&pagina=' + encodeURIComponent(NOME_PAGINA)
+                    + '&callback=' + cb + '&t=' + Date.now();
+                window[cb] = () => { delete window[cb]; };
+                const s = document.createElement('script');
+                s.onerror = () => { delete window[cb]; };
+                s.src = url;
+                document.head.appendChild(s);
+                setTimeout(() => { if (s.parentNode) s.remove(); }, 8000);
+            }
 
-    fetch('https://api.ipify.org?format=json')
-        .then(r => r.json())
-        .then(d  => enviarLog(d.ip || '—'))
-        .catch(()  => enviarLog('—'));
-})();
-</script>
+            fetch('https://api.ipify.org?format=json')
+                .then(r => r.json())
+                .then(d => enviarLog(d.ip || '—'))
+                .catch(() => enviarLog('—'));
+        })();
+    </script>
 </body>
+
 </html>
