@@ -822,7 +822,7 @@
         ══════════════════════════════════════════ */
         .summary-premium {
             display: grid;
-            grid-template-columns: repeat(9, minmax(0, 1fr));
+            grid-template-columns: repeat(10, minmax(0, 1fr));
             gap: 8px;
             margin-bottom: 24px;
             padding: 16px;
@@ -1167,6 +1167,30 @@
             color: #7e22ce;
             font-size: 1rem;
             flex-shrink: 0;
+        }
+
+        /* MOTIVO ENCERRAMENTO 51 */
+        .motivo51-alert {
+            border: 1px solid var(--danger-border);
+            background: var(--danger-bg);
+            color: var(--danger);
+            padding: 14px 16px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 0.82rem;
+        }
+
+        .motivo51-alert i {
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .badge-motivo51 {
+            background: var(--danger-bg);
+            border-color: var(--danger-border);
+            color: var(--danger);
         }
 
         /* META INFO */
@@ -3384,7 +3408,7 @@
                             this.arquivos.push({ nome: file.name, guias, stats: this.calcularStats(guias) });
                         } catch (e) {
                             this.showToast(`Erro em ${file.name}: ${e.message}`, 'error');
-                            this.arquivos.push({ nome: file.name, guias: [], stats: { total: 0, erros: 0, erros694: 0, erros554: 0, errosGrau: 0, errosNascido: 0, errosObito: 0, vencidas: 0, valor: 0, locais: 0, intercambio: 0 }, erro: true });
+                            this.arquivos.push({ nome: file.name, guias: [], stats: { total: 0, erros: 0, erros694: 0, erros554: 0, errosGrau: 0, errosNascido: 0, errosObito: 0, errosMotivo51: 0, vencidas: 0, valor: 0, locais: 0, intercambio: 0 }, erro: true });
                         }
                         resolve();
                     };
@@ -3518,21 +3542,30 @@
                         erros.push({ tipo: 'sem_declaracao_obito', mensagem: `Tag <declaracaoObito> ausente (motivoEncerramento = ${motivoEncerramento})`, motivo: motivoEncerramento });
                     }
 
-                    guias.push({ numero: numG, carteira: cart, beneficiario: nomeB, tipo: info, convenio: nomeConvenio, dataReferencia: dataRef, vencida: this.checarVencimento(dataRef, nomeConvenio), valorTotal, items, temErro, erros, qtdItens: items.length, temDeclaracaoNascido, codigosNascido: codigosNascidoPresentes, motivoEncerramento, temDeclaracaoObito, erroObito, senha });
+                    // Regra adicional: motivoEncerramento = 51 é inválido (demais motivos seguem normalmente)
+                    let erroMotivo51 = false;
+                    const temMotivo51 = Array.from(guia.getElementsByTagName('*')).some(el => el.localName === 'motivoEncerramento' && el.textContent.trim() === '51');
+                    if (temMotivo51) {
+                        temErro = true; erroMotivo51 = true;
+                        erros.push({ tipo: 'motivo_encerramento_51', mensagem: 'Tag <motivoEncerramento> com valor 51 não é aceito', motivo: '51' });
+                    }
+
+                    guias.push({ numero: numG, carteira: cart, beneficiario: nomeB, tipo: info, convenio: nomeConvenio, dataReferencia: dataRef, vencida: this.checarVencimento(dataRef, nomeConvenio), valorTotal, items, temErro, erros, qtdItens: items.length, temDeclaracaoNascido, codigosNascido: codigosNascidoPresentes, motivoEncerramento, temDeclaracaoObito, erroObito, erroMotivo51, senha });
                 });
                 return guias;
             }
 
             calcularStats(guias) {
-                let erros694 = 0, erros554 = 0, errosGrau = 0, errosNascido = 0, errosObito = 0;
+                let erros694 = 0, erros554 = 0, errosGrau = 0, errosNascido = 0, errosObito = 0, errosMotivo51 = 0;
                 guias.forEach(g => g.erros.forEach(e => {
                     if (e.tipo === 'ra_694') erros694++;
                     if (e.tipo === 'ra_554') erros554++;
                     if (e.tipo === 'grau_incorreto') errosGrau++;
                     if (e.tipo === 'sem_declaracao_nascido') errosNascido++;
                     if (e.tipo === 'sem_declaracao_obito') errosObito++;
+                    if (e.tipo === 'motivo_encerramento_51') errosMotivo51++;
                 }));
-                return { total: guias.length, erros: guias.filter(g => g.temErro).length, erros694, erros554, errosGrau, errosNascido, errosObito, vencidas: guias.filter(g => g.vencida).length, valor: guias.reduce((a, g) => a + g.valorTotal, 0), locais: guias.filter(g => g.tipo.isLocal).length, intercambio: guias.filter(g => !g.tipo.isLocal).length };
+                return { total: guias.length, erros: guias.filter(g => g.temErro).length, erros694, erros554, errosGrau, errosNascido, errosObito, errosMotivo51, vencidas: guias.filter(g => g.vencida).length, valor: guias.reduce((a, g) => a + g.valorTotal, 0), locais: guias.filter(g => g.tipo.isLocal).length, intercambio: guias.filter(g => !g.tipo.isLocal).length };
             }
 
             identificarVinculos(guias) {
@@ -3570,12 +3603,14 @@
                 const tGrau = this.arquivos.reduce((a, arq) => a + arq.stats.errosGrau, 0);
                 const tNascido = this.arquivos.reduce((a, arq) => a + arq.stats.errosNascido, 0);
                 const tObito = this.arquivos.reduce((a, arq) => a + arq.stats.errosObito, 0);
+                const tMotivo51 = this.arquivos.reduce((a, arq) => a + (arq.stats.errosMotivo51 || 0), 0);
                 container.innerHTML = `
                     <button class="filter-btn-premium ${this.filtroAtual.erro === '694' ? 'active' : ''}" onclick="app.filterByError('694')"><i class="fas fa-exclamation-triangle"></i>Erro Enfermaria<span class="filter-count">${t694}</span></button>
                     <button class="filter-btn-premium ${this.filtroAtual.erro === '554' ? 'active' : ''}" onclick="app.filterByError('554')"><i class="fas fa-exclamation-triangle"></i>Erro Apartamento<span class="filter-count">${t554}</span></button>
                     <button class="filter-btn-premium ${this.filtroAtual.erro === 'grau' ? 'active' : ''}" onclick="app.filterByError('grau')"><i class="fas fa-exclamation-triangle"></i>Erro Grau Part.<span class="filter-count">${tGrau}</span></button>
                     <button class="filter-btn-premium ${this.filtroAtual.erro === 'nascido' ? 'active' : ''}" onclick="app.filterByError('nascido')"><i class="fas fa-baby"></i>DNV<span class="filter-count">${tNascido}</span></button>
                     <button class="filter-btn-premium ${this.filtroAtual.erro === 'obito' ? 'active' : ''}" onclick="app.filterByError('obito')"><i class="fas fa-skull"></i>DO<span class="filter-count">${tObito}</span></button>
+                    <button class="filter-btn-premium ${this.filtroAtual.erro === 'motivo51' ? 'active' : ''}" onclick="app.filterByError('motivo51')"><i class="fas fa-door-open"></i>Motivo Enc. 51<span class="filter-count">${tMotivo51}</span></button>
                 `;
             }
 
@@ -3634,6 +3669,7 @@
                     <div class="summary-item-premium ${this.filtroAtual.erro === 'grau' ? 'active' : ''}" onclick="app.filterByError('grau')"><div class="label">Erro Grau</div><div class="value">${stats.errosGrau}</div></div>
                     <div class="summary-item-premium ${this.filtroAtual.erro === 'nascido' ? 'active' : ''}" onclick="app.filterByError('nascido')"><div class="label">Decl. Nascido</div><div class="value">${stats.errosNascido}</div></div>
                     <div class="summary-item-premium ${this.filtroAtual.erro === 'obito' ? 'active' : ''}" onclick="app.filterByError('obito')"><div class="label">Decl. Óbito</div><div class="value">${stats.errosObito}</div></div>
+                    <div class="summary-item-premium ${this.filtroAtual.erro === 'motivo51' ? 'active' : ''}" onclick="app.filterByError('motivo51')"><div class="label">Enc. 51</div><div class="value">${stats.errosMotivo51 || 0}</div></div>
                     <div class="summary-item-premium ${this.filtroAtual.tipo === 'expired' ? 'active' : ''}" onclick="app.filterByType('expired')"><div class="label">Vencidas</div><div class="value">${stats.vencidas}</div></div>
                     <div class="summary-item-premium"><div class="label">Valor</div><div class="value" style="font-size:clamp(0.65rem,1.1vw,0.9rem);">${this.formatCurrency(stats.valor)}</div></div>
                 </div>
@@ -3657,6 +3693,7 @@
                 else if (this.filtroAtual.erro === 'grau') gf = gf.filter(g => g.erros.some(e => e.tipo === 'grau_incorreto'));
                 else if (this.filtroAtual.erro === 'nascido') gf = gf.filter(g => g.erros.some(e => e.tipo === 'sem_declaracao_nascido'));
                 else if (this.filtroAtual.erro === 'obito') gf = gf.filter(g => g.erros.some(e => e.tipo === 'sem_declaracao_obito'));
+                else if (this.filtroAtual.erro === 'motivo51') gf = gf.filter(g => g.erros.some(e => e.tipo === 'motivo_encerramento_51'));
                 if (!gf.length) { container.innerHTML = `<div class="empty-state-premium"><i class="fas fa-search"></i><h3>Nenhuma guia encontrada</h3></div>`; return; }
                 const grupos = new Map();
                 gf.forEach(g => { const k = g.carteira || '__sem_carteira__'; if (!grupos.has(k)) grupos.set(k, []); grupos.get(k).push(g); });
@@ -3670,6 +3707,7 @@
                 const temVencida = guias.some(g => g.vencida);
                 const temNascido = guias.some(g => g.erros.some(e => e.tipo === 'sem_declaracao_nascido'));
                 const temObito = guias.some(g => g.erros.some(e => e.tipo === 'sem_declaracao_obito'));
+                const temMotivo51 = guias.some(g => g.erros.some(e => e.tipo === 'motivo_encerramento_51'));
                 const valorTotal = guias.reduce((s, g) => s + g.valorTotal, 0);
                 const convenios = [...new Set(guias.map(g => g.convenio))].join(' · ');
                 const grupo = document.createElement('div');
@@ -3684,6 +3722,7 @@
                             ${temVencida ? '<span class="grupo-pill grupo-pill-vencida"><i class="fas fa-clock"></i> Vencida</span>' : ''}
                             ${temNascido ? '<span class="grupo-pill grupo-pill-nascido"><i class="fas fa-baby"></i> Sem Decl. Nascido</span>' : ''}
                             ${temObito ? '<span class="grupo-pill grupo-pill-obito"><i class="fas fa-skull"></i> Sem Decl. Óbito</span>' : ''}
+                            ${temMotivo51 ? '<span class="grupo-pill grupo-pill-erro"><i class="fas fa-door-open"></i> Enc. 51</span>' : ''}
                             <span class="grupo-pill grupo-pill-default"><i class="fas fa-file-invoice"></i> ${guias.length} guias</span>
                             <span class="grupo-pill grupo-pill-default"><i class="fas fa-hospital"></i> ${convenios}</span>
                             <span class="grupo-valor">${this.formatCurrency(valorTotal)}</span>
@@ -3699,6 +3738,7 @@
             createGuiaCard(guia) {
                 const temErroNascido = guia.erros.some(e => e.tipo === 'sem_declaracao_nascido');
                 const temErroObito = guia.erros.some(e => e.tipo === 'sem_declaracao_obito');
+                const temErroMotivo51 = guia.erros.some(e => e.tipo === 'motivo_encerramento_51');
                 const card = document.createElement('div');
                 let cardClasses = 'guia-card-premium';
                 if (guia.temErro) cardClasses += ' has-error';
@@ -3730,6 +3770,11 @@
                 if (temErroObito) {
                     const erroO = guia.erros.find(e => e.tipo === 'sem_declaracao_obito');
                     obitoAlertHtml = `<div class="obito-alert"><i class="fas fa-skull"></i><div><strong>Tag &lt;declaracaoObito&gt; ausente</strong><ul style="margin-top:4px;padding-left:16px;"><li>Motivo de encerramento: <strong>${erroO?.motivo || guia.motivoEncerramento}</strong></li><li>Inclua a tag com o número da DO do paciente.</li></ul></div></div>`;
+                }
+
+                let motivo51AlertHtml = '';
+                if (temErroMotivo51) {
+                    motivo51AlertHtml = `<div class="motivo51-alert"><i class="fas fa-door-open"></i><div><strong>Motivo de encerramento 51 não aceito</strong><ul style="margin-top:4px;padding-left:16px;"><li>Tag <strong>&lt;motivoEncerramento&gt;51&lt;/motivoEncerramento&gt;</strong> encontrada nesta guia.</li><li>Corrija o motivo de encerramento antes de enviar.</li></ul></div></div>`;
                 }
 
                 const convenioBadgeClass = this.getConvenioBadgeClass(guia.convenio);
@@ -3793,12 +3838,14 @@
                             ${guia.vencida ? '<span class="badge-premium badge-vencida"><i class="fas fa-clock"></i>VENCIDA</span>' : ''}
                             ${temErroNascido ? '<span class="badge-premium badge-sem-nascido"><i class="fas fa-baby"></i>SEM DECL. NASCIDO</span>' : ''}
                             ${temErroObito ? '<span class="badge-premium badge-sem-obito"><i class="fas fa-skull"></i>SEM DECL. ÓBITO</span>' : ''}
+                            ${temErroMotivo51 ? '<span class="badge-premium badge-motivo51"><i class="fas fa-door-open"></i>MOTIVO ENC. 51</span>' : ''}
                             ${guia.vinculada ? `<span class="badge-premium badge-vinculo" title="Vinculada à(s): ${(guia.grupoVinculo || []).join(', ')}" onclick="event.stopPropagation();app.destacarVinculos(this)"><i class="fas fa-link"></i>VINCULADA</span>` : ''}
                         </div>
                     </div>
                     <div class="guia-body-premium">
                         ${nascidoAlertHtml}
                         ${obitoAlertHtml}
+                        ${motivo51AlertHtml}
                         ${equipeHtml}
                         <div class="guia-meta-row">
                             <span><i class="fas fa-calendar"></i>Referência: ${dataFormatada}</span>
@@ -3818,10 +3865,10 @@
 
             filterByType(type) { this.filtroAtual.tipo = type; this.filtroAtual.erro = null; this.updateErrorFiltersUI(); if (this.arquivoAtivo) this.renderTabContent(this.arquivoAtivo); }
             filterByError(errorType) { if (this.filtroAtual.erro === errorType) { this.filtroAtual.erro = null; this.filtroAtual.tipo = 'all'; } else { this.filtroAtual.erro = errorType; this.filtroAtual.tipo = 'error'; } this.updateErrorFiltersUI(); if (this.arquivoAtivo) this.renderTabContent(this.arquivoAtivo); }
-            updateErrorFiltersUI() { document.querySelectorAll('.filter-btn-premium').forEach(btn => { const o = btn.getAttribute('onclick') || ''; let t = null; if (o.includes("'694'")) t = '694'; else if (o.includes("'554'")) t = '554'; else if (o.includes("'grau'")) t = 'grau'; else if (o.includes("'nascido'")) t = 'nascido'; else if (o.includes("'obito'")) t = 'obito'; if (t) btn.classList.toggle('active', this.filtroAtual.erro === t); }); }
-            updateActiveFiltersDisplay() { const div = document.getElementById('activeFilters'); const btn = document.getElementById('clearFiltersBtn'); const txt = document.getElementById('activeFilterText'); if (this.filtroAtual.tipo !== 'all' || this.filtroAtual.erro) { div.style.display = 'flex'; btn.style.display = 'inline-flex'; const map = { '694': 'Erro RA 60000694', '554': 'Erro RA 60000554', 'grau': 'Erro Grau', 'nascido': 'Decl. Nascido Ausente', 'obito': 'Decl. Óbito Ausente' }; if (this.filtroAtual.erro) txt.innerText = map[this.filtroAtual.erro] || ''; else if (this.filtroAtual.tipo === 'error') txt.innerText = 'Guias com erro'; else if (this.filtroAtual.tipo === 'expired') txt.innerText = 'Guias vencidas'; } else { div.style.display = 'none'; btn.style.display = 'none'; } }
+            updateErrorFiltersUI() { document.querySelectorAll('.filter-btn-premium').forEach(btn => { const o = btn.getAttribute('onclick') || ''; let t = null; if (o.includes("'694'")) t = '694'; else if (o.includes("'554'")) t = '554'; else if (o.includes("'grau'")) t = 'grau'; else if (o.includes("'nascido'")) t = 'nascido'; else if (o.includes("'obito'")) t = 'obito'; else if (o.includes("'motivo51'")) t = 'motivo51'; if (t) btn.classList.toggle('active', this.filtroAtual.erro === t); }); }
+            updateActiveFiltersDisplay() { const div = document.getElementById('activeFilters'); const btn = document.getElementById('clearFiltersBtn'); const txt = document.getElementById('activeFilterText'); if (this.filtroAtual.tipo !== 'all' || this.filtroAtual.erro) { div.style.display = 'flex'; btn.style.display = 'inline-flex'; const map = { '694': 'Erro RA 60000694', '554': 'Erro RA 60000554', 'grau': 'Erro Grau', 'nascido': 'Decl. Nascido Ausente', 'obito': 'Decl. Óbito Ausente', 'motivo51': 'Motivo de Encerramento 51' }; if (this.filtroAtual.erro) txt.innerText = map[this.filtroAtual.erro] || ''; else if (this.filtroAtual.tipo === 'error') txt.innerText = 'Guias com erro'; else if (this.filtroAtual.tipo === 'expired') txt.innerText = 'Guias vencidas'; } else { div.style.display = 'none'; btn.style.display = 'none'; } }
             clearAllFilters() { this.filtroAtual = { tipo: 'all', erro: null, codigo: null }; this.updateErrorFiltersUI(); if (this.arquivoAtivo) this.renderTabContent(this.arquivoAtivo); document.getElementById('search').value = ''; }
-            filterSearch() { const query = document.getElementById('search').value.toLowerCase().trim(); if (this.modoEquipe) { document.querySelectorAll('.equipe-table-row').forEach(row => { const busca = row.dataset.busca || ''; row.style.display = (!query || busca.includes(query)) ? 'table-row' : 'none'; }); return; } document.querySelectorAll('.guia-card-premium').forEach(card => { if (!query) { card.style.display = 'block'; return; } const fullText = `${card.dataset.numero || ''} ${card.dataset.beneficiario || ''} ${card.dataset.carteira || ''} ${card.dataset.convenio || ''} ${Array.from(card.querySelectorAll('.item-name')).map(el => el.textContent).join(' ')}`.toLowerCase(); const matches = fullText.includes(query); const filtrosAplicados = this.filtroAtual.tipo !== 'all' || this.filtroAtual.erro; if (!filtrosAplicados) { card.style.display = matches ? 'block' : 'none'; return; } const et = card.dataset.errorTypes || ''; let fa = false; if (this.filtroAtual.tipo === 'error' && card.dataset.hasError === 'true') fa = true; else if (this.filtroAtual.tipo === 'expired' && card.dataset.vencida === 'true') fa = true; else if (this.filtroAtual.erro === '694') fa = et.includes('ra_694'); else if (this.filtroAtual.erro === '554') fa = et.includes('ra_554'); else if (this.filtroAtual.erro === 'grau') fa = et.includes('grau_incorreto'); else if (this.filtroAtual.erro === 'nascido') fa = et.includes('sem_declaracao_nascido'); else if (this.filtroAtual.erro === 'obito') fa = et.includes('sem_declaracao_obito'); card.style.display = (fa && matches) ? 'block' : 'none'; }); document.querySelectorAll('.grupo-carteirinha').forEach(g => { const filhos = g.querySelectorAll('.guia-card-premium'); g.style.display = Array.from(filhos).some(c => c.style.display !== 'none') ? 'block' : 'none'; }); }
+            filterSearch() { const query = document.getElementById('search').value.toLowerCase().trim(); if (this.modoEquipe) { document.querySelectorAll('.equipe-table-row').forEach(row => { const busca = row.dataset.busca || ''; row.style.display = (!query || busca.includes(query)) ? 'table-row' : 'none'; }); return; } document.querySelectorAll('.guia-card-premium').forEach(card => { if (!query) { card.style.display = 'block'; return; } const fullText = `${card.dataset.numero || ''} ${card.dataset.beneficiario || ''} ${card.dataset.carteira || ''} ${card.dataset.convenio || ''} ${Array.from(card.querySelectorAll('.item-name')).map(el => el.textContent).join(' ')}`.toLowerCase(); const matches = fullText.includes(query); const filtrosAplicados = this.filtroAtual.tipo !== 'all' || this.filtroAtual.erro; if (!filtrosAplicados) { card.style.display = matches ? 'block' : 'none'; return; } const et = card.dataset.errorTypes || ''; let fa = false; if (this.filtroAtual.tipo === 'error' && card.dataset.hasError === 'true') fa = true; else if (this.filtroAtual.tipo === 'expired' && card.dataset.vencida === 'true') fa = true; else if (this.filtroAtual.erro === '694') fa = et.includes('ra_694'); else if (this.filtroAtual.erro === '554') fa = et.includes('ra_554'); else if (this.filtroAtual.erro === 'grau') fa = et.includes('grau_incorreto'); else if (this.filtroAtual.erro === 'nascido') fa = et.includes('sem_declaracao_nascido'); else if (this.filtroAtual.erro === 'obito') fa = et.includes('sem_declaracao_obito'); else if (this.filtroAtual.erro === 'motivo51') fa = et.includes('motivo_encerramento_51'); card.style.display = (fa && matches) ? 'block' : 'none'; }); document.querySelectorAll('.grupo-carteirinha').forEach(g => { const filhos = g.querySelectorAll('.guia-card-premium'); g.style.display = Array.from(filhos).some(c => c.style.display !== 'none') ? 'block' : 'none'; }); }
             toggleAll(open) { document.querySelectorAll('.grupo-carteirinha').forEach(el => el.classList.toggle('is-open', open)); document.querySelectorAll('.guia-card-premium').forEach(el => el.classList.toggle('is-open', open)); }
             destacarVinculos(badgeEl) { const card = badgeEl.closest('.guia-card-premium'); const nums = [...(card.dataset.grupoVinculo || '').split(',').map(s => s.trim()).filter(Boolean), card.dataset.numero]; document.querySelectorAll('.guia-card-premium.vinculo-highlight').forEach(c => c.classList.remove('vinculo-highlight')); document.querySelectorAll('.guia-card-premium').forEach(c => { if (nums.includes(c.dataset.numero)) { c.classList.add('vinculo-highlight'); c.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } }); setTimeout(() => document.querySelectorAll('.vinculo-highlight').forEach(c => c.classList.remove('vinculo-highlight')), 3000); }
         }
