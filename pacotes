@@ -1,0 +1,1591 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Portal Corporativo | AXON</title>
+  <meta name="description" content="Portal estratégico de otimização de processos hospitalares" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="icon" type="image/png" href="https://i.imgur.com/vNrUft9.png" />
+  <style>
+    /* ════════════════════════════════════════
+       PORTAL CORPORATIVO — SISTEMA VISUAL
+       Navy institucional + neutros frios, um único azul de ação.
+       Tema claro é o padrão; o escuro mantém a mesma estrutura.
+    ════════════════════════════════════════ */
+    :root {
+      --font: 'IBM Plex Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      --bg: #F3F5F8;
+      --surface: #FFFFFF;
+      --surface-2: #F8F9FB;
+      --line: #DCE1E9;
+      --line-strong: #C3CBD8;
+      --text: #172033;
+      --text-2: #4A5568;
+      --text-3: #667386;
+      --accent: #1D5FA7;
+      --accent-hover: #174D8A;
+      --accent-soft: #E6EFF9;
+      --ok: #0B7A4B;
+      --ok-soft: #E4F4EC;
+      --warn: #A8520A;
+      --warn-soft: #FDF1E2;
+      --danger: #B4231A;
+      --danger-soft: #FCE9E7;
+      --side-bg: #13233B;
+      --side-line: rgba(255, 255, 255, 0.10);
+      --side-text: #C3CDDC;
+      --side-hover: rgba(255, 255, 255, 0.07);
+      --side-active: rgba(255, 255, 255, 0.13);
+      --radius: 6px;
+      --radius-lg: 8px;
+      --shadow-modal: 0 16px 40px rgba(10, 20, 36, 0.28);
+    }
+
+    body.dark-mode {
+      --bg: #0E1520;
+      --surface: #151E2C;
+      --surface-2: #121A27;
+      --line: #263449;
+      --line-strong: #34465F;
+      --text: #E6EBF2;
+      --text-2: #B0BCCD;
+      --text-3: #8795A9;
+      --accent: #6FA6E3;
+      --accent-hover: #8DBBEE;
+      --accent-soft: rgba(111, 166, 227, 0.14);
+      --ok: #4CC38A;
+      --ok-soft: rgba(76, 195, 138, 0.14);
+      --warn: #F0A25A;
+      --warn-soft: rgba(240, 162, 90, 0.14);
+      --danger: #F28B82;
+      --danger-soft: rgba(242, 139, 130, 0.14);
+      --side-bg: #0A111B;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+
+    html { font-size: 15px; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      line-height: 1.5;
+    }
+
+    button, input, select { font-family: inherit; font-size: inherit; }
+
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .sidebar :focus-visible { outline-color: #fff; }
+
+    .sem-acesso { display: none !important; }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 264px;
+      background: var(--side-bg);
+      color: var(--side-text);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      padding: 24px 16px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 0 8px 22px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid var(--side-line);
+    }
+    .brand img { height: 36px; width: auto; align-self: flex-start; filter: brightness(0) invert(1); }
+    .brand-text { font-size: 0.95rem; font-weight: 600; color: #fff; }
+
+    .nav-menu { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+    .nav-header { font-size: 0.8rem; font-weight: 500; color: #8FA0B8; margin: 4px 10px 8px; }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: var(--radius);
+      color: var(--side-text);
+      text-decoration: none;
+      font-size: 0.93rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .nav-item i { width: 18px; text-align: center; font-size: 0.95rem; opacity: 0.8; }
+    .nav-item:hover { background: var(--side-hover); color: #fff; }
+    .nav-item.active { background: var(--side-active); color: #fff; font-weight: 600; }
+    .nav-item.active i { opacity: 1; }
+
+    .user-mini {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 8px 0;
+      margin-top: 18px;
+      border-top: 1px solid var(--side-line);
+    }
+    .avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: rgba(255, 255, 255, 0.14);
+      color: #fff; font-weight: 600; font-size: 0.82rem;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .user-info { min-width: 0; }
+    .user-info h4 { font-size: 0.9rem; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .user-info span { font-size: 0.8rem; color: #8FA0B8; }
+
+    .btn-logout {
+      margin-top: 14px;
+      width: 100%;
+      padding: 9px 12px;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      color: var(--side-text);
+      border-radius: var(--radius);
+      font-size: 0.86rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-logout:hover { background: var(--side-hover); color: #fff; }
+
+    /* ── ÁREA PRINCIPAL ── */
+    .main-content { flex: 1; min-width: 0; height: 100%; display: flex; flex-direction: column; overflow-y: auto; }
+
+    .topbar {
+      min-height: 64px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      padding: 0 40px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+      flex-shrink: 0;
+    }
+    .topbar-actions { display: flex; align-items: center; gap: 10px; }
+    .breadcrumbs { font-size: 0.9rem; color: var(--text-3); }
+    .breadcrumbs b { color: var(--text); font-weight: 600; }
+
+    .search-box { display: flex; align-items: center; gap: 8px; }
+    .search-box label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+    .search-input {
+      width: 280px; padding: 8px 12px;
+      background: var(--surface); border: 1px solid var(--line-strong); border-radius: var(--radius);
+      color: var(--text); font-size: 0.9rem;
+    }
+    .search-input::placeholder { color: var(--text-3); }
+    .search-input:focus { outline: 2px solid var(--accent); outline-offset: -1px; border-color: var(--accent); }
+    .search-button {
+      width: 36px; height: 36px; border-radius: var(--radius);
+      border: 1px solid var(--line-strong); background: var(--surface); color: var(--text-2);
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
+    }
+    .search-button:hover, .theme-toggle:hover { background: var(--surface-2); color: var(--text); }
+    .theme-toggle {
+      width: 36px; height: 36px; border-radius: var(--radius);
+      background: transparent; border: 1px solid transparent; color: var(--text-2);
+      font-size: 1rem; cursor: pointer;
+    }
+
+    .dashboard-wrapper { width: 100%; max-width: 1040px; margin: 0 auto; padding: 36px 40px 72px; }
+
+    .section-group { display: none; }
+    .section-group.active { display: block; }
+
+    .page-head { margin-bottom: 28px; }
+    .page-head h1, .page-head h2 { font-size: 1.65rem; font-weight: 600; letter-spacing: -0.01em; line-height: 1.25; color: var(--text); }
+    .page-head p { margin-top: 6px; color: var(--text-2); font-size: 0.97rem; max-width: 62ch; }
+
+    /* Indicadores: uma faixa única, separada por filetes */
+    .metrics {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg);
+      margin-bottom: 36px;
+    }
+    .metric { padding: 20px 24px; }
+    .metric + .metric { border-left: 1px solid var(--line); }
+    .metric strong { display: block; font-size: 1.85rem; font-weight: 600; line-height: 1.15; font-variant-numeric: tabular-nums; color: var(--text); }
+    .metric span { display: block; margin-top: 4px; font-size: 0.86rem; color: var(--text-3); }
+
+    .block-title { font-size: 1.05rem; font-weight: 600; margin-bottom: 12px; color: var(--text); }
+
+    /* Ferramentas: lista com linhas, não grade de cartões */
+    .app-grid {
+      display: flex; flex-direction: column;
+      background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    .card {
+      display: flex; align-items: center; gap: 16px;
+      padding: 16px 20px;
+      color: inherit; text-decoration: none; cursor: pointer;
+      border-bottom: 1px solid var(--line);
+    }
+    .card:last-child { border-bottom: none; }
+    .card:hover { background: var(--surface-2); }
+    .card:hover .card-title { color: var(--accent); }
+    .card::after {
+      content: '\f054'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+      font-size: 0.75rem; color: var(--text-3); margin-left: auto; flex-shrink: 0;
+    }
+    .card-icon {
+      width: 38px; height: 38px; border-radius: var(--radius);
+      background: var(--accent-soft); color: var(--accent);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1rem;
+    }
+    .card-body { display: flex; flex-direction: column; min-width: 0; }
+    .card-title { font-size: 0.97rem; font-weight: 600; color: var(--text); }
+    .card-desc { font-size: 0.88rem; color: var(--text-2); }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 8000;
+      display: flex; align-items: center; gap: 12px; min-width: 280px; max-width: 360px;
+      background: var(--surface); border: 1px solid var(--line-strong); border-radius: var(--radius-lg);
+      padding: 12px 16px; box-shadow: 0 6px 20px rgba(10, 20, 36, 0.14);
+      opacity: 0; transform: translateY(8px); pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+    .toast.show { opacity: 1; transform: none; }
+    .toast-icon { width: 28px; height: 28px; border-radius: 50%; background: var(--ok-soft); color: var(--ok); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; flex-shrink: 0; }
+    .toast-title { font-weight: 600; font-size: 0.9rem; color: var(--text); }
+    .toast-sub { font-size: 0.82rem; color: var(--text-2); }
+
+    /* ── SPLASH ── */
+    .splash-screen {
+      position: fixed; inset: 0; z-index: 10000; background: var(--side-bg);
+      display: flex; align-items: center; justify-content: center;
+      pointer-events: none; transition: opacity 0.5s ease;
+    }
+    .splash-screen.fade-out { opacity: 0; }
+    .splash-content { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; }
+    .splash-logo { width: 84px; height: 84px; object-fit: contain; margin-bottom: 14px; }
+    .splash-title { font-size: 1.7rem; font-weight: 600; letter-spacing: 0.04em; color: #fff; }
+    .splash-subtitle { font-size: 0.9rem; color: #8FA0B8; }
+
+    /* ── LOGIN ── */
+    .login-overlay { position: fixed; inset: 0; z-index: 9999; background: var(--bg); overflow-y: auto; }
+    .login-shell { min-height: 100%; display: grid; grid-template-columns: minmax(380px, 42%) 1fr; }
+    .login-aside {
+      background: var(--side-bg); color: var(--side-text);
+      padding: 48px; display: flex; flex-direction: column; justify-content: space-between; gap: 40px;
+      position: relative; overflow: hidden; isolation: isolate;
+    }
+    .login-aside-logo { height: 44px; width: auto; align-self: flex-start; filter: brightness(0) invert(1); }
+    .login-aside > :not(.login-fibras) { position: relative; z-index: 1; }
+
+    /* Fibras: linhas finas saindo do cérebro, com um pulso de luz percorrendo cada uma (o "axônio") */
+    .login-fibras { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;
+      -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 50%, transparent 72%); mask-image: linear-gradient(to bottom, #000 0%, #000 50%, transparent 72%); }
+    .fibra-base path { fill: none; stroke: rgba(111, 190, 230, 0.30); stroke-width: 1.3; }
+    .pulso { fill: none; stroke: #5EEAD4; stroke-width: 2.6; stroke-linecap: round; stroke-dasharray: 80 920; opacity: 1;
+      filter: drop-shadow(0 0 5px rgba(94, 234, 212, 0.9));
+      animation: none; }
+
+    .login-brand { display: flex; flex-direction: column; align-items: center; text-align: center; }
+    .login-brain-wrap { position: relative; width: 300px; height: 300px; margin: -64px 0 -58px; display: flex; align-items: center; justify-content: center; animation: aparecer 1s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+    .login-brain { position: relative; width: 100%; height: 100%; object-fit: contain; }
+    .login-halo { position: absolute; width: 62%; height: 62%; border-radius: 50%;
+      background: radial-gradient(circle, rgba(79, 209, 197, 0.22) 0%, rgba(79, 209, 197, 0) 68%);
+      animation: respirar 5.5s ease-in-out infinite; }
+    .login-wordmark { font-size: 2.5rem; font-weight: 600; letter-spacing: 0.16em; line-height: 1; color: #fff; padding-left: 0.16em; }
+    .login-wordmark span { display: inline-block; animation: subir 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+    .login-wordmark-sub { margin-top: 10px; font-size: 0.95rem; letter-spacing: 0.05em; color: #8FA0B8; animation: subir 0.6s ease both; }
+    .login-signal { position: relative; width: 100%; max-width: 40ch; height: 1px; margin: 26px 0 24px; background: rgba(255, 255, 255, 0.12); overflow: hidden; animation: subir 0.6s ease both; }
+    .login-signal span { position: absolute; top: 0; left: 0; width: 25%; height: 1px; background: linear-gradient(90deg, transparent, #4FD1C5, transparent); animation: varrer 3.8s linear infinite; }
+    .login-product { max-width: 40ch; animation: subir 0.6s ease both; }
+    .login-product h1 { font-size: 1.15rem; font-weight: 600; line-height: 1.3; color: #fff; margin-bottom: 6px; }
+    .login-product p { font-size: 0.95rem; line-height: 1.6; color: var(--side-text); }
+    .login-scripture { font-size: 0.88rem; line-height: 1.7; color: #8FA0B8; max-width: 44ch; font-style: italic; border-top: 1px solid var(--side-line); padding-top: 18px; animation: subir 0.6s ease both; }
+    .login-scripture span { display: block; margin-top: 6px; font-style: normal; font-size: 0.82rem; color: #A9B7CB; }
+
+    .login-main { display: flex; align-items: center; justify-content: center; padding: 40px 24px; }
+    .login-card { width: 100%; max-width: 380px; animation: subir 0.7s ease 0.25s both; }
+    .login-title { font-size: 1.6rem; font-weight: 600; letter-spacing: -0.01em; color: var(--text); }
+    .login-subtitle { margin: 6px 0 26px; color: var(--text-2); font-size: 0.95rem; }
+    .login-field { margin-bottom: 16px; }
+    .login-label { display: block; font-size: 0.86rem; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+    .login-input {
+      width: 100%; padding: 11px 12px;
+      background: var(--surface); border: 1px solid var(--line-strong); border-radius: var(--radius);
+      color: var(--text); font-size: 0.97rem;
+    }
+    .login-input::placeholder { color: var(--text-3); }
+    .login-input:focus { outline: 2px solid var(--accent); outline-offset: -1px; border-color: var(--accent); }
+
+    .login-btn {
+      width: 100%; margin-top: 8px; padding: 12px 16px;
+      background: var(--accent); border: 1px solid var(--accent); border-radius: var(--radius);
+      color: #fff; font-size: 0.97rem; font-weight: 600; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    body.dark-mode .login-btn { color: #0E1520; }
+    .login-btn:hover:not(:disabled) { background: var(--accent-hover); border-color: var(--accent-hover); }
+    .login-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .login-error, .login-info {
+      display: none; gap: 10px; align-items: flex-start;
+      margin-top: 14px; padding: 10px 12px; border-radius: var(--radius);
+      font-size: 0.88rem; line-height: 1.45;
+    }
+    .login-error { background: var(--danger-soft); color: var(--danger); border: 1px solid color-mix(in srgb, var(--danger) 30%, transparent); }
+    .login-info { background: var(--ok-soft); color: var(--ok); border: 1px solid color-mix(in srgb, var(--ok) 30%, transparent); }
+    .login-error.show, .login-info.show { display: flex; }
+    .login-error i, .login-info i { margin-top: 2px; }
+
+    .login-links { margin-top: 20px; }
+    .login-links a { color: var(--accent); font-size: 0.9rem; font-weight: 500; cursor: pointer; text-decoration: none; }
+    .login-links a:hover { text-decoration: underline; }
+    .login-footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 0.82rem; color: var(--text-3); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+
+    .spin { animation: spinAnim 0.8s linear infinite; }
+    @keyframes spinAnim { to { transform: rotate(360deg); } }
+
+    /* ── MOVIMENTO DA ENTRADA ──
+       Tudo fica parado até o login aparecer (classe .entrou, colocada depois da abertura). */
+    .login-overlay .vida { animation-play-state: paused; }
+    .login-overlay.entrou .vida { animation-play-state: running; }
+    @keyframes subir { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    @keyframes aparecer { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: none; } }
+    @keyframes respirar { 0%, 100% { opacity: 0.5; transform: scale(0.92); } 50% { opacity: 1; transform: scale(1.1); } }
+    @keyframes varrer { from { transform: translateX(-100%); } to { transform: translateX(400%); } }
+
+    /* ── AGUARDANDO LIBERAÇÃO ── */
+    #pendingOverlay { z-index: 10001; display: none; align-items: center; justify-content: center; padding: 24px; }
+    .pending-card { width: 100%; max-width: 420px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 32px; }
+    .pending-icon { font-size: 1.5rem; color: var(--warn); margin-bottom: 14px; display: block; }
+    .pending-icon.fa-ban { color: var(--danger); }
+    .pending-card .login-subtitle { margin-bottom: 20px; }
+    .pending-card .btn-logout { color: var(--text-2); border-color: var(--line-strong); margin-top: 10px; }
+    .pending-card .btn-logout:hover { background: var(--surface-2); color: var(--text); }
+
+    /* ── MODAIS (sessão e administração) ── */
+    .adm-modal-bg, .modal-bg {
+      position: fixed; inset: 0; z-index: 9000; background: rgba(10, 20, 36, 0.55);
+      display: flex; align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-bg { z-index: 99999; }
+    .modal, .adm-modal {
+      background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-modal); width: 100%; padding: 26px 28px;
+    }
+    .modal { max-width: 400px; }
+    .modal h3, .adm-modal h3 { font-size: 1.15rem; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .modal p { color: var(--text-2); font-size: 0.93rem; margin: 8px 0 20px; line-height: 1.55; }
+    .modal p strong { color: var(--text); font-variant-numeric: tabular-nums; }
+    .modal-icon { font-size: 1.4rem; margin-bottom: 12px; display: block; color: var(--warn); }
+    .modal-icon.danger { color: var(--danger); }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+    .adm-modal { max-width: 640px; max-height: 90vh; overflow-y: auto; }
+
+    /* ── ADMINISTRAÇÃO ── */
+    .adm-tabs { display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+    .adm-tab {
+      background: none; border: none; border-bottom: 2px solid transparent; margin-bottom: -1px;
+      padding: 10px 14px; color: var(--text-2); font-weight: 500; font-size: 0.93rem; cursor: pointer;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .adm-tab:hover { color: var(--text); }
+    .adm-tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+    .adm-count { background: var(--warn-soft); color: var(--warn); border-radius: 999px; font-size: 0.76rem; padding: 1px 8px; font-weight: 600; }
+    .adm-panel { display: none; }
+    .adm-panel.active { display: block; }
+    .adm-table-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow-x: auto; }
+    .adm-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .adm-table th { text-align: left; padding: 11px 16px; font-size: 0.82rem; font-weight: 600; color: var(--text-2); background: var(--surface-2); border-bottom: 1px solid var(--line); }
+    .adm-table td { padding: 13px 16px; border-bottom: 1px solid var(--line); vertical-align: top; color: var(--text); }
+    .adm-table tr:last-child td { border-bottom: none; }
+    .adm-mods { max-width: 340px; color: var(--text-2); font-size: 0.86rem; }
+    .adm-muted { color: var(--text-3); font-size: 0.86rem; }
+    .adm-badge { padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600; white-space: nowrap; }
+    .adm-badge.pendente { background: var(--warn-soft); color: var(--warn); }
+    .adm-badge.aprovado { background: var(--ok-soft); color: var(--ok); }
+    .adm-badge.bloqueado { background: var(--danger-soft); color: var(--danger); }
+    .adm-btn { background: var(--surface); border: 1px solid var(--line-strong); color: var(--text); padding: 8px 14px; border-radius: var(--radius); font-weight: 500; font-size: 0.88rem; cursor: pointer; white-space: nowrap; }
+    .adm-btn:hover { background: var(--surface-2); }
+    .adm-btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    body.dark-mode .adm-btn.primary { color: #0E1520; }
+    .adm-btn.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+    .adm-btn.danger { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 40%, transparent); }
+    .adm-input { width: 100%; padding: 9px 12px; background: var(--surface); border: 1px solid var(--line-strong); border-radius: var(--radius); color: var(--text); font-size: 0.93rem; }
+    .adm-input:focus { outline: 2px solid var(--accent); outline-offset: -1px; border-color: var(--accent); }
+    .adm-lbl { display: block; font-size: 0.86rem; font-weight: 500; color: var(--text); margin: 16px 0 6px; }
+    .adm-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .adm-grupos { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; margin-top: 6px; }
+    .adm-grupo { background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 14px; }
+    .adm-grupo-t { font-size: 0.86rem; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .adm-check { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; padding: 3px 0; cursor: pointer; color: var(--text-2); }
+    .adm-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 16px; }
+    .adm-card h4 { margin-bottom: 8px; font-size: 1rem; font-weight: 600; }
+    .adm-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
+    .adm-erro { color: var(--danger); font-size: 0.88rem; margin-top: 10px; min-height: 1em; }
+
+    /* ── PACOTES VENDIDOS ── */
+    .vd-bar { display: grid; grid-template-columns: 2fr 1fr 1fr 1.2fr; gap: 10px; margin-bottom: 12px; }
+    .vd-acoes { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .vd-botoes { display: flex; gap: 8px; flex-wrap: wrap; }
+    .vd-num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    @media (max-width: 992px) { .vd-bar { grid-template-columns: 1fr 1fr; } .vd-bar input[type=search] { grid-column: 1 / -1; } }
+
+    /* ── TELAS PEQUENAS ── */
+    @media (max-width: 992px) {
+      body { flex-direction: column; overflow: auto; height: auto; min-height: 100vh; }
+      .sidebar { position: static; width: 100%; height: auto; padding: 14px 16px; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 10px; }
+      .brand { flex-direction: row; align-items: center; padding: 0; margin: 0; border: none; }
+      .brand img { height: 28px; }
+      .nav-menu { flex-direction: row; flex-wrap: wrap; flex: 1 1 100%; order: 3; }
+      .nav-header { display: none; }
+      .user-mini { padding: 0; margin: 0 0 0 auto; border: none; }
+      .user-info { display: none; }
+      .btn-logout { width: auto; margin: 0; }
+      .main-content { overflow: visible; height: auto; }
+      .topbar { padding: 10px 16px; flex-wrap: wrap; }
+      .search-input { width: 100%; min-width: 0; }
+      .search-box { flex: 1; }
+      .dashboard-wrapper { padding: 24px 16px 56px; }
+      .metrics { grid-template-columns: 1fr; }
+      .metric + .metric { border-left: none; border-top: 1px solid var(--line); }
+      .login-shell { grid-template-columns: 1fr; }
+      .login-aside { padding: 20px 24px; gap: 18px; }
+      .login-fibras, .login-halo, .login-signal, .login-product, .login-scripture { display: none; }
+      .login-brand { flex-direction: row; flex-wrap: wrap; justify-content: flex-start; align-items: center; column-gap: 14px; text-align: left; }
+      .login-brain-wrap { width: 56px; height: 56px; margin: 0; }
+      .login-wordmark { font-size: 1.6rem; padding-left: 0; }
+      .login-wordmark-sub { flex-basis: 100%; margin: -14px 0 0; padding-left: 70px; font-size: 0.82rem; }
+      .adm-row { grid-template-columns: 1fr; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ══ SPLASH ══ -->
+  <div class="splash-screen" id="splashScreen">
+    <div class="splash-content">
+      <img class="splash-logo" src="https://i.imgur.com/DOK9k47.png" alt="">
+      <p class="splash-title">AXON</p>
+      <p class="splash-subtitle">Technology Solutions</p>
+    </div>
+  </div>
+
+  <!-- ══ LOGIN ══ -->
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-shell">
+      <aside class="login-aside">
+      
+          </g>
+        
+        </svg>
+        <img class="login-aside-logo"
+          src="https://i.imgur.com/DOK9k47.png"
+          alt="AXON">
+        <div class="login-brand">
+          <div class="login-brain-wrap vida">
+            <span class="login-halo vida"></span>
+            <img class="login-brain" src="https://i.imgur.com/DOK9k47.png" alt="">
+          </div>
+          <div class="login-wordmark" role="img" aria-label="AXON"><span class="vida" style="animation-delay:0.55s">A</span><span class="vida" style="animation-delay:0.64s">X</span><span class="vida" style="animation-delay:0.73s">O</span><span class="vida" style="animation-delay:0.82s">N</span></div>
+          <div class="login-wordmark-sub vida" style="animation-delay:1s">Technology Solutions</div>
+          <div class="login-signal vida" style="animation-delay:1.2s" aria-hidden="true"><span></span></div>
+          <div class="login-product vida" style="animation-delay:1.35s">
+            <h1>Portal Corporativo</h1>
+            <p>Faturamento, auditoria e cadastro hospitalar em um só ambiente de trabalho.</p>
+          </div>
+        </div>
+        <div class="login-scripture vida" id="loginScripture" style="animation-delay:1.7s"></div>
+      </aside>
+
+      <main class="login-main">
+        <div class="login-card vida">
+          <h2 class="login-title" id="loginTitle">Bem‑vindo</h2>
+          <p class="login-subtitle" id="loginSubtitle">Entre com seu usuário e senha para acessar o portal.</p>
+
+          <div class="login-field" id="fieldNome" style="display:none">
+            <label class="login-label" for="loginNome">Nome completo</label>
+            <input class="login-input" id="loginNome" type="text" autocomplete="name">
+          </div>
+          <div class="login-field">
+            <label class="login-label" for="loginUser">Usuário</label>
+            <input class="login-input" id="loginUser" type="text" autocomplete="username" autocapitalize="none"
+              spellcheck="false">
+          </div>
+          <div class="login-field">
+            <label class="login-label" for="loginPass">Senha</label>
+            <input class="login-input" id="loginPass" type="password" autocomplete="current-password">
+          </div>
+
+          <button class="login-btn" id="loginBtn" onclick="enviarFormLogin()">
+            <i class="fa-solid fa-arrow-right-to-bracket" id="loginIcon"></i>
+            <span id="loginBtnText">Entrar no Portal</span>
+          </button>
+
+          <div class="login-error" id="loginError" role="alert">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <span id="loginErrorMsg">Usuário ou senha incorretos.</span>
+          </div>
+          <div class="login-info" id="loginInfo" role="status">
+            <i class="fa-solid fa-circle-check"></i>
+            <span id="loginInfoMsg"></span>
+          </div>
+
+          <div class="login-links">
+            <a id="lnkAlternar" onclick="alternarModoLogin('cadastro')">Primeiro acesso? Solicitar cadastro</a>
+          </div>
+
+          <div class="login-footer">
+            <span>Portal de uso interno restrito</span>
+            <span>© 2026 Azambuja</span>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- ══ AGUARDANDO LIBERAÇÃO ══ -->
+  <div class="login-overlay" id="pendingOverlay">
+    <div class="pending-card">
+      <i class="fa-regular fa-clock pending-icon" id="pendingIcon"></i>
+      <h2 class="login-title" id="pendingTitle">Aguardando liberação</h2>
+      <p class="login-subtitle" id="pendingMsg"></p>
+      <button class="login-btn" onclick="verificarAcessoNovamente()">
+        <i class="fa-solid fa-rotate"></i><span>Verificar novamente</span>
+      </button>
+      <button class="btn-logout" onclick="fazerLogout()">
+        <i class="fa-solid fa-right-from-bracket"></i> Sair
+      </button>
+    </div>
+  </div>
+
+  <!-- ══ TOAST ══ -->
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <div class="toast-icon"><i class="fa-solid fa-check"></i></div>
+    <div>
+      <div class="toast-title" id="toastTitle">Login realizado</div>
+      <div class="toast-sub" id="toastSub">Bem-vindo ao Portal AXON</div>
+    </div>
+  </div>
+
+  <!-- ══ PORTAL ══ -->
+  <aside class="sidebar" id="sidebar" style="display:none">
+    <div class="brand">
+      <img src="https://hospitalauxiliadora.com.br/wp-content/uploads/2025/03/logo-hospital-auxiliadora.png"
+        alt="Hospital Auxiliadora">
+      <span class="brand-text">Portal Corporativo</span>
+    </div>
+    <nav class="nav-menu" aria-label="Navegação principal">
+      <div class="nav-header">Menu</div>
+      <a href="#" onclick="switchSection('sec-inicio', this); return false;" class="nav-item active">
+        <i class="fa-solid fa-house"></i> Início
+      </a>
+      <a id="navKpi" data-modulo="kpi" href="KPI.html" class="nav-item">
+        <i class="fa-solid fa-chart-line"></i> KPI Performance
+      </a>
+      <a id="navFaturamento" href="#" onclick="switchSection('sec-faturamento', this); return false;" class="nav-item">
+        <i class="fa-solid fa-file-invoice-dollar"></i> Faturamento
+      </a>
+      <a id="navVendas" data-modulo="pacotes_contrato" href="#" onclick="switchSection('sec-vendas', this); return false;" class="nav-item">
+        <i class="fa-solid fa-receipt"></i> Pacotes vendidos
+      </a>
+      <a id="navCadastro" data-modulo="cadastro" href="#" onclick="switchSection('sec-auditoria', this); return false;"
+        class="nav-item">
+        <i class="fa-solid fa-clipboard-check"></i> Cadastro
+      </a>
+      <a id="navGerencial" href="#" onclick="switchSection('sec-gerencial', this); return false;" class="nav-item">
+        <i class="fa-solid fa-briefcase"></i> Gerencial
+      </a>
+      <a id="navAdmin" href="#" onclick="switchSection('sec-admin', this); return false;" class="nav-item sem-acesso">
+        <i class="fa-solid fa-user-shield"></i> Administração
+      </a>
+    </nav>
+    <div class="user-mini">
+      <div class="avatar" id="sidebarAvatar">??</div>
+      <div class="user-info">
+        <h4 id="sidebarNome">—</h4>
+        <span id="sidebarPapel">Usuário</span>
+      </div>
+    </div>
+    <button class="btn-logout" onclick="fazerLogout()">
+      <i class="fa-solid fa-right-from-bracket"></i> Sair
+    </button>
+  </aside>
+
+  <main class="main-content" id="mainContent" style="display:none">
+    <header class="topbar">
+      <div class="breadcrumbs">Portal Corporativo / <b id="page-title">Início</b></div>
+      <div class="topbar-actions">
+        <form class="search-box" onsubmit="searchPortal(event)">
+          <label for="topbarSearch">Buscar ferramenta</label>
+          <input id="topbarSearch" class="search-input" type="search" placeholder="Buscar ferramenta" autocomplete="off">
+          <button class="search-button" type="submit" aria-label="Buscar"><i
+              class="fa-solid fa-magnifying-glass"></i></button>
+        </form>
+        <button class="theme-toggle" id="theme-toggle" aria-label="Alternar tema claro e escuro"><i
+            class="fa-regular fa-moon"></i></button>
+      </div>
+    </header>
+
+    <div class="dashboard-wrapper">
+
+      <div class="section-group active" id="sec-inicio">
+        <header class="page-head">
+          <h1 id="homeGreeting">Portal Corporativo</h1>
+          <p>Faturamento, auditoria, cadastro e indicadores assistenciais reunidos em um único ambiente.</p>
+        </header>
+
+        <div class="metrics">
+          <div class="metric"><strong>R$ 4M</strong><span>em faturamento monitorado</span></div>
+          <div class="metric"><strong>4%</strong><span>de índice médio de glosas controladas</span></div>
+          <div class="metric"><strong>70%</strong><span>de redução de retrabalho e erros</span></div>
+        </div>
+
+        <h2 class="block-title">Acesso rápido</h2>
+        <div class="app-grid">
+          <a href="#" class="card" onclick="switchSection('sec-faturamento', document.getElementById('navFaturamento')); return false;"
+            data-modulos-any="val_ambulatorial,gerador_sequencial,padronizacao_temporal,edicao_inteligente,validacao_tiss,pacotes">
+            <span class="card-icon"><i class="fa-solid fa-file-invoice-dollar"></i></span>
+            <span class="card-body">
+              <span class="card-title">Faturamento</span>
+              <span class="card-desc">Correção em lote de XML e padronização de dados de faturamento.</span>
+            </span>
+          </a>
+          <a href="#" class="card" onclick="switchSection('sec-auditoria', document.getElementById('navCadastro')); return false;"
+            data-modulo="cadastro">
+            <span class="card-icon"><i class="fa-solid fa-clipboard-check"></i></span>
+            <span class="card-body">
+              <span class="card-title">Cadastro e auditoria</span>
+              <span class="card-desc">Controle preventivo de glosas, vínculo de atendimentos e conformidade.</span>
+            </span>
+          </a>
+        </div>
+      </div>
+
+      <div class="section-group" id="sec-auditoria">
+        <header class="page-head">
+          <h2>Cadastro de regras</h2>
+          <p>Controle das regras de cadastro e análise de prazos.</p>
+        </header>
+        <div class="app-grid">
+          <a href="AXON.html" class="card" data-modulo="cadastro">
+            <span class="card-icon"><i class="fa-solid fa-link"></i></span>
+            <span class="card-body">
+              <span class="card-title">Página inicial Cadastro</span>
+              <span class="card-desc">Análise de prazos e regras de cadastro.</span>
+            </span>
+          </a>
+        </div>
+      </div>
+
+      <div class="section-group" id="sec-faturamento">
+        <header class="page-head">
+          <h2>Faturamento e auditoria</h2>
+          <p>Ferramentas dos processos operacionais de faturamento.</p>
+        </header>
+        <div class="app-grid">
+          <a href="Correção XML Ambulatorial.html" class="card" data-modulo="val_ambulatorial">
+            <span class="card-icon"><i class="fa-solid fa-file-medical"></i></span>
+            <span class="card-body">
+              <span class="card-title">Validação Ambulatorial</span>
+              <span class="card-desc">Auditoria da produção ambulatorial.</span>
+            </span>
+          </a>
+          <a href="Correção XML.html" class="card" data-modulo="gerador_sequencial">
+            <span class="card-icon"><i class="fa-solid fa-file-code"></i></span>
+            <span class="card-body">
+              <span class="card-title">Gerador Sequencial</span>
+              <span class="card-desc">Análise e correção do sequencial de faturamento.</span>
+            </span>
+          </a>
+          <a href="data.html" class="card" data-modulo="padronizacao_temporal">
+            <span class="card-icon"><i class="fa-regular fa-clock"></i></span>
+            <span class="card-body">
+              <span class="card-title">Padronização Temporal</span>
+              <span class="card-desc">Correção em massa de datas e horários inconsistentes.</span>
+            </span>
+          </a>
+          <a href="Buscar e Substituir.html" class="card" data-modulo="edicao_inteligente">
+            <span class="card-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+            <span class="card-body">
+              <span class="card-title">Edição Inteligente</span>
+              <span class="card-desc">Busca e substituição em grandes volumes de dados.</span>
+            </span>
+          </a>
+          <a href="xml.html" class="card" data-modulo="validacao_tiss">
+            <span class="card-icon"><i class="fa-solid fa-calendar-check"></i></span>
+            <span class="card-body">
+              <span class="card-title">Validação de Lotes TISS</span>
+              <span class="card-desc">Validação de arquivos XML no padrão TISS.</span>
+            </span>
+          </a>
+          <a href="pc.html" class="card" data-modulo="pacotes">
+            <span class="card-icon"><i class="fa-solid fa-layer-group"></i></span>
+            <span class="card-body">
+              <span class="card-title">Pacotes Hospitalares</span>
+              <span class="card-desc">Consulta dos pacotes e composições. Baixar o contrato depende de permissão.</span>
+            </span>
+          </a>
+        </div>
+      </div>
+
+      <div class="section-group" id="sec-vendas">
+        <header class="page-head">
+          <h2>Pacotes vendidos</h2>
+          <p>Histórico das vendas registradas ao gerar o contrato: código, paciente e data da venda.</p>
+        </header>
+        <div class="vd-bar">
+          <input id="vdBusca" class="adm-input" type="search" placeholder="Buscar paciente, código ou pacote" autocomplete="off" oninput="filtrarVendas()">
+          <input id="vdDe" class="adm-input" type="date" title="Vendas a partir de" oninput="filtrarVendas()">
+          <input id="vdAte" class="adm-input" type="date" title="Vendas até" oninput="filtrarVendas()">
+          <select id="vdSetor" class="adm-input" onchange="filtrarVendas()"><option value="">Todos os setores</option></select>
+        </div>
+        <div class="vd-bar vd-acoes">
+          <span class="adm-muted" id="vdResumo">Carregando…</span>
+          <span class="vd-botoes">
+            <button class="adm-btn" onclick="carregarVendas()"><i class="fa-solid fa-rotate"></i> Atualizar</button>
+            <button class="adm-btn" onclick="exportarVendas()"><i class="fa-solid fa-file-csv"></i> Exportar CSV</button>
+            <a class="adm-btn primary" href="pc.html" style="text-decoration:none"><i class="fa-solid fa-plus"></i> Nova venda</a>
+          </span>
+        </div>
+        <div id="vdLista"></div>
+      </div>
+
+      <div class="section-group" id="sec-admin">
+        <header class="page-head">
+          <h2>Administração de acessos</h2>
+          <p>Aprove cadastros, defina o que cada usuário pode usar e redefina senhas.</p>
+        </header>
+        <div class="adm-tabs">
+          <button class="adm-tab active" data-tab="usuarios" onclick="admTab('usuarios')"><i class="fa-solid fa-users"></i> Usuários <span class="adm-count" id="admCountPend" style="display:none"></span></button>
+          <button class="adm-tab" data-tab="perfis" onclick="admTab('perfis')"><i class="fa-solid fa-id-badge"></i> Perfis de acesso</button>
+          <button class="adm-tab" data-tab="acessos" onclick="admTab('acessos')"><i class="fa-solid fa-clock-rotate-left"></i> Últimos acessos</button>
+        </div>
+        <div class="adm-panel active" id="admPanelUsuarios"><div id="admUsuarios" class="adm-muted">Carregando…</div></div>
+        <div class="adm-panel" id="admPanelPerfis"><div id="admPerfis"></div></div>
+        <div class="adm-panel" id="admPanelAcessos"><div id="admAcessos"></div></div>
+      </div>
+
+      <div class="section-group" id="sec-gerencial">
+        <header class="page-head">
+          <h2>Gestão estratégica</h2>
+          <p>Painéis de acompanhamento financeiro e de internações.</p>
+        </header>
+        <div class="app-grid">
+          <a href="Movimentação de Contas.html" class="card" data-modulo="contas_medicas">
+            <span class="card-icon"><i class="fa-solid fa-money-bill-transfer"></i></span>
+            <span class="card-body">
+              <span class="card-title">Contas Médicas</span>
+              <span class="card-desc">Conciliação e análise de movimentações financeiras.</span>
+            </span>
+          </a>
+          <a href="sus.html" class="card" data-modulo="internacoes">
+            <span class="card-icon"><i class="fa-solid fa-hospital-user"></i></span>
+            <span class="card-body">
+              <span class="card-title">Gestão de Internações</span>
+              <span class="card-desc">Controle da movimentação de AIH/SUS.</span>
+            </span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    /* ── SUPABASE ───────────────────────────────────────── */
+    const SUPABASE_URL = 'https://ukijcejmtcdrsxuhklmv.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_U4n-seYKyyFyzEKhQq814g_dWHVpZG9';   // chave pública (publishable): pode ficar no front
+    // A sessão fica no sessionStorage: fechou a aba, entra de novo (mesmo comportamento de antes)
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+      auth: { storage: window.sessionStorage, persistSession: true, autoRefreshToken: true, detectSessionInUrl: false }
+    });
+    const DOMINIO_LOGIN = 'axon.portal';   // o usuário digita só o nome; o domínio é interno e nunca aparece
+    const emailDe = u => { u = String(u).trim().toLowerCase(); return u.includes('@') ? u : u + '@' + DOMINIO_LOGIN; };
+    const nomeUsuario = e => String(e || '').split('@')[0];
+    let _acesso = null;   // { status, papel, nome, email, modulos[] }
+    let _meuId = null;
+    function esc(s) {
+      return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
+    /* ── TEMA ───────────────────────────────────────────── */
+    const themeBtn = document.getElementById('theme-toggle');
+    const themeIcon = themeBtn.querySelector('i');
+    function setTheme(isDark) {
+      if (isDark) {
+        document.body.classList.add('dark-mode');
+        document.body.classList.remove('light-mode');
+        themeIcon.classList.replace('fa-moon', 'fa-sun');
+      } else {
+        document.body.classList.add('light-mode');
+        document.body.classList.remove('dark-mode');
+        themeIcon.classList.replace('fa-sun', 'fa-moon');
+      }
+    }
+    const savedTheme = localStorage.getItem('hnsa-theme');
+    setTheme(savedTheme === 'dark');
+    themeBtn.addEventListener('click', () => {
+      const isDark = !document.body.classList.contains('dark-mode');
+      setTheme(isDark);
+      localStorage.setItem('hnsa-theme', isDark ? 'dark' : 'light');
+    });
+    function showToast(title, sub, duration = 3000) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastTitle').textContent = title;
+      document.getElementById('toastSub').textContent = sub;
+      toast.classList.add('show');
+      clearTimeout(window._toastTimeout);
+      window._toastTimeout = setTimeout(() => toast.classList.remove('show'), duration);
+    }
+    function searchPortal(event) {
+      event.preventDefault();
+      const query = document.getElementById('topbarSearch').value.trim().toLowerCase();
+      const cards = Array.from(document.querySelectorAll('.app-grid .card'));
+      let matches = 0;
+      cards.forEach(card => {
+        const text = card.innerText.toLowerCase();
+        const visible = !query || text.includes(query);
+        card.style.display = visible ? '' : 'none';
+        if (visible) matches += 1;
+      });
+      if (!query) {
+        showToast('Busca limpa', 'Todos os módulos foram restaurados.');
+      } else if (matches === 0) {
+        showToast('Nenhum resultado', 'Tente outro termo ou navegue pelos módulos.');
+      } else {
+        showToast(`${matches} resultado(s)`, 'Busca aplicada no painel.');
+      }
+    }
+
+    /* ── LOGIN (Supabase Auth) ──────────────────────────── */
+    let _modoLogin = 'login';
+
+    function setBtnLogin(carregando, texto) {
+      document.getElementById('loginBtn').disabled = carregando;
+      document.getElementById('loginIcon').className = carregando ? 'fa-solid fa-spinner spin'
+        : (_modoLogin === 'cadastro' ? 'fa-solid fa-user-plus' : 'fa-solid fa-arrow-right-to-bracket');
+      document.getElementById('loginBtnText').textContent = texto || (_modoLogin === 'cadastro' ? 'Solicitar acesso' : 'Entrar no Portal');
+    }
+
+    function alternarModoLogin(modo) {
+      _modoLogin = modo;
+      const cad = modo === 'cadastro';
+      document.getElementById('fieldNome').style.display = cad ? '' : 'none';
+      document.getElementById('loginTitle').textContent = cad ? 'Solicitar acesso' : 'Bem‑vindo';
+      document.getElementById('loginSubtitle').textContent = cad
+        ? 'Preencha seus dados. Um administrador vai liberar o seu acesso.'
+        : 'Entre com seu usuário e senha para acessar o portal.';
+      const lnk = document.getElementById('lnkAlternar');
+      lnk.textContent = cad ? 'Já tenho conta · Entrar' : 'Primeiro acesso? Solicitar cadastro';
+      lnk.onclick = () => alternarModoLogin(cad ? 'login' : 'cadastro');
+      document.getElementById('loginPass').autocomplete = cad ? 'new-password' : 'current-password';
+      document.getElementById('loginError').classList.remove('show');
+      document.getElementById('loginInfo').classList.remove('show');
+      setBtnLogin(false);
+    }
+
+    function traduzirErroAuth(err) {
+      const m = ((err && err.message) || '').toLowerCase();
+      if (m.includes('invalid login')) return 'Usuário ou senha incorretos.';
+      if (m.includes('rate limit') || m.includes('too many')) return 'Muitas tentativas. Aguarde alguns minutos.';
+      if (m.includes('pwned') || m.includes('compromised') || m.includes('weak')) return 'Senha fraca ou já vazada. Escolha outra.';
+      if (m.includes('password') && m.includes('characters')) return 'A senha precisa ter pelo menos 8 caracteres.';
+      if (m.includes('failed to fetch') || m.includes('network')) return 'Erro de conexão. Verifique a internet.';
+      return 'Não foi possível concluir: ' + ((err && err.message) || 'erro desconhecido');
+    }
+
+    function mostrarErro(msg) {
+      document.getElementById('loginInfo').classList.remove('show');
+      document.getElementById('loginErrorMsg').textContent = msg;
+      document.getElementById('loginError').classList.add('show');
+    }
+
+    function mostrarInfo(msg) {
+      document.getElementById('loginError').classList.remove('show');
+      document.getElementById('loginInfoMsg').textContent = msg;
+      document.getElementById('loginInfo').classList.add('show');
+    }
+
+    function enviarFormLogin() { return _modoLogin === 'cadastro' ? criarConta() : tentarLogin(); }
+
+    async function tentarLogin() {
+      const usuario = document.getElementById('loginUser').value.trim();
+      const senha = document.getElementById('loginPass').value;
+      if (!usuario || !senha) { mostrarErro('Preencha usuário e senha.'); return; }
+      setBtnLogin(true, 'Verificando...');
+      document.getElementById('loginError').classList.remove('show');
+      try {
+        const { error } = await sb.auth.signInWithPassword({ email: emailDe(usuario), password: senha });
+        if (error) throw error;
+        await iniciarSessaoPortal({ restaurando: false });
+      } catch (e) {
+        mostrarErro(traduzirErroAuth(e));
+      }
+      setBtnLogin(false);
+    }
+
+    // O cadastro passa por uma função no servidor: cria a conta como "pendente" e NÃO envia nenhum e-mail.
+    async function criarConta() {
+      const nome = document.getElementById('loginNome').value.trim();
+      const usuario = document.getElementById('loginUser').value.trim().toLowerCase();
+      const senha = document.getElementById('loginPass').value;
+      if (!nome || !usuario || !senha) { mostrarErro('Preencha nome, usuário e senha.'); return; }
+      if (!/^[a-z0-9._-]{3,30}$/.test(usuario)) { mostrarErro('Usuário: de 3 a 30 caracteres, só letras, números, ponto, hífen ou _ (sem espaços e sem @).'); return; }
+      if (senha.length < 8) { mostrarErro('A senha precisa ter pelo menos 8 caracteres.'); return; }
+      setBtnLogin(true, 'Enviando...');
+      try {
+        const r = await fetch(SUPABASE_URL + '/functions/v1/solicitar-acesso', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY },
+          body: JSON.stringify({ nome, usuario, senha })
+        });
+        const d = await r.json().catch(() => ({}));
+        if (!r.ok) { mostrarErro(d.erro || 'Não foi possível enviar a solicitação.'); setBtnLogin(false); return; }
+        document.getElementById('loginPass').value = '';
+        alternarModoLogin('login');
+        mostrarInfo('Solicitação enviada! Assim que o administrador liberar, entre com o seu usuário e senha.');
+      } catch (e) {
+        mostrarErro(traduzirErroAuth(e));
+      }
+      setBtnLogin(false);
+    }
+
+    function registrarEntrada(email) {
+      const salvar = ip => sb.from('acessos_log')
+        .insert({ email, pagina: 'Portal Corporativo (index.html)', ip })
+        .then(() => { }, () => { });
+      fetch('https://api.ipify.org?format=json')
+        .then(r => r.json())
+        .then(d => salvar(d.ip || '—'))
+        .catch(() => salvar('—'));
+    }
+
+    function updateDailyScripture() {
+      const verses = [
+        { text: 'Tudo o que fizerem, façam de todo o coração, como para o Senhor, não para os homens, sabendo que receberão do Senhor a recompensa da herança, pois é a Cristo, o Senhor, a quem vocês servem.', ref: 'Colossenses 3:23-24' },
+        { text: 'Confia no Senhor de todo o teu coração e não te estribes no teu próprio entendimento.', ref: 'Provérbios 3:5' },
+
+        { text: 'Entrega o teu caminho ao Senhor; confia nele, e ele tudo fará.', ref: 'Salmos 37:5' },
+
+        { text: 'O Senhor é o meu pastor; nada me faltará.', ref: 'Salmos 23:1' },
+
+        { text: 'Porque sou eu que conheço os planos que tenho para vocês, diz o Senhor.', ref: 'Jeremias 29:11' },
+
+        { text: 'Buscai primeiro o Reino de Deus e a sua justiça, e todas estas coisas vos serão acrescentadas.', ref: 'Mateus 6:33' },
+
+        { text: 'Se Deus é por nós, quem será contra nós?', ref: 'Romanos 8:31' },
+
+        { text: 'Não fui eu que lhe ordenei? Seja forte e corajoso.', ref: 'Josué 1:9' },
+
+        { text: 'Lâmpada para os meus pés é a tua palavra e luz para o meu caminho.', ref: 'Salmos 119:105' },
+
+        { text: 'O coração do homem pode fazer planos, mas a resposta certa dos lábios vem do Senhor.', ref: 'Provérbios 16:1' },
+
+        { text: 'Os que esperam no Senhor renovarão as suas forças.', ref: 'Isaías 40:31' },
+
+        { text: 'Em tudo dai graças, porque esta é a vontade de Deus.', ref: '1 Tessalonicenses 5:18' },
+
+        { text: 'Alegrem-se na esperança, sejam pacientes na tribulação, perseverem na oração.', ref: 'Romanos 12:12' },
+
+        { text: 'O Senhor é a minha força e o meu escudo; nele o meu coração confia.', ref: 'Salmos 28:7' },
+
+        { text: 'Porque para Deus nada é impossível.', ref: 'Lucas 1:37' },
+
+        { text: 'Bem-aventurado o homem que confia no Senhor.', ref: 'Jeremias 17:7' },
+
+        { text: 'A resposta branda desvia o furor, mas a palavra dura suscita a ira.', ref: 'Provérbios 15:1' },
+
+        { text: 'O temor do Senhor é o princípio da sabedoria.', ref: 'Provérbios 9:10' },
+
+        { text: 'Lancem sobre ele toda a sua ansiedade, porque ele tem cuidado de vocês.', ref: '1 Pedro 5:7' },
+
+        { text: 'A paz de Deus, que excede todo entendimento, guardará os vossos corações.', ref: 'Filipenses 4:7' },
+
+        { text: 'Mas os que confiam no Senhor são como o monte Sião, que não se abala, mas permanece para sempre.', ref: 'Salmos 125:1' },
+      ];
+      const now = new Date();
+      const dailyIndex = (now.getUTCFullYear() * 10000 + (now.getUTCMonth() + 1) * 100 + now.getUTCDate()) % verses.length;
+      const verse = verses[dailyIndex];
+      const container = document.getElementById('loginScripture');
+      if (!container) return;
+      container.innerHTML = `${verse.text} <span>${verse.ref}</span>`;
+    }
+
+    updateDailyScripture();
+
+    /* ── SESSÃO E PERMISSÕES ────────────────────────────── */
+    async function iniciarSessaoPortal(opts = {}) {
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session) throw new Error('Sessão não encontrada.');
+      _meuId = session.user.id;
+      const { data: acesso, error } = await sb.rpc('meu_acesso');
+      if (error) throw error;
+      _acesso = acesso;
+      if (acesso.status !== 'aprovado') { mostrarTelaPendente(acesso.status); return false; }
+      esconderTelaPendente();
+      const email = acesso.email || session.user.email || '';
+      const nome = acesso.nome || nomeUsuario(email) || 'Usuário';
+      const mods = acesso.modulos || [];
+      // Chaves de sessão antigas continuam sendo gravadas para as páginas que ainda não usam o axon-guard.js
+      sessionStorage.setItem('axon_portal_auth', '1');
+      sessionStorage.setItem('axon_portal_user', nomeUsuario(email));
+      sessionStorage.setItem('axon_portal_nome', nome);
+      sessionStorage.setItem('axon_portal_kpi', mods.includes('kpi') ? '1' : '0');
+      sessionStorage.setItem('axon_portal_cadastro', mods.includes('cadastro') ? '1' : '0');
+      // Pacotes: quem só tem 'pacotes' apenas visualiza as composições; 'pacotes_contrato' (ou admin) também baixa o contrato
+      sessionStorage.setItem('axon_portal_pacotes_contrato', (acesso.papel === 'admin' || mods.includes('pacotes_contrato')) ? '1' : '0');
+      if (!opts.restaurando || !sessionStorage.getItem('axon_portal_login_ts')) {
+        sessionStorage.setItem('axon_portal_login_ts', Date.now().toString());
+      }
+      if (!opts.restaurando) registrarEntrada(email);
+      iniciarWatchdogSessao();
+      abrirPortal(nome, email, !!opts.restaurando);
+      return true;
+    }
+
+    function mostrarTelaPendente(status) {
+      const bloq = status === 'bloqueado';
+      document.getElementById('pendingIcon').className = 'pending-icon ' + (bloq ? 'fa-solid fa-ban' : 'fa-regular fa-clock');
+      document.getElementById('pendingTitle').textContent = bloq ? 'Acesso bloqueado' : 'Aguardando liberação';
+      document.getElementById('pendingMsg').textContent = bloq
+        ? 'Seu acesso foi bloqueado. Procure o administrador do portal.'
+        : 'Seu cadastro foi recebido. Assim que um administrador liberar o seu acesso, você poderá usar o portal.';
+      document.getElementById('loginOverlay').style.display = 'none';
+      if (window._stopLoginCanvas) window._stopLoginCanvas();
+      document.getElementById('pendingOverlay').style.display = 'flex';
+    }
+
+    function esconderTelaPendente() {
+      document.getElementById('pendingOverlay').style.display = 'none';
+    }
+
+    async function verificarAcessoNovamente() {
+      try { await iniciarSessaoPortal({ restaurando: false }); }
+      catch (e) { showToast('Erro', e.message || 'Não foi possível verificar.'); }
+    }
+
+    function abrirPortal(nome, usuario, semAnimacao) {
+      const overlay = document.getElementById('loginOverlay');
+      const mostrar = () => {
+        overlay.style.display = 'none';
+        if (window._stopLoginCanvas) window._stopLoginCanvas();
+        document.getElementById('sidebar').style.display = 'flex';
+        document.getElementById('mainContent').style.display = 'flex';
+      };
+      if (semAnimacao) {
+        mostrar();
+      } else {
+        overlay.style.transition = 'opacity 0.45s ease, transform 0.45s ease';
+        overlay.style.opacity = '0';
+        overlay.style.transform = 'scale(1.03)';
+        setTimeout(mostrar, 440);
+      }
+      const iniciais = nome.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase() || 'U';
+      document.getElementById('sidebarAvatar').textContent = iniciais;
+      document.getElementById('sidebarNome').textContent = nome;
+      document.getElementById('sidebarPapel').textContent = (_acesso && _acesso.papel === 'admin') ? 'Administrador' : 'Usuário';
+      document.getElementById('homeGreeting').textContent = 'Olá, ' + nome.split(' ')[0];
+      aplicarPermissoes();
+      if (!semAnimacao) {
+        setTimeout(() => {
+          document.getElementById('toastTitle').textContent = 'Olá, ' + nome.split(' ')[0] + '!';
+          document.getElementById('toastSub').textContent = 'Acesso registrado · Portal AXON';
+          const toast = document.getElementById('toast');
+          toast.classList.add('show');
+          setTimeout(() => toast.classList.remove('show'), 4000);
+        }, 700);
+      }
+    }
+
+    function aplicarPermissoes() {
+      const mods = new Set((_acesso && _acesso.modulos) || []);
+      const ehAdmin = !!_acesso && _acesso.papel === 'admin';
+      document.querySelectorAll('[data-modulo]').forEach(el =>
+        el.classList.toggle('sem-acesso', !mods.has(el.dataset.modulo)));
+      document.querySelectorAll('[data-modulos-any]').forEach(el =>
+        el.classList.toggle('sem-acesso', !el.dataset.modulosAny.split(',').some(m => mods.has(m))));
+      const temCard = id => !!document.querySelector('#' + id + ' .card:not(.sem-acesso)');
+      document.getElementById('navFaturamento').classList.toggle('sem-acesso', !temCard('sec-faturamento'));
+      document.getElementById('navGerencial').classList.toggle('sem-acesso', !temCard('sec-gerencial'));
+      document.getElementById('navAdmin').classList.toggle('sem-acesso', !ehAdmin);
+
+      const antigo = document.getElementById('semModulosAviso');
+      if (antigo) antigo.remove();
+      if (!ehAdmin && mods.size === 0) {
+        document.querySelector('#sec-inicio .metrics').insertAdjacentHTML('beforebegin',
+          '<div id="semModulosAviso" class="login-info show" style="margin:0 0 24px"><i class="fa-solid fa-circle-info"></i>' +
+          '<span>Seu acesso foi aprovado, mas nenhum módulo foi liberado ainda. Fale com o administrador do portal.</span></div>');
+      }
+      const ativo = document.querySelector('.nav-item.active');
+      if (ativo && ativo.classList.contains('sem-acesso')) switchSection('sec-inicio', document.querySelector('.nav-item'));
+    }
+
+    /* ── WATCHDOG DE SESSÃO (30 min) ───────────────────── */
+    let _watchdogInterval = null;
+    let _alertaExibido = false;
+
+    function iniciarWatchdogSessao() {
+      if (_watchdogInterval) clearInterval(_watchdogInterval);
+      _alertaExibido = false;
+      _watchdogInterval = setInterval(() => {
+        const ts = parseInt(sessionStorage.getItem('axon_portal_login_ts') || '0', 10);
+        if (!ts) return;
+        const LIMITE    = 30 * 60 * 1000;
+        const AVISO     =  2 * 60 * 1000;
+        const decorrido = Date.now() - ts;
+        const restante  = LIMITE - decorrido;
+        if (restante <= 0) {
+          clearInterval(_watchdogInterval);
+          expirarSessao();
+        } else if (restante <= AVISO && !_alertaExibido) {
+          _alertaExibido = true;
+          exibirAvisoExpiracao();
+        }
+      }, 10000);
+    }
+
+    function exibirAvisoExpiracao() {
+      const anterior = document.getElementById('modalExpiracaoSessao');
+      if (anterior) anterior.remove();
+      const modal = document.createElement('div');
+      modal.id = 'modalExpiracaoSessao';
+      modal.className = 'modal-bg';
+      modal.innerHTML = `
+        <div class="modal" role="alertdialog" aria-labelledby="tituloExp">
+          <i class="fa-regular fa-clock modal-icon"></i>
+          <h3 id="tituloExp">Sua sessão vai expirar</h3>
+          <p>Por segurança, a sessão termina em <strong id="countdownExpiracao"></strong>. Deseja continuar conectado?</p>
+          <div class="modal-actions">
+            <button class="adm-btn danger" onclick="expirarSessao()">Sair agora</button>
+            <button class="adm-btn primary" onclick="renovarSessao()">Continuar conectado</button>
+          </div>
+        </div>`;
+      document.body.appendChild(modal);
+      const el = document.getElementById('countdownExpiracao');
+      const tick = () => {
+        const ts2   = parseInt(sessionStorage.getItem('axon_portal_login_ts') || '0', 10);
+        const rest2 = ts2 ? Math.max(0, (ts2 + 30 * 60 * 1000) - Date.now()) : 0;
+        if (el) el.textContent = Math.floor(rest2 / 60000) + ':' + String(Math.floor((rest2 % 60000) / 1000)).padStart(2, '0');
+        if (rest2 <= 0) { clearInterval(_cdInt); expirarSessao(); }
+      };
+      tick();
+      const _cdInt = setInterval(tick, 1000);
+    }
+
+    function renovarSessao() {
+      sessionStorage.setItem('axon_portal_login_ts', Date.now().toString());
+      _alertaExibido = false;
+      const m = document.getElementById('modalExpiracaoSessao');
+      if (m) m.remove();
+    }
+
+    function expirarSessao() {
+      clearInterval(_watchdogInterval);
+      const m = document.getElementById('modalExpiracaoSessao');
+      if (m) m.remove();
+      const aviso = document.createElement('div');
+      aviso.className = 'modal-bg';
+      aviso.innerHTML = `
+        <div class="modal" role="alertdialog" aria-labelledby="tituloEnc">
+          <i class="fa-solid fa-lock modal-icon danger"></i>
+          <h3 id="tituloEnc">Sessão encerrada</h3>
+          <p>Por segurança, a sessão expirou após 30 minutos. Entre novamente para continuar.</p>
+          <div class="modal-actions">
+            <button class="adm-btn primary" onclick="location.reload()">Entrar novamente</button>
+          </div>
+        </div>`;
+      document.body.appendChild(aviso);
+      sb.auth.signOut({ scope: 'local' }).catch(() => { });
+      sessionStorage.clear();
+      setTimeout(() => location.reload(), 4000);
+    }
+
+    async function fazerLogout() {
+      if (_watchdogInterval) clearInterval(_watchdogInterval);
+      try { await sb.auth.signOut({ scope: 'local' }); } catch (e) { }
+      ['axon_portal_auth', 'axon_portal_user', 'axon_portal_nome', 'axon_portal_kpi', 'axon_portal_cadastro', 'axon_portal_pacotes_contrato', 'axon_portal_login_ts']
+        .forEach(k => sessionStorage.removeItem(k));
+      location.reload();
+    }
+
+    /* ══ ADMINISTRAÇÃO DE ACESSOS ══ */
+    const _adm = { usuarios: [], perms: {}, modulos: [], perfis: [] };
+    const STATUS_LABEL = { pendente: 'Pendente', aprovado: 'Aprovado', bloqueado: 'Bloqueado' };
+
+    function admMsg(texto, erro) { showToast(erro ? 'Atenção' : 'Pronto', texto, 3500); }
+
+    function admTab(nome) {
+      document.querySelectorAll('.adm-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === nome));
+      document.querySelectorAll('.adm-panel').forEach(p =>
+        p.classList.toggle('active', p.id === 'admPanel' + nome.charAt(0).toUpperCase() + nome.slice(1)));
+      if (nome === 'acessos') carregarAcessos();
+    }
+
+    async function carregarAdmin() {
+      if (!_acesso || _acesso.papel !== 'admin') return;
+      const box = document.getElementById('admUsuarios');
+      try {
+        const [u, p, m, pf] = await Promise.all([
+          sb.from('usuarios_portal').select('id,email,nome,status,papel,criado_em').order('criado_em', { ascending: false }),
+          sb.from('permissoes_portal').select('usuario_id,modulo'),
+          sb.from('modulos_portal').select('chave,nome,secao,ordem').order('ordem'),
+          sb.from('perfis_acesso').select('id,nome,modulos').order('nome')
+        ]);
+        const falha = [u, p, m, pf].find(r => r.error);
+        if (falha) throw falha.error;
+        _adm.usuarios = u.data; _adm.modulos = m.data; _adm.perfis = pf.data; _adm.perms = {};
+        p.data.forEach(r => (_adm.perms[r.usuario_id] ||= []).push(r.modulo));
+        renderUsuarios();
+        renderPerfis();
+      } catch (e) {
+        box.innerHTML = '<div class="adm-erro">Erro ao carregar: ' + esc(e.message) + '</div>';
+      }
+    }
+
+    function renderUsuarios() {
+      const ordem = { pendente: 0, aprovado: 1, bloqueado: 2 };
+      const lista = [..._adm.usuarios].sort((a, b) =>
+        ordem[a.status] - ordem[b.status] || (a.nome || a.email).localeCompare(b.nome || b.email));
+      const pend = lista.filter(u => u.status === 'pendente').length;
+      const badge = document.getElementById('admCountPend');
+      badge.textContent = pend || '';
+      badge.style.display = pend ? '' : 'none';
+      const nomeMod = Object.fromEntries(_adm.modulos.map(m => [m.chave, m.nome]));
+      const linhas = lista.map(u => {
+        const mods = _adm.perms[u.id] || [];
+        const resumo = u.papel === 'admin' ? 'Todos (administrador)' : mods.length ? mods.map(k => nomeMod[k] || k).join(', ') : '—';
+        const acao = u.status === 'pendente'
+          ? `<button class="adm-btn primary" onclick="abrirEdicao('${u.id}', true)">Revisar e aprovar</button>`
+          : `<button class="adm-btn" onclick="abrirEdicao('${u.id}')">Editar acesso</button>`;
+        return `<tr>
+          <td><b>${esc(u.nome || '—')}</b><br><span class="adm-muted">${esc(nomeUsuario(u.email))}</span></td>
+          <td>${new Date(u.criado_em).toLocaleDateString('pt-BR')}</td>
+          <td><span class="adm-badge ${esc(u.status)}">${STATUS_LABEL[u.status] || esc(u.status)}</span></td>
+          <td>${u.papel === 'admin' ? 'Admin' : 'Usuário'}</td>
+          <td class="adm-mods">${esc(resumo)}</td>
+          <td>${acao}</td></tr>`;
+      }).join('');
+      document.getElementById('admUsuarios').innerHTML = lista.length
+        ? `<div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>Usuário</th><th>Cadastro</th><th>Status</th><th>Papel</th><th>Pode usar</th><th></th></tr></thead><tbody>${linhas}</tbody></table></div>`
+        : '<div class="adm-muted">Nenhum usuário cadastrado.</div>';
+    }
+
+    function htmlModulos(selecionados, classe) {
+      const grupos = {};
+      _adm.modulos.forEach(m => (grupos[m.secao] ||= []).push(m));
+      return Object.entries(grupos).map(([secao, itens]) => `
+        <div class="adm-grupo"><div class="adm-grupo-t">${esc(secao)}</div>
+        ${itens.map(m => `<label class="adm-check"><input type="checkbox" class="${classe}" value="${esc(m.chave)}" ${selecionados.includes(m.chave) ? 'checked' : ''}> ${esc(m.nome)}</label>`).join('')}
+        </div>`).join('');
+    }
+
+    const marcados = classe => [...document.querySelectorAll('input.' + classe + ':checked')].map(i => i.value);
+
+    function abrirEdicao(id, aprovar) {
+      const u = _adm.usuarios.find(x => x.id === id);
+      if (!u) return;
+      const sel = _adm.perms[id] || [];
+      const eu = id === _meuId;
+      const status = aprovar ? 'aprovado' : u.status;
+      const opt = (v, t, atual) => `<option value="${v}" ${atual === v ? 'selected' : ''}>${t}</option>`;
+      fecharModal();
+      const m = document.createElement('div');
+      m.id = 'admModal';
+      m.className = 'adm-modal-bg';
+      m.innerHTML = `<div class="adm-modal">
+        <h3>${aprovar ? 'Aprovar acesso' : 'Editar acesso'}</h3>
+        <p class="adm-muted">Usuário: <b>${esc(nomeUsuario(u.email))}</b></p>
+        <label class="adm-lbl">Nome</label>
+        <input id="admNome" class="adm-input" value="${esc(u.nome || '')}">
+        <div class="adm-row">
+          <div><label class="adm-lbl">Status</label>
+            <select id="admStatus" class="adm-input" ${eu ? 'disabled' : ''}>${opt('pendente', 'Pendente', status)}${opt('aprovado', 'Aprovado', status)}${opt('bloqueado', 'Bloqueado', status)}</select></div>
+          <div><label class="adm-lbl">Papel</label>
+            <select id="admPapel" class="adm-input" ${eu ? 'disabled' : ''}>${opt('usuario', 'Usuário', u.papel)}${opt('admin', 'Administrador (acesso total)', u.papel)}</select></div>
+        </div>
+        <label class="adm-lbl">Aplicar perfil de acesso</label>
+        <select id="admPerfil" class="adm-input" onchange="aplicarPerfilNoModal(this.value)">
+          <option value="">— escolher um perfil para marcar os módulos —</option>
+          ${_adm.perfis.map(p => `<option value="${p.id}">${esc(p.nome)}</option>`).join('')}
+        </select>
+        <label class="adm-lbl">O que este usuário pode usar</label>
+        <div class="adm-grupos">${htmlModulos(sel, 'admChk')}</div>
+        <div class="adm-muted" style="margin-top:8px">Administradores têm acesso a todos os módulos, independentemente das marcações.</div>
+        <div class="adm-muted" style="margin-top:6px"><b>Pacotes Hospitalares</b> sozinho = só visualizar os pacotes e as composições. Marque também <b>Pacotes: baixar contrato</b> para o usuário poder gerar e baixar o contrato.</div>
+        <label class="adm-lbl">Redefinir senha (opcional)</label>
+        <div style="display:flex;gap:10px">
+          <input id="admNovaSenha" class="adm-input" type="text" placeholder="Nova senha (mínimo 8 caracteres)" autocomplete="off">
+          <button class="adm-btn" onclick="redefinirSenha('${id}')">Definir</button>
+        </div>
+        <div id="admModalErro" class="adm-erro"></div>
+        <div class="adm-actions">
+          <button class="adm-btn" onclick="fecharModal()">Cancelar</button>
+          <button class="adm-btn primary" onclick="salvarUsuario('${id}')">Salvar</button>
+        </div></div>`;
+      document.body.appendChild(m);
+    }
+
+    function fecharModal() {
+      const m = document.getElementById('admModal');
+      if (m) m.remove();
+    }
+
+    function aplicarPerfilNoModal(idPerfil) {
+      const p = _adm.perfis.find(x => String(x.id) === String(idPerfil));
+      if (!p) return;
+      document.querySelectorAll('input.admChk').forEach(i => { i.checked = (p.modulos || []).includes(i.value); });
+    }
+
+    async function salvarUsuario(id) {
+      const er = document.getElementById('admModalErro');
+      er.textContent = '';
+      const { error } = await sb.rpc('salvar_acesso_usuario', {
+        p_id: id,
+        p_nome: document.getElementById('admNome').value,
+        p_status: document.getElementById('admStatus').value,
+        p_papel: document.getElementById('admPapel').value,
+        p_modulos: marcados('admChk')
+      });
+      if (error) { er.textContent = error.message; return; }
+      fecharModal();
+      admMsg('Acesso atualizado.');
+      carregarAdmin();
+    }
+
+    async function redefinirSenha(id) {
+      const er = document.getElementById('admModalErro');
+      const campo = document.getElementById('admNovaSenha');
+      er.textContent = '';
+      if (campo.value.length < 8) { er.textContent = 'A senha precisa ter pelo menos 8 caracteres.'; return; }
+      const { data: { session } } = await sb.auth.getSession();
+      try {
+        const r = await fetch(SUPABASE_URL + '/functions/v1/admin-redefinir-senha', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', apikey: SUPABASE_KEY, Authorization: 'Bearer ' + session.access_token },
+          body: JSON.stringify({ id, senha: campo.value })
+        });
+        const d = await r.json().catch(() => ({}));
+        if (!r.ok) { er.textContent = d.erro || 'Não foi possível redefinir a senha.'; return; }
+        campo.value = '';
+        admMsg('Senha redefinida. Passe a nova senha ao usuário.');
+      } catch (e) {
+        er.textContent = 'Erro de conexão.';
+      }
+    }
+
+    function renderPerfis() {
+      const cards = _adm.perfis.map(p => `
+        <div class="adm-card" data-perfil="${p.id}">
+          <input class="adm-input perfil-nome" value="${esc(p.nome)}">
+          <div class="adm-grupos">${htmlModulos(p.modulos || [], 'pChk' + p.id)}</div>
+          <div class="adm-actions">
+            <button class="adm-btn danger" onclick="excluirPerfil(${p.id})">Excluir</button>
+            <button class="adm-btn primary" onclick="salvarPerfil(${p.id})">Salvar</button>
+          </div></div>`).join('');
+      document.getElementById('admPerfis').innerHTML = `
+        <div class="adm-card"><h4>Novo perfil</h4>
+          <p class="adm-muted" style="margin-bottom:12px">Um perfil é um conjunto de módulos pronto para aplicar a vários usuários (ex.: Faturamento, Cadastro, Gerencial).</p>
+          <input id="novoPerfilNome" class="adm-input" placeholder="Nome do perfil">
+          <div class="adm-grupos">${htmlModulos([], 'pChkNovo')}</div>
+          <div class="adm-actions"><button class="adm-btn primary" onclick="salvarPerfil(null)">Criar perfil</button></div>
+        </div>${cards}`;
+    }
+
+    async function salvarPerfil(id) {
+      const campo = id ? document.querySelector(`[data-perfil="${id}"] .perfil-nome`) : document.getElementById('novoPerfilNome');
+      const nome = campo.value.trim();
+      if (!nome) { admMsg('Dê um nome ao perfil.', true); return; }
+      const modulos = marcados(id ? 'pChk' + id : 'pChkNovo');
+      const { error } = id
+        ? await sb.from('perfis_acesso').update({ nome, modulos }).eq('id', id)
+        : await sb.from('perfis_acesso').insert({ nome, modulos });
+      if (error) { admMsg(error.code === '23505' ? 'Já existe um perfil com esse nome.' : error.message, true); return; }
+      admMsg('Perfil salvo.');
+      carregarAdmin();
+    }
+
+    async function excluirPerfil(id) {
+      if (!confirm('Excluir este perfil? Usuários que já receberam esses módulos não são afetados.')) return;
+      const { error } = await sb.from('perfis_acesso').delete().eq('id', id);
+      if (error) { admMsg(error.message, true); return; }
+      admMsg('Perfil excluído.');
+      carregarAdmin();
+    }
+
+    async function carregarAcessos() {
+      const box = document.getElementById('admAcessos');
+      box.innerHTML = '<div class="adm-muted">Carregando…</div>';
+      const { data, error } = await sb.from('acessos_log').select('email,pagina,ip,criado_em')
+        .order('criado_em', { ascending: false }).limit(100);
+      if (error) { box.innerHTML = '<div class="adm-erro">' + esc(error.message) + '</div>'; return; }
+      box.innerHTML = data.length
+        ? `<div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>Data/hora</th><th>Usuário</th><th>Página</th><th>IP</th></tr></thead><tbody>${
+          data.map(r => `<tr><td>${new Date(r.criado_em).toLocaleString('pt-BR')}</td><td>${esc(nomeUsuario(r.email))}</td><td>${esc(r.pagina)}</td><td>${esc(r.ip)}</td></tr>`).join('')
+        }</tbody></table></div>`
+        : '<div class="adm-muted">Nenhum acesso registrado ainda.</div>';
+    }
+
+    /* ══ PACOTES VENDIDOS (histórico) ══ */
+    const _vd = { lista: [], filtrada: [] };
+    const brlV = n => (n === null || n === undefined || n === '') ? '—' : Number(n).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    const dataV = iso => iso ? String(iso).split('-').reverse().join('/') : '';
+
+    async function carregarVendas() {
+      const box = document.getElementById('vdLista');
+      box.innerHTML = '<div class="adm-muted">Carregando…</div>';
+      const { data, error } = await sb.from('pacotes_vendidos')
+        .select('id,codigo,pacote,setor,paciente,data_venda,valor,forma,parcelas,medico,vendedor,criado_em')
+        .order('data_venda', { ascending: false }).order('id', { ascending: false }).limit(2000);
+      if (error) { box.innerHTML = '<div class="adm-erro">Erro ao carregar: ' + esc(error.message) + '</div>'; return; }
+      _vd.lista = data;
+      const setores = [...new Set(data.map(r => r.setor).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+      const sel = document.getElementById('vdSetor'), atual = sel.value;
+      sel.innerHTML = '<option value="">Todos os setores</option>' + setores.map(x => `<option value="${esc(x)}">${esc(x)}</option>`).join('');
+      sel.value = setores.includes(atual) ? atual : '';
+      filtrarVendas();
+    }
+
+    function filtrarVendas() {
+      const norm = t => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+      const q = norm(document.getElementById('vdBusca').value.trim());
+      const de = document.getElementById('vdDe').value, ate = document.getElementById('vdAte').value;
+      const setor = document.getElementById('vdSetor').value;
+      _vd.filtrada = _vd.lista.filter(r =>
+        (!q || norm(r.paciente + ' ' + r.codigo + ' ' + r.pacote).includes(q)) &&
+        (!de || r.data_venda >= de) && (!ate || r.data_venda <= ate) && (!setor || r.setor === setor));
+      const total = _vd.filtrada.reduce((t, r) => t + (Number(r.valor) || 0), 0);
+      document.getElementById('vdResumo').textContent = _vd.filtrada.length
+        ? `${_vd.filtrada.length} ${_vd.filtrada.length === 1 ? 'venda' : 'vendas'} · ${brlV(total)}`
+        : 'Nenhuma venda encontrada';
+      const ehAdmin = !!_acesso && _acesso.papel === 'admin';
+      const linhas = _vd.filtrada.map(r => `<tr>
+        <td>${esc(dataV(r.data_venda))}</td>
+        <td><b>${esc(r.codigo || '—')}</b></td>
+        <td>${esc(r.pacote)}<br><span class="adm-muted">${esc(r.setor || '')}</span></td>
+        <td>${esc(r.paciente)}${r.medico ? `<br><span class="adm-muted">${esc(r.medico)}</span>` : ''}</td>
+        <td class="vd-num">${esc(brlV(r.valor))}<br><span class="adm-muted">${r.forma === 'cartao' ? 'cartão' + (r.parcelas ? ' ' + esc(r.parcelas) + 'x' : '') : 'pacote'}</span></td>
+        <td>${esc(r.vendedor || '—')}</td>
+        ${ehAdmin ? `<td><button class="adm-btn danger" onclick="excluirVenda(${Number(r.id)})" title="Excluir registro"><i class="fa-solid fa-trash"></i></button></td>` : ''}
+      </tr>`).join('');
+      document.getElementById('vdLista').innerHTML = _vd.filtrada.length
+        ? `<div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>Data da venda</th><th>Código</th><th>Pacote</th><th>Paciente</th><th class="vd-num">Valor</th><th>Vendedor</th>${ehAdmin ? '<th></th>' : ''}</tr></thead><tbody>${linhas}</tbody></table></div>`
+        : '<div class="adm-muted">Nenhuma venda para esses filtros.</div>';
+    }
+
+    async function excluirVenda(id) {
+      if (!confirm('Excluir este registro de venda? Essa ação não pode ser desfeita.')) return;
+      const { error } = await sb.from('pacotes_vendidos').delete().eq('id', id);
+      if (error) { admMsg(error.message, true); return; }
+      admMsg('Registro excluído.');
+      carregarVendas();
+    }
+
+    function exportarVendas() {
+      if (!_vd.filtrada.length) { showToast('Nada para exportar', 'Ajuste os filtros.'); return; }
+      const cel = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+      const linhas = [['Data da venda', 'Código', 'Pacote', 'Setor', 'Paciente', 'Médico', 'Valor', 'Forma', 'Parcelas', 'Vendedor']]
+        .concat(_vd.filtrada.map(r => [dataV(r.data_venda), r.codigo, r.pacote, r.setor, r.paciente, r.medico,
+          r.valor === null ? '' : String(r.valor).replace('.', ','), r.forma === 'cartao' ? 'cartão' : 'pacote', r.parcelas, r.vendedor]));
+      const blob = new Blob(['\ufeff' + linhas.map(l => l.map(cel).join(';')).join('\r\n')], { type: 'text/csv;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'pacotes-vendidos-' + new Date().toISOString().slice(0, 10) + '.csv';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+    }
+
+    /* ── NAVEGAÇÃO ──────────────────────────────────────── */
+    function switchSection(sectionId, element) {
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      if (element) element.classList.add('active');
+      document.querySelectorAll('.section-group').forEach(sec => sec.classList.remove('active'));
+      const target = document.getElementById(sectionId);
+      if (target) target.classList.add('active');
+      const titleMap = { 'sec-inicio': 'Início', 'sec-gerencial': 'Gestão estratégica', 'sec-faturamento': 'Faturamento', 'sec-auditoria': 'Cadastro', 'sec-vendas': 'Pacotes vendidos', 'sec-admin': 'Administração de acessos' };
+      document.getElementById('page-title').innerText = titleMap[sectionId] || 'Portal';
+      if (sectionId === 'sec-admin') carregarAdmin();
+      if (sectionId === 'sec-vendas') carregarVendas();
+    }
+
+    ['loginNome', 'loginUser', 'loginPass'].forEach(id => {
+      document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') enviarFormLogin(); });
+    });
+
+    /* ── SPLASH SCREEN ───────────────────────────────────── */
+    document.addEventListener('DOMContentLoaded', () => {
+      const splash = document.getElementById('splashScreen');
+      const loginOverlay = document.getElementById('loginOverlay');
+
+      // Se já está logado e sessão válida, pula o splash direto
+      const _ts  = parseInt(sessionStorage.getItem('axon_portal_login_ts') || '0', 10);
+      const _ok  = sessionStorage.getItem('axon_portal_auth') === '1';
+      const _exp = _ts && (Date.now() - _ts) >= 30 * 60 * 1000;
+      if (_ok && !_exp) {
+        if (splash) splash.style.display = 'none';
+        return;
+      }
+
+      if (loginOverlay) setTimeout(() => loginOverlay.classList.add('entrou'), 4500);   // garantia
+      if (splash && loginOverlay) {
+        loginOverlay.style.opacity = '0';
+        loginOverlay.style.pointerEvents = 'none';
+
+        setTimeout(() => {
+          splash.classList.add('fade-out');
+          setTimeout(() => {
+            splash.style.display = 'none';
+            loginOverlay.style.transition = 'opacity 0.6s ease-out';
+            loginOverlay.style.opacity = '1';
+            loginOverlay.style.pointerEvents = 'auto';
+            loginOverlay.classList.add('entrou');
+          }, 500);
+        }, 1400);
+      }
+    });
+
+    /* ── SESSÃO SALVA ───────────────────────────────────── */
+    (function restaurarSessao() {
+      const ts = parseInt(sessionStorage.getItem('axon_portal_login_ts') || '0', 10);
+      const flagOk = sessionStorage.getItem('axon_portal_auth') === '1' && ts && (Date.now() - ts) < 30 * 60 * 1000;
+      const recomecar = () => { sessionStorage.clear(); location.reload(); };
+      if (flagOk) {
+        document.getElementById('loginOverlay').style.display = 'none';
+        if (window._stopLoginCanvas) window._stopLoginCanvas();
+      }
+      sb.auth.getSession().then(async ({ data: { session } }) => {
+        if (!session) { if (flagOk) recomecar(); return; }
+        if (!flagOk && ts) {                       // sessão passou dos 30 minutos
+          await sb.auth.signOut({ scope: 'local' });
+          recomecar();
+          return;
+        }
+        await iniciarSessaoPortal({ restaurando: true });
+      }).catch(() => { if (flagOk) recomecar(); });
+    })();
+  </script>
+</body>
+
+</html>
