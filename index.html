@@ -78,7 +78,8 @@
       background: var(--bg);
       color: var(--text);
       display: flex;
-      min-height: 100vh;
+      height: 100vh;
+      height: 100dvh;
       overflow: hidden;
       line-height: 1.5;
     }
@@ -171,7 +172,7 @@
     .btn-logout:hover { background: var(--side-hover); color: #fff; }
 
     /* ── ÁREA PRINCIPAL ── */
-    .main-content { flex: 1; min-width: 0; display: flex; flex-direction: column; overflow-y: auto; }
+    .main-content { flex: 1; min-width: 0; height: 100%; display: flex; flex-direction: column; overflow-y: auto; }
 
     .topbar {
       min-height: 64px;
@@ -439,9 +440,16 @@
     .adm-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
     .adm-erro { color: var(--danger); font-size: 0.88rem; margin-top: 10px; min-height: 1em; }
 
+    /* ── PACOTES VENDIDOS ── */
+    .vd-bar { display: grid; grid-template-columns: 2fr 1fr 1fr 1.2fr; gap: 10px; margin-bottom: 12px; }
+    .vd-acoes { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .vd-botoes { display: flex; gap: 8px; flex-wrap: wrap; }
+    .vd-num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    @media (max-width: 992px) { .vd-bar { grid-template-columns: 1fr 1fr; } .vd-bar input[type=search] { grid-column: 1 / -1; } }
+
     /* ── TELAS PEQUENAS ── */
     @media (max-width: 992px) {
-      body { flex-direction: column; overflow: auto; }
+      body { flex-direction: column; overflow: auto; height: auto; min-height: 100vh; }
       .sidebar { position: static; width: 100%; height: auto; padding: 14px 16px; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 10px; }
       .brand { flex-direction: row; align-items: center; padding: 0; margin: 0; border: none; }
       .brand img { height: 28px; }
@@ -450,7 +458,7 @@
       .user-mini { padding: 0; margin: 0 0 0 auto; border: none; }
       .user-info { display: none; }
       .btn-logout { width: auto; margin: 0; }
-      .main-content { overflow: visible; }
+      .main-content { overflow: visible; height: auto; }
       .topbar { padding: 10px 16px; flex-wrap: wrap; }
       .search-input { width: 100%; min-width: 0; }
       .search-box { flex: 1; }
@@ -599,6 +607,9 @@
       <a id="navFaturamento" href="#" onclick="switchSection('sec-faturamento', this); return false;" class="nav-item">
         <i class="fa-solid fa-file-invoice-dollar"></i> Faturamento
       </a>
+      <a id="navVendas" data-modulo="pacotes_contrato" href="#" onclick="switchSection('sec-vendas', this); return false;" class="nav-item">
+        <i class="fa-solid fa-receipt"></i> Pacotes vendidos
+      </a>
       <a id="navCadastro" data-modulo="cadastro" href="#" onclick="switchSection('sec-auditoria', this); return false;"
         class="nav-item">
         <i class="fa-solid fa-clipboard-check"></i> Cadastro
@@ -733,10 +744,32 @@
             <span class="card-icon"><i class="fa-solid fa-layer-group"></i></span>
             <span class="card-body">
               <span class="card-title">Pacotes Hospitalares</span>
-              <span class="card-desc">Consulta e análise dos pacotes cadastrados no sistema.</span>
+              <span class="card-desc">Consulta dos pacotes e composições. Baixar o contrato depende de permissão.</span>
             </span>
           </a>
         </div>
+      </div>
+
+      <div class="section-group" id="sec-vendas">
+        <header class="page-head">
+          <h2>Pacotes vendidos</h2>
+          <p>Histórico das vendas registradas ao gerar o contrato: código, paciente e data da venda.</p>
+        </header>
+        <div class="vd-bar">
+          <input id="vdBusca" class="adm-input" type="search" placeholder="Buscar paciente, código ou pacote" autocomplete="off" oninput="filtrarVendas()">
+          <input id="vdDe" class="adm-input" type="date" title="Vendas a partir de" oninput="filtrarVendas()">
+          <input id="vdAte" class="adm-input" type="date" title="Vendas até" oninput="filtrarVendas()">
+          <select id="vdSetor" class="adm-input" onchange="filtrarVendas()"><option value="">Todos os setores</option></select>
+        </div>
+        <div class="vd-bar vd-acoes">
+          <span class="adm-muted" id="vdResumo">Carregando…</span>
+          <span class="vd-botoes">
+            <button class="adm-btn" onclick="carregarVendas()"><i class="fa-solid fa-rotate"></i> Atualizar</button>
+            <button class="adm-btn" onclick="exportarVendas()"><i class="fa-solid fa-file-csv"></i> Exportar CSV</button>
+            <a class="adm-btn primary" href="pc.html" style="text-decoration:none"><i class="fa-solid fa-plus"></i> Nova venda</a>
+          </span>
+        </div>
+        <div id="vdLista"></div>
       </div>
 
       <div class="section-group" id="sec-admin">
@@ -1022,6 +1055,8 @@
       sessionStorage.setItem('axon_portal_nome', nome);
       sessionStorage.setItem('axon_portal_kpi', mods.includes('kpi') ? '1' : '0');
       sessionStorage.setItem('axon_portal_cadastro', mods.includes('cadastro') ? '1' : '0');
+      // Pacotes: quem só tem 'pacotes' apenas visualiza as composições; 'pacotes_contrato' (ou admin) também baixa o contrato
+      sessionStorage.setItem('axon_portal_pacotes_contrato', (acesso.papel === 'admin' || mods.includes('pacotes_contrato')) ? '1' : '0');
       if (!opts.restaurando || !sessionStorage.getItem('axon_portal_login_ts')) {
         sessionStorage.setItem('axon_portal_login_ts', Date.now().toString());
       }
@@ -1191,7 +1226,7 @@
     async function fazerLogout() {
       if (_watchdogInterval) clearInterval(_watchdogInterval);
       try { await sb.auth.signOut({ scope: 'local' }); } catch (e) { }
-      ['axon_portal_auth', 'axon_portal_user', 'axon_portal_nome', 'axon_portal_kpi', 'axon_portal_cadastro', 'axon_portal_login_ts']
+      ['axon_portal_auth', 'axon_portal_user', 'axon_portal_nome', 'axon_portal_kpi', 'axon_portal_cadastro', 'axon_portal_pacotes_contrato', 'axon_portal_login_ts']
         .forEach(k => sessionStorage.removeItem(k));
       location.reload();
     }
@@ -1299,6 +1334,7 @@
         <label class="adm-lbl">O que este usuário pode usar</label>
         <div class="adm-grupos">${htmlModulos(sel, 'admChk')}</div>
         <div class="adm-muted" style="margin-top:8px">Administradores têm acesso a todos os módulos, independentemente das marcações.</div>
+        <div class="adm-muted" style="margin-top:6px"><b>Pacotes Hospitalares</b> sozinho = só visualizar os pacotes e as composições. Marque também <b>Pacotes: baixar contrato</b> para o usuário poder gerar e baixar o contrato.</div>
         <label class="adm-lbl">Redefinir senha (opcional)</label>
         <div style="display:flex;gap:10px">
           <input id="admNovaSenha" class="adm-input" type="text" placeholder="Nova senha (mínimo 8 caracteres)" autocomplete="off">
@@ -1412,6 +1448,75 @@
         : '<div class="adm-muted">Nenhum acesso registrado ainda.</div>';
     }
 
+    /* ══ PACOTES VENDIDOS (histórico) ══ */
+    const _vd = { lista: [], filtrada: [] };
+    const brlV = n => (n === null || n === undefined || n === '') ? '—' : Number(n).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    const dataV = iso => iso ? String(iso).split('-').reverse().join('/') : '';
+
+    async function carregarVendas() {
+      const box = document.getElementById('vdLista');
+      box.innerHTML = '<div class="adm-muted">Carregando…</div>';
+      const { data, error } = await sb.from('pacotes_vendidos')
+        .select('id,codigo,pacote,setor,paciente,data_venda,valor,forma,parcelas,medico,vendedor,criado_em')
+        .order('data_venda', { ascending: false }).order('id', { ascending: false }).limit(2000);
+      if (error) { box.innerHTML = '<div class="adm-erro">Erro ao carregar: ' + esc(error.message) + '</div>'; return; }
+      _vd.lista = data;
+      const setores = [...new Set(data.map(r => r.setor).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+      const sel = document.getElementById('vdSetor'), atual = sel.value;
+      sel.innerHTML = '<option value="">Todos os setores</option>' + setores.map(x => `<option value="${esc(x)}">${esc(x)}</option>`).join('');
+      sel.value = setores.includes(atual) ? atual : '';
+      filtrarVendas();
+    }
+
+    function filtrarVendas() {
+      const norm = t => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+      const q = norm(document.getElementById('vdBusca').value.trim());
+      const de = document.getElementById('vdDe').value, ate = document.getElementById('vdAte').value;
+      const setor = document.getElementById('vdSetor').value;
+      _vd.filtrada = _vd.lista.filter(r =>
+        (!q || norm(r.paciente + ' ' + r.codigo + ' ' + r.pacote).includes(q)) &&
+        (!de || r.data_venda >= de) && (!ate || r.data_venda <= ate) && (!setor || r.setor === setor));
+      const total = _vd.filtrada.reduce((t, r) => t + (Number(r.valor) || 0), 0);
+      document.getElementById('vdResumo').textContent = _vd.filtrada.length
+        ? `${_vd.filtrada.length} ${_vd.filtrada.length === 1 ? 'venda' : 'vendas'} · ${brlV(total)}`
+        : 'Nenhuma venda encontrada';
+      const ehAdmin = !!_acesso && _acesso.papel === 'admin';
+      const linhas = _vd.filtrada.map(r => `<tr>
+        <td>${esc(dataV(r.data_venda))}</td>
+        <td><b>${esc(r.codigo || '—')}</b></td>
+        <td>${esc(r.pacote)}<br><span class="adm-muted">${esc(r.setor || '')}</span></td>
+        <td>${esc(r.paciente)}${r.medico ? `<br><span class="adm-muted">${esc(r.medico)}</span>` : ''}</td>
+        <td class="vd-num">${esc(brlV(r.valor))}<br><span class="adm-muted">${r.forma === 'cartao' ? 'cartão' + (r.parcelas ? ' ' + esc(r.parcelas) + 'x' : '') : 'pacote'}</span></td>
+        <td>${esc(r.vendedor || '—')}</td>
+        ${ehAdmin ? `<td><button class="adm-btn danger" onclick="excluirVenda(${Number(r.id)})" title="Excluir registro"><i class="fa-solid fa-trash"></i></button></td>` : ''}
+      </tr>`).join('');
+      document.getElementById('vdLista').innerHTML = _vd.filtrada.length
+        ? `<div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>Data da venda</th><th>Código</th><th>Pacote</th><th>Paciente</th><th class="vd-num">Valor</th><th>Vendedor</th>${ehAdmin ? '<th></th>' : ''}</tr></thead><tbody>${linhas}</tbody></table></div>`
+        : '<div class="adm-muted">Nenhuma venda para esses filtros.</div>';
+    }
+
+    async function excluirVenda(id) {
+      if (!confirm('Excluir este registro de venda? Essa ação não pode ser desfeita.')) return;
+      const { error } = await sb.from('pacotes_vendidos').delete().eq('id', id);
+      if (error) { admMsg(error.message, true); return; }
+      admMsg('Registro excluído.');
+      carregarVendas();
+    }
+
+    function exportarVendas() {
+      if (!_vd.filtrada.length) { showToast('Nada para exportar', 'Ajuste os filtros.'); return; }
+      const cel = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+      const linhas = [['Data da venda', 'Código', 'Pacote', 'Setor', 'Paciente', 'Médico', 'Valor', 'Forma', 'Parcelas', 'Vendedor']]
+        .concat(_vd.filtrada.map(r => [dataV(r.data_venda), r.codigo, r.pacote, r.setor, r.paciente, r.medico,
+          r.valor === null ? '' : String(r.valor).replace('.', ','), r.forma === 'cartao' ? 'cartão' : 'pacote', r.parcelas, r.vendedor]));
+      const blob = new Blob(['\ufeff' + linhas.map(l => l.map(cel).join(';')).join('\r\n')], { type: 'text/csv;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'pacotes-vendidos-' + new Date().toISOString().slice(0, 10) + '.csv';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+    }
+
     /* ── NAVEGAÇÃO ──────────────────────────────────────── */
     function switchSection(sectionId, element) {
       document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -1419,9 +1524,10 @@
       document.querySelectorAll('.section-group').forEach(sec => sec.classList.remove('active'));
       const target = document.getElementById(sectionId);
       if (target) target.classList.add('active');
-      const titleMap = { 'sec-inicio': 'Início', 'sec-gerencial': 'Gestão estratégica', 'sec-faturamento': 'Faturamento', 'sec-auditoria': 'Cadastro', 'sec-admin': 'Administração de acessos' };
+      const titleMap = { 'sec-inicio': 'Início', 'sec-gerencial': 'Gestão estratégica', 'sec-faturamento': 'Faturamento', 'sec-auditoria': 'Cadastro', 'sec-vendas': 'Pacotes vendidos', 'sec-admin': 'Administração de acessos' };
       document.getElementById('page-title').innerText = titleMap[sectionId] || 'Portal';
       if (sectionId === 'sec-admin') carregarAdmin();
+      if (sectionId === 'sec-vendas') carregarVendas();
     }
 
     ['loginNome', 'loginUser', 'loginPass'].forEach(id => {
