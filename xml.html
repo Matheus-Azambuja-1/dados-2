@@ -2,6 +2,7 @@
 <html lang="pt-br">
 
 <head>
+<script src="axon-guard.js" data-modulo="validacao_tiss"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AXON Auditoria | Validador TISS</title>
@@ -4171,15 +4172,17 @@ function testeManual() {
 
         function fazerLogout() {
             sessionStorage.removeItem('axon_tiss_auth');
+            if (window.AXON && AXON.sair) { AXON.sair(); return; }   // encerra a sessão do portal e volta ao login
             sessionStorage.removeItem('axon_portal_nome');
-            location.reload();
+            location.href = 'index.html';
         }
 
         // Enter nos campos
         document.addEventListener('DOMContentLoaded', () => {
             ['loginUser', 'loginPass'].forEach(id => {
-                document.getElementById(id).addEventListener('keydown', e => {
-                    if (e.key === 'Enter') tentarLogin();
+                const el = document.getElementById(id);   // o login próprio saiu; hoje vale o do portal (axon-guard.js)
+                if (el) el.addEventListener('keydown', e => {
+                    if (e.key === 'Enter' && typeof tentarLogin === 'function') tentarLogin();
                 });
             });
         });
