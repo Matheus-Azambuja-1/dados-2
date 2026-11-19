@@ -393,6 +393,16 @@ const SUPABASE_KEY = 'sb_publishable_U4n-seYKyyFyzEKhQq814g_dWHVpZG9';
     ];
     const ENDPOINT = _c.map(s => atob(s)).join('');
 
+    // ── BACKUP — planilha Google (Apps Script, ação getPacotes) ──
+    // Só é usado quando o Supabase falha; os dados da planilha podem estar desatualizados.
+    const _cp = [
+        'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWM=',
+        'cm9zL3MvQUtmeWNidzNYS1V2Mmp0bFBBQ1hzMkU=',
+        'QkZrLURTYTJtbG1TNm92UXZXbUlRMjYyclBVUlE=',
+        'TXcyWEVvWjJDNTRncWNYYks1eVgvZXhlYw=='
+    ];
+    const ENDPOINT_BACKUP = _cp.map(s => atob(s)).join('');
+
     // ── TRACKER — registra acesso na aba "entradas" ─────────────
     (function axonTracker() {
         const usuario = sessionStorage.getItem('axon_portal_user') || localStorage.getItem('axon_portal_user') || '—';
@@ -528,6 +538,71 @@ const SUPABASE_KEY = 'sb_publishable_U4n-seYKyyFyzEKhQq814g_dWHVpZG9';
         };
         CACHE_COMP.set(id, c);
         return c;
+    }
+
+    // ── BACKUP (planilha) ───────────────────────────────────────────
+    let modoBackup = false;
+
+    function tentarBackupUmaVez(timeoutMs) {
+        return new Promise(resolve => {
+            const cb = '_axon_bk_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
+            const s = document.createElement('script');
+            const fim = r => { clearTimeout(t); delete window[cb]; if (s.parentNode) s.remove(); resolve(r); };
+            const t = setTimeout(() => fim({ ok: false, erro: 'timeout' }), timeoutMs);
+            window[cb] = resp => {
+                if (resp && resp.ok && Array.isArray(resp.data) && resp.data.length) fim({ ok: true, data: resp.data });
+                else fim({ ok: false, erro: (resp && resp.erro) || 'resposta_vazia' });
+            };
+            s.onerror = () => fim({ ok: false, erro: 'falha_conexao' });
+            s.src = ENDPOINT_BACKUP + '?acao=getPacotes&callback=' + cb + '&t=' + Date.now();
+            document.head.appendChild(s);
+        });
+    }
+
+    // Aceita tanto as chaves curtas (s, p, c, v1...) quanto os nomes das colunas do banco.
+    function normalizarBackup(lista) {
+        return lista.map((r, i) => ({
+            id: r.id != null ? r.id : 'bk' + i,
+            s: r.s ?? r.setor ?? '',
+            p: r.p ?? r.procedimento ?? '',
+            c: r.c ?? r.codigo ?? '',
+            v1: r.v1 ?? r.valor_pacote ?? null,
+            v2: r.v2 ?? r.valor_cartao ?? null,
+            t1: r.t1 ?? r.texto_pacote ?? null,
+            t2: r.t2 ?? r.texto_cartao ?? null,
+            xs: r.xs ?? r.exclusoes ?? [],
+            o: r.o ?? r.observacoes ?? null,
+            kc: null,            // composição detalhada só existe no Supabase
+            k: r.k ?? null,
+            vig: null
+        }));
+    }
+
+    async function carregarPacotesBackup() {
+        const TENTATIVAS = [15000, 20000];   // cold start do Apps Script
+        let erro = 'timeout';
+        for (let i = 0; i < TENTATIVAS.length; i++) {
+            if (i > 0) atualizarStatusCarregamento('Planilha demorando para responder — tentando de novo...');
+            const r = await tentarBackupUmaVez(TENTATIVAS[i]);
+            if (r.ok) return { ok: true, data: normalizarBackup(r.data) };
+            erro = r.erro;
+            console.warn('[AXON] Backup (planilha) tentativa ' + (i + 1) + ' falhou: ' + erro);
+        }
+        return { ok: false, erro };
+    }
+
+    function mostrarFaixaBackup() {
+        modoBackup = true;
+        if (document.getElementById('avisoBackup')) return;
+        const f = document.createElement('div');
+        f.id = 'avisoBackup';
+        f.setAttribute('role', 'alert');
+        f.style.cssText = 'margin:0 0 14px;padding:10px 14px;border:1px solid var(--az-gold);border-left-width:4px;color:var(--az-gold);font-size:0.78rem;font-weight:600;letter-spacing:0.5px;line-height:1.4;';
+        f.textContent = 'MODO BACKUP — o banco de dados está fora do ar e estes valores vêm da planilha, que pode estar desatualizada. A composição detalhada dos pacotes não está disponível. Recarregue a página mais tarde.';
+        const tb = document.getElementById('tabela');
+        const tabela = tb && tb.closest('table');
+        if (tabela && tabela.parentElement) tabela.parentElement.insertAdjacentElement('beforebegin', f);
+        else document.body.insertAdjacentElement('afterbegin', f);
     }
 
     function atualizarStatusCarregamento(texto) {
@@ -1064,7 +1139,17 @@ const SUPABASE_KEY = 'sb_publishable_U4n-seYKyyFyzEKhQq814g_dWHVpZG9';
             versaoAtual = await pedidoVersao;
             iniciarAtualizacaoAutomatica();
         } catch (e) {
-            console.error('[AXON] Falha ao carregar pacotes', e);
+            console.error('[AXON] Falha ao carregar pacotes no Supabase', e);
+            atualizarStatusCarregamento('Banco indisponível — carregando o backup (planilha)...');
+            const bk = await carregarPacotesBackup();
+            if (bk.ok) {
+                DATA = bk.data;
+                DATA_BY_ID = new Map(DATA.map(d => [d.id, d]));
+                initFilters();
+                render();
+                mostrarFaixaBackup();
+                return;
+            }
             mostrarErroCarregamento('Não foi possível ler o banco de dados. Confira a conexão. Se o projeto do Supabase ficou parado alguns dias no plano gratuito, ele pode estar pausado: reative-o no painel do Supabase.');
         }
     };
