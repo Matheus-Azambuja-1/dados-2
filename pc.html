@@ -88,6 +88,40 @@
         }
         .btn-logout-hero:hover { background: rgba(239,68,68,.1); }
 
+
+        /* ── REPORTAR PROBLEMA ── */
+        .btn-reportar-hero { padding: 6px 14px; background: transparent; border: 1px solid rgba(176,141,50,0.45); color: var(--az-gold); font-size: .6rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; font-family: 'Inter',sans-serif; transition: all .2s; }
+        .btn-reportar-hero:hover { background: rgba(176,141,50,.12); }
+        .btn-reportar { background: transparent; color: var(--az-gold); border: 1px solid var(--az-gold-dim); padding: 9px 14px; font-family: 'Inter', sans-serif; font-size: .68rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-reportar:hover, .btn-reportar:focus-visible { border-color: var(--az-gold); outline: none; }
+        .modal-acoes { gap: 10px; flex-wrap: wrap; }
+        #modalReporte .modal { max-width: 520px; }
+        #modalReporte [hidden], #modalMeus [hidden] { display: none !important; }
+        .btn-reportar-hero .badge-av { display: inline-block; min-width: 18px; padding: 1px 6px; margin-left: 6px; border-radius: 9px; background: var(--danger); color: #fff; font-size: .62rem; letter-spacing: 0; }
+        .meus-item { border: 1px solid var(--border); padding: 14px 16px; margin-bottom: 12px; }
+        .meus-item.nova { border-color: var(--az-gold); background: var(--az-gold-dim); }
+        .meus-topo { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; align-items: baseline; }
+        .meus-meta { font-size: .78rem; color: var(--az-text-gray); margin-top: 4px; }
+        .meus-st { font-size: .62rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 3px 9px; border: 1px solid var(--border); }
+        .meus-st.resolvido { color: var(--success); border-color: var(--success); } .meus-st.descartado { color: var(--danger); border-color: var(--danger); } .meus-st.em_analise { color: var(--warning); border-color: var(--warning); }
+        .meus-resp { margin-top: 10px; padding: 10px 12px; border-left: 3px solid var(--az-gold); background: var(--bg-body); font-size: .88rem; white-space: pre-wrap; }
+        .meus-resp small { display: block; color: var(--az-text-gray); margin-bottom: 4px; }
+        .meus-vazio { color: var(--az-text-gray); padding: 20px 0; text-align: center; }
+        .rep-tipos { display: grid; gap: 8px; margin: 4px 0 14px; }
+        .rep-tipo { display: flex; gap: 10px; align-items: center; padding: 11px 14px; border: 1px solid var(--border); cursor: pointer; font-size: .9rem; }
+        .rep-tipo:has(input:checked) { border-color: var(--az-gold); background: var(--az-gold-dim); }
+        .rep-campo { display: block; margin: 0 0 12px; font-size: .62rem; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; color: var(--az-text-gray); }
+        .rep-campo input, .rep-campo textarea { display: block; width: 100%; margin-top: 6px; padding: 10px 12px; background: var(--bg-body); color: var(--text-main); border: 1px solid var(--border); font: 400 .9rem 'Inter', sans-serif; letter-spacing: 0; text-transform: none; }
+        .rep-campo textarea { min-height: 80px; resize: vertical; }
+        .rep-campo input:focus, .rep-campo textarea:focus { outline: none; border-color: var(--az-gold); }
+        .rep-pac { padding: 10px 14px; border: 1px dashed var(--border); margin-bottom: 14px; font-size: .85rem; }
+        .rep-pac small { display: block; color: var(--az-text-gray); }
+        .rep-linha { display: flex; gap: 12px; } .rep-linha > * { flex: 1; }
+        .rep-msg { min-height: 1.2em; margin: 4px 0 12px; font-size: .85rem; }
+        .rep-msg.erro { color: var(--danger); } .rep-msg.ok { color: var(--success); font-weight: 600; }
+        .rep-botoes { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+        .rep-botoes .sec { background: transparent; color: var(--text-main); border-color: var(--border); }
+
         /* ── MAIN ── */
         .main-content { flex: 1; padding: 50px 30px; max-width: 1400px; margin: 0 auto; width: 100%; }
 
@@ -259,6 +293,12 @@
             <i class="fas fa-user-circle"></i>
             <span id="userBadgeNome">—</span>
         </div>
+        <button class="btn-reportar-hero" id="btnMeusAvisos" style="display:none" type="button" onclick="abrirMeusAvisos()">
+            <i class="fas fa-inbox"></i> Meus avisos <span class="badge-av" id="badgeAvisos" hidden></span>
+        </button>
+        <button class="btn-reportar-hero" id="btnReportar" style="display:none" type="button" onclick="abrirReporte(null)">
+            <i class="fas fa-flag"></i> Reportar problema
+        </button>
         <button class="btn-logout-hero" id="btnLogout" style="display:none" onclick="fazerLogout()">
             <i class="fas fa-sign-out-alt"></i> Sair
         </button>
@@ -321,6 +361,59 @@
             <button type="button" class="modal-close" id="modalFechar" aria-label="Fechar">&times;</button>
         </div>
         <div class="modal-body" id="modalCorpo"></div>
+    </div>
+</div>
+
+<!-- MODAL: MEUS AVISOS (respostas do administrador) -->
+<div class="modal-backdrop" id="modalMeus" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="meusTitulo">
+        <div class="modal-head">
+            <div><span class="sector-badge">Seus avisos</span><h2 class="modal-title" id="meusTitulo">Meus avisos e respostas</h2>
+                <div class="modal-code">Acompanhe o que você reportou e o que o administrador respondeu.</div></div>
+            <button type="button" class="modal-close" id="meusFechar" aria-label="Fechar">&times;</button>
+        </div>
+        <div class="modal-body" id="meusCorpo"></div>
+    </div>
+</div>
+
+<!-- MODAL: REPORTAR PROBLEMA -->
+<div class="modal-backdrop" id="modalReporte" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="repTitulo">
+        <div class="modal-head">
+            <div><span class="sector-badge">Aviso ao administrador</span><h2 class="modal-title" id="repTitulo">Reportar problema</h2>
+                <div class="modal-code">O administrador do Cadastro recebe o aviso e corrige o catálogo.</div></div>
+            <button type="button" class="modal-close" id="repFechar" aria-label="Fechar">&times;</button>
+        </div>
+        <form class="modal-body" id="repForm" autocomplete="off" novalidate>
+            <label class="rep-campo">Número do atendimento (obrigatório)
+                <input type="text" id="repAtend" maxlength="30" required inputmode="text" placeholder="Atendimento em que você percebeu o problema">
+            </label>
+            <div class="rep-tipos" role="radiogroup" aria-label="Tipo de problema">
+                <label class="rep-tipo"><input type="radio" name="repTipo" value="codigo_faltando"> Está faltando o código</label>
+                <label class="rep-tipo"><input type="radio" name="repTipo" value="valor_errado"> O valor está errado</label>
+                <label class="rep-tipo"><input type="radio" name="repTipo" value="codigo_nao_encontrado"> Não achei o código</label>
+            </div>
+            <div class="rep-pac" id="repPac" hidden></div>
+            <label class="rep-campo" id="repPacBusca" hidden>Qual pacote?
+                <input type="text" id="repPacInput" list="repPacLista" placeholder="Digite o nome ou o código e escolha na lista" maxlength="300">
+                <datalist id="repPacLista"></datalist>
+            </label>
+            <label class="rep-campo" id="repTermoBox" hidden>O que você procurava?
+                <input type="text" id="repTermo" maxlength="200" placeholder="Nome do procedimento ou código que não encontrou">
+            </label>
+            <div class="rep-linha" id="repValores" hidden>
+                <label class="rep-campo">Valor correto do pacote (R$)<input type="text" id="repVp" inputmode="decimal" placeholder="opcional"></label>
+                <label class="rep-campo">Valor correto no cartão (R$)<input type="text" id="repVc" inputmode="decimal" placeholder="opcional"></label>
+            </div>
+            <label class="rep-campo"><span id="repObsRot">Observação</span>
+                <textarea id="repObs" maxlength="1000" placeholder="Opcional"></textarea>
+            </label>
+            <div class="rep-msg" id="repMsg" role="status" aria-live="polite"></div>
+            <div class="rep-botoes">
+                <button type="button" class="btn-contrato sec" id="repCancelar">Cancelar</button>
+                <button type="submit" class="btn-contrato" id="repEnviar"><i class="fas fa-paper-plane"></i> Enviar aviso</button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -759,9 +852,10 @@ const SUPABASE_KEY = 'sb_publishable_U4n-seYKyyFyzEKhQq814g_dWHVpZG9';
 
     function montarComposicao(d, c) {
         contratoCtx = { d, c };
+        const btnRep = `<button type="button" class="btn-reportar" data-reportar="${Number(d.id)}"><i class="fas fa-flag"></i> Reportar problema</button>`;
         let h = valoresHTML(d) + (podeContrato()
-            ? `<div class="modal-acoes"><button type="button" class="btn-contrato" id="btnContrato"><i class="fas fa-file-signature"></i> Gerar contrato</button></div>`
-            : `<div class="comp-check"><i class="fas fa-eye"></i><div>Somente visualização: seu acesso não inclui baixar o contrato. Peça ao administrador a permissão “Pacotes: baixar contrato”.</div></div>`);
+            ? `<div class="modal-acoes">${btnRep}<button type="button" class="btn-contrato" id="btnContrato"><i class="fas fa-file-signature"></i> Gerar contrato</button></div>`
+            : `<div class="modal-acoes">${btnRep}</div><div class="comp-check"><i class="fas fa-eye"></i><div>Somente visualização: seu acesso não inclui baixar o contrato. Peça ao administrador a permissão “Pacotes: baixar contrato”.</div></div>`);
         if (c) {
             h += blocoComposicao(d, c);
         } else if (d.k) {
@@ -841,6 +935,146 @@ const SUPABASE_KEY = 'sb_publishable_U4n-seYKyyFyzEKhQq814g_dWHVpZG9';
             else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
         }
     });
+
+    // ── REPORTAR PROBLEMA (aviso ao administrador; fica guardado na tabela pacotes_reportes) ──
+    const repEl = id => document.getElementById(id);
+    let repPacoteId = null, repGatilho = null;
+    const repNum = v => { v = String(v ?? '').trim().replace(/\s|R\$/g, ''); if (!v) return ''; if (v.includes(',')) v = v.replace(/\./g, '').replace(',', '.'); return /^\d+(\.\d+)?$/.test(v) ? v : null; };
+
+    function repAtualizarTipo() {
+        const t = (document.querySelector('input[name=repTipo]:checked') || {}).value || '';
+        const semPacote = t === 'codigo_nao_encontrado';
+        repEl('repTermoBox').hidden = !semPacote;
+        repEl('repValores').hidden = t !== 'valor_errado';
+        repEl('repPac').hidden = semPacote || repPacoteId == null;
+        repEl('repPacBusca').hidden = semPacote || repPacoteId != null || !t;
+        repEl('repObsRot').textContent = t === 'codigo_faltando' ? 'Código correto, se você souber' : 'Observação';
+        repEl('repMsg').textContent = ''; repEl('repMsg').className = 'rep-msg';
+    }
+    function abrirReporte(id, gatilho) {
+        repPacoteId = id == null ? null : Number(id);
+        repGatilho = gatilho || document.activeElement;
+        repEl('repForm').reset();
+        repEl('repMsg').textContent = ''; repEl('repMsg').className = 'rep-msg';
+        repEl('repEnviar').disabled = false;
+        const d = repPacoteId != null ? DATA_BY_ID.get(repPacoteId) : null;
+        if (d) {
+            repEl('repPac').innerHTML = `<strong>${esc(d.p)}</strong><small>${esc(d.s)} · ${d.c ? 'Código ' + esc(d.c) : 'sem código cadastrado'}</small>`;
+            const sug = document.querySelector(`input[name=repTipo][value=${d.c ? 'valor_errado' : 'codigo_faltando'}]`);
+            if (sug) sug.checked = true;
+        } else {
+            repPacoteId = null;
+            repEl('repTermo').value = (repEl('busca').value || '').trim();
+            const r = document.querySelector('input[name=repTipo][value=codigo_nao_encontrado]'); if (r) r.checked = true;
+            repEl('repPacLista').innerHTML = DATA.slice(0, 1500).map(x => `<option value="${esc(x.p + (x.c ? ' · ' + x.c : '') + ' [#' + x.id + ']')}">`).join('');
+        }
+        repAtualizarTipo();
+        repEl('modalReporte').hidden = false;
+        document.body.style.overflow = '';
+        repEl('repAtend').focus();
+    }
+    function fecharReporte() {
+        repEl('modalReporte').hidden = true;
+        if (repEl('modalComp').hidden && repEl('modalContrato').hidden) document.body.style.overflow = '';
+        if (repGatilho && repGatilho.isConnected) repGatilho.focus();
+    }
+    async function enviarReporte(ev) {
+        ev.preventDefault();
+        const msg = (t, c) => { repEl('repMsg').textContent = t; repEl('repMsg').className = 'rep-msg ' + (c || ''); };
+        const tipo = (document.querySelector('input[name=repTipo]:checked') || {}).value;
+        if (!tipo) return msg('Escolha o tipo de problema.', 'erro');
+        const atend = repEl('repAtend').value.trim();
+        if (!/^[0-9A-Za-z./-]{3,30}$/.test(atend)) { repEl('repAtend').focus(); return msg('Informe o número do atendimento (3 a 30 caracteres: letras, números, ponto, barra ou hífen).', 'erro'); }
+        const corpo = { tipo, numero_atendimento: atend, observacao: repEl('repObs').value.trim() || null };
+        if (tipo === 'codigo_nao_encontrado') {
+            corpo.termo_busca = repEl('repTermo').value.trim();
+            if (!corpo.termo_busca) return msg('Diga o que você procurava.', 'erro');
+        } else {
+            let pid = repPacoteId;
+            if (pid == null) {
+                const m = /\[#(\d+)\]\s*$/.exec(repEl('repPacInput').value);
+                pid = m ? Number(m[1]) : null;
+                if (pid == null || !DATA_BY_ID.has(pid)) return msg('Escolha o pacote na lista que aparece ao digitar.', 'erro');
+            }
+            corpo.pacote_id = pid;
+            if (tipo === 'valor_errado') {
+                const vp = repNum(repEl('repVp').value), vc = repNum(repEl('repVc').value);
+                if (vp === null || vc === null) return msg('Valor inválido. Use números, por exemplo 1.250,00.', 'erro');
+                if (vp !== '') corpo.valor_sugerido_pacote = vp;
+                if (vc !== '') corpo.valor_sugerido_cartao = vc;
+                if (vp === '' && vc === '' && !corpo.observacao) return msg('Informe o valor correto ou explique na observação.', 'erro');
+            }
+        }
+        const btn = repEl('repEnviar'); btn.disabled = true; msg('Enviando…');
+        try {
+            const tk = window.AXON && AXON.token ? await AXON.token() : null;
+            if (!tk) throw new Error('Sessão expirada. Entre de novo no portal.');
+            const r = await fetch(SUPABASE_URL.replace(/\/+$/, '') + '/rest/v1/pacotes_reportes', {
+                method: 'POST',
+                headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + tk, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+                body: JSON.stringify(corpo)
+            });
+            if (!r.ok) {
+                let det = {}; try { det = await r.json(); } catch (e) { }
+                if (r.status === 409 || det.code === '23505') throw new Error('Você já avisou este problema, neste pacote e atendimento, e o administrador ainda não tratou.');
+                if (r.status === 401 || r.status === 403) throw new Error('Seu acesso não permite enviar avisos.');
+                throw new Error(det.message || ('Erro ' + r.status));
+            }
+            msg('Aviso enviado ao administrador. Você verá a resposta em “Meus avisos”.', 'ok');
+            setTimeout(fecharReporte, 1800); atualizarBadgeAvisos();
+        } catch (e) { msg(e.message || 'Não foi possível enviar. Tente de novo.', 'erro'); btn.disabled = false; }
+    }
+    document.querySelectorAll('input[name=repTipo]').forEach(i => i.addEventListener('change', repAtualizarTipo));
+    repEl('repForm').addEventListener('submit', enviarReporte);
+    repEl('repFechar').addEventListener('click', fecharReporte);
+    repEl('repCancelar').addEventListener('click', fecharReporte);
+    repEl('modalReporte').addEventListener('click', e => { if (e.target.id === 'modalReporte') fecharReporte(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && !repEl('modalReporte').hidden) { e.stopImmediatePropagation(); fecharReporte(); } }, true);
+    repEl('modalCorpo').addEventListener('click', e => { const b = e.target.closest('[data-reportar]'); if (b) abrirReporte(Number(b.dataset.reportar), b); });
+
+
+    // ── MEUS AVISOS: o usuário vê a resposta do administrador ──
+    const ST_ROT = { aberto: 'Aguardando', em_analise: 'Em análise', resolvido: 'Resolvido', descartado: 'Descartado' };
+    const TP_ROT = { codigo_faltando: 'Faltava o código', valor_errado: 'Valor errado', codigo_nao_encontrado: 'Não achei o código' };
+    async function atualizarBadgeAvisos() {
+        try {
+            const n = (await sb('pacotes_reportes?select=id&resposta_vista=eq.false&limit=100')).length;
+            const b = repEl('badgeAvisos'); b.hidden = !n; b.textContent = n || '';
+        } catch (e) { /* silencioso: o contador é só um aviso visual */ }
+    }
+    async function abrirMeusAvisos() {
+        const corpo = repEl('meusCorpo');
+        corpo.innerHTML = '<div class="meus-vazio">Carregando…</div>';
+        repEl('modalMeus').hidden = false; document.body.style.overflow = 'hidden';
+        repEl('meusFechar').focus();
+        try {
+            const l = await sb('pacotes_reportes?select=*&order=criado_em.desc&limit=200');
+            corpo.innerHTML = l.length ? l.map(x => {
+                const quando = new Date(x.criado_em).toLocaleString('pt-BR');
+                const onde = x.tipo === 'codigo_nao_encontrado' ? `“${esc(x.termo_busca)}”` : `<strong>${esc(x.procedimento || '—')}</strong> · ${esc(x.codigo || 'sem código')}`;
+                const at = x.numero_atendimento === 'ANTERIOR' ? 'não exigido na época' : esc(x.numero_atendimento);
+                const resp = x.resposta_admin || (x.status === 'resolvido' ? 'Marcado como resolvido pelo administrador.' : x.status === 'descartado' ? 'Aviso descartado pelo administrador.' : '');
+                const quem = x.resolvido_por || '';
+                return `<div class="meus-item${x.resposta_vista ? '' : ' nova'}"><div class="meus-topo"><div>${onde}</div><span class="meus-st ${esc(x.status)}">${esc(ST_ROT[x.status] || x.status)}</span></div>
+                    <div class="meus-meta">${esc(TP_ROT[x.tipo] || x.tipo)} · atendimento ${at} · enviado em ${esc(quando)}</div>
+                    ${x.observacao ? `<div class="meus-meta">Sua observação: ${esc(x.observacao)}</div>` : ''}
+                    ${resp ? `<div class="meus-resp"><small>Resposta do administrador${x.resposta_em ? ' · ' + esc(new Date(x.resposta_em).toLocaleString('pt-BR')) : ''}</small>${esc(resp)}</div>` : '<div class="meus-meta">Ainda sem resposta.</div>'}</div>`;
+            }).join('') : '<div class="meus-vazio">Você ainda não enviou nenhum aviso.</div>';
+            // marca como lidas e atualiza o contador
+            const tk = window.AXON && AXON.token ? await AXON.token() : null;
+            if (tk && l.some(x => !x.resposta_vista)) {
+                await fetch(SUPABASE_URL.replace(/\/+$/, '') + '/rest/v1/rpc/marcar_avisos_vistos', { method: 'POST', headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + tk, 'Content-Type': 'application/json' }, body: '{}' });
+                atualizarBadgeAvisos();
+            }
+        } catch (e) { corpo.innerHTML = '<div class="meus-vazio">Não foi possível carregar seus avisos. Tente de novo em instantes.</div>'; }
+    }
+    function fecharMeusAvisos() {
+        repEl('modalMeus').hidden = true;
+        if (repEl('modalComp').hidden && repEl('modalContrato').hidden) document.body.style.overflow = '';
+    }
+    repEl('meusFechar').addEventListener('click', fecharMeusAvisos);
+    repEl('modalMeus').addEventListener('click', e => { if (e.target.id === 'modalMeus') fecharMeusAvisos(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && !repEl('modalMeus').hidden && repEl('modalReporte').hidden) { e.stopImmediatePropagation(); fecharMeusAvisos(); } }, true);
 
     // ── CONTRATO ────────────────────────────────────────────────────
     // O contrato mostra o valor do pacote (vigente) e a composição (itens e quantidades).
@@ -1123,6 +1357,9 @@ const SUPABASE_KEY = 'sb_publishable_U4n-seYKyyFyzEKhQq814g_dWHVpZG9';
             const btnLogout = document.getElementById('btnLogout');
             if (badge) { document.getElementById('userBadgeNome').textContent = nomeLogado; badge.style.display = 'flex'; }
             if (btnLogout) btnLogout.style.display = 'inline-flex';
+            const btnRep = document.getElementById('btnReportar'); if (btnRep) btnRep.style.display = 'inline-flex';
+            const btnMeus = document.getElementById('btnMeusAvisos'); if (btnMeus) btnMeus.style.display = 'inline-flex';
+            atualizarBadgeAvisos();
         }
 
         if (!supabaseConfigurado()) {
