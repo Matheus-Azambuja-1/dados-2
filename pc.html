@@ -98,6 +98,7 @@
         #modalReporte .modal { max-width: 520px; }
         #modalReporte [hidden], #modalMeus [hidden] { display: none !important; }
         .btn-reportar-hero .badge-av { display: inline-block; min-width: 18px; padding: 1px 6px; margin-left: 6px; border-radius: 9px; background: var(--danger); color: #fff; font-size: .62rem; letter-spacing: 0; }
+        .badge-av[hidden] { display: none !important; }
         .meus-item { border: 1px solid var(--border); padding: 14px 16px; margin-bottom: 12px; }
         .meus-item.nova { border-color: var(--az-gold); background: var(--az-gold-dim); }
         .meus-topo { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; align-items: baseline; }
@@ -106,6 +107,15 @@
         .meus-st.resolvido { color: var(--success); border-color: var(--success); } .meus-st.descartado { color: var(--danger); border-color: var(--danger); } .meus-st.em_analise { color: var(--warning); border-color: var(--warning); }
         .meus-resp { margin-top: 10px; padding: 10px 12px; border-left: 3px solid var(--az-gold); background: var(--bg-body); font-size: .88rem; white-space: pre-wrap; }
         .meus-resp small { display: block; color: var(--az-text-gray); margin-bottom: 4px; }
+        .meus-resp.user { border-left-color: var(--success); background: transparent; border: 1px solid var(--border); border-left: 3px solid var(--success); }
+        .meus-acoes { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+        .meus-acoes button, .meus-topo-acoes button { background: transparent; color: var(--text-main); border: 1px solid var(--border); padding: 8px 14px; font: 700 .64rem 'Inter', sans-serif; letter-spacing: 1.4px; text-transform: uppercase; cursor: pointer; }
+        .meus-acoes button.pri { background: var(--az-gold); border-color: var(--az-gold); color: #fff; }
+        .meus-acoes button:hover, .meus-topo-acoes button:hover { border-color: var(--az-gold); }
+        .meus-form { margin-top: 10px; } .meus-form textarea { width: 100%; min-height: 80px; padding: 10px 12px; background: var(--bg-body); color: var(--text-main); border: 1px solid var(--border); font: 400 .9rem 'Inter', sans-serif; resize: vertical; }
+        .meus-form textarea:focus { outline: none; border-color: var(--az-gold); }
+        .meus-topo-acoes { display: flex; justify-content: flex-end; margin-bottom: 12px; }
+        .meus-erro { color: var(--danger); font-size: .82rem; margin-top: 6px; }
         .meus-vazio { color: var(--az-text-gray); padding: 20px 0; text-align: center; }
         .rep-tipos { display: grid; gap: 8px; margin: 4px 0 14px; }
         .rep-tipo { display: flex; gap: 10px; align-items: center; padding: 11px 14px; border: 1px solid var(--border); cursor: pointer; font-size: .9rem; }
@@ -1042,32 +1052,70 @@ const SUPABASE_KEY = 'sb_publishable_U4n-seYKyyFyzEKhQq814g_dWHVpZG9';
             const b = repEl('badgeAvisos'); b.hidden = !n; b.textContent = n || '';
         } catch (e) { /* silencioso: o contador é só um aviso visual */ }
     }
-    async function abrirMeusAvisos() {
-        const corpo = repEl('meusCorpo');
-        corpo.innerHTML = '<div class="meus-vazio">Carregando…</div>';
-        repEl('modalMeus').hidden = false; document.body.style.overflow = 'hidden';
-        repEl('meusFechar').focus();
-        try {
-            const l = await sb('pacotes_reportes?select=*&order=criado_em.desc&limit=200');
-            corpo.innerHTML = l.length ? l.map(x => {
-                const quando = new Date(x.criado_em).toLocaleString('pt-BR');
-                const onde = x.tipo === 'codigo_nao_encontrado' ? `“${esc(x.termo_busca)}”` : `<strong>${esc(x.procedimento || '—')}</strong> · ${esc(x.codigo || 'sem código')}`;
-                const at = x.numero_atendimento === 'ANTERIOR' ? 'não exigido na época' : esc(x.numero_atendimento);
-                const resp = x.resposta_admin || (x.status === 'resolvido' ? 'Marcado como resolvido pelo administrador.' : x.status === 'descartado' ? 'Aviso descartado pelo administrador.' : '');
-                const quem = x.resolvido_por || '';
-                return `<div class="meus-item${x.resposta_vista ? '' : ' nova'}"><div class="meus-topo"><div>${onde}</div><span class="meus-st ${esc(x.status)}">${esc(ST_ROT[x.status] || x.status)}</span></div>
-                    <div class="meus-meta">${esc(TP_ROT[x.tipo] || x.tipo)} · atendimento ${at} · enviado em ${esc(quando)}</div>
-                    ${x.observacao ? `<div class="meus-meta">Sua observação: ${esc(x.observacao)}</div>` : ''}
-                    ${resp ? `<div class="meus-resp"><small>Resposta do administrador${x.resposta_em ? ' · ' + esc(new Date(x.resposta_em).toLocaleString('pt-BR')) : ''}</small>${esc(resp)}</div>` : '<div class="meus-meta">Ainda sem resposta.</div>'}</div>`;
-            }).join('') : '<div class="meus-vazio">Você ainda não enviou nenhum aviso.</div>';
-            // marca como lidas e atualiza o contador
-            const tk = window.AXON && AXON.token ? await AXON.token() : null;
-            if (tk && l.some(x => !x.resposta_vista)) {
-                await fetch(SUPABASE_URL.replace(/\/+$/, '') + '/rest/v1/rpc/marcar_avisos_vistos', { method: 'POST', headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + tk, 'Content-Type': 'application/json' }, body: '{}' });
-                atualizarBadgeAvisos();
-            }
-        } catch (e) { corpo.innerHTML = '<div class="meus-vazio">Não foi possível carregar seus avisos. Tente de novo em instantes.</div>'; }
+    async function restPost(caminho, corpo) {
+        const tk = window.AXON && AXON.token ? await AXON.token() : null;
+        if (!tk) throw new Error('Sessão expirada. Entre de novo no portal.');
+        const r = await fetch(SUPABASE_URL.replace(/\/+$/, '') + '/rest/v1/' + caminho, { method: 'POST', headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + tk, 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify(corpo) });
+        if (!r.ok) { let d = {}; try { d = await r.json(); } catch (e) { } throw new Error(d.message || ('Erro ' + r.status)); }
     }
+    const fmtQuando = t => new Date(t).toLocaleString('pt-BR');
+    function blocoAviso(x, msgs) {
+        const onde = x.tipo === 'codigo_nao_encontrado' ? `“${esc(x.termo_busca)}”` : `<strong>${esc(x.procedimento || '—')}</strong> · ${esc(x.codigo || 'sem código')}`;
+        const at = x.numero_atendimento === 'ANTERIOR' ? 'não exigido na época' : esc(x.numero_atendimento);
+        let conv = msgs.map(m => `<div class="meus-resp${m.autor === 'usuario' ? ' user' : ''}"><small>${m.autor === 'usuario' ? 'Você' : 'Administrador'} · ${esc(fmtQuando(m.criado_em))}</small>${esc(m.texto)}</div>`).join('');
+        if (!msgs.length && (x.status === 'resolvido' || x.status === 'descartado'))
+            conv = `<div class="meus-resp"><small>Administrador</small>${x.status === 'resolvido' ? 'Marcado como resolvido.' : 'Aviso descartado.'}</div>`;
+        const temAdmin = msgs.some(m => m.autor === 'admin') || x.status === 'resolvido' || x.status === 'descartado';
+        const nova = !x.resposta_vista;
+        const acoes = temAdmin
+            ? `<div class="meus-acoes"><button type="button" class="pri" data-act="responder" data-id="${x.id}">Responder</button>${nova ? `<button type="button" data-act="ciente" data-id="${x.id}">Ciente, não precisa responder</button>` : ''}</div>
+               <div class="meus-form" id="form-${x.id}" hidden><textarea id="txt-${x.id}" maxlength="1000" placeholder="Escreva sua resposta ao administrador"></textarea>
+               <div class="meus-erro" id="err-${x.id}"></div>
+               <div class="meus-acoes"><button type="button" class="pri" data-act="enviar" data-id="${x.id}">Enviar resposta</button><button type="button" data-act="cancelar" data-id="${x.id}">Cancelar</button></div></div>`
+            : '';
+        return `<div class="meus-item${nova ? ' nova' : ''}"><div class="meus-topo"><div>${onde}</div><span class="meus-st ${esc(x.status)}">${esc(ST_ROT[x.status] || x.status)}</span></div>
+            <div class="meus-meta">${esc(TP_ROT[x.tipo] || x.tipo)} · atendimento ${at} · enviado em ${esc(fmtQuando(x.criado_em))}</div>
+            ${x.observacao ? `<div class="meus-meta">Sua observação: ${esc(x.observacao)}</div>` : ''}
+            ${conv || '<div class="meus-meta">Ainda sem resposta.</div>'}${acoes}</div>`;
+    }
+    async function abrirMeusAvisos(manter) {
+        const corpo = repEl('meusCorpo');
+        const topo = corpo.scrollTop;
+        if (manter !== true) corpo.innerHTML = '<div class="meus-vazio">Carregando…</div>';
+        repEl('modalMeus').hidden = false; document.body.style.overflow = 'hidden';
+        if (manter !== true) repEl('meusFechar').focus();
+        try {
+            const [l, ms] = await Promise.all([
+                sb('pacotes_reportes?select=*&order=criado_em.desc&limit=200'),
+                sb('pacotes_reportes_msgs?select=*&order=criado_em.asc&limit=2000')
+            ]);
+            const porAviso = {}; ms.forEach(m => (porAviso[m.reporte_id] = porAviso[m.reporte_id] || []).push(m));
+            const naoLidas = l.filter(x => !x.resposta_vista).length;
+            corpo.innerHTML = l.length
+                ? (naoLidas > 1 ? '<div class="meus-topo-acoes"><button type="button" data-act="todas">Marcar todas como lidas</button></div>' : '') + l.map(x => blocoAviso(x, porAviso[x.id] || [])).join('')
+                : '<div class="meus-vazio">Você ainda não enviou nenhum aviso.</div>';
+            if (manter === true) corpo.scrollTop = topo;
+        } catch (e) { corpo.innerHTML = '<div class="meus-vazio">Não foi possível carregar seus avisos. Tente de novo em instantes.</div>'; }
+        atualizarBadgeAvisos();
+    }
+    repEl('meusCorpo').addEventListener('click', async e => {
+        const b = e.target.closest('[data-act]'); if (!b) return;
+        const id = Number(b.dataset.id), act = b.dataset.act;
+        try {
+            if (act === 'responder') { const f = repEl('form-' + id); f.hidden = false; repEl('txt-' + id).focus(); }
+            else if (act === 'cancelar') { repEl('form-' + id).hidden = true; repEl('err-' + id).textContent = ''; }
+            else if (act === 'ciente') { b.disabled = true; await restPost('rpc/marcar_aviso_visto', { p_id: id }); await abrirMeusAvisos(true); }
+            else if (act === 'todas') { b.disabled = true; await restPost('rpc/marcar_avisos_vistos', {}); await abrirMeusAvisos(true); }
+            else if (act === 'enviar') {
+                const txt = repEl('txt-' + id).value.trim();
+                if (!txt) { repEl('err-' + id).textContent = 'Escreva a resposta antes de enviar.'; return; }
+                b.disabled = true;
+                try { await restPost('pacotes_reportes_msgs', { reporte_id: id, autor: 'usuario', texto: txt }); }
+                catch (er) { b.disabled = false; repEl('err-' + id).textContent = er.message; return; }
+                await abrirMeusAvisos(true);
+            }
+        } catch (er) { b.disabled = false; }
+    });
     function fecharMeusAvisos() {
         repEl('modalMeus').hidden = true;
         if (repEl('modalComp').hidden && repEl('modalContrato').hidden) document.body.style.overflow = '';
