@@ -83,6 +83,7 @@
       <option value="com">Com composição</option>
     </select>
     <label class="chk"><input type="checkbox" id="fInativos"> mostrar inativos</label>
+    <button class="btn" id="btnRep">Avisos dos usuários <span class="pill w" id="repCnt" hidden></span></button>
     <button class="btn p" id="btnNovo">+ Novo pacote</button>
   </div>
   <div class="wrap"><table>
@@ -130,6 +131,22 @@
     <button class="btn" onclick="fecharComp()">Cancelar</button>
     <button class="btn" id="btnCopia" style="display:none">Salvar como nova composição só deste pacote</button>
     <button class="btn p" id="btnSalvarComp">Salvar composição</button>
+  </div>
+</dialog>
+<!-- Avisos dos usuários -->
+<dialog id="dRep">
+  <div class="mh"><h2>Avisos dos usuários (código faltando, valor errado, código não encontrado)</h2><button class="btn s" onclick="dRep.close()">Fechar</button></div>
+  <div class="mb">
+    <div class="bar">
+      <select id="rStatus"><option value="aberto">Abertos</option><option value="em_analise">Em análise</option><option value="resolvido">Resolvidos</option><option value="descartado">Descartados</option><option value="">Todos</option></select>
+      <select id="rTipo"><option value="">Todos os tipos</option><option value="codigo_faltando">Falta o código</option><option value="valor_errado">Valor errado</option><option value="codigo_nao_encontrado">Não achei o código</option></select>
+      <span class="mut" id="rInfo" style="flex:1"></span>
+      <button class="btn" id="rCsv">Exportar tudo (CSV)</button>
+    </div>
+    <div class="wrap"><table>
+      <thead><tr><th>Quando</th><th>Tipo</th><th>Pacote / o que procurava</th><th>Valores</th><th>Observação</th><th>Quem</th><th>Tratamento</th></tr></thead>
+      <tbody id="rLista"><tr><td colspan="7" class="mut">Carregando…</td></tr></tbody>
+    </table></div>
   </div>
 </dialog>
 <datalist id="dlSetores"></datalist>
@@ -453,13 +470,69 @@
   });
   $('btnCopia').addEventListener('click', function () { salvarComp(true); });
 
+
+  /* ───── avisos dos usuários ───── */
+  var dRep = $('dRep'); window.dRep = dRep;
+  var reps = [];
+  var TIPOS = { codigo_faltando: 'Falta o código', valor_errado: 'Valor errado', codigo_nao_encontrado: 'Não achei o código' };
+  async function contarReportes() {
+    var r = await sb.from('pacotes_reportes').select('id', { count: 'exact', head: true }).eq('status', 'aberto');
+    var el = $('repCnt'); if (r.error) { el.hidden = true; return; }
+    el.hidden = !r.count; el.textContent = r.count || '';
+  }
+  async function carregarReportes() {
+    var r = await sb.from('pacotes_reportes').select('*').order('criado_em', { ascending: false }).limit(2000);
+    if (r.error) { $('rLista').innerHTML = '<tr><td colspan="7" class="mut">Erro: ' + esc(r.error.message) + '</td></tr>'; return; }
+    reps = r.data || []; desenharReportes();
+  }
+  function desenharReportes() {
+    var st = $('rStatus').value, tp = $('rTipo').value;
+    var rows = reps.filter(function (x) { return (!st || x.status === st) && (!tp || x.tipo === tp); });
+    $('rInfo').textContent = rows.length + ' aviso(s)';
+    $('rLista').innerHTML = rows.length ? rows.map(function (x) {
+      var onde = x.tipo === 'codigo_nao_encontrado'
+        ? '“' + esc(x.termo_busca) + '”'
+        : '<b>' + esc(x.procedimento || '—') + '</b><div class="mut">' + esc(x.setor || '') + ' · ' + esc(x.codigo || 'sem código') + '</div>' + (x.pacote_id ? '<button class="btn s" data-abrir="' + Number(x.pacote_id) + '">Abrir pacote</button>' : '');
+      onde += '<div class="mut">Atendimento: <b>' + esc(x.numero_atendimento === 'ANTERIOR' ? 'não exigido na época' : x.numero_atendimento) + '</b></div>';
+      var val = x.tipo === 'valor_errado'
+        ? 'Atual: ' + brl(x.valor_pacote_atual) + ' / ' + brl(x.valor_cartao_atual) + '<br>Correto: ' + brl(x.valor_sugerido_pacote) + ' / ' + brl(x.valor_sugerido_cartao) : '<span class="mut">—</span>';
+      var op = ['aberto', 'em_analise', 'resolvido', 'descartado'].map(function (o) { return '<option value="' + o + '"' + (o === x.status ? ' selected' : '') + '>' + { aberto: 'Aberto', em_analise: 'Em análise', resolvido: 'Resolvido', descartado: 'Descartado' }[o] + '</option>'; }).join('');
+      return '<tr data-rid="' + Number(x.id) + '"><td class="mut">' + esc(new Date(x.criado_em).toLocaleString('pt-BR')) + '</td><td><span class="pill w">' + esc(TIPOS[x.tipo] || x.tipo) + '</span></td><td>' + onde + '</td><td>' + val +
+        '</td><td>' + esc(x.observacao || '') + '</td><td>' + esc(x.usuario_nome || x.usuario_email || '') + '</td><td><select data-r="status">' + op + '</select>' +
+        '<input type="text" data-r="resp" maxlength="1000" placeholder="Resposta que o usuário vai ver" value="' + esc(x.resposta_admin || '') + '" style="display:block;margin:4px 0;width:100%;padding:5px 7px;border:1px solid var(--line-strong);border-radius:4px">' +
+        '<button class="btn s p" data-r="salvar">Salvar</button>' + (x.resolvido_por ? '<div class="mut">por ' + esc(x.resolvido_por) + '</div>' : '') + '</td></tr>';
+    }).join('') : '<tr><td colspan="7" class="mut">Nenhum aviso neste filtro.</td></tr>';
+  }
+  $('btnRep').addEventListener('click', function () { $('rLista').innerHTML = '<tr><td colspan="7" class="mut">Carregando…</td></tr>'; dRep.showModal(); carregarReportes(); });
+  ['rStatus', 'rTipo'].forEach(function (i) { $(i).addEventListener('input', desenharReportes); });
+  $('rLista').addEventListener('click', async function (e) {
+    var a = e.target.closest('[data-abrir]');
+    if (a) { dRep.close(); abrirPacote(Number(a.dataset.abrir)); return; }
+    var b = e.target.closest('[data-r=salvar]'); if (!b) return;
+    var tr = b.closest('tr'), id = Number(tr.dataset.rid);
+    b.disabled = true;
+    var u = await sb.from('pacotes_reportes').update({ status: tr.querySelector('[data-r=status]').value, resposta_admin: tr.querySelector('[data-r=resp]').value.trim() || null }).eq('id', id);
+    b.disabled = false;
+    if (u.error) return toast('Não foi possível salvar: ' + u.error.message, true);
+    toast('Aviso atualizado.'); await carregarReportes(); contarReportes();
+  });
+  $('rCsv').addEventListener('click', async function () {
+    var r = await sb.from('pacotes_reportes_indicador').select('*').order('criado_em', { ascending: false }).limit(20000);
+    if (r.error) return toast('Erro ao exportar: ' + r.error.message, true);
+    var cols = ['id', 'data', 'mes', 'tipo_descricao', 'status', 'numero_atendimento', 'setor', 'codigo', 'procedimento', 'pacote_id', 'termo_busca', 'valor_pacote_atual', 'valor_cartao_atual', 'valor_sugerido_pacote', 'valor_sugerido_cartao', 'observacao', 'usuario_email', 'usuario_nome', 'resposta_admin', 'resolvido_por', 'resolvido_em', 'horas_ate_resolver'];
+    var cel = function (v) { v = v == null ? '' : String(v).replace(/\r?\n/g, ' '); return /[;"]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+    var csv = '﻿' + cols.join(';') + '\r\n' + (r.data || []).map(function (x) { return cols.map(function (c) { return cel(x[c]); }).join(';'); }).join('\r\n');
+    var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    a.download = 'avisos_pacotes_' + hoje() + '.csv'; document.body.appendChild(a); a.click(); a.remove();
+  });
+
   /* ───── início ───── */
   (async function () {
     try { await AXON.pronto; } catch (e) { return; }
     if (!AXON.acesso || AXON.acesso.papel !== 'admin') { AXON.sair(); return; }
     sb = AXON.sb;
     $('quem').textContent = 'Administrador · ' + (AXON.acesso.nome || AXON.acesso.email || '');
-    carregar();
+    carregar(); contarReportes();
   })();
 })();
 </script>
