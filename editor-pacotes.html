@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<script src="axon-guard.js" data-admin></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Editor de pacotes — Portal AXON</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--font:'IBM Plex Sans','Segoe UI',system-ui,sans-serif;--bg:#F3F5F8;--surface:#fff;--surface-2:#F8F9FB;--line:#DCE1E9;--line-strong:#C3CBD8;--text:#172033;--text-2:#4A5568;--text-3:#667386;--accent:#1D5FA7;--accent-hover:#174D8A;--accent-soft:#E6EFF9;--ok:#0B7A4B;--ok-soft:#E4F4EC;--warn:#A8520A;--warn-soft:#FDF1E2;--danger:#B4231A;--danger-soft:#FCE9E7;--side:#13233B}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--font);background:var(--bg);color:var(--text);font-size:14.5px;line-height:1.45}
+  button,input,select,textarea{font:inherit;color:inherit}
+  .top{background:var(--side);color:#fff;display:flex;align-items:center;gap:16px;padding:12px 24px;flex-wrap:wrap}
+  .top a{color:#C3CDDC;text-decoration:none;font-size:.9rem}.top a:hover{color:#fff}
+  .top h1{margin:0;font-size:1.1rem;font-weight:600;flex:1}
+  .tag{background:rgba(255,255,255,.12);border-radius:4px;padding:3px 9px;font-size:.78rem}
+  main{max-width:1280px;margin:0 auto;padding:20px 24px 60px}
+  .bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+  .bar input[type=search],.bar select{padding:9px 12px;border:1px solid var(--line-strong);border-radius:6px;background:#fff;min-width:160px}
+  .bar input[type=search]{flex:1;min-width:220px}
+  .chk{display:flex;gap:6px;align-items:center;color:var(--text-2);font-size:.9rem}
+  .btn{border:1px solid var(--line-strong);background:#fff;border-radius:6px;padding:8px 14px;cursor:pointer;font-weight:500}
+  .btn:hover{background:var(--surface-2)}
+  .btn.p{background:var(--accent);border-color:var(--accent);color:#fff}.btn.p:hover{background:var(--accent-hover)}
+  .btn.d{color:var(--danger);border-color:#E5B5B1}.btn.s{padding:5px 10px;font-size:.85rem}
+  .btn:disabled{opacity:.55;cursor:not-allowed}
+  .wrap{background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:auto}
+  table{border-collapse:collapse;width:100%}
+  th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:var(--surface-2);font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:var(--text-3);position:sticky;top:0;white-space:nowrap}
+  td.n,th.n{text-align:right;white-space:nowrap}
+  tr.clk{cursor:pointer}tr.clk:hover td{background:var(--accent-soft)}
+  .mut{color:var(--text-3);font-size:.85rem}
+  .pill{display:inline-block;border-radius:10px;padding:1px 8px;font-size:.75rem;font-weight:500}
+  .pill.ok{background:var(--ok-soft);color:var(--ok)}.pill.off{background:var(--danger-soft);color:var(--danger)}.pill.w{background:var(--warn-soft);color:var(--warn)}
+  .cnt{margin:8px 2px;color:var(--text-3);font-size:.85rem}
+  dialog{border:0;border-radius:10px;padding:0;width:min(960px,96vw);max-height:92vh;box-shadow:0 20px 60px rgba(10,20,40,.35)}
+  dialog::backdrop{background:rgba(15,25,45,.55)}
+  .mh{display:flex;align-items:center;gap:10px;padding:14px 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff;z-index:2}
+  .mh h2{margin:0;font-size:1.05rem;flex:1}
+  .mb{padding:18px 20px;overflow:auto;max-height:calc(92vh - 130px)}
+  .mf{padding:12px 20px;border-top:1px solid var(--line);display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;position:sticky;bottom:0;background:#fff}
+  .g{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px 14px}
+  .g .full{grid-column:1/-1}
+  label.f{display:block;font-size:.8rem;font-weight:500;color:var(--text-2)}
+  label.f input,label.f select,label.f textarea{display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line-strong);border-radius:6px;background:#fff;font-weight:400;color:var(--text)}
+  label.f textarea{min-height:90px;resize:vertical}
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
+  .note{background:var(--warn-soft);color:var(--warn);border-radius:6px;padding:9px 12px;font-size:.88rem;margin:12px 0}
+  .info{background:var(--accent-soft);color:var(--accent);border-radius:6px;padding:9px 12px;font-size:.88rem;margin:12px 0}
+  h3{font-size:.95rem;margin:20px 0 8px}
+  .sec{border:1px solid var(--line);border-radius:8px;margin:12px 0;background:var(--surface-2)}
+  .sh{display:flex;gap:8px;align-items:center;padding:10px;flex-wrap:wrap}
+  .sh input{padding:7px 9px;border:1px solid var(--line-strong);border-radius:6px;background:#fff}
+  .sh .nm{flex:1;min-width:200px;font-weight:600}.sh .nu{width:120px;text-align:right}
+  .it th,.it td{padding:4px 6px;font-size:.88rem;background:#fff}
+  .it input[type=text]{width:100%;padding:6px 7px;border:1px solid var(--line);border-radius:4px;min-width:60px}
+  .it input.nu{text-align:right;min-width:72px}
+  .it td.c{white-space:nowrap}
+  #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#172033;color:#fff;padding:11px 18px;border-radius:8px;opacity:0;pointer-events:none;transition:.25s;z-index:99;max-width:90vw}
+  #toast.on{opacity:1}#toast.err{background:var(--danger)}
+  .hist{font-size:.86rem;border-bottom:1px solid var(--line);padding:8px 0}
+  .hist b{font-weight:600}.hist .df{color:var(--text-2)}
+  @media(max-width:640px){main{padding:14px 12px 50px}.top{padding:10px 14px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <a href="index.html">← Portal</a>
+  <h1>Editor de pacotes</h1>
+  <span class="tag" id="quem">Administrador</span>
+</header>
+<main>
+  <div class="bar">
+    <input type="search" id="busca" placeholder="Buscar por procedimento ou código…" autocomplete="off">
+    <select id="fSetor"><option value="">Todos os setores</option></select>
+    <select id="fComp">
+      <option value="">Composição: todas</option>
+      <option value="sem">Sem composição</option>
+      <option value="com">Com composição</option>
+    </select>
+    <label class="chk"><input type="checkbox" id="fInativos"> mostrar inativos</label>
+    <button class="btn p" id="btnNovo">+ Novo pacote</button>
+  </div>
+  <div class="wrap"><table>
+    <thead><tr><th>Código</th><th>Procedimento</th><th>Setor</th><th class="n">Pacote</th><th class="n">Cartão</th><th>Composição</th><th>Situação</th></tr></thead>
+    <tbody id="lista"><tr><td colspan="7" class="mut">Carregando…</td></tr></tbody>
+  </table></div>
+  <div class="cnt" id="cnt"></div>
+</main>
+
+<!-- Pacote -->
+<dialog id="dPac">
+  <div class="mh"><h2 id="pTit">Pacote</h2><button class="btn s" onclick="dPac.close()">Fechar</button></div>
+  <div class="mb">
+    <div class="g">
+      <label class="f full">Procedimento<input id="pProc" type="text" maxlength="300"></label>
+      <label class="f">Setor<input id="pSetor" type="text" list="dlSetores" maxlength="80"></label>
+      <label class="f">Código<input id="pCod" type="text" maxlength="60"></label>
+      <label class="f">Situação<select id="pAtivo"><option value="1">Ativo</option><option value="0">Inativo (some do catálogo)</option></select></label>
+      <label class="f">Valor do pacote (R$)<input id="pVal" type="text" inputmode="decimal"></label>
+      <label class="f">Valor no cartão (R$)<input id="pCar" type="text" inputmode="decimal"></label>
+      <label class="f">Texto do valor (pacote)<input id="pTxtP" type="text" maxlength="200"></label>
+      <label class="f">Texto do valor (cartão)<input id="pTxtC" type="text" maxlength="200"></label>
+      <label class="f full">Não incluso (um item por linha)<textarea id="pExc"></textarea></label>
+      <label class="f full">Observações<textarea id="pObs"></textarea></label>
+      <label class="f full">Composição vinculada
+        <select id="pComp"></select>
+      </label>
+    </div>
+    <div id="pAvisoPreco" class="info" style="display:none">O novo valor entra como uma nova tabela de preços com vigência de hoje. Os valores anteriores ficam guardados no histórico.</div>
+    <div id="pAvisoComp" class="note" style="display:none"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+      <button class="btn" id="btnComp">Editar composição</button>
+      <button class="btn" id="btnHist">Histórico de alterações</button>
+    </div>
+    <div id="histBox"></div>
+  </div>
+  <div class="mf"><button class="btn" onclick="dPac.close()">Cancelar</button><button class="btn p" id="btnSalvarPac">Salvar pacote</button></div>
+</dialog>
+
+<!-- Composição -->
+<dialog id="dComp">
+  <div class="mh"><h2 id="cTit">Composição</h2><button class="btn s" onclick="fecharComp()">Fechar</button></div>
+  <div class="mb" id="cCorpo"></div>
+  <div class="mf">
+    <button class="btn" onclick="fecharComp()">Cancelar</button>
+    <button class="btn" id="btnCopia" style="display:none">Salvar como nova composição só deste pacote</button>
+    <button class="btn p" id="btnSalvarComp">Salvar composição</button>
+  </div>
+</dialog>
+<datalist id="dlSetores"></datalist>
+<div id="toast"></div>
+
+<script>
+(function () {
+  'use strict';
+  var $ = function (i) { return document.getElementById(i); };
+  var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+  var brl = function (v) { return v == null || v === '' ? '—' : Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); };
+  var sb, pacotes = [], comps = [], usoComp = {}, atual = null, compSt = null, compOrig = null;
+  var dPac = $('dPac'), dComp = $('dComp');
+  window.dPac = dPac; window.dComp = dComp;
+
+  function toast(msg, erro) {
+    var t = $('toast'); t.textContent = msg; t.className = 'on' + (erro ? ' err' : '');
+    clearTimeout(toast._t); toast._t = setTimeout(function () { t.className = ''; }, erro ? 6000 : 3000);
+  }
+  function num(v) {            // "1.234,56" ou "1234.56" → "1234.56"; vazio → ''; inválido → null
+    v = String(v == null ? '' : v).trim().replace(/\s|R\$/g, '');
+    if (v === '') return '';
+    if (v.indexOf(',') >= 0) v = v.replace(/\./g, '').replace(',', '.');
+    return /^-?\d+(\.\d+)?$/.test(v) ? v : null;
+  }
+  var str = function (v) { return v == null ? '' : String(v); };
+  function hoje() { return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Cuiaba' }); }
+  function hojeBR() { var p = hoje().split('-'); return p[2] + '/' + p[1] + '/' + p[0]; }
+  function norm(s) { return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase(); }
+
+  /* ───── lista ───── */
+  async function carregar() {
+    var r = await Promise.all([
+      sb.from('pacotes_admin').select('*').order('setor').order('procedimento').limit(5000),
+      sb.from('composicoes').select('id,titulo').order('id').limit(5000)
+    ]);
+    if (r[0].error) { toast('Erro ao carregar pacotes: ' + r[0].error.message, true); return; }
+    if (r[1].error) { toast('Erro ao carregar composições: ' + r[1].error.message, true); return; }
+    pacotes = r[0].data || []; comps = r[1].data || [];
+    usoComp = {}; pacotes.forEach(function (p) { if (p.composicao_id != null) usoComp[p.composicao_id] = (usoComp[p.composicao_id] || 0) + 1; });
+    var setores = Array.from(new Set(pacotes.map(function (p) { return p.setor; }).filter(Boolean))).sort();
+    var sel = $('fSetor'), v = sel.value;
+    sel.innerHTML = '<option value="">Todos os setores</option>' + setores.map(function (s) { return '<option>' + esc(s) + '</option>'; }).join('');
+    sel.value = v;
+    $('dlSetores').innerHTML = setores.map(function (s) { return '<option value="' + esc(s) + '">'; }).join('');
+    desenhar();
+  }
+  function desenhar() {
+    var q = norm($('busca').value), st = $('fSetor').value, fc = $('fComp').value, ina = $('fInativos').checked;
+    var rows = pacotes.filter(function (p) {
+      if (!ina && p.ativo === false) return false;
+      if (st && p.setor !== st) return false;
+      if (fc === 'sem' && p.composicao_id != null) return false;
+      if (fc === 'com' && p.composicao_id == null) return false;
+      return !q || norm(p.procedimento + ' ' + p.codigo).indexOf(q) >= 0;
+    });
+    $('lista').innerHTML = rows.length ? rows.map(function (p) {
+      var n = usoComp[p.composicao_id] || 0;
+      return '<tr class="clk" data-id="' + Number(p.id) + '"><td>' + esc(p.codigo || '—') + '</td><td>' + esc(p.procedimento) + '</td><td>' + esc(p.setor) +
+        '</td><td class="n">' + brl(p.valor_pacote) + '</td><td class="n">' + brl(p.valor_cartao) + '</td><td>' +
+        (p.composicao_id != null ? '#' + Number(p.composicao_id) + (n > 1 ? ' <span class="pill w">compartilhada (' + n + ')</span>' : '') : '<span class="mut">sem composição</span>') +
+        '</td><td>' + (p.ativo === false ? '<span class="pill off">inativo</span>' : '<span class="pill ok">ativo</span>') + '</td></tr>';
+    }).join('') : '<tr><td colspan="7" class="mut">Nenhum pacote encontrado.</td></tr>';
+    $('cnt').textContent = rows.length + ' de ' + pacotes.length + ' pacotes';
+  }
+  $('lista').addEventListener('click', function (e) {
+    var tr = e.target.closest('tr[data-id]'); if (tr) abrirPacote(Number(tr.dataset.id));
+  });
+  ['busca', 'fSetor', 'fComp', 'fInativos'].forEach(function (i) { $(i).addEventListener('input', desenhar); });
+  $('btnNovo').addEventListener('click', function () { abrirPacote(null); });
+
+  /* ───── pacote ───── */
+  function opcoesComp(sel) {
+    $('pComp').innerHTML = '<option value="">(sem composição)</option>' + comps.map(function (c) {
+      var n = usoComp[c.id] || 0;
+      return '<option value="' + Number(c.id) + '"' + (c.id === sel ? ' selected' : '') + '>#' + Number(c.id) + ' — ' + esc(String(c.titulo).slice(0, 90)) + (n ? ' (usada em ' + n + ')' : '') + '</option>';
+    }).join('');
+  }
+  function abrirPacote(id) {
+    atual = id == null ? null : pacotes.find(function (p) { return p.id === id; });
+    var p = atual || { setor: '', procedimento: '', codigo: '', valor_pacote: null, valor_cartao: null, texto_pacote: '', texto_cartao: '', exclusoes: [], observacoes: '', composicao_id: null, ativo: true };
+    $('pTit').textContent = atual ? 'Pacote #' + atual.id : 'Novo pacote';
+    $('pProc').value = str(p.procedimento); $('pSetor').value = str(p.setor); $('pCod').value = str(p.codigo);
+    $('pAtivo').value = p.ativo === false ? '0' : '1';
+    $('pVal').value = p.valor_pacote == null ? '' : String(p.valor_pacote).replace('.', ',');
+    $('pCar').value = p.valor_cartao == null ? '' : String(p.valor_cartao).replace('.', ',');
+    $('pTxtP').value = str(p.texto_pacote); $('pTxtC').value = str(p.texto_cartao);
+    $('pExc').value = (p.exclusoes || []).join('\n'); $('pObs').value = str(p.observacoes);
+    opcoesComp(p.composicao_id);
+    $('histBox').innerHTML = ''; $('pAvisoPreco').style.display = 'none';
+    $('btnHist').style.display = atual ? '' : 'none';
+    avisoComp();
+    dPac.showModal();
+  }
+  function avisoComp() {
+    var v = $('pComp').value, n = v ? (usoComp[Number(v)] || 0) : 0, el = $('pAvisoComp');
+    var outros = n - (atual && atual.composicao_id === Number(v) ? 1 : 0);
+    el.style.display = outros > 0 ? '' : 'none';
+    el.textContent = outros > 0 ? 'Esta composição também é usada por ' + outros + ' outro(s) pacote(s). Alterá-la muda todos. Para mudar só este pacote, use "Salvar como nova composição só deste pacote".' : '';
+    $('btnComp').textContent = v ? 'Editar composição' : 'Criar composição para este pacote';
+  }
+  $('pComp').addEventListener('change', avisoComp);
+  ['pVal', 'pCar'].forEach(function (i) {
+    $(i).addEventListener('input', function () {
+      if (!atual) { $('pAvisoPreco').style.display = 'none'; return; }
+      var a = num($('pVal').value), b = num($('pCar').value);
+      var mudou = String(a) !== String(atual.valor_pacote == null ? '' : atual.valor_pacote) || String(b) !== String(atual.valor_cartao == null ? '' : atual.valor_cartao);
+      $('pAvisoPreco').style.display = mudou ? '' : 'none';
+    });
+  });
+
+  $('btnSalvarPac').addEventListener('click', async function () {
+    var btn = this;
+    var proc = $('pProc').value.trim(), setor = $('pSetor').value.trim(), cod = $('pCod').value.trim();
+    var vp = num($('pVal').value), vc = num($('pCar').value);
+    if (!proc) return toast('Informe o procedimento.', true);
+    if (!setor) return toast('Informe o setor.', true);
+    if (vp === null || vc === null) return toast('Valor inválido. Use números, por exemplo 1.250,00.', true);
+    if (vp === '' && vc === '' && !$('pTxtP').value.trim()) return toast('Informe o valor do pacote (ou um texto de valor).', true);
+    if (cod && pacotes.some(function (x) { return x.codigo === cod && (!atual || x.id !== atual.id); }) &&
+        !confirm('Já existe outro pacote com o código "' + cod + '". Salvar mesmo assim?')) return;
+    var dados = {
+      setor: setor, procedimento: proc, codigo: cod, ativo: $('pAtivo').value === '1',
+      texto_pacote: $('pTxtP').value.trim() || null, texto_cartao: $('pTxtC').value.trim() || null,
+      exclusoes: $('pExc').value.split('\n').map(function (s) { return s.trim(); }).filter(Boolean),
+      observacoes: $('pObs').value.trim() || null,
+      composicao_id: $('pComp').value ? Number($('pComp').value) : null
+    };
+    btn.disabled = true;
+    try {
+      var id, precoMudou = false;
+      if (atual) {
+        id = atual.id;
+        var u = await sb.from('pacotes').update(dados).eq('id', id);
+        if (u.error) throw u.error;
+        precoMudou = String(vp) !== String(atual.valor_pacote == null ? '' : atual.valor_pacote) || String(vc) !== String(atual.valor_cartao == null ? '' : atual.valor_cartao);
+      } else {
+        var ins = await sb.from('pacotes').insert(Object.assign({ valor_pacote: vp === '' ? null : vp, valor_cartao: vc === '' ? null : vc }, dados)).select('id').single();
+        if (ins.error) throw ins.error;
+        id = ins.data.id;
+      }
+      if (precoMudou) await gravarPreco(id, vp === '' ? null : vp, vc === '' ? null : vc);
+      toast(atual ? 'Pacote salvo.' : 'Pacote criado.');
+      dPac.close(); await carregar();
+    } catch (e) { toast('Não foi possível salvar: ' + (e.message || e), true); }
+    btn.disabled = false;
+  });
+
+  async function gravarPreco(pacoteId, vp, vc) {     // nunca sobrescreve tabelas antigas: usa/cria a tabela de hoje
+    var d = hoje(), t = await sb.from('tabelas_preco').select('id').eq('vigencia_inicio', d).order('id', { ascending: false }).limit(1);
+    if (t.error) throw t.error;
+    var tid;
+    if (t.data && t.data.length) tid = t.data[0].id;
+    else {
+      var nt = await sb.from('tabelas_preco').insert({ nome: 'Ajuste manual ' + hojeBR(), vigencia_inicio: d, observacao: 'Ajuste feito no Editor de pacotes', criado_por: (AXON.acesso && AXON.acesso.email) || null }).select('id').single();
+      if (nt.error) throw nt.error;
+      tid = nt.data.id;
+    }
+    var up = await sb.from('pacote_precos').upsert({ tabela_id: tid, pacote_id: pacoteId, valor_pacote: vp, valor_cartao: vc }, { onConflict: 'tabela_id,pacote_id' });
+    if (up.error) throw up.error;
+  }
+
+  $('btnHist').addEventListener('click', async function () {
+    if (!atual) return;
+    var box = $('histBox'); box.innerHTML = '<p class="mut">Carregando…</p>';
+    var r = await Promise.all([
+      sb.from('pacotes_auditoria').select('*').eq('tabela', 'pacotes').eq('registro_id', atual.id),
+      sb.from('pacotes_auditoria').select('*').eq('tabela', 'pacote_precos').filter('depois->>pacote_id', 'eq', String(atual.id))
+    ]);
+    var ev = (r[0].data || []).concat(r[1].data || []).sort(function (a, b) { return a.criado_em < b.criado_em ? 1 : -1; });
+    if (!ev.length) { box.innerHTML = '<h3>Histórico</h3><p class="mut">Nenhuma alteração registrada desde que o editor foi ativado.</p>'; return; }
+    box.innerHTML = '<h3>Histórico</h3>' + ev.slice(0, 60).map(function (e) {
+      var quando = new Date(e.criado_em).toLocaleString('pt-BR');
+      var dif = '';
+      if (e.acao === 'update' && e.antes && e.depois) {
+        dif = Object.keys(e.depois).filter(function (k) { return k !== 'atualizado_em' && JSON.stringify(e.antes[k]) !== JSON.stringify(e.depois[k]); })
+          .map(function (k) { return esc(k) + ': ' + esc(JSON.stringify(e.antes[k])) + ' → ' + esc(JSON.stringify(e.depois[k])); }).join('<br>');
+      } else if (e.tabela === 'pacote_precos' && e.depois) {
+        dif = 'preço: pacote ' + brl(e.depois.valor_pacote) + ' · cartão ' + brl(e.depois.valor_cartao);
+      } else dif = esc(e.acao);
+      return '<div class="hist"><b>' + esc(quando) + '</b> — ' + esc(e.usuario) + '<div class="df">' + dif + '</div></div>';
+    }).join('');
+  });
+
+  /* ───── composição ───── */
+  var vazio = function () { return { id: null, titulo: '', rotulo_venda: '', rotulo_cartao: '', pacote_final: '', cartao_final: '', resumo: [], minutos_cc: '', custo_cc: '', elaborado_por: '', data_elaboracao: '', notas: [], secoes: [{ nome: 'Seção 1', total_custo: '', total_venda: '', itens: [] }] }; };
+  var ni = function () { return { codigo: '', descricao: '', quantidade: '', quantidade_texto: '', unitario: '', total: '', venda: '', fora_do_total: false }; };
+
+  $('btnComp').addEventListener('click', async function () {
+    var cid = $('pComp').value ? Number($('pComp').value) : null;
+    if (!cid) {
+      compSt = vazio(); compSt.titulo = atual ? atual.procedimento : $('pProc').value.trim();
+      compOrig = null; return mostrarComp();
+    }
+    var r = await sb.from('composicoes').select('*, composicao_secoes(*, composicao_itens(*))').eq('id', cid).single();
+    if (r.error) return toast('Erro ao abrir a composição: ' + r.error.message, true);
+    var c = r.data;
+    compSt = {
+      id: c.id, titulo: str(c.titulo), rotulo_venda: str(c.rotulo_venda), rotulo_cartao: str(c.rotulo_cartao),
+      pacote_final: str(c.pacote_final), cartao_final: str(c.cartao_final), resumo: c.resumo || [], minutos_cc: str(c.minutos_cc),
+      custo_cc: str(c.custo_cc), elaborado_por: str(c.elaborado_por), data_elaboracao: str(c.data_elaboracao), notas: c.notas || [],
+      secoes: (c.composicao_secoes || []).sort(function (a, b) { return a.ordem - b.ordem; }).map(function (s) {
+        return { nome: str(s.nome), total_custo: str(s.total_custo), total_venda: str(s.total_venda),
+          itens: (s.composicao_itens || []).sort(function (a, b) { return a.ordem - b.ordem; }).map(function (i) {
+            return { codigo: str(i.codigo), descricao: str(i.descricao), quantidade: str(i.quantidade), quantidade_texto: str(i.quantidade_texto),
+              unitario: str(i.unitario), total: str(i.total), venda: str(i.venda), fora_do_total: !!i.fora_do_total };
+          }) };
+      })
+    };
+    compOrig = JSON.stringify(compSt);
+    mostrarComp();
+  });
+
+  function campo(k, rotulo, extra) { return '<label class="f ' + (extra || '') + '">' + rotulo + '<input type="text" data-h="' + k + '" value="' + esc(compSt[k]) + '"></label>'; }
+  function mostrarComp() {
+    var c = compSt, n = c.id ? (usoComp[c.id] || 0) : 0;
+    $('cTit').textContent = c.id ? 'Composição #' + c.id : 'Nova composição';
+    $('btnCopia').style.display = c.id && n > 1 && atual ? '' : 'none';
+    var h = (n > 1 ? '<div class="note">Esta composição é usada em ' + n + ' pacotes. Salvar aqui muda todos eles.</div>' : '') +
+      '<div class="g">' + campo('titulo', 'Título', 'full') + campo('rotulo_venda', 'Rótulo do valor (pacote)') + campo('rotulo_cartao', 'Rótulo do valor (cartão)') +
+      campo('pacote_final', 'Valor final do pacote') + campo('cartao_final', 'Valor final no cartão') + campo('minutos_cc', 'Tempo de centro cirúrgico') + campo('custo_cc', 'Custo do centro cirúrgico') +
+      campo('elaborado_por', 'Elaborado por') + campo('data_elaboracao', 'Data da elaboração') +
+      '<label class="f full">Notas (uma por linha)<textarea data-h="notas">' + esc((c.notas || []).join('\n')) + '</textarea></label></div>';
+    c.secoes.forEach(function (s, si) {
+      h += '<div class="sec"><div class="sh"><input class="nm" type="text" data-s="' + si + '" data-sf="nome" value="' + esc(s.nome) + '" placeholder="Nome da seção">' +
+        '<label class="mut">Custo <input class="nu" type="text" data-s="' + si + '" data-sf="total_custo" value="' + esc(s.total_custo) + '"></label>' +
+        '<label class="mut">Venda <input class="nu" type="text" data-s="' + si + '" data-sf="total_venda" value="' + esc(s.total_venda) + '"></label>' +
+        '<button class="btn s" data-a="recalc" data-s="' + si + '">Recalcular totais</button>' +
+        '<button class="btn s d" data-a="delsec" data-s="' + si + '">Remover seção</button></div>' +
+        '<div class="wrap" style="border:0;border-radius:0"><table class="it"><thead><tr><th>Código</th><th>Descrição</th><th class="n">Qtd</th><th>Qtd (texto)</th><th class="n">Unitário</th><th class="n">Total</th><th class="n">Venda</th><th>Fora do total</th><th></th></tr></thead><tbody>' +
+        s.itens.map(function (it, ii) {
+          var d = ' data-s="' + si + '" data-i="' + ii + '"';
+          return '<tr><td><input type="text"' + d + ' data-f="codigo" value="' + esc(it.codigo) + '"></td><td><input type="text"' + d + ' data-f="descricao" value="' + esc(it.descricao) + '" style="min-width:240px"></td>' +
+            '<td><input class="nu" type="text"' + d + ' data-f="quantidade" value="' + esc(it.quantidade) + '"></td><td><input type="text"' + d + ' data-f="quantidade_texto" value="' + esc(it.quantidade_texto) + '"></td>' +
+            '<td><input class="nu" type="text"' + d + ' data-f="unitario" value="' + esc(it.unitario) + '"></td><td><input class="nu" type="text"' + d + ' data-f="total" value="' + esc(it.total) + '"></td>' +
+            '<td><input class="nu" type="text"' + d + ' data-f="venda" value="' + esc(it.venda) + '"></td>' +
+            '<td class="c"><input type="checkbox"' + d + ' data-f="fora_do_total"' + (it.fora_do_total ? ' checked' : '') + '></td>' +
+            '<td class="c"><button class="btn s d" data-a="delit"' + d + ' title="Remover item">✕</button></td></tr>';
+        }).join('') + '</tbody></table></div>' +
+        '<div style="padding:8px 10px"><button class="btn s" data-a="additem" data-s="' + si + '">+ Item</button></div></div>';
+    });
+    h += '<button class="btn" data-a="addsec">+ Nova seção</button>';
+    $('cCorpo').innerHTML = h;
+    if (!dComp.open) dComp.showModal();
+  }
+  function somar(s, campoK) {
+    var t = 0, ok = true;
+    s.itens.forEach(function (i) { if (campoK === 'total' && i.fora_do_total) return; var v = num(i[campoK]); if (v === null) ok = false; else if (v !== '') t += Number(v); });
+    return ok ? (Math.round(t * 100) / 100).toString() : null;
+  }
+  $('cCorpo').addEventListener('input', function (e) {
+    var t = e.target, st = compSt;
+    if (t.dataset.h) { st[t.dataset.h] = t.dataset.h === 'notas' ? t.value.split('\n').map(function (x) { return x.trim(); }).filter(Boolean) : t.value; return; }
+    if (t.dataset.sf) { st.secoes[+t.dataset.s][t.dataset.sf] = t.value; return; }
+    if (t.dataset.f) {
+      var it = st.secoes[+t.dataset.s].itens[+t.dataset.i];
+      it[t.dataset.f] = t.type === 'checkbox' ? t.checked : t.value;
+      if (t.dataset.f === 'quantidade' || t.dataset.f === 'unitario') {
+        var q = num(it.quantidade), u = num(it.unitario);
+        if (q && u) { it.total = (Math.round(Number(q) * Number(u) * 100) / 100).toString(); var row = t.closest('tr').querySelector('[data-f=total]'); if (row) row.value = it.total; }
+      }
+    }
+  });
+  $('cCorpo').addEventListener('change', function (e) { if (e.target.type === 'checkbox' && e.target.dataset.f) compSt.secoes[+e.target.dataset.s].itens[+e.target.dataset.i].fora_do_total = e.target.checked; });
+  $('cCorpo').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-a]'); if (!b) return;
+    var a = b.dataset.a, s = compSt.secoes[+b.dataset.s];
+    if (a === 'addsec') compSt.secoes.push({ nome: 'Seção ' + (compSt.secoes.length + 1), total_custo: '', total_venda: '', itens: [] });
+    else if (a === 'delsec') { if (!confirm('Remover a seção "' + s.nome + '" e seus ' + s.itens.length + ' itens? (só vale ao salvar)')) return; compSt.secoes.splice(+b.dataset.s, 1); }
+    else if (a === 'additem') s.itens.push(ni());
+    else if (a === 'delit') s.itens.splice(+b.dataset.i, 1);
+    else if (a === 'recalc') {
+      var c1 = somar(s, 'total'), v1 = somar(s, 'venda');
+      if (c1 === null || v1 === null) return toast('Há valores inválidos nos itens desta seção.', true);
+      s.total_custo = c1; s.total_venda = v1;
+    }
+    var top = $('cCorpo').scrollTop; mostrarComp(); $('cCorpo').scrollTop = top;
+  });
+  function fecharComp() {
+    if (compOrig !== null && JSON.stringify(compSt) !== compOrig && !confirm('Descartar as alterações da composição?')) return;
+    dComp.close();
+  }
+  window.fecharComp = fecharComp;
+  dComp.addEventListener('cancel', function (e) { e.preventDefault(); fecharComp(); });
+
+  function montar(c, novaCopia) {
+    var campos = ['pacote_final', 'cartao_final', 'custo_cc'], p = { id: novaCopia ? null : c.id };
+    if (!c.titulo.trim()) throw new Error('Informe o título da composição.');
+    ['titulo', 'rotulo_venda', 'rotulo_cartao', 'minutos_cc', 'elaborado_por', 'data_elaboracao'].forEach(function (k) { p[k] = c[k]; });
+    campos.forEach(function (k) { var v = num(c[k]); if (v === null) throw new Error('Valor inválido em "' + k + '".'); p[k] = v; });
+    p.resumo = c.resumo; p.notas = c.notas;
+    p.secoes = c.secoes.map(function (s, si) {
+      var tc = num(s.total_custo), tv = num(s.total_venda);
+      if (tc === null || tv === null) throw new Error('Total inválido na seção "' + (s.nome || si + 1) + '".');
+      return { nome: s.nome, total_custo: tc, total_venda: tv, itens: s.itens.map(function (i, ii) {
+        var q = num(i.quantidade), u = num(i.unitario), t = num(i.total), v = num(i.venda);
+        if (q === null || u === null || t === null || v === null) throw new Error('Número inválido na seção "' + (s.nome || si + 1) + '", item ' + (ii + 1) + '.');
+        if (!i.descricao.trim()) throw new Error('Item ' + (ii + 1) + ' da seção "' + (s.nome || si + 1) + '" está sem descrição.');
+        return { codigo: i.codigo, descricao: i.descricao, quantidade: q, quantidade_texto: i.quantidade_texto, unitario: u, total: t, venda: v, fora_do_total: !!i.fora_do_total };
+      }) };
+    });
+    return p;
+  }
+  async function salvarComp(novaCopia) {
+    var btns = [$('btnSalvarComp'), $('btnCopia')]; btns.forEach(function (b) { b.disabled = true; });
+    try {
+      var p = montar(compSt, novaCopia);
+      var vinc = atual ? atual.id : null;
+      if (!compSt.id && !atual) throw new Error('Salve o pacote antes de criar a composição dele.');
+      var r = await sb.rpc('salvar_composicao', { p: p, p_pacote_id: (novaCopia || !compSt.id) ? vinc : null });
+      if (r.error) throw r.error;
+      toast(novaCopia || !compSt.id ? 'Composição criada e vinculada ao pacote.' : 'Composição salva (a versão anterior ficou guardada no histórico).');
+      compOrig = null; dComp.close(); dPac.close(); await carregar();
+    } catch (e) { toast('Não foi possível salvar: ' + (e.message || e), true); }
+    btns.forEach(function (b) { b.disabled = false; });
+  }
+  $('btnSalvarComp').addEventListener('click', function () {
+    var n = compSt.id ? (usoComp[compSt.id] || 0) : 0;
+    if (n > 1 && !confirm('Esta composição é usada em ' + n + ' pacotes e todos serão alterados. Continuar?')) return;
+    salvarComp(false);
+  });
+  $('btnCopia').addEventListener('click', function () { salvarComp(true); });
+
+  /* ───── início ───── */
+  (async function () {
+    try { await AXON.pronto; } catch (e) { return; }
+    if (!AXON.acesso || AXON.acesso.papel !== 'admin') { AXON.sair(); return; }
+    sb = AXON.sb;
+    $('quem').textContent = 'Administrador · ' + (AXON.acesso.nome || AXON.acesso.email || '');
+    carregar();
+  })();
+})();
+</script>
+</body>
+</html>

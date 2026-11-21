@@ -3,6 +3,7 @@
 
    Uso (primeira linha dentro do <head> de cada página):
      <script src="axon-guard.js" data-modulo="pacotes"></script>
+     <script src="axon-guard.js" data-admin></script>        ← só administradores
 
    O que faz:
    • Usa a MESMA sessão do login do index.html (Supabase, guardada no sessionStorage).
@@ -23,6 +24,7 @@
 
   var tag = document.currentScript;
   var modulo = (tag && tag.getAttribute('data-modulo')) || '';
+  var soAdmin = !!(tag && tag.hasAttribute('data-admin'));   // página só para administradores
   var html = document.documentElement;
   html.style.visibility = 'hidden';
 
@@ -95,7 +97,7 @@
       if (a.status !== 'aprovado') { encerrar(); return; }
       AXON.acesso = a;
       var mods = a.modulos || [], admin = a.papel === 'admin';
-      if (modulo && !admin && mods.indexOf(modulo) < 0) {
+      if ((soAdmin && !admin) || (modulo && !admin && mods.indexOf(modulo) < 0)) {
         tela('Sem permissão', 'Seu acesso não inclui esta ferramenta. Peça ao administrador do portal para liberar.',
           '<a ' + BTN + ' href="index.html">Voltar ao portal</a>');
         rejeitar(new Error('sem permissão'));
