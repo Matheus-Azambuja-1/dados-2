@@ -617,6 +617,9 @@
       <a id="navGerencial" href="#" onclick="switchSection('sec-gerencial', this); return false;" class="nav-item">
         <i class="fa-solid fa-briefcase"></i> Gerencial
       </a>
+      <a id="navEditor" data-admin href="editor-pacotes.html" class="nav-item sem-acesso">
+        <i class="fa-solid fa-pen-to-square"></i> Editor de pacotes
+      </a>
       <a id="navAdmin" href="#" onclick="switchSection('sec-admin', this); return false;" class="nav-item sem-acesso">
         <i class="fa-solid fa-user-shield"></i> Administração
       </a>
@@ -738,6 +741,13 @@
             <span class="card-body">
               <span class="card-title">Validação de Lotes TISS</span>
               <span class="card-desc">Validação de arquivos XML no padrão TISS.</span>
+            </span>
+          </a>
+          <a href="editor-pacotes.html" class="card sem-acesso" data-admin>
+            <span class="card-icon"><i class="fa-solid fa-pen-to-square"></i></span>
+            <span class="card-body">
+              <span class="card-title">Editor de pacotes</span>
+              <span class="card-desc">Preços, dados e composições dos pacotes. Apenas administradores.</span>
             </span>
           </a>
           <a href="pc.html" class="card" data-modulo="pacotes">
@@ -1131,6 +1141,7 @@
       document.getElementById('navFaturamento').classList.toggle('sem-acesso', !temCard('sec-faturamento'));
       document.getElementById('navGerencial').classList.toggle('sem-acesso', !temCard('sec-gerencial'));
       document.getElementById('navAdmin').classList.toggle('sem-acesso', !ehAdmin);
+      document.querySelectorAll('[data-admin]').forEach(el => el.classList.toggle('sem-acesso', !ehAdmin));
 
       const antigo = document.getElementById('semModulosAviso');
       if (antigo) antigo.remove();
