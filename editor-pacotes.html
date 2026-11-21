@@ -473,7 +473,7 @@
 
   /* ───── avisos dos usuários ───── */
   var dRep = $('dRep'); window.dRep = dRep;
-  var reps = [];
+  var reps = [], msgsRep = {};
   var TIPOS = { codigo_faltando: 'Falta o código', valor_errado: 'Valor errado', codigo_nao_encontrado: 'Não achei o código' };
   async function contarReportes() {
     var r = await sb.from('pacotes_reportes').select('id', { count: 'exact', head: true }).eq('status', 'aberto');
@@ -481,8 +481,12 @@
     el.hidden = !r.count; el.textContent = r.count || '';
   }
   async function carregarReportes() {
-    var r = await sb.from('pacotes_reportes').select('*').order('criado_em', { ascending: false }).limit(2000);
+    var rr = await Promise.all([
+      sb.from('pacotes_reportes').select('*').order('criado_em', { ascending: false }).limit(2000),
+      sb.from('pacotes_reportes_msgs').select('*').order('criado_em', { ascending: true }).limit(10000)
+    ]), r = rr[0];
     if (r.error) { $('rLista').innerHTML = '<tr><td colspan="7" class="mut">Erro: ' + esc(r.error.message) + '</td></tr>'; return; }
+    msgsRep = {}; (rr[1].data || []).forEach(function (m) { (msgsRep[m.reporte_id] = msgsRep[m.reporte_id] || []).push(m); });
     reps = r.data || []; desenharReportes();
   }
   function desenharReportes() {
@@ -497,9 +501,13 @@
       var val = x.tipo === 'valor_errado'
         ? 'Atual: ' + brl(x.valor_pacote_atual) + ' / ' + brl(x.valor_cartao_atual) + '<br>Correto: ' + brl(x.valor_sugerido_pacote) + ' / ' + brl(x.valor_sugerido_cartao) : '<span class="mut">—</span>';
       var op = ['aberto', 'em_analise', 'resolvido', 'descartado'].map(function (o) { return '<option value="' + o + '"' + (o === x.status ? ' selected' : '') + '>' + { aberto: 'Aberto', em_analise: 'Em análise', resolvido: 'Resolvido', descartado: 'Descartado' }[o] + '</option>'; }).join('');
+      var conv = (msgsRep[x.id] || []).map(function (m) {
+        return '<div style="margin:0 0 6px;padding:6px 8px;border-radius:6px;font-size:.85rem;background:' + (m.autor === 'usuario' ? 'var(--warn-soft)' : 'var(--accent-soft)') + '"><b>' + (m.autor === 'usuario' ? 'Usuário' : 'Admin') + '</b> <span class="mut">' + esc(new Date(m.criado_em).toLocaleString('pt-BR')) + '</span><br>' + esc(m.texto) + '</div>';
+      }).join('');
+      var novo = x.admin_vista === false ? '<div><span class="pill off">Usuário respondeu</span></div>' : '';
       return '<tr data-rid="' + Number(x.id) + '"><td class="mut">' + esc(new Date(x.criado_em).toLocaleString('pt-BR')) + '</td><td><span class="pill w">' + esc(TIPOS[x.tipo] || x.tipo) + '</span></td><td>' + onde + '</td><td>' + val +
-        '</td><td>' + esc(x.observacao || '') + '</td><td>' + esc(x.usuario_nome || x.usuario_email || '') + '</td><td><select data-r="status">' + op + '</select>' +
-        '<input type="text" data-r="resp" maxlength="1000" placeholder="Resposta que o usuário vai ver" value="' + esc(x.resposta_admin || '') + '" style="display:block;margin:4px 0;width:100%;padding:5px 7px;border:1px solid var(--line-strong);border-radius:4px">' +
+        '</td><td>' + esc(x.observacao || '') + '</td><td>' + esc(x.usuario_nome || x.usuario_email || '') + '</td><td>' + novo + conv + '<select data-r="status">' + op + '</select>' +
+        '<input type="text" data-r="resp" maxlength="1000" placeholder="Nova resposta (o usuário vai ver)" value="" style="display:block;margin:4px 0;width:100%;padding:5px 7px;border:1px solid var(--line-strong);border-radius:4px">' +
         '<button class="btn s p" data-r="salvar">Salvar</button>' + (x.resolvido_por ? '<div class="mut">por ' + esc(x.resolvido_por) + '</div>' : '') + '</td></tr>';
     }).join('') : '<tr><td colspan="7" class="mut">Nenhum aviso neste filtro.</td></tr>';
   }
@@ -511,7 +519,9 @@
     var b = e.target.closest('[data-r=salvar]'); if (!b) return;
     var tr = b.closest('tr'), id = Number(tr.dataset.rid);
     b.disabled = true;
-    var u = await sb.from('pacotes_reportes').update({ status: tr.querySelector('[data-r=status]').value, resposta_admin: tr.querySelector('[data-r=resp]').value.trim() || null }).eq('id', id);
+    var upd = { status: tr.querySelector('[data-r=status]').value, admin_vista: true }, txt = tr.querySelector('[data-r=resp]').value.trim();
+    if (txt) upd.resposta_admin = txt;     // vira uma nova mensagem na conversa
+    var u = await sb.from('pacotes_reportes').update(upd).eq('id', id);
     b.disabled = false;
     if (u.error) return toast('Não foi possível salvar: ' + u.error.message, true);
     toast('Aviso atualizado.'); await carregarReportes(); contarReportes();
